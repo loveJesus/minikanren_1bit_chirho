@@ -105,13 +105,23 @@ result = compute(input)  # Missing _chirho
 
 Example: `cargo run --example appendo_chirho`
 
+## Calyx FPGA Implementation (`calyx_chirho/`)
+
+| File | Description |
+|------|-------------|
+| `domain_chirho.futil` | 64-bit domain registers, unify (AND), disjunction (OR) |
+| `cam_chirho.futil` | Content-Addressable Memory for single-cycle relation lookup |
+| `search_engine_chirho.futil` | Complete search engine with branching and backtracking |
+
+Target: iCE40 HX8K FPGA (~2000 LUTs). See `calyx_chirho/README.md` for build instructions.
+
 ## Roadmap
 
 ```
 Phase 1: ✅ COMPLETE - Python prototype (19 files, ~10k lines)
 Phase 2: ✅ COMPLETE - Rust implementation (12 modules, 39 tests)
-Phase 3: 🚧 IN PROGRESS - Hardware primitives (BitVec64, CAM, parallel unify)
-Phase 4: PLANNED - FPGA synthesis via Clash/Calyx
+Phase 3: ✅ COMPLETE - Hardware primitives (BitVec64, CAM, parallel unify)
+Phase 4: ✅ COMPLETE - Calyx IR for FPGA synthesis
 ```
 
 ## References
