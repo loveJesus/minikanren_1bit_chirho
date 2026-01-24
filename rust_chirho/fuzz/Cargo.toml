@@ -1,0 +1,37 @@
+[package]
+name = "minikanren_1bit_chirho-fuzz"
+version = "0.0.0"
+authors = ["Automatically generated"]
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+arbitrary = { version = "1", features = ["derive"] }
+
+[dependencies.minikanren_1bit_chirho]
+path = ".."
+
+[[bin]]
+name = "fuzz_unify_chirho"
+path = "fuzz_targets/fuzz_unify_chirho.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_bitmatrix_chirho"
+path = "fuzz_targets/fuzz_bitmatrix_chirho.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_occurs_check_chirho"
+path = "fuzz_targets/fuzz_occurs_check_chirho.rs"
+test = false
+doc = false
+bench = false
