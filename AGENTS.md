@@ -73,6 +73,7 @@ CREATE TABLE terms_chirho (id_chirho INTEGER, ...);
 | 16 | `differentiable_chirho.py` | **SOFT LOGIC**: Semiring abstraction, gradients flow through |
 | 17 | `mutual_recursion_chirho.py` | **MUTUAL RECURSION**: SLG completion with SCC detection |
 | 18 | `var_propagation_chirho.py` | **VAR PROPAGATION**: Union-Find + bit matrix for O(α(n)) binding |
+| 19 | `contraction_order_chirho.py` | **CONTRACTION ORDER**: Greedy/min-degree/min-fill heuristics |
 
 ---
 
@@ -99,6 +100,8 @@ CREATE TABLE terms_chirho (id_chirho INTEGER, ...);
 | **Dependency graph** | **Tarjan's SCC → completion order** |
 | **Variable binding** | **Union-Find: O(α(n)) equivalence classes** |
 | **Var occurrences** | **Bit matrix: var_class → {term_classes containing it}** |
+| **Query optimization** | **Tensor contraction order (NP-hard, use heuristics)** |
+| **Join ordering** | **Min-fill/min-degree variable elimination** |
 
 ---
 
@@ -244,7 +247,12 @@ Example: [?, 1, ?] as paths
 
 3. ~~**Tabling**~~ ✅ SOLVED — See `tabling_complete_chirho.py`
 
-4. **Contraction order** — NP-hard (same as quantum tensor network simulation). Heuristics needed.
+4. ~~**Contraction order**~~ ✅ ADDRESSED — See `contraction_order_chirho.py`
+   - NP-hard (same as treewidth / quantum simulation)
+   - Greedy: O(n³), often within 2-10x optimal
+   - Min-degree: O(n² log n), good for sparse
+   - Min-fill: O(n³), best quality
+   - Hardware: cache orders for common patterns
 
 5. ~~**Soft unification**~~ ✅ SOLVED — See `differentiable_chirho.py`
    - Semiring abstraction (Boolean, Probability, Tropical, Counting)
