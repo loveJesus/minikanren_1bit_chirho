@@ -36,10 +36,49 @@ class State_chirho:  # Should be StateChirho
 GLOBAL_TABLE = ...   # Missing _CHIRHO
 ```
 
+### Language-Specific Notes
+
+**Haskell/Clash:**
+```haskell
+-- Module names: PascalChirho (no underscore)
+module HashConsChirho where
+
+-- Types: PascalChirho
+data TermChirho = ConsChirho TermIdChirho TermIdChirho
+
+-- Functions: camelChirho
+unifyChirho :: DomainChirho -> DomainChirho -> DomainChirho
+
+-- Local variables: camelChirho
+let resultChirho = computeChirho inputChirho
+```
+
+**Rust:**
+```rust
+// Types: PascalChirho
+struct TermStoreChirho { ... }
+
+// Functions: snake_chirho
+fn unify_chirho(a: Domain, b: Domain) -> Domain
+
+// Variables: snake_chirho
+let result_chirho = compute_chirho(input_chirho);
+```
+
+**Calyx/FPGA:**
+```
+// Components: snake_chirho (hardware convention)
+component hashcons_chirho(...) -> (...) { ... }
+
+// Cells/wires: snake_chirho
+reg_chirho = std_reg(64);
+```
+
 ### Exceptions (keep original names)
-- External library imports (`import numpy as np`)
+- External library imports (`import numpy as np`, `import Clash.Prelude`)
 - Python builtins (`len`, `range`, `print`)
 - Magic methods (`__init__`, `__repr__`)
+- Calyx `main` component (required by toolchain)
 
 ### Database/Routes
 ```sql
