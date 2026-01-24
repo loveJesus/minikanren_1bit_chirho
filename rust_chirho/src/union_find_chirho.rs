@@ -43,6 +43,18 @@ impl UnionFindChirho {
         }
     }
 
+    /// Find representative WITHOUT path compression (immutable access)
+    pub fn find_immut_chirho(&self, x_chirho: u32) -> u32 {
+        let mut current_chirho = x_chirho;
+        while let Some(&parent_chirho) = self.parent_chirho.get(&current_chirho) {
+            if parent_chirho == current_chirho {
+                return current_chirho;
+            }
+            current_chirho = parent_chirho;
+        }
+        x_chirho // Not in structure, is its own root
+    }
+
     /// Union by rank, returns new root
     pub fn union_chirho(&mut self, x_chirho: u32, y_chirho: u32) -> u32 {
         let root_x_chirho = self.find_chirho(x_chirho);

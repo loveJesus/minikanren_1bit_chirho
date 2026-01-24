@@ -4,6 +4,11 @@
 //!
 //! Core equation: miniKanren search = sparse Boolean tensor network contraction
 //!
+//! # Features
+//!
+//! - `egraph_native_chirho` (default): Native hardware-optimized e-graph
+//! - `egg_chirho`: External egg crate integration (more features, less hw-friendly)
+//!
 //! # Modules
 //!
 //! - `terms_chirho`: Hash-consed term storage
@@ -19,6 +24,8 @@
 //! - `semiring_chirho`: Semiring abstraction (Bool, Prob, Tropical, Count)
 //! - `hardware_chirho`: FPGA/ASIC-oriented primitives (BitVec64, CAM, parallel ops)
 //! - `gpu_chirho`: GPU backend sketch (SIMT-style parallel search)
+//! - `egraph_native_chirho`: Native e-graph (hardware-optimized, bit-parallel)
+//! - `egg_chirho`: External egg crate wrapper (feature-gated)
 
 pub mod terms_chirho;
 pub mod union_find_chirho;
@@ -36,6 +43,12 @@ pub mod gpu_chirho;
 pub mod neural_chirho;
 pub mod smt_chirho;
 pub mod contraction_learn_chirho;
+
+// E-graph implementations (feature-gated)
+#[cfg(feature = "egraph_native_chirho")]
+pub mod egraph_native_chirho;
+
+#[cfg(feature = "egg_chirho")]
 pub mod egg_chirho;
 
 // Re-export key types (avoiding ambiguous globs)
@@ -51,4 +64,10 @@ pub use hardware_chirho::{BitVec64Chirho, BitVec256Chirho, SearchStateHwChirho, 
 pub use neural_chirho::{SoftDomainChirho, NeuralStateChirho, NeuralHeuristicChirho, beam_search_chirho};
 pub use smt_chirho::{SmtSortChirho, SmtExprChirho, SmtProblemChirho, domain_to_smt_chirho};
 pub use contraction_learn_chirho::{TensorNetworkChirho, EdgeFeaturesChirho, LinearEdgeScorerChirho, LearnedContractionChirho};
+
+// E-graph re-exports (feature-gated)
+#[cfg(feature = "egraph_native_chirho")]
+pub use egraph_native_chirho::{ENodeChirho, ENodeIdChirho, EClassIdChirho, EClassDataChirho, EGraphNativeChirho};
+
+#[cfg(feature = "egg_chirho")]
 pub use egg_chirho::{TermLangChirho, TermAnalysisChirho, EggStoreChirho, list_rules_chirho, arith_rules_chirho};

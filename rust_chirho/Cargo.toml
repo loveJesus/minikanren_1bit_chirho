@@ -6,8 +6,8 @@ description = "miniKanren as 1-bit matrix operations - exploring hardware accele
 license = "MIT"
 
 [dependencies]
-# E-graphs for equality saturation
-egg = "0.9"
+# E-graphs for equality saturation (optional, use egraph_native_chirho instead)
+egg = { version = "0.9", optional = true }
 
 # Symbolic computation (optional, for expression simplification)
 # symbolic_expressions = "5"
@@ -21,6 +21,10 @@ name = "criterion_bench_chirho"
 harness = false
 
 [features]
-default = []
+default = ["egraph_native_chirho"]
+# Use external egg crate (general purpose, more features)
+egg_chirho = ["egg"]
+# Use native e-graph (hardware-optimized, bit-parallel, full _chirho compliance)
+egraph_native_chirho = []
 # Enable GPU backend (requires wgpu)
 # gpu = ["wgpu"]
