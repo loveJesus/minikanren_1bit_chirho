@@ -27,37 +27,48 @@ Clash is ideal for miniKanren because:
 
 | File | Description |
 |------|-------------|
-| `MiniKanren_chirho.hs` | Core operations and search engine |
-| `minikanren-clash.cabal` | Package definition |
+| `MiniKanrenChirho.hs` | Core operations and search engine |
+| `HashConsChirho.hs` | Hardware hash consing for infinite domains |
 
 ## Key Operations
 
 ### Unification (1 cycle)
 ```haskell
-unify_chirho :: Domain_chirho -> Domain_chirho -> Domain_chirho
-unify_chirho d1_chirho d2_chirho = d1_chirho .&. d2_chirho
+unifyChirho :: DomainChirho -> DomainChirho -> DomainChirho
+unifyChirho d1Chirho d2Chirho = d1Chirho .&. d2Chirho
 ```
 
 ### Fork/Branch (1 cycle)
 ```haskell
-fork_chirho :: Domain_chirho -> (Domain_chirho, Domain_chirho)
-fork_chirho x_chirho = (lowestBit_chirho x_chirho, clearLowest_chirho x_chirho)
+forkChirho :: DomainChirho -> (DomainChirho, DomainChirho)
+forkChirho xChirho = (lowestBitChirho xChirho, clearLowestChirho xChirho)
   where
-    lowestBit_chirho x = x .&. negate x      -- isolate lowest set bit
-    clearLowest_chirho x = x .&. (x - 1)     -- clear lowest set bit
+    lowestBitChirho x = x .&. negate x      -- isolate lowest set bit
+    clearLowestChirho x = x .&. (x - 1)     -- clear lowest set bit
 ```
 
 ### Singleton Check (1 cycle)
 ```haskell
-isSingleton_chirho :: Domain_chirho -> Bool
-isSingleton_chirho x_chirho = 
-  x_chirho /= 0 && (x_chirho .&. (x_chirho - 1)) == 0
+isSingletonChirho :: DomainChirho -> Bool
+isSingletonChirho xChirho =
+  xChirho /= 0 && (xChirho .&. (xChirho - 1)) == 0
 ```
 
 ## Building
 
 ### Prerequisites
+
+**GHC Version:** Clash requires GHC 9.2-9.8 (not 9.10+).
+Use ghcup to manage versions:
+
 ```bash
+# Install ghcup
+curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
+# Install compatible GHC
+ghcup install ghc 9.6.4
+ghcup set ghc 9.6.4
+
 # Install Clash
 cabal update
 cabal install clash-ghc
@@ -69,27 +80,27 @@ stack install clash-ghc
 ### Compile to Verilog
 ```bash
 cd clash_chirho
-clash --verilog MiniKanren_chirho.hs
+clash --verilog MiniKanrenChirho.hs
 
-# Output in verilog/MiniKanren_chirho/search_engine_chirho.v
+# Output in verilog/MiniKanrenChirho/searchEngineChirho.v
 ```
 
 ### Compile to VHDL
 ```bash
-clash --vhdl MiniKanren_chirho.hs
+clash --vhdl MiniKanrenChirho.hs
 
-# Output in vhdl/MiniKanren_chirho/search_engine_chirho.vhdl
+# Output in vhdl/MiniKanrenChirho/searchEngineChirho.vhdl
 ```
 
 ### Simulate
 ```bash
 # Interactive testing
-clashi MiniKanren_chirho.hs
+clashi MiniKanrenChirho.hs
 
 # In GHCi:
-> let s0 = initState_chirho :: SearchState_chirho 4
-> let s1 = unifyVars_chirho 0 1 s0
-> domains_chirho s1
+> let s0 = initStateChirho :: SearchStateChirho 4
+> let s1 = unifyVarsChirho 0 1 s0
+> domainsChirho s1
 ```
 
 ## Architecture
