@@ -30,14 +30,14 @@ impl SudokuWasmChirho {
 
     /// Load a puzzle from an 81-character string (0 or . for empty)
     #[wasm_bindgen]
-    pub fn load_puzzle(&mut self, puzzle_chirho: &str) -> bool {
+    pub fn load_puzzle_chirho(&mut self, puzzle_chirho: &str) -> bool {
         self.solver_chirho.load_puzzle_chirho(puzzle_chirho)
     }
 
     /// Solve the puzzle using adaptive strategy
     /// Returns the solution as an 81-character string, or empty on failure
     #[wasm_bindgen]
-    pub fn solve(&mut self) -> String {
+    pub fn solve_chirho(&mut self) -> String {
         if self.solver_chirho.solve_adaptive_chirho() {
             self.solver_chirho.to_string_chirho()
         } else {
@@ -47,14 +47,14 @@ impl SudokuWasmChirho {
 
     /// Get current board state as 81-character string
     #[wasm_bindgen]
-    pub fn get_board(&self) -> String {
+    pub fn get_board_chirho(&self) -> String {
         self.solver_chirho.to_string_chirho()
     }
 
     /// Get domain bitmask for a cell (0-80)
     /// Returns 9-bit mask where bit i means (i+1) is possible
     #[wasm_bindgen]
-    pub fn get_domain(&self, cell_chirho: usize) -> u16 {
+    pub fn get_domain_chirho(&self, cell_chirho: usize) -> u16 {
         if cell_chirho < 81 {
             self.solver_chirho.get_domain_chirho(cell_chirho)
         } else {
@@ -64,19 +64,19 @@ impl SudokuWasmChirho {
 
     /// Check if puzzle is solved (all cells have single value)
     #[wasm_bindgen]
-    pub fn is_solved(&self) -> bool {
+    pub fn is_solved_chirho(&self) -> bool {
         self.solver_chirho.is_solved_chirho()
     }
 
     /// Get propagation count (for stats)
     #[wasm_bindgen]
-    pub fn propagation_count(&self) -> u32 {
+    pub fn propagation_count_chirho(&self) -> u32 {
         self.solver_chirho.propagation_count_chirho
     }
 
     /// Get branch count (for stats)
     #[wasm_bindgen]
-    pub fn branch_count(&self) -> u32 {
+    pub fn branch_count_chirho(&self) -> u32 {
         self.solver_chirho.branch_count_chirho
     }
 }
@@ -107,21 +107,21 @@ impl NQueensWasmChirho {
 
     /// Count all solutions
     #[wasm_bindgen]
-    pub fn count_solutions(&self) -> u64 {
+    pub fn count_solutions_chirho(&self) -> u64 {
         let mut solver_chirho = crate::nqueens_chirho::NQueensSolverChirho::new_chirho(self.n_chirho);
         solver_chirho.count_solutions_chirho()
     }
 
     /// Find one solution, returns array of column positions (or empty)
     #[wasm_bindgen]
-    pub fn solve_one(&self) -> Vec<u8> {
+    pub fn solve_one_chirho(&self) -> Vec<u8> {
         let mut solver_chirho = crate::nqueens_chirho::NQueensSolverChirho::new_chirho(self.n_chirho);
         solver_chirho.solve_one_chirho().unwrap_or_default()
     }
 
     /// Get board size
     #[wasm_bindgen]
-    pub fn size(&self) -> usize {
+    pub fn size_chirho(&self) -> usize {
         self.n_chirho
     }
 }
@@ -141,19 +141,19 @@ pub struct ValidationResultChirho {
 impl ValidationResultChirho {
     /// Is the validation successful?
     #[wasm_bindgen]
-    pub fn is_valid(&self) -> bool {
+    pub fn is_valid_chirho(&self) -> bool {
         self.valid_chirho
     }
 
     /// Get error messages (empty if valid)
     #[wasm_bindgen]
-    pub fn errors(&self) -> Vec<String> {
+    pub fn errors_chirho(&self) -> Vec<String> {
         self.errors_chirho.clone()
     }
 
     /// Get number of errors
     #[wasm_bindgen]
-    pub fn error_count(&self) -> usize {
+    pub fn error_count_chirho(&self) -> usize {
         self.errors_chirho.len()
     }
 }
@@ -180,8 +180,8 @@ pub fn version_chirho() -> String {
 #[wasm_bindgen]
 pub fn solve_sudoku_chirho(puzzle_chirho: &str) -> String {
     let mut solver_chirho = SudokuWasmChirho::new();
-    if solver_chirho.load_puzzle(puzzle_chirho) {
-        solver_chirho.solve()
+    if solver_chirho.load_puzzle_chirho(puzzle_chirho) {
+        solver_chirho.solve_chirho()
     } else {
         String::new()
     }
@@ -191,11 +191,11 @@ pub fn solve_sudoku_chirho(puzzle_chirho: &str) -> String {
 /// Returns array of column positions for first solution
 #[wasm_bindgen]
 pub fn solve_nqueens_chirho(n_chirho: usize) -> Vec<u8> {
-    NQueensWasmChirho::new(n_chirho).solve_one()
+    NQueensWasmChirho::new(n_chirho).solve_one_chirho()
 }
 
 /// Count N-Queens solutions
 #[wasm_bindgen]
 pub fn count_nqueens_chirho(n_chirho: usize) -> u64 {
-    NQueensWasmChirho::new(n_chirho).count_solutions()
+    NQueensWasmChirho::new(n_chirho).count_solutions_chirho()
 }
