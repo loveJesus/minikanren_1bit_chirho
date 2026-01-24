@@ -36,6 +36,7 @@ pub mod gpu_chirho;
 pub mod neural_chirho;
 pub mod smt_chirho;
 pub mod contraction_learn_chirho;
+pub mod egg_chirho;
 
 // Re-export key types (avoiding ambiguous globs)
 pub use terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};
@@ -50,3 +51,4 @@ pub use hardware_chirho::{BitVec64Chirho, BitVec256Chirho, SearchStateHwChirho, 
 pub use neural_chirho::{SoftDomainChirho, NeuralStateChirho, NeuralHeuristicChirho, beam_search_chirho};
 pub use smt_chirho::{SmtSortChirho, SmtExprChirho, SmtProblemChirho, domain_to_smt_chirho};
 pub use contraction_learn_chirho::{TensorNetworkChirho, EdgeFeaturesChirho, LinearEdgeScorerChirho, LearnedContractionChirho};
+pub use egg_chirho::{TermLangChirho, TermAnalysisChirho, EggStoreChirho, list_rules_chirho, arith_rules_chirho};

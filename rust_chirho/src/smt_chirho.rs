@@ -252,7 +252,7 @@ pub fn domain_to_smt_chirho(var_name_chirho: &str, domain_chirho: u64) -> SmtExp
 /// More efficient for SMT solver than disjunction
 pub fn domain_to_bv_smt_chirho(
     var_name_chirho: &str,
-    domain_chirho: u64,
+    _domain_chirho: u64,
     domain_bv_name_chirho: &str,
 ) -> SmtExprChirho {
     // (bvand (bvshl (_ bv1 64) var) domain) != 0

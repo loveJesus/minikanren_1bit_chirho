@@ -14,7 +14,7 @@
 //! - Graph structure (clustering, centrality)
 //! - Domain sizes
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 /// Tensor network for contraction planning
 #[derive(Debug, Clone)]
@@ -263,7 +263,7 @@ impl LearnedContractionChirho {
                 remaining_chirho.remove(&edge_idx_chirho);
 
                 // Mark one tensor as contracted (merged into the other)
-                let (t1_chirho, t2_chirho, _) = network_chirho.edges_chirho[edge_idx_chirho];
+                let (_t1_chirho, t2_chirho, _) = network_chirho.edges_chirho[edge_idx_chirho];
                 contracted_tensors_chirho.insert(t2_chirho); // t2 merged into t1
             } else {
                 // No valid edges left

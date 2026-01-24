@@ -2,5 +2,25 @@
 name = "minikanren_1bit_chirho"
 version = "0.1.0"
 edition = "2021"
+description = "miniKanren as 1-bit matrix operations - exploring hardware acceleration of logic programming"
+license = "MIT"
 
 [dependencies]
+# E-graphs for equality saturation
+egg = "0.9"
+
+# Symbolic computation (optional, for expression simplification)
+# symbolic_expressions = "5"
+
+[dev-dependencies]
+# For benchmarking on stable
+criterion = "0.5"
+
+[[bench]]
+name = "criterion_bench_chirho"
+harness = false
+
+[features]
+default = []
+# Enable GPU backend (requires wgpu)
+# gpu = ["wgpu"]
