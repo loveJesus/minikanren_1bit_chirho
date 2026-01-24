@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>miniKanren 1-Bit Matrix Operations ☧</title>
+    <style>
+        :root {
+            --bg-chirho: #0a0a0f;
+            --fg-chirho: #e0e0e0;
+            --accent-chirho: #4a9eff;
+            --success-chirho: #4aff9e;
+            --fail-chirho: #ff4a6a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--bg-chirho);
+            color: var(--fg-chirho);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        h1 { 
+            color: var(--accent-chirho); 
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        .subtitle_chirho {
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        .container_chirho {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .grid_chirho {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        .panel_chirho {
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        .panel_chirho h2 {
+            color: var(--accent-chirho);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #2a2a3a;
+            padding-bottom: 0.5rem;
+        }
+        .domain_chirho {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            margin: 1rem 0;
+        }
+        .bit_chirho {
+            aspect-ratio: 1;
+            background: #1a1a2a;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: #444;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .bit_chirho.set_chirho {
+            background: var(--accent-chirho);
+            color: #000;
+        }
+        .bit_chirho:hover {
+            transform: scale(1.1);
+        }
+        .var_chirho {
+            margin: 1rem 0;
+        }
+        .var_label_chirho {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+        .var_name_chirho { color: var(--accent-chirho); }
+        .var_count_chirho { color: #666; }
+        button {
+            background: var(--accent-chirho);
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            margin: 0.25rem;
+            transition: all 0.15s;
+        }
+        button:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .controls_chirho {
+            margin-top: 1rem;
+        }
+        .result_chirho {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #1a1a2a;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .result_chirho.success_chirho {
+            border-left: 3px solid var(--success-chirho);
+        }
+        .result_chirho.fail_chirho {
+            border-left: 3px solid var(--fail-chirho);
+        }
+        .log_chirho {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+        .log_chirho .entry_chirho {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #1a1a2a;
+        }
+        .gpu_status_chirho {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .gpu_indicator_chirho {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--fail-chirho);
+        }
+        .gpu_indicator_chirho.active_chirho {
+            background: var(--success-chirho);
+        }
+        .timing_chirho {
+            color: #666;
+            font-size: 0.75rem;
+        }
+        .chi_rho_chirho {
+            text-align: center;
+            margin-top: 2rem;
+            color: #444;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container_chirho">
+        <h1>miniKanren as 1-Bit Matrix Operations ☧</h1>
+        <p class="subtitle_chirho">WebGPU-accelerated constraint propagation</p>
+        
+        <div class="gpu_status_chirho">
+            <div class="gpu_indicator_chirho" id="gpuIndicator_chirho"></div>
+            <span id="gpuStatus_chirho">Checking WebGPU...</span>
+        </div>
+        
+        <div class="grid_chirho">
+            <div class="panel_chirho">
+                <h2>Variables (64-bit domains)</h2>
+                
+                <div class="var_chirho">
+                    <div class="var_label_chirho">
+                        <span class="var_name_chirho">x_chirho</span>
+                        <span class="var_count_chirho" id="countX_chirho">64 possible</span>
+                    </div>
+                    <div class="domain_chirho" id="domainX_chirho"></div>
+                </div>
+                
+                <div class="var_chirho">
+                    <div class="var_label_chirho">
+                        <span class="var_name_chirho">y_chirho</span>
+                        <span class="var_count_chirho" id="countY_chirho">64 possible</span>
+                    </div>
+                    <div class="domain_chirho" id="domainY_chirho"></div>
+                </div>
+                
+                <div class="var_chirho">
+                    <div class="var_label_chirho">
+                        <span class="var_name_chirho">result_chirho = x ∩ y</span>
+                        <span class="var_count_chirho" id="countR_chirho">-</span>
+                    </div>
+                    <div class="domain_chirho" id="domainR_chirho"></div>
+                </div>
+                
+                <div class="controls_chirho">
+                    <button onclick="unify_chirho()">Unify (AND)</button>
+                    <button onclick="resetDomains_chirho()">Reset</button>
+                    <button onclick="randomize_chirho()">Random</button>
+                </div>
+            </div>
+            
+            <div class="panel_chirho">
+                <h2>Operations Log</h2>
+                <div class="log_chirho" id="log_chirho"></div>
+                
+                <div class="result_chirho" id="result_chirho">
+                    Click "Unify" to compute x ∩ y
+                </div>
+            </div>
+        </div>
+        
+        <div class="chi_rho_chirho">
+            ☧ Soli Deo Gloria ☧
+        </div>
+    </div>
+    
+    <script>
+        // State
+        let domainX_chirho = 0xFFFFFFFFFFFFFFFFn;  // Full domain (BigInt for 64-bit)
+        let domainY_chirho = 0xFFFFFFFFFFFFFFFFn;
+        let domainR_chirho = 0n;
+        let gpuDevice_chirho = null;
+        let gpuPipeline_chirho = null;
+        
+        // WebGPU shader for bitwise AND
+        const shaderCode_chirho = `
+            @group(0) @binding(0) var<storage, read> a_chirho: array<u32>;
+            @group(0) @binding(1) var<storage, read> b_chirho: array<u32>;
+            @group(0) @binding(2) var<storage, read_write> result_chirho: array<u32>;
+            
+            @compute @workgroup_size(1)
+            fn main_chirho(@builtin(global_invocation_id) id_chirho: vec3<u32>) {
+                result_chirho[0] = a_chirho[0] & b_chirho[0];
+                result_chirho[1] = a_chirho[1] & b_chirho[1];
+            }
+        `;
+        
+        // Initialize
+        async function init_chirho() {
+            renderDomain_chirho('domainX_chirho', domainX_chirho, 'X');
+            renderDomain_chirho('domainY_chirho', domainY_chirho, 'Y');
+            renderDomain_chirho('domainR_chirho', domainR_chirho, 'R');
+            updateCounts_chirho();
+            
+            // Check WebGPU
+            if (!navigator.gpu) {
+                document.getElementById('gpuStatus_chirho').textContent = 'WebGPU not supported';
+                log_chirho('WebGPU not available - using CPU fallback');
+                return;
+            }
+            
+            try {
+                const adapter_chirho = await navigator.gpu.requestAdapter();
+                if (!adapter_chirho) throw new Error('No adapter');
+                
+                gpuDevice_chirho = await adapter_chirho.requestDevice();
+                
+                // Create compute pipeline
+                const shaderModule_chirho = gpuDevice_chirho.createShaderModule({
+                    code: shaderCode_chirho
+                });
+                
+                gpuPipeline_chirho = gpuDevice_chirho.createComputePipeline({
+                    layout: 'auto',
+                    compute: {
+                        module: shaderModule_chirho,
+                        entryPoint: 'main_chirho'
+                    }
+                });
+                
+                document.getElementById('gpuIndicator_chirho').classList.add('active_chirho');
+                document.getElementById('gpuStatus_chirho').textContent = 
+                    `WebGPU: ${adapter_chirho.name || 'Ready'}`;
+                log_chirho('WebGPU initialized successfully');
+                
+            } catch (e_chirho) {
+                document.getElementById('gpuStatus_chirho').textContent = 'WebGPU init failed';
+                log_chirho('WebGPU error: ' + e_chirho.message);
+            }
+        }
+        
+        // Render a 64-bit domain as 8x8 grid
+        function renderDomain_chirho(elementId_chirho, domain_chirho, varName_chirho) {
+            const container_chirho = document.getElementById(elementId_chirho);
+            container_chirho.innerHTML = '';
+            
+            for (let i_chirho = 0; i_chirho < 64; i_chirho++) {
+                const bit_chirho = document.createElement('div');
+                bit_chirho.className = 'bit_chirho';
+                bit_chirho.textContent = i_chirho;
+                
+                if ((domain_chirho >> BigInt(i_chirho)) & 1n) {
+                    bit_chirho.classList.add('set_chirho');
+                }
+                
+                // Click to toggle (only for X and Y)
+                if (varName_chirho !== 'R') {
+                    bit_chirho.onclick = () => toggleBit_chirho(varName_chirho, i_chirho);
+                }
+                
+                container_chirho.appendChild(bit_chirho);
+            }
+        }
+        
+        // Toggle a bit in a domain
+        function toggleBit_chirho(varName_chirho, bitIdx_chirho) {
+            const mask_chirho = 1n << BigInt(bitIdx_chirho);
+            
+            if (varName_chirho === 'X') {
+                domainX_chirho ^= mask_chirho;
+                renderDomain_chirho('domainX_chirho', domainX_chirho, 'X');
+            } else {
+                domainY_chirho ^= mask_chirho;
+                renderDomain_chirho('domainY_chirho', domainY_chirho, 'Y');
+            }
+            
+            updateCounts_chirho();
+            log_chirho(`Toggled bit ${bitIdx_chirho} in ${varName_chirho}_chirho`);
+        }
+        
+        // Count set bits
+        function popcount_chirho(n_chirho) {
+            let count_chirho = 0;
+            while (n_chirho > 0n) {
+                count_chirho += Number(n_chirho & 1n);
+                n_chirho >>= 1n;
+            }
+            return count_chirho;
+        }
+        
+        // Update count displays
+        function updateCounts_chirho() {
+            document.getElementById('countX_chirho').textContent = 
+                `${popcount_chirho(domainX_chirho)} possible`;
+            document.getElementById('countY_chirho').textContent = 
+                `${popcount_chirho(domainY_chirho)} possible`;
+            document.getElementById('countR_chirho').textContent = 
+                domainR_chirho === 0n ? '-' : `${popcount_chirho(domainR_chirho)} possible`;
+        }
+        
+        // Unify domains
+        async function unify_chirho() {
+            const start_chirho = performance.now();
+            
+            if (gpuDevice_chirho && gpuPipeline_chirho) {
+                // GPU path
+                domainR_chirho = await unifyGpu_chirho(domainX_chirho, domainY_chirho);
+            } else {
+                // CPU fallback
+                domainR_chirho = domainX_chirho & domainY_chirho;
+            }
+            
+            const elapsed_chirho = (performance.now() - start_chirho).toFixed(3);
+            
+            renderDomain_chirho('domainR_chirho', domainR_chirho, 'R');
+            updateCounts_chirho();
+            
+            const result_chirho = document.getElementById('result_chirho');
+            if (domainR_chirho === 0n) {
+                result_chirho.className = 'result_chirho fail_chirho';
+                result_chirho.innerHTML = `
+                    <strong>Unification Failed!</strong><br>
+                    No values satisfy both constraints.<br>
+                    <span class="timing_chirho">${elapsed_chirho}ms (${gpuDevice_chirho ? 'GPU' : 'CPU'})</span>
+                `;
+                log_chirho(`FAIL: Empty domain (${elapsed_chirho}ms)`);
+            } else {
+                const count_chirho = popcount_chirho(domainR_chirho);
+                result_chirho.className = 'result_chirho success_chirho';
+                result_chirho.innerHTML = `
+                    <strong>Unification Succeeded!</strong><br>
+                    ${count_chirho} possible value${count_chirho !== 1 ? 's' : ''} remain.<br>
+                    <span class="timing_chirho">${elapsed_chirho}ms (${gpuDevice_chirho ? 'GPU' : 'CPU'})</span>
+                `;
+                log_chirho(`OK: ${count_chirho} values (${elapsed_chirho}ms)`);
+            }
+        }
+        
+        // GPU unification
+        async function unifyGpu_chirho(a_chirho, b_chirho) {
+            // Split 64-bit into two 32-bit values for GPU
+            const aLo_chirho = Number(a_chirho & 0xFFFFFFFFn);
+            const aHi_chirho = Number((a_chirho >> 32n) & 0xFFFFFFFFn);
+            const bLo_chirho = Number(b_chirho & 0xFFFFFFFFn);
+            const bHi_chirho = Number((b_chirho >> 32n) & 0xFFFFFFFFn);
+            
+            // Create buffers
+            const bufferA_chirho = gpuDevice_chirho.createBuffer({
+                size: 8,
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+                mappedAtCreation: true
+            });
+            new Uint32Array(bufferA_chirho.getMappedRange()).set([aLo_chirho, aHi_chirho]);
+            bufferA_chirho.unmap();
+            
+            const bufferB_chirho = gpuDevice_chirho.createBuffer({
+                size: 8,
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+                mappedAtCreation: true
+            });
+            new Uint32Array(bufferB_chirho.getMappedRange()).set([bLo_chirho, bHi_chirho]);
+            bufferB_chirho.unmap();
+            
+            const bufferResult_chirho = gpuDevice_chirho.createBuffer({
+                size: 8,
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+            });
+            
+            const bufferStaging_chirho = gpuDevice_chirho.createBuffer({
+                size: 8,
+                usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST
+            });
+            
+            // Bind group
+            const bindGroup_chirho = gpuDevice_chirho.createBindGroup({
+                layout: gpuPipeline_chirho.getBindGroupLayout(0),
+                entries: [
+                    { binding: 0, resource: { buffer: bufferA_chirho } },
+                    { binding: 1, resource: { buffer: bufferB_chirho } },
+                    { binding: 2, resource: { buffer: bufferResult_chirho } }
+                ]
+            });
+            
+            // Execute
+            const encoder_chirho = gpuDevice_chirho.createCommandEncoder();
+            const pass_chirho = encoder_chirho.beginComputePass();
+            pass_chirho.setPipeline(gpuPipeline_chirho);
+            pass_chirho.setBindGroup(0, bindGroup_chirho);
+            pass_chirho.dispatchWorkgroups(1);
+            pass_chirho.end();
+            
+            encoder_chirho.copyBufferToBuffer(bufferResult_chirho, 0, bufferStaging_chirho, 0, 8);
+            gpuDevice_chirho.queue.submit([encoder_chirho.finish()]);
+            
+            // Read back
+            await bufferStaging_chirho.mapAsync(GPUMapMode.READ);
+            const resultData_chirho = new Uint32Array(bufferStaging_chirho.getMappedRange().slice());
+            bufferStaging_chirho.unmap();
+            
+            // Recombine to 64-bit
+            return BigInt(resultData_chirho[0]) | (BigInt(resultData_chirho[1]) << 32n);
+        }
+        
+        // Reset domains
+        function resetDomains_chirho() {
+            domainX_chirho = 0xFFFFFFFFFFFFFFFFn;
+            domainY_chirho = 0xFFFFFFFFFFFFFFFFn;
+            domainR_chirho = 0n;
+            
+            renderDomain_chirho('domainX_chirho', domainX_chirho, 'X');
+            renderDomain_chirho('domainY_chirho', domainY_chirho, 'Y');
+            renderDomain_chirho('domainR_chirho', domainR_chirho, 'R');
+            updateCounts_chirho();
+            
+            document.getElementById('result_chirho').className = 'result_chirho';
+            document.getElementById('result_chirho').textContent = 'Click "Unify" to compute x ∩ y';
+            
+            log_chirho('Domains reset to full');
+        }
+        
+        // Randomize domains
+        function randomize_chirho() {
+            domainX_chirho = BigInt(Math.floor(Math.random() * 0xFFFFFFFF)) | 
+                            (BigInt(Math.floor(Math.random() * 0xFFFFFFFF)) << 32n);
+            domainY_chirho = BigInt(Math.floor(Math.random() * 0xFFFFFFFF)) | 
+                            (BigInt(Math.floor(Math.random() * 0xFFFFFFFF)) << 32n);
+            
+            renderDomain_chirho('domainX_chirho', domainX_chirho, 'X');
+            renderDomain_chirho('domainY_chirho', domainY_chirho, 'Y');
+            updateCounts_chirho();
+            
+            log_chirho('Randomized domains');
+        }
+        
+        // Log message
+        function log_chirho(msg_chirho) {
+            const logEl_chirho = document.getElementById('log_chirho');
+            const entry_chirho = document.createElement('div');
+            entry_chirho.className = 'entry_chirho';
+            entry_chirho.textContent = `[${new Date().toLocaleTimeString()}] ${msg_chirho}`;
+            logEl_chirho.insertBefore(entry_chirho, logEl_chirho.firstChild);
+        }
+        
+        // Start
+        init_chirho();
+    </script>
+</body>
+</html>
