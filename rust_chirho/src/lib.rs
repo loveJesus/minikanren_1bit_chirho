@@ -47,6 +47,10 @@ pub mod smt_chirho;
 pub mod contraction_learn_chirho;
 pub mod slg_complete_chirho;
 pub mod nested_pattern_chirho;
+pub mod recursion_chirho;
+pub mod contraction_semiring_chirho;
+pub mod unify_matrix_chirho;
+pub mod simd_chirho;
 
 // E-graph implementations (feature-gated)
 #[cfg(feature = "egraph_native_chirho")]
@@ -72,6 +76,10 @@ pub use slg_complete_chirho::{SlgTableChirho, SlgGoalChirho, GoalStatusChirho, E
 pub use nested_pattern_chirho::{TreePathChirho, PathStepChirho, NodeTypeChirho, NodeConstraintChirho, NestedPatternChirho};
 pub use types_chirho::{TermIdChirhoSafe, VarIdChirho, EClassIdChirhoSafe, ENodeIdChirhoSafe, SymIdChirho, GoalIdChirho, TensorIdChirho, TypedIndexChirho, TypedVecChirho};
 pub use bitmatrix_packed_chirho::{Word64Chirho, BitMatrix64Chirho, BitMatrixPackedChirho};
+pub use recursion_chirho::{TermFChirho, TermStoreIndexedChirho, cata_indexed_chirho, para_indexed_chirho, is_ground_algebra_chirho, vars_algebra_chirho, size_algebra_chirho, depth_algebra_chirho, OccursCheckAlgebraChirho};
+pub use contraction_semiring_chirho::{SemiringTensorChirho, SemiringNetworkChirho, BoolTensorChirho, ProbTensorChirho, TropicalTensorChirho, CountTensorChirho};
+pub use unify_matrix_chirho::{SubstMatrixChirho, unify_matrix_chirho};
+pub use simd_chirho::{bulk_and_chirho, bulk_or_chirho, bulk_xor_chirho, bulk_not_chirho, bulk_popcount_chirho, AlignedBitMatrixChirho};
 
 // E-graph re-exports (feature-gated)
 #[cfg(feature = "egraph_native_chirho")]

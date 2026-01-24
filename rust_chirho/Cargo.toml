@@ -22,6 +22,10 @@ proptest = "1.4"
 name = "criterion_bench_chirho"
 harness = false
 
+[[bench]]
+name = "packed_bench_chirho"
+harness = false
+
 [features]
 default = ["egraph_native_chirho"]
 # Use external egg crate (general purpose, more features)
