@@ -416,6 +416,8 @@ impl SudokuSolverChirho {
             None => return self.is_solved_chirho(),
         };
 
+        // Save domains for backtracking (stack copy, no heap allocation)
+        let saved_domains_chirho = self.domains_chirho;
         let mut domain_chirho = self.domains_chirho[branch_idx_chirho];
 
         while domain_chirho != 0 {
@@ -424,15 +426,17 @@ impl SudokuSolverChirho {
             let try_val_chirho = lowest_bit_chirho(domain_chirho);
             domain_chirho &= domain_chirho - 1;
 
-            let mut attempt_chirho = self.clone();
-            attempt_chirho.domains_chirho[branch_idx_chirho] = try_val_chirho;
+            // Restore and try this value
+            self.domains_chirho = saved_domains_chirho;
+            self.domains_chirho[branch_idx_chirho] = try_val_chirho;
 
-            if attempt_chirho.solve_adaptive_chirho() {
-                *self = attempt_chirho;
+            if self.solve_adaptive_chirho() {
                 return true;
             }
         }
 
+        // Restore on complete failure
+        self.domains_chirho = saved_domains_chirho;
         false
     }
 
@@ -484,6 +488,8 @@ impl SudokuSolverChirho {
             None => return self.is_solved_chirho(),
         };
 
+        // Save domains for backtracking
+        let saved_domains_chirho = self.domains_chirho;
         let mut domain_chirho = self.domains_chirho[branch_idx_chirho];
 
         while domain_chirho != 0 {
@@ -491,15 +497,15 @@ impl SudokuSolverChirho {
             let try_val_chirho = lowest_bit_chirho(domain_chirho);
             domain_chirho &= domain_chirho - 1;
 
-            let mut attempt_chirho = self.clone();
-            attempt_chirho.domains_chirho[branch_idx_chirho] = try_val_chirho;
+            self.domains_chirho = saved_domains_chirho;
+            self.domains_chirho[branch_idx_chirho] = try_val_chirho;
 
-            if attempt_chirho.solve_fast_chirho() {
-                *self = attempt_chirho;
+            if self.solve_fast_chirho() {
                 return true;
             }
         }
 
+        self.domains_chirho = saved_domains_chirho;
         false
     }
 

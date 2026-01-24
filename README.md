@@ -137,16 +137,18 @@ python3 examples_chirho/type_inference_chirho.py
 python3 benchmarks_chirho/compare_chirho.py
 ```
 
-### Web Demos (Static HTML)
+### Web Demo
 
 ```bash
-# Open directly in browser:
-open rust_chirho/web_chirho/index.html       # WebGPU domain visualization
-open rust_chirho/web_chirho/sudoku_chirho.html  # Sudoku solver (1-bit domains)
+# Build WASM package first:
+cd rust_chirho && wasm-pack build --target web --features wasm_chirho
+
+# Open in browser (requires local server for WASM):
+python3 -m http.server 8080 --directory web_chirho
+# Then visit http://localhost:8080/demo_chirho.html
 ```
 
-- **WebGPU Demo**: Visualize 10,000+ parallel constraint propagations
-- **Sudoku Solver**: Interactive 9-bit domain propagation + search
+**Features:** Sudoku solver, N-Queens solver, 64-bit domain visualization — all running in WASM
 
 ### FPGA (Hardware) ✅ VERIFIED
 

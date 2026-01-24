@@ -70,6 +70,21 @@ pub enum UnifyResultChirho {
     OccursCheckFailed,
 }
 
+/// Bind variable to term with occurs check
+fn bind_with_occurs_check_chirho(
+    var_chirho: VarIdChirho,
+    term_chirho: TermIdChirho,
+    subst_chirho: &mut SubstChirho,
+    store_chirho: &TermStoreChirho,
+) -> UnifyResultChirho {
+    if occurs_chirho(var_chirho, term_chirho, subst_chirho, store_chirho) {
+        UnifyResultChirho::OccursCheckFailed
+    } else {
+        subst_chirho.bind_chirho(var_chirho, term_chirho);
+        UnifyResultChirho::Success
+    }
+}
+
 /// Unify two terms
 pub fn unify_chirho(
     t1_chirho: TermIdChirho,
@@ -94,18 +109,10 @@ pub fn unify_chirho(
             UnifyResultChirho::Success
         }
         (Some(TermChirho::VarChirho(v)), _) => {
-            if occurs_chirho(*v, t2_walked_chirho, subst_chirho, store_chirho) {
-                return UnifyResultChirho::OccursCheckFailed;
-            }
-            subst_chirho.bind_chirho(*v, t2_walked_chirho);
-            UnifyResultChirho::Success
+            bind_with_occurs_check_chirho(*v, t2_walked_chirho, subst_chirho, store_chirho)
         }
         (_, Some(TermChirho::VarChirho(v))) => {
-            if occurs_chirho(*v, t1_walked_chirho, subst_chirho, store_chirho) {
-                return UnifyResultChirho::OccursCheckFailed;
-            }
-            subst_chirho.bind_chirho(*v, t1_walked_chirho);
-            UnifyResultChirho::Success
+            bind_with_occurs_check_chirho(*v, t1_walked_chirho, subst_chirho, store_chirho)
         }
 
         // Structural cases

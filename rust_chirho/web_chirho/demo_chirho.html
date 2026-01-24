@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>miniKanren 1-Bit Matrix Operations</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --border: #2a2a3a;
+            --fg: #e0e0e0;
+            --accent: #4a9eff;
+            --success: #4aff9e;
+            --muted: #666;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { color: var(--accent); font-size: 1.4rem; margin-bottom: 0.25rem; }
+        .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .tab {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab.active { color: var(--accent); background: var(--bg2); }
+        .tab:hover { color: var(--fg); }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .card h2 {
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        button {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        button:hover { filter: brightness(1.1); }
+        button.secondary {
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--border);
+        }
+        input, select {
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+        .success { color: var(--success); }
+        .muted { color: var(--muted); font-size: 0.8rem; }
+        .row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .col { flex: 1; min-width: 300px; }
+
+        /* Sudoku */
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 36px);
+            gap: 1px;
+            background: var(--border);
+            padding: 1px;
+            border-radius: 4px;
+            width: fit-content;
+            margin-bottom: 1rem;
+        }
+        .sudoku-cell {
+            width: 36px;
+            height: 36px;
+            background: var(--bg);
+            border: none;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--fg);
+            font-family: inherit;
+        }
+        .sudoku-cell:focus { outline: 2px solid var(--accent); z-index: 1; }
+        .sudoku-cell.given { color: var(--accent); font-weight: bold; }
+        .sudoku-cell:nth-child(3n) { border-right: 2px solid var(--border); }
+        .sudoku-cell:nth-child(n+19):nth-child(-n+27),
+        .sudoku-cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--border); }
+
+        /* N-Queens */
+        .nqueens-board {
+            display: inline-grid;
+            gap: 0;
+            background: var(--border);
+            padding: 2px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .nqueens-cell {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .nqueens-light { background: #d4d4c8; color: #333; }
+        .nqueens-dark { background: #5a8a5a; color: #fff; }
+
+        /* Domains */
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 3px;
+            margin: 0.75rem 0;
+        }
+        .domain-bit {
+            aspect-ratio: 1;
+            background: var(--bg);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .domain-bit.set { background: var(--accent); color: #000; }
+        .domain-bit:hover { transform: scale(1.05); }
+        .domain-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+        .domain-name { color: var(--accent); }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        #status { margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>miniKanren 1-Bit Matrix Operations</h1>
+        <p class="subtitle">Hardware-accelerated logic programming with WASM</p>
+
+        <div id="status" class="muted">Loading WASM...</div>
+
+        <div class="tabs">
+            <button class="tab active" data-panel="sudoku">Sudoku</button>
+            <button class="tab" data-panel="nqueens">N-Queens</button>
+            <button class="tab" data-panel="domains">Domains</button>
+        </div>
+
+        <!-- Sudoku Panel -->
+        <div id="sudoku" class="panel active">
+            <div class="card">
+                <h2>Sudoku Solver</h2>
+                <p class="muted" style="margin-bottom: 1rem;">9-bit domains per cell. Solves using constraint propagation + backtracking.</p>
+                <div class="sudoku-grid" id="sudoku-grid"></div>
+                <div>
+                    <button onclick="sudokuLoad('easy')">Easy</button>
+                    <button onclick="sudokuLoad('hard')">Hard 17-Clue</button>
+                    <button onclick="sudokuLoad('escargot')">Escargot</button>
+                    <button onclick="sudokuSolve()" style="background: var(--success);">Solve</button>
+                    <button onclick="sudokuClear()" class="secondary">Clear</button>
+                </div>
+                <div class="result" id="sudoku-result">Enter a puzzle or load a preset, then click Solve.</div>
+            </div>
+        </div>
+
+        <!-- N-Queens Panel -->
+        <div id="nqueens" class="panel">
+            <div class="card">
+                <h2>N-Queens Solver</h2>
+                <p class="muted" style="margin-bottom: 1rem;">64-bit domains. Place N queens so none attack each other.</p>
+                <div style="margin-bottom: 1rem;">
+                    <label>Board size: <input type="number" id="nqueens-n" value="8" min="1" max="20" style="width: 60px;"></label>
+                    <button onclick="nqueensSolve()">Find Solution</button>
+                    <button onclick="nqueensCount()">Count All</button>
+                </div>
+                <div class="nqueens-board" id="nqueens-board"></div>
+                <div class="result" id="nqueens-result">Click "Find Solution" or "Count All".</div>
+            </div>
+        </div>
+
+        <!-- Domains Panel -->
+        <div id="domains" class="panel">
+            <div class="card">
+                <h2>64-Bit Domain Visualization</h2>
+                <p class="muted" style="margin-bottom: 1rem;">Click bits to toggle. Unification = bitwise AND.</p>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="domain-label"><span class="domain-name">x</span><span id="x-count">64 values</span></div>
+                        <div class="domain-grid" id="domain-x"></div>
+
+                        <div class="domain-label"><span class="domain-name">y</span><span id="y-count">64 values</span></div>
+                        <div class="domain-grid" id="domain-y"></div>
+
+                        <div class="domain-label"><span class="domain-name">x AND y</span><span id="r-count">-</span></div>
+                        <div class="domain-grid" id="domain-r"></div>
+                    </div>
+                    <div class="col">
+                        <button onclick="domainUnify()">Unify (AND)</button>
+                        <button onclick="domainReset()" class="secondary">Reset</button>
+                        <button onclick="domainRandom()" class="secondary">Random</button>
+                        <div class="result" id="domain-result">Click bits in x and y, then Unify.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">Soli Deo Gloria</div>
+    </div>
+
+    <script type="module">
+        // WASM imports
+        let wasmReady = false;
+        let solveSudoku, solveNQueens, countNQueens, getVersion;
+
+        // Puzzles
+        const PUZZLES = {
+            easy: '530070000600195000098000060800060003400803001700020006060000280000419005000080079',
+            hard: '000000010400000000020000000000050407008000300001090000300400200050100000000806000',
+            escargot: '100007090030020008009600500005300900010080002600004000300000010040000007007000300'
+        };
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.panel).classList.add('active');
+            });
+        });
+
+        // Initialize WASM
+        async function initWasm() {
+            try {
+                const wasm = await import('./pkg_chirho/minikanren_1bit_chirho.js');
+                await wasm.default();
+                solveSudoku = wasm.solve_sudoku_chirho;
+                solveNQueens = wasm.solve_nqueens_chirho;
+                countNQueens = wasm.count_nqueens_chirho;
+                getVersion = wasm.version_chirho;
+                wasmReady = true;
+                document.getElementById('status').textContent = 'WASM loaded - v' + getVersion();
+                document.getElementById('status').classList.add('success');
+            } catch (e) {
+                document.getElementById('status').textContent = 'WASM failed: ' + e.message;
+            }
+        }
+
+        // =====================================================================
+        // Sudoku
+        // =====================================================================
+        function initSudoku() {
+            const grid = document.getElementById('sudoku-grid');
+            for (let i = 0; i < 81; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.className = 'sudoku-cell';
+                input.id = 'sudoku-' + i;
+                input.addEventListener('input', e => {
+                    if (!/^[1-9]?$/.test(e.target.value)) e.target.value = '';
+                    e.target.classList.remove('given');
+                });
+                grid.appendChild(input);
+            }
+        }
+
+        window.sudokuLoad = function(name) {
+            const puzzle = PUZZLES[name];
+            for (let i = 0; i < 81; i++) {
+                const cell = document.getElementById('sudoku-' + i);
+                const c = puzzle[i];
+                cell.value = (c === '0' || c === '.') ? '' : c;
+                cell.classList.toggle('given', c !== '0' && c !== '.');
+            }
+            document.getElementById('sudoku-result').textContent = 'Loaded ' + name + ' puzzle.';
+        };
+
+        window.sudokuClear = function() {
+            for (let i = 0; i < 81; i++) {
+                const cell = document.getElementById('sudoku-' + i);
+                cell.value = '';
+                cell.classList.remove('given');
+            }
+            document.getElementById('sudoku-result').textContent = '';
+        };
+
+        window.sudokuSolve = function() {
+            if (!wasmReady) {
+                document.getElementById('sudoku-result').textContent = 'WASM not loaded';
+                return;
+            }
+            let puzzle = '';
+            for (let i = 0; i < 81; i++) {
+                puzzle += document.getElementById('sudoku-' + i).value || '0';
+            }
+            const t0 = performance.now();
+            const solution = solveSudoku(puzzle);
+            const dt = performance.now() - t0;
+
+            const result = document.getElementById('sudoku-result');
+            if (solution && solution.length === 81) {
+                for (let i = 0; i < 81; i++) {
+                    const cell = document.getElementById('sudoku-' + i);
+                    if (!cell.classList.contains('given')) {
+                        cell.value = solution[i];
+                    }
+                }
+                result.textContent = 'Solved in ' + dt.toFixed(2) + 'ms';
+                result.classList.add('success');
+            } else {
+                result.textContent = 'No solution found';
+                result.classList.remove('success');
+            }
+        };
+
+        // =====================================================================
+        // N-Queens
+        // =====================================================================
+        function drawBoard(n, solution) {
+            const board = document.getElementById('nqueens-board');
+            board.textContent = '';
+            board.style.gridTemplateColumns = 'repeat(' + n + ', 28px)';
+
+            for (let r = 0; r < n; r++) {
+                for (let c = 0; c < n; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'nqueens-cell ' + ((r + c) % 2 === 0 ? 'nqueens-light' : 'nqueens-dark');
+                    if (solution && solution[r] === c) {
+                        cell.textContent = '\u265B';
+                    }
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        window.nqueensSolve = function() {
+            if (!wasmReady) return;
+            const n = parseInt(document.getElementById('nqueens-n').value) || 8;
+            const t0 = performance.now();
+            const solution = solveNQueens(n);
+            const dt = performance.now() - t0;
+
+            const result = document.getElementById('nqueens-result');
+            if (solution.length > 0) {
+                drawBoard(n, solution);
+                result.textContent = 'Solution: [' + Array.from(solution).join(', ') + ']\nTime: ' + dt.toFixed(2) + 'ms';
+                result.classList.add('success');
+            } else {
+                drawBoard(n, null);
+                result.textContent = 'No solution exists for N=' + n;
+                result.classList.remove('success');
+            }
+        };
+
+        window.nqueensCount = function() {
+            if (!wasmReady) return;
+            const n = parseInt(document.getElementById('nqueens-n').value) || 8;
+            const result = document.getElementById('nqueens-result');
+            result.textContent = 'Counting...';
+
+            setTimeout(() => {
+                const t0 = performance.now();
+                const count = countNQueens(n);
+                const dt = performance.now() - t0;
+                result.textContent = 'Found ' + count + ' solutions\nTime: ' + dt.toFixed(2) + 'ms';
+                result.classList.add('success');
+            }, 10);
+        };
+
+        // =====================================================================
+        // Domains
+        // =====================================================================
+        let domainX = 0xFFFFFFFFFFFFFFFFn;
+        let domainY = 0xFFFFFFFFFFFFFFFFn;
+        let domainR = 0n;
+
+        function initDomains() {
+            ['x', 'y', 'r'].forEach(name => {
+                const grid = document.getElementById('domain-' + name);
+                for (let i = 0; i < 64; i++) {
+                    const bit = document.createElement('div');
+                    bit.className = 'domain-bit set';
+                    bit.textContent = i;
+                    bit.dataset.bit = i;
+                    if (name !== 'r') {
+                        bit.addEventListener('click', () => toggleBit(name, i));
+                    }
+                    grid.appendChild(bit);
+                }
+            });
+            renderDomains();
+        }
+
+        function toggleBit(name, i) {
+            const mask = 1n << BigInt(i);
+            if (name === 'x') domainX ^= mask;
+            else if (name === 'y') domainY ^= mask;
+            renderDomains();
+        }
+
+        function renderDomains() {
+            renderDomain('x', domainX);
+            renderDomain('y', domainY);
+            renderDomain('r', domainR);
+            document.getElementById('x-count').textContent = popcount(domainX) + ' values';
+            document.getElementById('y-count').textContent = popcount(domainY) + ' values';
+            document.getElementById('r-count').textContent = popcount(domainR) + ' values';
+        }
+
+        function renderDomain(name, value) {
+            const bits = document.querySelectorAll('#domain-' + name + ' .domain-bit');
+            bits.forEach((bit, i) => {
+                const isSet = (value & (1n << BigInt(i))) !== 0n;
+                bit.classList.toggle('set', isSet);
+            });
+        }
+
+        function popcount(n) {
+            let c = 0;
+            while (n > 0n) { c += Number(n & 1n); n >>= 1n; }
+            return c;
+        }
+
+        window.domainUnify = function() {
+            const t0 = performance.now();
+            domainR = domainX & domainY;
+            const dt = performance.now() - t0;
+            renderDomains();
+            const count = popcount(domainR);
+            document.getElementById('domain-result').textContent =
+                'Result: ' + count + ' value(s) remain\n' +
+                'Time: ' + dt.toFixed(3) + 'ms\n' +
+                'Hex: 0x' + domainR.toString(16).toUpperCase();
+        };
+
+        window.domainReset = function() {
+            domainX = 0xFFFFFFFFFFFFFFFFn;
+            domainY = 0xFFFFFFFFFFFFFFFFn;
+            domainR = 0n;
+            renderDomains();
+            document.getElementById('domain-result').textContent = 'Reset to full domains.';
+        };
+
+        window.domainRandom = function() {
+            domainX = BigInt(Math.floor(Math.random() * 0xFFFFFFFF)) << 32n | BigInt(Math.floor(Math.random() * 0xFFFFFFFF));
+            domainY = BigInt(Math.floor(Math.random() * 0xFFFFFFFF)) << 32n | BigInt(Math.floor(Math.random() * 0xFFFFFFFF));
+            domainR = 0n;
+            renderDomains();
+            document.getElementById('domain-result').textContent = 'Randomized domains.';
+        };
+
+        // Initialize
+        initSudoku();
+        initDomains();
+        drawBoard(8, null);
+        initWasm();
+    </script>
+</body>
+</html>
