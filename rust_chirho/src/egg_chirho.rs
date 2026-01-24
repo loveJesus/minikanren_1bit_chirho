@@ -77,17 +77,17 @@ impl Analysis<TermLangChirho> for TermAnalysisChirho {
                     constant_chirho: None,
                 }
             },
-            TermLangChirho::ConsChirho([h, t]) => {
-                let h_data_chirho = &egraph_chirho[*h].data;
-                let t_data_chirho = &egraph_chirho[*t].data;
+            TermLangChirho::ConsChirho([h_chirho, t_chirho]) => {
+                let h_data_chirho = &egraph_chirho[*h_chirho].data;
+                let t_data_chirho = &egraph_chirho[*t_chirho].data;
                 TermDataChirho {
                     is_ground_chirho: h_data_chirho.is_ground_chirho && t_data_chirho.is_ground_chirho,
                     constant_chirho: None,
                 }
             }
-            TermLangChirho::AppChirho([f, a]) => {
-                let f_data_chirho = &egraph_chirho[*f].data;
-                let a_data_chirho = &egraph_chirho[*a].data;
+            TermLangChirho::AppChirho([f_chirho, a_chirho]) => {
+                let f_data_chirho = &egraph_chirho[*f_chirho].data;
+                let a_data_chirho = &egraph_chirho[*a_chirho].data;
                 TermDataChirho {
                     is_ground_chirho: f_data_chirho.is_ground_chirho && a_data_chirho.is_ground_chirho,
                     constant_chirho: None,
@@ -96,7 +96,7 @@ impl Analysis<TermLangChirho> for TermAnalysisChirho {
             TermLangChirho::ListChirho(elems_chirho) => {
                 let all_ground_chirho = elems_chirho
                     .iter()
-                    .all(|id| egraph_chirho[*id].data.is_ground_chirho);
+                    .all(|id_chirho| egraph_chirho[*id_chirho].data.is_ground_chirho);
                 TermDataChirho {
                     is_ground_chirho: all_ground_chirho,
                     constant_chirho: None,
@@ -172,7 +172,7 @@ impl EggStoreChirho {
 
     /// Build list from integers
     pub fn list_ints_chirho(&mut self, vals_chirho: &[i64]) -> Id {
-        let ids_chirho: Vec<_> = vals_chirho.iter().map(|&v| self.int_chirho(v)).collect();
+        let ids_chirho: Vec<_> = vals_chirho.iter().map(|&v_chirho| self.int_chirho(v_chirho)).collect();
         self.list_chirho(&ids_chirho)
     }
 
@@ -190,8 +190,8 @@ impl EggStoreChirho {
         let a_const_chirho = self.egraph_chirho[a_root_chirho].data.constant_chirho;
         let b_const_chirho = self.egraph_chirho[b_root_chirho].data.constant_chirho;
 
-        if let (Some(ac), Some(bc)) = (a_const_chirho, b_const_chirho) {
-            if ac != bc {
+        if let (Some(ac_chirho), Some(bc_chirho)) = (a_const_chirho, b_const_chirho) {
+            if ac_chirho != bc_chirho {
                 return false; // Conflict: different constants
             }
         }
