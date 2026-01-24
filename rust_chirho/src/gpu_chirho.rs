@@ -1,275 +1,538 @@
-//! GPU Backend Sketch ☧
+//! GPU acceleration for bit matrix operations ☧
 //!
-//! Parallel search on GPU using SIMD-style operations.
-//! Each thread handles one search state; domains are 64-bit registers.
+//! Uses WebGPU compute shaders to accelerate:
+//! - Bulk bitwise AND (domain intersection)
+//! - Bulk bitwise OR (branch union)
+//! - Boolean matrix multiplication
+//! - Transitive closure (occurs check)
 //!
-//! This is a design sketch - actual implementation would use wgpu/CUDA/Metal.
+//! Feature-gated: enable with `gpu_chirho` feature.
 
-// BitVec64Chirho available via crate::hardware_chirho if needed for future GPU integration
+use bytemuck::{Pod, Zeroable};
+use std::sync::Arc;
+use wgpu::util::DeviceExt;
 
-/// GPU-friendly search state
-/// Designed for SIMT (Single Instruction Multiple Threads) execution
-#[derive(Debug, Clone, Copy)]
-#[repr(C)]  // Ensure predictable memory layout for GPU
-pub struct GpuStateChirho {
-    /// Variable domains (8 variables × 64 bits)
-    pub domains_chirho: [u64; 8],
-    /// Valid flag (0 = failed, can be pruned)
-    pub valid_chirho: u32,
-    /// State ID for tracking
-    pub id_chirho: u32,
+/// GPU context for bit matrix operations
+pub struct GpuContextChirho {
+    device_chirho: Arc<wgpu::Device>,
+    queue_chirho: Arc<wgpu::Queue>,
+    and_pipeline_chirho: wgpu::ComputePipeline,
+    or_pipeline_chirho: wgpu::ComputePipeline,
+    matmul_pipeline_chirho: wgpu::ComputePipeline,
 }
 
-impl GpuStateChirho {
-    pub fn new_chirho(id_chirho: u32) -> Self {
-        Self {
-            domains_chirho: [u64::MAX; 8],  // All values possible
-            valid_chirho: 1,
-            id_chirho,
-        }
-    }
-
-    /// Unify two variables (GPU kernel would run this in parallel across states)
-    #[inline]
-    pub fn unify_kernel_chirho(&mut self, var1_chirho: usize, var2_chirho: usize) {
-        if var1_chirho < 8 && var2_chirho < 8 && self.valid_chirho != 0 {
-            let result_chirho = self.domains_chirho[var1_chirho] & self.domains_chirho[var2_chirho];
-            self.domains_chirho[var1_chirho] = result_chirho;
-            self.domains_chirho[var2_chirho] = result_chirho;
-
-            if result_chirho == 0 {
-                self.valid_chirho = 0;  // Mark as failed
-            }
-        }
-    }
-
-    /// Constrain variable to single value
-    #[inline]
-    pub fn constrain_kernel_chirho(&mut self, var_chirho: usize, val_chirho: u32) {
-        if var_chirho < 8 && val_chirho < 64 && self.valid_chirho != 0 {
-            let mask_chirho = 1u64 << val_chirho;
-            self.domains_chirho[var_chirho] &= mask_chirho;
-
-            if self.domains_chirho[var_chirho] == 0 {
-                self.valid_chirho = 0;
-            }
-        }
-    }
-}
-
-/// Batch of search states for GPU processing
-#[derive(Debug, Clone)]
-pub struct GpuBatchChirho {
-    pub states_chirho: Vec<GpuStateChirho>,
-    pub capacity_chirho: usize,
-}
-
-impl GpuBatchChirho {
-    pub fn new_chirho(capacity_chirho: usize) -> Self {
-        Self {
-            states_chirho: Vec::with_capacity(capacity_chirho),
-            capacity_chirho,
-        }
-    }
-
-    /// Add initial state
-    pub fn add_state_chirho(&mut self, state_chirho: GpuStateChirho) -> bool {
-        if self.states_chirho.len() < self.capacity_chirho {
-            self.states_chirho.push(state_chirho);
-            true
-        } else {
-            false
-        }
-    }
-
-    /// Simulate GPU kernel: unify var1 == var2 across all states
-    pub fn parallel_unify_chirho(&mut self, var1_chirho: usize, var2_chirho: usize) {
-        // In real GPU, this would be a kernel launch with one thread per state
-        for state_chirho in &mut self.states_chirho {
-            state_chirho.unify_kernel_chirho(var1_chirho, var2_chirho);
-        }
-    }
-
-    /// Simulate GPU kernel: constrain variable across all states
-    pub fn parallel_constrain_chirho(&mut self, var_chirho: usize, val_chirho: u32) {
-        for state_chirho in &mut self.states_chirho {
-            state_chirho.constrain_kernel_chirho(var_chirho, val_chirho);
-        }
-    }
-
-    /// Compact: remove failed states (stream compaction on GPU)
-    pub fn compact_chirho(&mut self) {
-        self.states_chirho.retain(|s| s.valid_chirho != 0);
-    }
-
-    /// Fork: for each state, create two states (branching)
-    /// Returns new batch with forked states
-    pub fn parallel_fork_chirho(&self, var_chirho: usize) -> GpuBatchChirho {
-        let mut new_batch_chirho = GpuBatchChirho::new_chirho(self.capacity_chirho * 2);
-
-        for state_chirho in &self.states_chirho {
-            if state_chirho.valid_chirho == 0 || var_chirho >= 8 {
-                continue;
-            }
-
-            let domain_chirho = state_chirho.domains_chirho[var_chirho];
-            if domain_chirho == 0 {
-                continue;
-            }
-
-            // Lowest bit
-            let lowest_chirho = domain_chirho & domain_chirho.wrapping_neg();
-            // Rest
-            let rest_chirho = domain_chirho & (domain_chirho - 1);
-
-            // State with lowest bit only
-            let mut with_chirho = *state_chirho;
-            with_chirho.domains_chirho[var_chirho] = lowest_chirho;
-            with_chirho.id_chirho = state_chirho.id_chirho * 2;
-            if lowest_chirho != 0 {
-                new_batch_chirho.add_state_chirho(with_chirho);
-            }
-
-            // State with rest
-            if rest_chirho != 0 {
-                let mut without_chirho = *state_chirho;
-                without_chirho.domains_chirho[var_chirho] = rest_chirho;
-                without_chirho.id_chirho = state_chirho.id_chirho * 2 + 1;
-                new_batch_chirho.add_state_chirho(without_chirho);
-            }
-        }
-
-        new_batch_chirho
-    }
-
-    /// Count valid states
-    pub fn count_valid_chirho(&self) -> usize {
-        self.states_chirho.iter().filter(|s| s.valid_chirho != 0).count()
-    }
-
-    /// Count solved states (all variables are singletons)
-    pub fn count_solved_chirho(&self) -> usize {
-        self.states_chirho
-            .iter()
-            .filter(|s| {
-                s.valid_chirho != 0
-                    && s.domains_chirho
-                        .iter()
-                        .all(|&d| d != 0 && (d & (d - 1)) == 0)
-            })
-            .count()
-    }
-
-    /// Get solutions (states where all vars are singletons)
-    pub fn get_solutions_chirho(&self) -> Vec<[u32; 8]> {
-        self.states_chirho
-            .iter()
-            .filter(|s| {
-                s.valid_chirho != 0
-                    && s.domains_chirho
-                        .iter()
-                        .all(|&d| d != 0 && (d & (d - 1)) == 0)
-            })
-            .map(|s| {
-                let mut vals_chirho = [0u32; 8];
-                for (i_chirho, &d_chirho) in s.domains_chirho.iter().enumerate() {
-                    vals_chirho[i_chirho] = d_chirho.trailing_zeros();
-                }
-                vals_chirho
-            })
-            .collect()
-    }
-}
-
-/// WGSL shader code (for WebGPU)
-pub const UNIFY_SHADER_CHIRHO: &str = r#"
-// Unification kernel for WebGPU ☧
-
-struct State {
-    domains: array<u64, 8>,
-    valid: u32,
-    id: u32,
-}
-
-@group(0) @binding(0)
-var<storage, read_write> states: array<State>;
-
-@group(0) @binding(1)
-var<uniform> params: vec2<u32>;  // var1, var2
+/// Shader source for bitwise AND
+const AND_SHADER_CHIRHO: &str = r#"
+@group(0) @binding(0) var<storage, read> a_chirho: array<u32>;
+@group(0) @binding(1) var<storage, read> b_chirho: array<u32>;
+@group(0) @binding(2) var<storage, read_write> result_chirho: array<u32>;
 
 @compute @workgroup_size(256)
-fn unify_kernel(@builtin(global_invocation_id) gid: vec3<u32>) {
-    let idx = gid.x;
-    if (idx >= arrayLength(&states)) {
-        return;
-    }
-
-    let var1 = params.x;
-    let var2 = params.y;
-
-    if (states[idx].valid == 0u) {
-        return;
-    }
-
-    let result = states[idx].domains[var1] & states[idx].domains[var2];
-    states[idx].domains[var1] = result;
-    states[idx].domains[var2] = result;
-
-    if (result == 0u64) {
-        states[idx].valid = 0u;
+fn main_chirho(@builtin(global_invocation_id) id_chirho: vec3<u32>) {
+    let idx_chirho = id_chirho.x;
+    if (idx_chirho < arrayLength(&a_chirho)) {
+        result_chirho[idx_chirho] = a_chirho[idx_chirho] & b_chirho[idx_chirho];
     }
 }
 "#;
+
+/// Shader source for bitwise OR
+const OR_SHADER_CHIRHO: &str = r#"
+@group(0) @binding(0) var<storage, read> a_chirho: array<u32>;
+@group(0) @binding(1) var<storage, read> b_chirho: array<u32>;
+@group(0) @binding(2) var<storage, read_write> result_chirho: array<u32>;
+
+@compute @workgroup_size(256)
+fn main_chirho(@builtin(global_invocation_id) id_chirho: vec3<u32>) {
+    let idx_chirho = id_chirho.x;
+    if (idx_chirho < arrayLength(&a_chirho)) {
+        result_chirho[idx_chirho] = a_chirho[idx_chirho] | b_chirho[idx_chirho];
+    }
+}
+"#;
+
+/// Shader source for Boolean matrix multiplication
+/// Uses u32 chunks (32 bits per element)
+const MATMUL_SHADER_CHIRHO: &str = r#"
+struct ParamsChirho {
+    n_chirho: u32,
+    words_per_row_chirho: u32,
+}
+
+@group(0) @binding(0) var<uniform> params_chirho: ParamsChirho;
+@group(0) @binding(1) var<storage, read> a_chirho: array<u32>;
+@group(0) @binding(2) var<storage, read> b_chirho: array<u32>;
+@group(0) @binding(3) var<storage, read_write> result_chirho: array<u32>;
+
+fn get_bit_chirho(matrix_chirho: ptr<storage, array<u32>, read>, row_chirho: u32, col_chirho: u32, words_per_row_chirho: u32) -> bool {
+    let word_idx_chirho = row_chirho * words_per_row_chirho + col_chirho / 32u;
+    let bit_idx_chirho = col_chirho % 32u;
+    return ((*matrix_chirho)[word_idx_chirho] & (1u << bit_idx_chirho)) != 0u;
+}
+
+@compute @workgroup_size(16, 16)
+fn main_chirho(@builtin(global_invocation_id) id_chirho: vec3<u32>) {
+    let row_chirho = id_chirho.y;
+    let word_col_chirho = id_chirho.x;
+
+    if (row_chirho >= params_chirho.n_chirho || word_col_chirho >= params_chirho.words_per_row_chirho) {
+        return;
+    }
+
+    var result_word_chirho: u32 = 0u;
+
+    for (var bit_chirho: u32 = 0u; bit_chirho < 32u; bit_chirho = bit_chirho + 1u) {
+        let col_chirho = word_col_chirho * 32u + bit_chirho;
+        if (col_chirho >= params_chirho.n_chirho) {
+            break;
+        }
+
+        var dot_chirho: bool = false;
+        for (var k_chirho: u32 = 0u; k_chirho < params_chirho.n_chirho; k_chirho = k_chirho + 1u) {
+            if (get_bit_chirho(&a_chirho, row_chirho, k_chirho, params_chirho.words_per_row_chirho) &&
+                get_bit_chirho(&b_chirho, k_chirho, col_chirho, params_chirho.words_per_row_chirho)) {
+                dot_chirho = true;
+                break;
+            }
+        }
+
+        if (dot_chirho) {
+            result_word_chirho = result_word_chirho | (1u << bit_chirho);
+        }
+    }
+
+    let out_idx_chirho = row_chirho * params_chirho.words_per_row_chirho + word_col_chirho;
+    result_chirho[out_idx_chirho] = result_word_chirho;
+}
+"#;
+
+#[repr(C)]
+#[derive(Copy, Clone, Pod, Zeroable)]
+struct MatmulParamsChirho {
+    n_chirho: u32,
+    words_per_row_chirho: u32,
+}
+
+impl GpuContextChirho {
+    /// Create a new GPU context (blocks until GPU is ready)
+    pub fn new_chirho() -> Option<Self> {
+        pollster::block_on(Self::new_async_chirho())
+    }
+
+    /// Create a new GPU context asynchronously
+    pub async fn new_async_chirho() -> Option<Self> {
+        let instance_chirho = wgpu::Instance::new(wgpu::InstanceDescriptor {
+            backends: wgpu::Backends::all(),
+            ..Default::default()
+        });
+
+        let adapter_chirho = instance_chirho
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::HighPerformance,
+                compatible_surface: None,
+                force_fallback_adapter: false,
+            })
+            .await?;
+
+        let (device_chirho, queue_chirho) = adapter_chirho
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    label: Some("minikanren_1bit_chirho"),
+                    required_features: wgpu::Features::empty(),
+                    required_limits: wgpu::Limits::default(),
+                },
+                None,
+            )
+            .await
+            .ok()?;
+
+        let device_chirho = Arc::new(device_chirho);
+        let queue_chirho = Arc::new(queue_chirho);
+
+        let and_pipeline_chirho = Self::create_pipeline_chirho(&device_chirho, AND_SHADER_CHIRHO, "and_chirho");
+        let or_pipeline_chirho = Self::create_pipeline_chirho(&device_chirho, OR_SHADER_CHIRHO, "or_chirho");
+        let matmul_pipeline_chirho = Self::create_matmul_pipeline_chirho(&device_chirho);
+
+        Some(Self {
+            device_chirho,
+            queue_chirho,
+            and_pipeline_chirho,
+            or_pipeline_chirho,
+            matmul_pipeline_chirho,
+        })
+    }
+
+    fn create_pipeline_chirho(device_chirho: &wgpu::Device, source_chirho: &str, label_chirho: &str) -> wgpu::ComputePipeline {
+        let shader_chirho = device_chirho.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some(label_chirho),
+            source: wgpu::ShaderSource::Wgsl(source_chirho.into()),
+        });
+
+        device_chirho.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some(label_chirho),
+            layout: None,
+            module: &shader_chirho,
+            entry_point: "main_chirho",
+        })
+    }
+
+    fn create_matmul_pipeline_chirho(device_chirho: &wgpu::Device) -> wgpu::ComputePipeline {
+        let shader_chirho = device_chirho.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("matmul_chirho"),
+            source: wgpu::ShaderSource::Wgsl(MATMUL_SHADER_CHIRHO.into()),
+        });
+
+        device_chirho.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some("matmul_chirho"),
+            layout: None,
+            module: &shader_chirho,
+            entry_point: "main_chirho",
+        })
+    }
+
+    /// Bulk bitwise AND on GPU
+    pub fn bulk_and_chirho(&self, a_chirho: &[u32], b_chirho: &[u32]) -> Vec<u32> {
+        assert_eq!(a_chirho.len(), b_chirho.len());
+        if a_chirho.is_empty() {
+            return Vec::new();
+        }
+
+        let size_chirho = (a_chirho.len() * std::mem::size_of::<u32>()) as wgpu::BufferAddress;
+
+        let buf_a_chirho = self.device_chirho.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("a_chirho"),
+            contents: bytemuck::cast_slice(a_chirho),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+
+        let buf_b_chirho = self.device_chirho.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("b_chirho"),
+            contents: bytemuck::cast_slice(b_chirho),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+
+        let buf_result_chirho = self.device_chirho.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("result_chirho"),
+            size: size_chirho,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+
+        let buf_staging_chirho = self.device_chirho.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("staging_chirho"),
+            size: size_chirho,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        let bind_group_chirho = self.device_chirho.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("and_bind_chirho"),
+            layout: &self.and_pipeline_chirho.get_bind_group_layout(0),
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: buf_a_chirho.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 1, resource: buf_b_chirho.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 2, resource: buf_result_chirho.as_entire_binding() },
+            ],
+        });
+
+        let mut encoder_chirho = self.device_chirho.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("and_encoder_chirho"),
+        });
+
+        {
+            let mut pass_chirho = encoder_chirho.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("and_pass_chirho"),
+                timestamp_writes: None,
+            });
+            pass_chirho.set_pipeline(&self.and_pipeline_chirho);
+            pass_chirho.set_bind_group(0, &bind_group_chirho, &[]);
+            pass_chirho.dispatch_workgroups((a_chirho.len() as u32 + 255) / 256, 1, 1);
+        }
+
+        encoder_chirho.copy_buffer_to_buffer(&buf_result_chirho, 0, &buf_staging_chirho, 0, size_chirho);
+        self.queue_chirho.submit(Some(encoder_chirho.finish()));
+
+        let slice_chirho = buf_staging_chirho.slice(..);
+        slice_chirho.map_async(wgpu::MapMode::Read, |_| {});
+        self.device_chirho.poll(wgpu::Maintain::Wait);
+
+        let data_chirho = slice_chirho.get_mapped_range();
+        let result_chirho: Vec<u32> = bytemuck::cast_slice(&data_chirho).to_vec();
+        drop(data_chirho);
+        buf_staging_chirho.unmap();
+
+        result_chirho
+    }
+
+    /// Bulk bitwise OR on GPU
+    pub fn bulk_or_chirho(&self, a_chirho: &[u32], b_chirho: &[u32]) -> Vec<u32> {
+        assert_eq!(a_chirho.len(), b_chirho.len());
+        if a_chirho.is_empty() {
+            return Vec::new();
+        }
+
+        let size_chirho = (a_chirho.len() * std::mem::size_of::<u32>()) as wgpu::BufferAddress;
+
+        let buf_a_chirho = self.device_chirho.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("a_chirho"),
+            contents: bytemuck::cast_slice(a_chirho),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+
+        let buf_b_chirho = self.device_chirho.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("b_chirho"),
+            contents: bytemuck::cast_slice(b_chirho),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+
+        let buf_result_chirho = self.device_chirho.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("result_chirho"),
+            size: size_chirho,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+
+        let buf_staging_chirho = self.device_chirho.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("staging_chirho"),
+            size: size_chirho,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        let bind_group_chirho = self.device_chirho.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("or_bind_chirho"),
+            layout: &self.or_pipeline_chirho.get_bind_group_layout(0),
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: buf_a_chirho.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 1, resource: buf_b_chirho.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 2, resource: buf_result_chirho.as_entire_binding() },
+            ],
+        });
+
+        let mut encoder_chirho = self.device_chirho.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("or_encoder_chirho"),
+        });
+
+        {
+            let mut pass_chirho = encoder_chirho.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("or_pass_chirho"),
+                timestamp_writes: None,
+            });
+            pass_chirho.set_pipeline(&self.or_pipeline_chirho);
+            pass_chirho.set_bind_group(0, &bind_group_chirho, &[]);
+            pass_chirho.dispatch_workgroups((a_chirho.len() as u32 + 255) / 256, 1, 1);
+        }
+
+        encoder_chirho.copy_buffer_to_buffer(&buf_result_chirho, 0, &buf_staging_chirho, 0, size_chirho);
+        self.queue_chirho.submit(Some(encoder_chirho.finish()));
+
+        let slice_chirho = buf_staging_chirho.slice(..);
+        slice_chirho.map_async(wgpu::MapMode::Read, |_| {});
+        self.device_chirho.poll(wgpu::Maintain::Wait);
+
+        let data_chirho = slice_chirho.get_mapped_range();
+        let result_chirho: Vec<u32> = bytemuck::cast_slice(&data_chirho).to_vec();
+        drop(data_chirho);
+        buf_staging_chirho.unmap();
+
+        result_chirho
+    }
+
+    /// Boolean matrix multiplication on GPU
+    pub fn matmul_chirho(&self, a_chirho: &[u32], b_chirho: &[u32], n_chirho: u32) -> Vec<u32> {
+        let words_per_row_chirho = (n_chirho + 31) / 32;
+        let total_words_chirho = (n_chirho * words_per_row_chirho) as usize;
+
+        assert_eq!(a_chirho.len(), total_words_chirho);
+        assert_eq!(b_chirho.len(), total_words_chirho);
+
+        if n_chirho == 0 {
+            return Vec::new();
+        }
+
+        let params_chirho = MatmulParamsChirho { n_chirho, words_per_row_chirho };
+        let size_chirho = (total_words_chirho * std::mem::size_of::<u32>()) as wgpu::BufferAddress;
+
+        let buf_params_chirho = self.device_chirho.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("params_chirho"),
+            contents: bytemuck::bytes_of(&params_chirho),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let buf_a_chirho = self.device_chirho.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("a_chirho"),
+            contents: bytemuck::cast_slice(a_chirho),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+
+        let buf_b_chirho = self.device_chirho.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("b_chirho"),
+            contents: bytemuck::cast_slice(b_chirho),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+
+        let buf_result_chirho = self.device_chirho.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("result_chirho"),
+            size: size_chirho,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+
+        let buf_staging_chirho = self.device_chirho.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("staging_chirho"),
+            size: size_chirho,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        let bind_group_chirho = self.device_chirho.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("matmul_bind_chirho"),
+            layout: &self.matmul_pipeline_chirho.get_bind_group_layout(0),
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: buf_params_chirho.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 1, resource: buf_a_chirho.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 2, resource: buf_b_chirho.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 3, resource: buf_result_chirho.as_entire_binding() },
+            ],
+        });
+
+        let mut encoder_chirho = self.device_chirho.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("matmul_encoder_chirho"),
+        });
+
+        {
+            let mut pass_chirho = encoder_chirho.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("matmul_pass_chirho"),
+                timestamp_writes: None,
+            });
+            pass_chirho.set_pipeline(&self.matmul_pipeline_chirho);
+            pass_chirho.set_bind_group(0, &bind_group_chirho, &[]);
+            pass_chirho.dispatch_workgroups((words_per_row_chirho + 15) / 16, (n_chirho + 15) / 16, 1);
+        }
+
+        encoder_chirho.copy_buffer_to_buffer(&buf_result_chirho, 0, &buf_staging_chirho, 0, size_chirho);
+        self.queue_chirho.submit(Some(encoder_chirho.finish()));
+
+        let slice_chirho = buf_staging_chirho.slice(..);
+        slice_chirho.map_async(wgpu::MapMode::Read, |_| {});
+        self.device_chirho.poll(wgpu::Maintain::Wait);
+
+        let data_chirho = slice_chirho.get_mapped_range();
+        let result_chirho: Vec<u32> = bytemuck::cast_slice(&data_chirho).to_vec();
+        drop(data_chirho);
+        buf_staging_chirho.unmap();
+
+        result_chirho
+    }
+
+    /// Compute transitive closure on GPU using repeated squaring
+    pub fn transitive_closure_chirho(&self, matrix_chirho: &[u32], n_chirho: u32) -> Vec<u32> {
+        if n_chirho == 0 {
+            return Vec::new();
+        }
+
+        let words_per_row_chirho = ((n_chirho + 31) / 32) as usize;
+
+        let mut current_chirho = matrix_chirho.to_vec();
+        let mut accumulator_chirho = matrix_chirho.to_vec();
+
+        // Add identity matrix (reflexive closure)
+        for i_chirho in 0..n_chirho as usize {
+            let word_idx_chirho = i_chirho * words_per_row_chirho + i_chirho / 32;
+            let bit_idx_chirho = i_chirho % 32;
+            if word_idx_chirho < accumulator_chirho.len() {
+                accumulator_chirho[word_idx_chirho] |= 1u32 << bit_idx_chirho;
+            }
+        }
+
+        // Repeated squaring until convergence
+        let max_iters_chirho = (32 - n_chirho.leading_zeros()) as usize + 1;
+        for _ in 0..max_iters_chirho {
+            let squared_chirho = self.matmul_chirho(&current_chirho, &current_chirho, n_chirho);
+            let new_accum_chirho = self.bulk_or_chirho(&accumulator_chirho, &squared_chirho);
+
+            if new_accum_chirho == accumulator_chirho {
+                break;
+            }
+
+            accumulator_chirho = new_accum_chirho;
+            current_chirho = squared_chirho;
+        }
+
+        accumulator_chirho
+    }
+}
 
 #[cfg(test)]
 mod tests_chirho {
     use super::*;
 
     #[test]
-    fn test_gpu_state_unify_chirho() {
-        let mut state_chirho = GpuStateChirho::new_chirho(0);
+    fn test_bulk_and_chirho() {
+        let ctx_chirho = match GpuContextChirho::new_chirho() {
+            Some(c) => c,
+            None => {
+                eprintln!("No GPU available, skipping test");
+                return;
+            }
+        };
 
-        state_chirho.domains_chirho[0] = 0b1111;  // {0,1,2,3}
-        state_chirho.domains_chirho[1] = 0b1100;  // {2,3}
+        let a_chirho = vec![0b1111u32, 0b1010, 0b0101];
+        let b_chirho = vec![0b1100u32, 0b0110, 0b1111];
+        let result_chirho = ctx_chirho.bulk_and_chirho(&a_chirho, &b_chirho);
 
-        state_chirho.unify_kernel_chirho(0, 1);
-
-        assert_eq!(state_chirho.domains_chirho[0], 0b1100);  // {2,3}
-        assert_eq!(state_chirho.domains_chirho[1], 0b1100);
-        assert_eq!(state_chirho.valid_chirho, 1);
+        assert_eq!(result_chirho, vec![0b1100, 0b0010, 0b0101]);
     }
 
     #[test]
-    fn test_gpu_batch_fork_chirho() {
-        let mut batch_chirho = GpuBatchChirho::new_chirho(100);
+    fn test_bulk_or_chirho() {
+        let ctx_chirho = match GpuContextChirho::new_chirho() {
+            Some(c) => c,
+            None => {
+                eprintln!("No GPU available, skipping test");
+                return;
+            }
+        };
 
-        let mut state_chirho = GpuStateChirho::new_chirho(1);
-        state_chirho.domains_chirho[0] = 0b111;  // {0,1,2}
-        batch_chirho.add_state_chirho(state_chirho);
+        let a_chirho = vec![0b1100u32, 0b0010];
+        let b_chirho = vec![0b0011u32, 0b0100];
+        let result_chirho = ctx_chirho.bulk_or_chirho(&a_chirho, &b_chirho);
 
-        let forked_chirho = batch_chirho.parallel_fork_chirho(0);
-
-        assert_eq!(forked_chirho.states_chirho.len(), 2);
-        assert_eq!(forked_chirho.states_chirho[0].domains_chirho[0], 0b001);  // {0}
-        assert_eq!(forked_chirho.states_chirho[1].domains_chirho[0], 0b110);  // {1,2}
+        assert_eq!(result_chirho, vec![0b1111, 0b0110]);
     }
 
     #[test]
-    fn test_gpu_parallel_unify_chirho() {
-        let mut batch_chirho = GpuBatchChirho::new_chirho(100);
+    fn test_matmul_identity_chirho() {
+        let ctx_chirho = match GpuContextChirho::new_chirho() {
+            Some(c) => c,
+            None => {
+                eprintln!("No GPU available, skipping test");
+                return;
+            }
+        };
 
-        for i_chirho in 0..10 {
-            let mut state_chirho = GpuStateChirho::new_chirho(i_chirho);
-            state_chirho.domains_chirho[0] = 0b1111 << i_chirho;
-            state_chirho.domains_chirho[1] = 0b0011 << i_chirho;
-            batch_chirho.add_state_chirho(state_chirho);
-        }
+        let identity_chirho = vec![0b01u32, 0b10u32];
+        let result_chirho = ctx_chirho.matmul_chirho(&identity_chirho, &identity_chirho, 2);
 
-        batch_chirho.parallel_unify_chirho(0, 1);
+        assert_eq!(result_chirho, identity_chirho);
+    }
 
-        for state_chirho in &batch_chirho.states_chirho {
-            // After unify, domain[0] should equal domain[1]
-            assert_eq!(state_chirho.domains_chirho[0], state_chirho.domains_chirho[1]);
-        }
+    #[test]
+    fn test_transitive_closure_chain_chirho() {
+        let ctx_chirho = match GpuContextChirho::new_chirho() {
+            Some(c) => c,
+            None => {
+                eprintln!("No GPU available, skipping test");
+                return;
+            }
+        };
+
+        // 3x3 chain: 0->1->2
+        let chain_chirho = vec![0b010u32, 0b100u32, 0b000u32];
+        let tc_chirho = ctx_chirho.transitive_closure_chirho(&chain_chirho, 3);
+
+        assert_eq!(tc_chirho[0] & 0b111, 0b111); // 0 reaches all
+        assert_eq!(tc_chirho[1] & 0b111, 0b110); // 1 reaches 1,2
+        assert_eq!(tc_chirho[2] & 0b111, 0b100); // 2 reaches only 2
     }
 }

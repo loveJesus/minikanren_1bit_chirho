@@ -42,7 +42,6 @@ pub mod constraint_chirho;
 pub mod tabling_chirho;
 pub mod semiring_chirho;
 pub mod hardware_chirho;
-pub mod gpu_chirho;
 pub mod neural_chirho;
 pub mod smt_chirho;
 pub mod contraction_learn_chirho;
@@ -56,6 +55,10 @@ pub mod simd_chirho;
 // Goal-as-AST (feature-gated: introspection vs raw speed)
 #[cfg(feature = "goal_ast_chirho")]
 pub mod goal_ast_chirho;
+
+// GPU backend (feature-gated: requires wgpu)
+#[cfg(feature = "gpu_chirho")]
+pub mod gpu_chirho;
 
 // E-graph implementations (feature-gated)
 #[cfg(feature = "egraph_native_chirho")]
@@ -92,3 +95,6 @@ pub use egraph_native_chirho::{ENodeChirho, ENodeIdChirho, EClassIdChirho, EClas
 
 #[cfg(feature = "egg_chirho")]
 pub use egg_chirho::{TermLangChirho, TermAnalysisChirho, EggStoreChirho, list_rules_chirho, arith_rules_chirho};
+
+#[cfg(feature = "gpu_chirho")]
+pub use gpu_chirho::GpuContextChirho;

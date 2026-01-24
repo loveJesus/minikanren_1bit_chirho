@@ -8,6 +8,10 @@ license = "MIT"
 [dependencies]
 # E-graphs for equality saturation (optional, use egraph_native_chirho instead)
 egg = { version = "0.9", optional = true }
+# GPU compute via WebGPU (optional)
+wgpu = { version = "0.19", optional = true }
+pollster = { version = "0.3", optional = true }
+bytemuck = { version = "1.14", features = ["derive"], optional = true }
 
 # Symbolic computation (optional, for expression simplification)
 # symbolic_expressions = "5"
@@ -41,4 +45,4 @@ egraph_native_chirho = []
 # Disable for: FPGA/hardware targets where raw speed matters
 goal_ast_chirho = []
 # Enable GPU backend (requires wgpu)
-# gpu = ["wgpu"]
+gpu_chirho = ["wgpu", "pollster", "bytemuck"]

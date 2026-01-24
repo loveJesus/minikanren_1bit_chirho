@@ -128,47 +128,60 @@ fn main() {
     println!("All program types: {:?}", all_types_chirho);
     println!("  0 = Const, 1 = Var, 2 = Add, 3 = Mul\n");
 
-    println!("=== Example 7: GPU-style parallel synthesis ===");
-    println!("Using batched search states\n");
+    println!("=== Example 7: Batched parallel synthesis ===");
+    println!("Simulating parallel search with domain vectors\n");
 
-    use minikanren_1bit_chirho::gpu_chirho::{GpuBatchChirho, GpuStateChirho};
+    // Parallel state representation: each state has domain bitvectors
+    #[derive(Clone)]
+    struct BatchStateChirho {
+        domains_chirho: [u64; 8],  // Up to 8 variables
+        valid_chirho: bool,
+    }
 
-    let mut batch_chirho = GpuBatchChirho::new_chirho(1000);
+    impl BatchStateChirho {
+        fn new_chirho() -> Self {
+            Self { domains_chirho: [u64::MAX; 8], valid_chirho: true }
+        }
+    }
+
+    let mut states_chirho: Vec<BatchStateChirho> = Vec::new();
 
     // Create initial states exploring different program structures
-    for i_chirho in 0..4u32 {
-        let mut state_chirho = GpuStateChirho::new_chirho(i_chirho);
+    for i_chirho in 0..4u64 {
+        let mut state_chirho = BatchStateChirho::new_chirho();
         // var 0 = program type
         state_chirho.domains_chirho[0] = 1u64 << i_chirho;  // Each state tries one type
         // var 1 = first operand type (for Add/Mul)
         state_chirho.domains_chirho[1] = 0b11;  // Could be Const or Var
-        batch_chirho.add_state_chirho(state_chirho);
+        states_chirho.push(state_chirho);
     }
 
-    println!("Initial states: {}", batch_chirho.count_valid_chirho());
+    println!("Initial states: {}", states_chirho.iter().filter(|s| s.valid_chirho).count());
 
     // Constraint: if type is Add (2), second operand must be Const (0)
-    // This is a simplification for demo
-    for state_chirho in &mut batch_chirho.states_chirho {
+    for state_chirho in &mut states_chirho {
         if state_chirho.domains_chirho[0] == 0b0100 {  // Add type
             state_chirho.domains_chirho[1] &= 0b01;  // Force operand to Const
         }
     }
 
-    batch_chirho.compact_chirho();
-    println!("After constraints: {} valid states", batch_chirho.count_valid_chirho());
+    let valid_count_chirho = states_chirho.iter().filter(|s| s.valid_chirho).count();
+    println!("After constraints: {} valid states", valid_count_chirho);
 
-    let solutions_chirho = batch_chirho.get_solutions_chirho();
-    println!("Solutions found: {}", solutions_chirho.len());
-    for sol_chirho in &solutions_chirho {
-        let type_name_chirho = match sol_chirho[0] {
-            0 => "Const",
-            1 => "Var",
-            2 => "Add",
-            3 => "Mul",
-            _ => "?",
-        };
-        println!("  Program type: {} (operand type: {})", type_name_chirho, sol_chirho[1]);
+    println!("Solutions:");
+    for state_chirho in &states_chirho {
+        if state_chirho.valid_chirho {
+            let type_val_chirho = state_chirho.domains_chirho[0].trailing_zeros();
+            let type_name_chirho = match type_val_chirho {
+                0 => "Const",
+                1 => "Var",
+                2 => "Add",
+                3 => "Mul",
+                _ => "?",
+            };
+            let operand_val_chirho = state_chirho.domains_chirho[1].trailing_zeros();
+            println!("  Program type: {} (operand type: {})", type_name_chirho, operand_val_chirho);
+        }
     }
 
     println!("\n☧ Soli Deo Gloria ☧");
