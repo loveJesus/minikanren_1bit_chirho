@@ -3,7 +3,6 @@
 //! Relations as sparse Boolean tensors.
 
 use crate::bitmatrix_chirho::BitTensor3Chirho;
-use crate::terms_chirho::{TermIdChirho, TermStoreChirho};
 
 /// appendo relation: l ++ s = out
 #[derive(Debug, Default)]

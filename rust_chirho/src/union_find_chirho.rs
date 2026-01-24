@@ -97,7 +97,8 @@ pub struct UnionFindHwChirho {
     parent_chirho: Vec<u32>,
     /// Rank array
     rank_chirho: Vec<u8>,
-    /// Size
+    /// Size (reserved for future use)
+    #[allow(dead_code)]
     size_chirho: usize,
 }
 

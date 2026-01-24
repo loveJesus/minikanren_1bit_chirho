@@ -222,7 +222,7 @@ mod tests_chirho {
         let nil_chirho = store_chirho.nil_chirho();
 
         // [x | nil] = cons(x, nil)
-        let cyclic_chirho = store_chirho.cons_chirho(x_chirho, nil_chirho);
+        let _cyclic_chirho = store_chirho.cons_chirho(x_chirho, nil_chirho);
 
         // x = [x | nil] should fail occurs check
         // Actually this would be x = cons(x, nil), so x appears in RHS

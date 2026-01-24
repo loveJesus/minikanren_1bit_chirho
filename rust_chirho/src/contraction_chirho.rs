@@ -107,8 +107,8 @@ pub fn greedy_order_chirho(network_chirho: &TensorNetworkChirho) -> Vec<Contract
             });
 
             // Remove contracted tensors, add result
-            let t2_chirho = remaining_chirho.remove(j_chirho);
-            let t1_chirho = remaining_chirho.remove(i_chirho);
+            let _t2_chirho = remaining_chirho.remove(j_chirho);
+            let _t1_chirho = remaining_chirho.remove(i_chirho);
             remaining_chirho.push(result_chirho);
             step_id_chirho += 1;
         } else {
