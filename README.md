@@ -101,6 +101,24 @@ The 1-bit matrix representation is ideal for parallel hardware:
 | N-Queens 12 (count 14,200) | 50ms | **3.8ms** | **13×** | 64-bit domains |
 | N-Queens 20 (find one) | — | **1.5ms** | — | Scales to 32×32 |
 
+### vs egg (E-Graphs)
+
+Our native e-graph (`egraph_native_chirho`) uses bit-parallel operations vs egg's pointer-based approach:
+
+| Aspect | Our Native E-Graph | egg crate |
+|--------|-------------------|-----------|
+| E-class membership | Bitmask (N-bit vector) | Pointer chase |
+| Merge operation | Bitwise OR | Union-find + rebuild |
+| Memory layout | Contiguous arrays | Scattered allocations |
+| FPGA synthesis | ✅ Direct mapping | ❌ Requires redesign |
+| Congruence closure | Parallel hash lookup | Sequential iteration |
+
+**When to use what:**
+- **Our approach**: Finite domains, hardware targets, bulk operations
+- **egg**: Complex rewrite rules, term rewriting, equality saturation
+
+The 1-bit matrix approach excels when domains fit in registers (≤64 values) and you need massive parallelism. egg excels at symbolic manipulation with unbounded terms.
+
 ## Quick Start
 
 ### Rust (Production)
