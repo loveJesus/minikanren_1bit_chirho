@@ -1,0 +1,5 @@
+__pycache__/
+.idea/
+*.zip
+*.pyc
+.DS_Store
