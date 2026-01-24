@@ -27,10 +27,12 @@
 //! - `egraph_native_chirho`: Native e-graph (hardware-optimized, bit-parallel)
 //! - `egg_chirho`: External egg crate wrapper (feature-gated)
 
+pub mod types_chirho;
 pub mod terms_chirho;
 pub mod union_find_chirho;
 pub mod unify_chirho;
 pub mod bitmatrix_chirho;
+pub mod bitmatrix_packed_chirho;
 pub mod relations_chirho;
 pub mod contraction_chirho;
 pub mod stream_chirho;
@@ -68,6 +70,8 @@ pub use smt_chirho::{SmtSortChirho, SmtExprChirho, SmtProblemChirho, domain_to_s
 pub use contraction_learn_chirho::{TensorNetworkChirho, EdgeFeaturesChirho, LinearEdgeScorerChirho, LearnedContractionChirho};
 pub use slg_complete_chirho::{SlgTableChirho, SlgGoalChirho, GoalStatusChirho, EvenOddTensorChirho};
 pub use nested_pattern_chirho::{TreePathChirho, PathStepChirho, NodeTypeChirho, NodeConstraintChirho, NestedPatternChirho};
+pub use types_chirho::{TermIdChirhoSafe, VarIdChirho, EClassIdChirhoSafe, ENodeIdChirhoSafe, SymIdChirho, GoalIdChirho, TensorIdChirho, TypedIndexChirho, TypedVecChirho};
+pub use bitmatrix_packed_chirho::{Word64Chirho, BitMatrix64Chirho, BitMatrixPackedChirho};
 
 // E-graph re-exports (feature-gated)
 #[cfg(feature = "egraph_native_chirho")]
