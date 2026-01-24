@@ -42,6 +42,18 @@ pub struct TermStoreChirho {
     id_to_sym_chirho: Vec<String>,
 }
 
+impl Clone for TermStoreChirho {
+    fn clone(&self) -> Self {
+        Self {
+            term_to_id_chirho: self.term_to_id_chirho.clone(),
+            id_to_term_chirho: self.id_to_term_chirho.clone(),
+            next_var_chirho: AtomicU32::new(self.next_var_chirho.load(Ordering::SeqCst)),
+            sym_to_id_chirho: self.sym_to_id_chirho.clone(),
+            id_to_sym_chirho: self.id_to_sym_chirho.clone(),
+        }
+    }
+}
+
 impl TermStoreChirho {
     pub fn new() -> Self {
         Self::default()

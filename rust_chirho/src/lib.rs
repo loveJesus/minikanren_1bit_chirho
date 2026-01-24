@@ -51,6 +51,7 @@ pub mod recursion_chirho;
 pub mod contraction_semiring_chirho;
 pub mod unify_matrix_chirho;
 pub mod simd_chirho;
+pub mod goal_ast_chirho;
 
 // E-graph implementations (feature-gated)
 #[cfg(feature = "egraph_native_chirho")]
