@@ -43,6 +43,8 @@ pub mod gpu_chirho;
 pub mod neural_chirho;
 pub mod smt_chirho;
 pub mod contraction_learn_chirho;
+pub mod slg_complete_chirho;
+pub mod nested_pattern_chirho;
 
 // E-graph implementations (feature-gated)
 #[cfg(feature = "egraph_native_chirho")]
@@ -64,6 +66,8 @@ pub use hardware_chirho::{BitVec64Chirho, BitVec256Chirho, SearchStateHwChirho, 
 pub use neural_chirho::{SoftDomainChirho, NeuralStateChirho, NeuralHeuristicChirho, beam_search_chirho};
 pub use smt_chirho::{SmtSortChirho, SmtExprChirho, SmtProblemChirho, domain_to_smt_chirho};
 pub use contraction_learn_chirho::{TensorNetworkChirho, EdgeFeaturesChirho, LinearEdgeScorerChirho, LearnedContractionChirho};
+pub use slg_complete_chirho::{SlgTableChirho, SlgGoalChirho, GoalStatusChirho, EvenOddTensorChirho};
+pub use nested_pattern_chirho::{TreePathChirho, PathStepChirho, NodeTypeChirho, NodeConstraintChirho, NestedPatternChirho};
 
 // E-graph re-exports (feature-gated)
 #[cfg(feature = "egraph_native_chirho")]
