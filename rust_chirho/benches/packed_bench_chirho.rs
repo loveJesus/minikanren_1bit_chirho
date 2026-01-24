@@ -10,27 +10,27 @@ use minikanren_1bit_chirho::{
 };
 
 fn bench_word64_ops_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Word64 Operations");
+    let mut group_chirho = c_chirho.benchmark_group("word64_ops_chirho");
 
     let a_chirho = Word64Chirho::new_chirho(0xAAAA_AAAA_AAAA_AAAAu64);
     let b_chirho = Word64Chirho::new_chirho(0x5555_5555_5555_5555u64);
 
-    group_chirho.bench_function("and", |bench_chirho| {
+    group_chirho.bench_function("and_chirho", |bench_chirho| {
         bench_chirho.iter(|| black_box(a_chirho) & black_box(b_chirho))
     });
 
-    group_chirho.bench_function("or", |bench_chirho| {
+    group_chirho.bench_function("or_chirho", |bench_chirho| {
         bench_chirho.iter(|| black_box(a_chirho) | black_box(b_chirho))
     });
 
-    group_chirho.bench_function("popcount", |bench_chirho| {
-        bench_chirho.iter(|| black_box(a_chirho).popcount_chirho())
+    group_chirho.bench_function("popcount_chirho", |bench_chirho| {
+        bench_chirho.iter(|| black_box(a_chirho).popcount_chirho_chirho())
     });
 
-    group_chirho.bench_function("iter_ones", |bench_chirho| {
+    group_chirho.bench_function("iter_ones_chirho", |bench_chirho| {
         bench_chirho.iter(|| {
             let mut count_chirho = 0u32;
-            for _bit_chirho in black_box(a_chirho).iter_ones_chirho() {
+            for _bit_chirho in black_box(a_chirho).iter_ones_chirho_chirho() {
                 count_chirho += 1;
             }
             count_chirho
@@ -41,7 +41,7 @@ fn bench_word64_ops_chirho(c_chirho: &mut Criterion) {
 }
 
 fn bench_matrix64_and_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Matrix64 AND");
+    let mut group_chirho = c_chirho.benchmark_group("matrix64_and_chirho");
 
     for size_chirho in [8u8, 16, 32, 64] {
         // Dense matrices (50% fill)
@@ -60,7 +60,7 @@ fn bench_matrix64_and_chirho(c_chirho: &mut Criterion) {
         }
 
         group_chirho.bench_with_input(
-            BenchmarkId::new("packed", size_chirho),
+            BenchmarkId::new("packed_chirho", size_chirho),
             &(a_chirho.clone(), b_chirho.clone()),
             |bench_chirho, (a_ref_chirho, b_ref_chirho)| {
                 bench_chirho.iter(|| black_box(a_ref_chirho).and_chirho(black_box(b_ref_chirho)))
@@ -72,7 +72,7 @@ fn bench_matrix64_and_chirho(c_chirho: &mut Criterion) {
 }
 
 fn bench_matrix64_matmul_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Matrix64 Matmul");
+    let mut group_chirho = c_chirho.benchmark_group("matrix64_matmul_chirho");
 
     for size_chirho in [8u8, 16, 32] {
         // Sparse matrices (~10% fill)
@@ -88,7 +88,7 @@ fn bench_matrix64_matmul_chirho(c_chirho: &mut Criterion) {
         }
 
         group_chirho.bench_with_input(
-            BenchmarkId::new("packed", size_chirho),
+            BenchmarkId::new("packed_chirho", size_chirho),
             &(a_chirho.clone(), b_chirho.clone()),
             |bench_chirho, (a_ref_chirho, b_ref_chirho)| {
                 bench_chirho.iter(|| black_box(a_ref_chirho).matmul_chirho(black_box(b_ref_chirho)))
@@ -100,7 +100,7 @@ fn bench_matrix64_matmul_chirho(c_chirho: &mut Criterion) {
 }
 
 fn bench_transitive_closure_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Transitive Closure");
+    let mut group_chirho = c_chirho.benchmark_group("transitive_closure_chirho");
 
     for size_chirho in [8u8, 16, 32] {
         // Chain graph: 0->1->2->...->n-1
@@ -110,7 +110,7 @@ fn bench_transitive_closure_chirho(c_chirho: &mut Criterion) {
         }
 
         group_chirho.bench_with_input(
-            BenchmarkId::new("chain", size_chirho),
+            BenchmarkId::new("chain_chirho", size_chirho),
             &adj_chirho,
             |bench_chirho, adj_ref_chirho| {
                 bench_chirho.iter(|| black_box(adj_ref_chirho).transitive_closure_chirho())
@@ -122,7 +122,7 @@ fn bench_transitive_closure_chirho(c_chirho: &mut Criterion) {
 }
 
 fn bench_sparse_vs_packed_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Sparse vs Packed");
+    let mut group_chirho = c_chirho.benchmark_group("sparse_vs_packed_chirho");
 
     // Compare HashSet-based sparse matrix vs packed u64 matrix
     let size_chirho = 32;
@@ -152,19 +152,19 @@ fn bench_sparse_vs_packed_chirho(c_chirho: &mut Criterion) {
         }
     }
 
-    group_chirho.bench_function("sparse_and", |bench_chirho| {
+    group_chirho.bench_function("sparse_and_chirho", |bench_chirho| {
         bench_chirho.iter(|| black_box(&sparse_chirho).and_chirho(black_box(&sparse2_chirho)))
     });
 
-    group_chirho.bench_function("packed_and", |bench_chirho| {
+    group_chirho.bench_function("packed_and_chirho", |bench_chirho| {
         bench_chirho.iter(|| black_box(&packed_chirho).and_chirho(black_box(&packed2_chirho)))
     });
 
-    group_chirho.bench_function("sparse_matmul", |bench_chirho| {
+    group_chirho.bench_function("sparse_matmul_chirho", |bench_chirho| {
         bench_chirho.iter(|| black_box(&sparse_chirho).matmul_chirho(black_box(&sparse2_chirho)))
     });
 
-    group_chirho.bench_function("packed_matmul", |bench_chirho| {
+    group_chirho.bench_function("packed_matmul_chirho", |bench_chirho| {
         bench_chirho.iter(|| black_box(&packed_chirho).matmul_chirho(black_box(&packed2_chirho)))
     });
 
