@@ -1,23 +1,147 @@
 //! SIMD-Accelerated Bit Operations ☧
 //!
 //! Bulk AND/OR operations using wide registers.
-//! Falls back to scalar when SIMD unavailable.
+//! Uses explicit SIMD intrinsics when available:
+//! - x86_64: AVX2 (256-bit) or SSE2 (128-bit)
+//! - aarch64: NEON (128-bit)
+//! Falls back to auto-vectorizable scalar when SIMD unavailable.
 //!
-//! Target: 256-bit AVX2 or 128-bit SSE for x86_64,
-//! NEON for ARM.
+//! Hardware-friendly for FPGA: these operations map directly to
+//! wide AND/OR/XOR gates.
 
-/// Bulk AND of two slices of u64 words
-/// Result stored in `dst_chirho`
-#[inline]
-pub fn bulk_and_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
-    debug_assert_eq!(dst_chirho.len(), a_chirho.len());
-    debug_assert_eq!(a_chirho.len(), b_chirho.len());
+#[cfg(target_arch = "x86_64")]
+use std::arch::x86_64::*;
 
-    // Process 4 words at a time (256 bits = 4 × 64)
+#[cfg(target_arch = "aarch64")]
+use std::arch::aarch64::*;
+
+// === AVX2 Intrinsics (x86_64) ===
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx2")]
+unsafe fn bulk_and_avx2_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
     let chunks_chirho = a_chirho.len() / 4;
     let remainder_chirho = a_chirho.len() % 4;
 
-    // Main loop - compiler should auto-vectorize this
+    for i_chirho in 0..chunks_chirho {
+        let base_chirho = i_chirho * 4;
+        let va_chirho = _mm256_loadu_si256(a_chirho.as_ptr().add(base_chirho) as *const __m256i);
+        let vb_chirho = _mm256_loadu_si256(b_chirho.as_ptr().add(base_chirho) as *const __m256i);
+        let vr_chirho = _mm256_and_si256(va_chirho, vb_chirho);
+        _mm256_storeu_si256(dst_chirho.as_mut_ptr().add(base_chirho) as *mut __m256i, vr_chirho);
+    }
+
+    let base_chirho = chunks_chirho * 4;
+    for i_chirho in 0..remainder_chirho {
+        dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] & b_chirho[base_chirho + i_chirho];
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx2")]
+unsafe fn bulk_or_avx2_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    let chunks_chirho = a_chirho.len() / 4;
+    let remainder_chirho = a_chirho.len() % 4;
+
+    for i_chirho in 0..chunks_chirho {
+        let base_chirho = i_chirho * 4;
+        let va_chirho = _mm256_loadu_si256(a_chirho.as_ptr().add(base_chirho) as *const __m256i);
+        let vb_chirho = _mm256_loadu_si256(b_chirho.as_ptr().add(base_chirho) as *const __m256i);
+        let vr_chirho = _mm256_or_si256(va_chirho, vb_chirho);
+        _mm256_storeu_si256(dst_chirho.as_mut_ptr().add(base_chirho) as *mut __m256i, vr_chirho);
+    }
+
+    let base_chirho = chunks_chirho * 4;
+    for i_chirho in 0..remainder_chirho {
+        dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] | b_chirho[base_chirho + i_chirho];
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx2")]
+unsafe fn bulk_xor_avx2_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    let chunks_chirho = a_chirho.len() / 4;
+    let remainder_chirho = a_chirho.len() % 4;
+
+    for i_chirho in 0..chunks_chirho {
+        let base_chirho = i_chirho * 4;
+        let va_chirho = _mm256_loadu_si256(a_chirho.as_ptr().add(base_chirho) as *const __m256i);
+        let vb_chirho = _mm256_loadu_si256(b_chirho.as_ptr().add(base_chirho) as *const __m256i);
+        let vr_chirho = _mm256_xor_si256(va_chirho, vb_chirho);
+        _mm256_storeu_si256(dst_chirho.as_mut_ptr().add(base_chirho) as *mut __m256i, vr_chirho);
+    }
+
+    let base_chirho = chunks_chirho * 4;
+    for i_chirho in 0..remainder_chirho {
+        dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] ^ b_chirho[base_chirho + i_chirho];
+    }
+}
+
+// === NEON Intrinsics (aarch64) ===
+
+#[cfg(target_arch = "aarch64")]
+unsafe fn bulk_and_neon_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    let chunks_chirho = a_chirho.len() / 2;
+    let remainder_chirho = a_chirho.len() % 2;
+
+    for i_chirho in 0..chunks_chirho {
+        let base_chirho = i_chirho * 2;
+        let va_chirho = vld1q_u64(a_chirho.as_ptr().add(base_chirho));
+        let vb_chirho = vld1q_u64(b_chirho.as_ptr().add(base_chirho));
+        let vr_chirho = vandq_u64(va_chirho, vb_chirho);
+        vst1q_u64(dst_chirho.as_mut_ptr().add(base_chirho), vr_chirho);
+    }
+
+    let base_chirho = chunks_chirho * 2;
+    for i_chirho in 0..remainder_chirho {
+        dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] & b_chirho[base_chirho + i_chirho];
+    }
+}
+
+#[cfg(target_arch = "aarch64")]
+unsafe fn bulk_or_neon_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    let chunks_chirho = a_chirho.len() / 2;
+    let remainder_chirho = a_chirho.len() % 2;
+
+    for i_chirho in 0..chunks_chirho {
+        let base_chirho = i_chirho * 2;
+        let va_chirho = vld1q_u64(a_chirho.as_ptr().add(base_chirho));
+        let vb_chirho = vld1q_u64(b_chirho.as_ptr().add(base_chirho));
+        let vr_chirho = vorrq_u64(va_chirho, vb_chirho);
+        vst1q_u64(dst_chirho.as_mut_ptr().add(base_chirho), vr_chirho);
+    }
+
+    let base_chirho = chunks_chirho * 2;
+    for i_chirho in 0..remainder_chirho {
+        dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] | b_chirho[base_chirho + i_chirho];
+    }
+}
+
+#[cfg(target_arch = "aarch64")]
+unsafe fn bulk_xor_neon_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    let chunks_chirho = a_chirho.len() / 2;
+    let remainder_chirho = a_chirho.len() % 2;
+
+    for i_chirho in 0..chunks_chirho {
+        let base_chirho = i_chirho * 2;
+        let va_chirho = vld1q_u64(a_chirho.as_ptr().add(base_chirho));
+        let vb_chirho = vld1q_u64(b_chirho.as_ptr().add(base_chirho));
+        let vr_chirho = veorq_u64(va_chirho, vb_chirho);
+        vst1q_u64(dst_chirho.as_mut_ptr().add(base_chirho), vr_chirho);
+    }
+
+    let base_chirho = chunks_chirho * 2;
+    for i_chirho in 0..remainder_chirho {
+        dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] ^ b_chirho[base_chirho + i_chirho];
+    }
+}
+
+// === Scalar fallback ===
+
+fn bulk_and_scalar_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    let chunks_chirho = a_chirho.len() / 4;
+    let remainder_chirho = a_chirho.len() % 4;
+
     for i_chirho in 0..chunks_chirho {
         let base_chirho = i_chirho * 4;
         dst_chirho[base_chirho] = a_chirho[base_chirho] & b_chirho[base_chirho];
@@ -26,19 +150,13 @@ pub fn bulk_and_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64
         dst_chirho[base_chirho + 3] = a_chirho[base_chirho + 3] & b_chirho[base_chirho + 3];
     }
 
-    // Handle remainder
     let base_chirho = chunks_chirho * 4;
     for i_chirho in 0..remainder_chirho {
         dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] & b_chirho[base_chirho + i_chirho];
     }
 }
 
-/// Bulk OR of two slices of u64 words
-#[inline]
-pub fn bulk_or_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
-    debug_assert_eq!(dst_chirho.len(), a_chirho.len());
-    debug_assert_eq!(a_chirho.len(), b_chirho.len());
-
+fn bulk_or_scalar_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
     let chunks_chirho = a_chirho.len() / 4;
     let remainder_chirho = a_chirho.len() % 4;
 
@@ -56,12 +174,7 @@ pub fn bulk_or_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]
     }
 }
 
-/// Bulk XOR of two slices
-#[inline]
-pub fn bulk_xor_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
-    debug_assert_eq!(dst_chirho.len(), a_chirho.len());
-    debug_assert_eq!(a_chirho.len(), b_chirho.len());
-
+fn bulk_xor_scalar_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
     let chunks_chirho = a_chirho.len() / 4;
     let remainder_chirho = a_chirho.len() % 4;
 
@@ -77,6 +190,83 @@ pub fn bulk_xor_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64
     for i_chirho in 0..remainder_chirho {
         dst_chirho[base_chirho + i_chirho] = a_chirho[base_chirho + i_chirho] ^ b_chirho[base_chirho + i_chirho];
     }
+}
+
+// === Public API with runtime dispatch ===
+
+/// Bulk AND of two slices of u64 words
+/// Uses AVX2 on x86_64, NEON on aarch64, scalar fallback otherwise
+#[inline]
+pub fn bulk_and_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    debug_assert_eq!(dst_chirho.len(), a_chirho.len());
+    debug_assert_eq!(a_chirho.len(), b_chirho.len());
+
+    #[cfg(target_arch = "x86_64")]
+    {
+        if is_x86_feature_detected!("avx2") {
+            unsafe { bulk_and_avx2_chirho(dst_chirho, a_chirho, b_chirho) };
+            return;
+        }
+    }
+
+    #[cfg(target_arch = "aarch64")]
+    {
+        unsafe { bulk_and_neon_chirho(dst_chirho, a_chirho, b_chirho) };
+        return;
+    }
+
+    #[allow(unreachable_code)]
+    bulk_and_scalar_chirho(dst_chirho, a_chirho, b_chirho);
+}
+
+/// Bulk OR of two slices of u64 words
+/// Uses AVX2 on x86_64, NEON on aarch64, scalar fallback otherwise
+#[inline]
+pub fn bulk_or_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    debug_assert_eq!(dst_chirho.len(), a_chirho.len());
+    debug_assert_eq!(a_chirho.len(), b_chirho.len());
+
+    #[cfg(target_arch = "x86_64")]
+    {
+        if is_x86_feature_detected!("avx2") {
+            unsafe { bulk_or_avx2_chirho(dst_chirho, a_chirho, b_chirho) };
+            return;
+        }
+    }
+
+    #[cfg(target_arch = "aarch64")]
+    {
+        unsafe { bulk_or_neon_chirho(dst_chirho, a_chirho, b_chirho) };
+        return;
+    }
+
+    #[allow(unreachable_code)]
+    bulk_or_scalar_chirho(dst_chirho, a_chirho, b_chirho);
+}
+
+/// Bulk XOR of two slices
+/// Uses AVX2 on x86_64, NEON on aarch64, scalar fallback otherwise
+#[inline]
+pub fn bulk_xor_chirho(dst_chirho: &mut [u64], a_chirho: &[u64], b_chirho: &[u64]) {
+    debug_assert_eq!(dst_chirho.len(), a_chirho.len());
+    debug_assert_eq!(a_chirho.len(), b_chirho.len());
+
+    #[cfg(target_arch = "x86_64")]
+    {
+        if is_x86_feature_detected!("avx2") {
+            unsafe { bulk_xor_avx2_chirho(dst_chirho, a_chirho, b_chirho) };
+            return;
+        }
+    }
+
+    #[cfg(target_arch = "aarch64")]
+    {
+        unsafe { bulk_xor_neon_chirho(dst_chirho, a_chirho, b_chirho) };
+        return;
+    }
+
+    #[allow(unreachable_code)]
+    bulk_xor_scalar_chirho(dst_chirho, a_chirho, b_chirho);
 }
 
 /// Bulk NOT
