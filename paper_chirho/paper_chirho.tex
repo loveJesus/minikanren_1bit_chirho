@@ -51,16 +51,17 @@
 \maketitle
 
 \begin{abstract}
-We observe that miniKanren's relational search over finite domains can be represented as sparse Boolean tensor operations.
-The key insight is simple: variable domains become bitmasks, and unification becomes bitwise AND.
+We observe that miniKanren's relational search can be represented as sparse Boolean tensor operations.
+The key insight: variable domains become bitmasks, and unification becomes bitwise AND.
+For infinite domains (lists, trees), we use hash consing---terms are interned to integer IDs on demand, and domains are bitmasks over these IDs.
+
 This mapping has three consequences.
 First, \emph{parallelism}: unification reduces to a single SIMD instruction.
 Second, \emph{hardware synthesis}: the representation maps directly to FPGA primitives (registers, LUTs, content-addressable memory).
 Third, \emph{differentiability}: Boolean operations generalize to semirings, enabling gradient-based learning through logic programs.
 
-We implement this approach in Rust (production) with verified FPGA targets (Calyx IR, Clash).
+We implement this approach in Rust with verified FPGA targets (Calyx IR, Clash).
 Benchmarks show 3,000--4,000$\times$ speedup over heap-based constraint operations, and 25--86$\times$ speedup over Z3 and clingo on N-Queens.
-For infinite domains, we use hash consing to generate terms on demand while maintaining the bit-parallel representation.
 \end{abstract}
 
 % ============================================================================
