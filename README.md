@@ -1,5 +1,8 @@
 # miniKanren as 1-Bit Matrix Operations ☧
 
+[![crates.io](https://img.shields.io/crates/v/minikanren_1bit_chirho.svg)](https://crates.io/crates/minikanren_1bit_chirho)
+[![docs.rs](https://docs.rs/minikanren_1bit_chirho/badge.svg)](https://docs.rs/minikanren_1bit_chirho)
+
 > **"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."** — John 3:16
 
 ---
@@ -120,15 +123,16 @@ python3 examples_chirho/type_inference_chirho.py
 python3 benchmarks_chirho/compare_chirho.py
 ```
 
-### WebGPU Demo
+### Web Demos (Static HTML)
 
 ```bash
-cd webgpu_chirho
-npm install && npm run dev
-# Open http://localhost:5173
+# Open directly in browser:
+open rust_chirho/web_chirho/index.html       # WebGPU domain visualization
+open rust_chirho/web_chirho/sudoku_chirho.html  # Sudoku solver (1-bit domains)
 ```
 
-Visualize 10,000+ parallel constraint propagations in your browser.
+- **WebGPU Demo**: Visualize 10,000+ parallel constraint propagations
+- **Sudoku Solver**: Interactive 9-bit domain propagation + search
 
 ### FPGA (Hardware) ✅ VERIFIED
 
@@ -152,13 +156,13 @@ clash --verilog MiniKanrenChirho.hs
 
 ```
 minikanren_1bit_chirho/
-├── *.py                    # 19 Python files (~10K lines)
-├── rust_chirho/            # Rust implementation (116 tests)
-├── calyx_chirho/           # Calyx IR for FPGA synthesis
-├── clash_chirho/           # Clash/Haskell for FPGA
-├── webgpu_chirho/          # Browser-based GPU demo
-├── examples_chirho/        # Sudoku, type inference
-├── benchmarks_chirho/      # Performance comparisons
+├── *.py                        # 19 Python files (~10K lines)
+├── rust_chirho/                # Rust implementation (128 tests)
+│   └── web_chirho/             # WebGPU + Sudoku demos
+├── calyx_chirho/               # Calyx IR for FPGA synthesis
+├── clash_chirho/               # Clash/Haskell for FPGA
+├── examples_chirho/            # Sudoku, type inference (Python)
+├── benchmarks_chirho/          # Performance comparisons
 └── spec_chirho/findings_chirho/  # Research documentation
 ```
 
