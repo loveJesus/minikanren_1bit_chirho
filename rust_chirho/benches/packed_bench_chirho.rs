@@ -24,13 +24,13 @@ fn bench_word64_ops_chirho(c_chirho: &mut Criterion) {
     });
 
     group_chirho.bench_function("popcount_chirho", |bench_chirho| {
-        bench_chirho.iter(|| black_box(a_chirho).popcount_chirho_chirho())
+        bench_chirho.iter(|| black_box(a_chirho).popcount_chirho())
     });
 
     group_chirho.bench_function("iter_ones_chirho", |bench_chirho| {
         bench_chirho.iter(|| {
             let mut count_chirho = 0u32;
-            for _bit_chirho in black_box(a_chirho).iter_ones_chirho_chirho() {
+            for _bit_chirho in black_box(a_chirho).iter_ones_chirho() {
                 count_chirho += 1;
             }
             count_chirho

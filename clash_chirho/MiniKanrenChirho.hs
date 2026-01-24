@@ -4,6 +4,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE KindSignatures #-}
 
 {- |
 Module      : MiniKanrenChirho
@@ -20,8 +21,6 @@ Compiles to Verilog/VHDL for FPGA synthesis.
 module MiniKanrenChirho where
 
 import Clash.Prelude
-import GHC.Generics (Generic)
-import Control.DeepSeq (NFData)
 
 -- | 64-bit domain representing possible values for a variable
 -- Bit i = 1 means value i is possible
@@ -34,7 +33,7 @@ type VarIdxChirho = Index 8
 data SearchStateChirho (n :: Nat) = SearchStateChirho
   { domainsChirho :: Vec n DomainChirho
   , validChirho   :: Bool
-  } deriving (Generic, NFData, Show, Eq, Bundle)
+  } deriving (Generic, NFDataX, Show, Eq, Bundle)
 
 -- | Full domain: all values possible
 fullDomainChirho :: DomainChirho
@@ -163,21 +162,21 @@ data SearchCmdChirho
   | BranchVarChirho VarIdxChirho           -- Branch on variable (push to stack)
   | BacktrackChirho                        -- Pop from stack and continue
   | NopChirho                              -- No operation
-  deriving (Generic, NFData, Show, Eq, Bundle)
+  deriving (Generic, NFDataX, Show, Eq, Bundle)
 
 -- | Search engine response
 data SearchRespChirho = SearchRespChirho
   { respValidChirho    :: Bool
   , respSolutionChirho :: Bool
   , respDomainsChirho  :: Vec 8 DomainChirho
-  } deriving (Generic, NFData, Show, Eq, Bundle)
+  } deriving (Generic, NFDataX, Show, Eq, Bundle)
 
 -- | Stack entry for backtracking
 data StackEntryChirho = StackEntryChirho
   { stackVarChirho     :: VarIdxChirho
   , stackDomainChirho  :: DomainChirho
   , stackDomainsChirho :: Vec 8 DomainChirho
-  } deriving (Generic, NFData, Show, Eq, Bundle)
+  } deriving (Generic, NFDataX, Show, Eq, Bundle)
 
 -- | Search engine state
 data EngineStateChirho = EngineStateChirho
@@ -185,7 +184,7 @@ data EngineStateChirho = EngineStateChirho
   , engValidChirho   :: Bool
   , engStackChirho   :: Vec 16 (Maybe StackEntryChirho)
   , engSPChirho      :: Index 16
-  } deriving (Generic, NFData, Show, Eq, Bundle)
+  } deriving (Generic, NFDataX, Show, Eq, Bundle)
 
 -- | Initial engine state
 initEngineChirho :: EngineStateChirho
@@ -271,16 +270,17 @@ engineStepChirho stChirho cmdChirho = (stChirho', respChirho)
 {-# ANN searchEngineChirho
   (Synthesize
     { t_name   = "searchEngineChirho"
-    , t_inputs = [PortName "clk", PortName "rst", PortName "cmdChirho"]
+    , t_inputs = [PortName "clk", PortName "rst", PortName "enChirho", PortName "cmdChirho"]
     , t_output = PortName "respChirho"
     }) #-}
 searchEngineChirho
   :: Clock System
   -> Reset System
+  -> Enable System
   -> Signal System SearchCmdChirho
   -> Signal System SearchRespChirho
-searchEngineChirho clkChirho rstChirho cmdChirho =
-  mealy engineStepChirho initEngineChirho cmdChirho
+searchEngineChirho clkChirho rstChirho enChirho =
+  exposeClockResetEnable (mealy engineStepChirho initEngineChirho) clkChirho rstChirho enChirho
 
 -------------------------------------------------------------------------------
 -- Soli Deo Gloria ☧

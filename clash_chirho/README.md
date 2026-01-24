@@ -29,6 +29,19 @@ Clash is ideal for miniKanren because:
 |------|-------------|
 | `MiniKanrenChirho.hs` | Core operations and search engine |
 | `HashConsChirho.hs` | Hardware hash consing for infinite domains |
+| `minikanren-clash-chirho.cabal` | Cabal build configuration |
+
+## Quick Build
+
+```bash
+cd clash_chirho
+
+# Using Cabal
+cabal build
+
+# Using Stack (alternative)
+stack build
+```
 
 ## Key Operations
 

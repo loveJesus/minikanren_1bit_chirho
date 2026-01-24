@@ -19,8 +19,9 @@ impl UnionFindChirho {
 
     /// Make singleton set
     pub fn make_set_chirho(&mut self, x_chirho: u32) {
-        if !self.parent_chirho.contains_key(&x_chirho) {
-            self.parent_chirho.insert(x_chirho, x_chirho);
+        use std::collections::hash_map::Entry;
+        if let Entry::Vacant(e_chirho) = self.parent_chirho.entry(x_chirho) {
+            e_chirho.insert(x_chirho);
             self.rank_chirho.insert(x_chirho, 0);
         }
     }

@@ -2,8 +2,20 @@
 name = "minikanren_1bit_chirho"
 version = "0.1.0"
 edition = "2021"
-description = "miniKanren as 1-bit matrix operations - exploring hardware acceleration of logic programming"
+rust-version = "1.70"
+description = "miniKanren as 1-bit matrix operations - hardware-accelerated logic programming with SIMD, GPU, and FPGA support"
 license = "MIT"
+repository = "https://github.com/loveJesus/minikanren_1bit_chirho"
+documentation = "https://docs.rs/minikanren_1bit_chirho"
+readme = "README.md"
+keywords = ["logic-programming", "minikanren", "constraint-solving", "fpga", "simd"]
+categories = ["algorithms", "science", "mathematics"]
+authors = ["loveJesus"]
+exclude = [
+    "benches/*",
+    "tests/*",
+    ".github/*",
+]
 
 [dependencies]
 # E-graphs for equality saturation (optional, use egraph_native_chirho instead)
@@ -33,6 +45,11 @@ harness = false
 [[bench]]
 name = "goal_bench_chirho"
 harness = false
+required-features = ["goal_ast_chirho"]
+
+[[bench]]
+name = "optics_bench_chirho"
+harness = false
 
 [features]
 default = ["egraph_native_chirho"]
@@ -46,3 +63,30 @@ egraph_native_chirho = []
 goal_ast_chirho = []
 # Enable GPU backend (requires wgpu)
 gpu_chirho = ["wgpu", "pollster", "bytemuck"]
+
+# ============================================================================
+# Category-theoretic extensions (Kmett-inspired)
+# ============================================================================
+
+# Optics: Prisms, Traversals, Lenses for term manipulation
+# Enables: unified walk/reify, pattern matching
+# Overhead: ~5% (extra trait dispatch)
+optics_chirho = []
+
+# Free Monad Goals: Same AST, multiple interpreters (Bool, Prob, SMT)
+# Enables: differentiable logic, SMT export, probabilistic semantics
+# Overhead: ~10% (Box<dyn> indirection)
+free_goal_chirho = []
+
+# Comonadic Streams: Search zipper, extend, constraint propagation
+# Enables: focused search, local context, neighborhood operations
+# Overhead: ~8% (zipper overhead)
+comonad_chirho = []
+
+# Linear Logic: Tensor/Par connectives, session types
+# Enables: resource-aware logic, protocol verification
+# Overhead: minimal (Rust ownership already linear)
+linear_chirho = []
+
+# All category-theoretic extensions
+kmett_chirho = ["optics_chirho", "free_goal_chirho", "comonad_chirho", "linear_chirho"]

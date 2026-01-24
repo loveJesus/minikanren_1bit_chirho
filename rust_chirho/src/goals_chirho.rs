@@ -1,12 +1,13 @@
 //! Goal Combinators ☧
 //!
 //! The core miniKanren operators: ==, fresh, conde, conj
+//! Plus advanced operators: not, conda, condu, diseq (=/=), project
 
 use std::sync::Arc;
 
 use crate::stream_chirho::StreamChirho;
 use crate::terms_chirho::{TermIdChirho, TermStoreChirho};
-use crate::unify_chirho::{unify_chirho, SubstChirho, UnifyResultChirho};
+use crate::unify_chirho::{unify_chirho, ground_eq_chirho, SubstChirho, UnifyResultChirho};
 
 /// Goal: substitution → stream of substitutions
 pub type GoalFnChirho = Arc<dyn Fn(SubstChirho, &TermStoreChirho) -> StreamChirho + Send + Sync>;
@@ -86,6 +87,89 @@ pub fn succeed_chirho() -> GoalFnChirho {
 /// Failure goal (always fails)
 pub fn fail_chirho() -> GoalFnChirho {
     Arc::new(|_, _| StreamChirho::empty_chirho())
+}
+
+/// Negation-as-failure: succeeds if goal fails, fails if goal succeeds
+///
+/// WARNING: Not pure relational - depends on order and groundness.
+pub fn not_chirho(goal_chirho: GoalFnChirho) -> GoalFnChirho {
+    Arc::new(move |subst_chirho: SubstChirho, store_chirho: &TermStoreChirho| {
+        let results_chirho = goal_chirho(subst_chirho.clone(), store_chirho).take_chirho(1);
+        if results_chirho.is_empty() {
+            StreamChirho::unit_chirho(subst_chirho)
+        } else {
+            StreamChirho::empty_chirho()
+        }
+    })
+}
+
+/// Soft cut (conda): if cond succeeds, run then; otherwise run else
+///
+/// Commits to first branch but explores all solutions in that branch.
+pub fn conda_chirho(
+    cond_chirho: GoalFnChirho,
+    then_chirho: GoalFnChirho,
+    else_chirho: GoalFnChirho,
+) -> GoalFnChirho {
+    Arc::new(move |subst_chirho: SubstChirho, store_chirho: &TermStoreChirho| {
+        let cond_results_chirho = cond_chirho(subst_chirho.clone(), store_chirho).take_chirho(1);
+        if let Some(cond_state_chirho) = cond_results_chirho.into_iter().next() {
+            then_chirho(cond_state_chirho, store_chirho)
+        } else {
+            else_chirho(subst_chirho, store_chirho)
+        }
+    })
+}
+
+/// Committed choice (condu): try each clause, take first success only
+///
+/// Unlike conde which explores all branches, condu commits to the first
+/// successful clause and only takes one solution from it.
+pub fn condu_chirho(clauses_chirho: Vec<GoalFnChirho>) -> GoalFnChirho {
+    Arc::new(move |subst_chirho: SubstChirho, store_chirho: &TermStoreChirho| {
+        for clause_chirho in &clauses_chirho {
+            let results_chirho = clause_chirho(subst_chirho.clone(), store_chirho).take_chirho(1);
+            if let Some(first_chirho) = results_chirho.into_iter().next() {
+                return StreamChirho::unit_chirho(first_chirho);
+            }
+        }
+        StreamChirho::empty_chirho()
+    })
+}
+
+/// Disequality constraint: (=/= t1 t2) - t1 must never equal t2
+///
+/// If they are already ground and equal, fail immediately.
+/// Otherwise, record the constraint for later checking.
+pub fn diseq_chirho(t1_chirho: TermIdChirho, t2_chirho: TermIdChirho) -> GoalFnChirho {
+    Arc::new(move |mut subst_chirho: SubstChirho, store_chirho: &TermStoreChirho| {
+        // Check if already definitively equal
+        match ground_eq_chirho(t1_chirho, t2_chirho, &mut subst_chirho, store_chirho) {
+            Some(true) => return StreamChirho::empty_chirho(), // Already equal, fail
+            Some(false) => return StreamChirho::unit_chirho(subst_chirho), // Definitely unequal, no constraint needed
+            None => {} // Unknown, need to record constraint
+        }
+
+        subst_chirho.add_diseq_chirho(t1_chirho, t2_chirho);
+        StreamChirho::unit_chirho(subst_chirho)
+    })
+}
+
+/// Project: access walked values of variables, then run a goal
+///
+/// Enables accessing the current state of variables to make decisions.
+pub fn project_chirho<F>(vars_chirho: Vec<TermIdChirho>, goal_fn_chirho: F) -> GoalFnChirho
+where
+    F: Fn(Vec<TermIdChirho>, &SubstChirho, &TermStoreChirho) -> GoalFnChirho + Send + Sync + 'static,
+{
+    Arc::new(move |mut subst_chirho: SubstChirho, store_chirho: &TermStoreChirho| {
+        let walked_chirho: Vec<TermIdChirho> = vars_chirho
+            .iter()
+            .map(|&v| subst_chirho.walk_chirho(v, store_chirho))
+            .collect();
+        let goal_chirho = goal_fn_chirho(walked_chirho, &subst_chirho, store_chirho);
+        goal_chirho(subst_chirho, store_chirho)
+    })
 }
 
 /// Run a goal and collect n solutions

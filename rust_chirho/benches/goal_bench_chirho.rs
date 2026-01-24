@@ -10,10 +10,10 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
 use minikanren_1bit_chirho::{
     TermStoreChirho,
-    eq_chirho as eq_closure_chirho_chirho,
-    conj_chirho as conj_closure_chirho_chirho,
-    disj_chirho as disj_closure_chirho_chirho,
-    run_chirho as run_closure_chirho_chirho,
+    eq_chirho as eq_closure_chirho,
+    conj_chirho as conj_closure_chirho,
+    disj_chirho as disj_closure_chirho,
+    run_chirho as run_closure_chirho,
 };
 use minikanren_1bit_chirho::goal_ast_chirho::{
     eq_ast_chirho,
@@ -36,8 +36,8 @@ fn bench_simple_unify_chirho(c_chirho: &mut Criterion) {
             let mut store_chirho = TermStoreChirho::new();
             let (_, x_chirho) = store_chirho.fresh_var_chirho();
             let forty_two_chirho = store_chirho.int_chirho(42);
-            let goal_chirho = eq_closure_chirho_chirho(x_chirho, forty_two_chirho);
-            let results_chirho = run_closure_chirho_chirho(10, x_chirho, goal_chirho, &store_chirho);
+            let goal_chirho = eq_closure_chirho(x_chirho, forty_two_chirho);
+            let results_chirho = run_closure_chirho(10, x_chirho, goal_chirho, &store_chirho);
             black_box(results_chirho)
         })
     });
@@ -76,12 +76,12 @@ fn bench_conj_chain_chirho(c_chirho: &mut Criterion) {
                         .map(|i_chirho| store_chirho.int_chirho(i_chirho as i64))
                         .collect();
 
-                    let mut goal_chirho = eq_closure_chirho_chirho(vars_chirho[0], vals_chirho[0]);
+                    let mut goal_chirho = eq_closure_chirho(vars_chirho[0], vals_chirho[0]);
                     for i_chirho in 1..n_chirho {
-                        goal_chirho = conj_closure_chirho_chirho(goal_chirho, eq_closure_chirho_chirho(vars_chirho[i_chirho], vals_chirho[i_chirho]));
+                        goal_chirho = conj_closure_chirho(goal_chirho, eq_closure_chirho(vars_chirho[i_chirho], vals_chirho[i_chirho]));
                     }
 
-                    let results_chirho = run_closure_chirho_chirho(10, vars_chirho[0], goal_chirho, &store_chirho);
+                    let results_chirho = run_closure_chirho(10, vars_chirho[0], goal_chirho, &store_chirho);
                     black_box(results_chirho)
                 })
             },
@@ -133,12 +133,12 @@ fn bench_conde_chirho(c_chirho: &mut Criterion) {
                         .map(|i_chirho| store_chirho.int_chirho(i_chirho as i64))
                         .collect();
 
-                    let mut goal_chirho = eq_closure_chirho_chirho(x_chirho, vals_chirho[0]);
+                    let mut goal_chirho = eq_closure_chirho(x_chirho, vals_chirho[0]);
                     for i_chirho in 1..n_chirho {
-                        goal_chirho = disj_closure_chirho_chirho(goal_chirho, eq_closure_chirho_chirho(x_chirho, vals_chirho[i_chirho]));
+                        goal_chirho = disj_closure_chirho(goal_chirho, eq_closure_chirho(x_chirho, vals_chirho[i_chirho]));
                     }
 
-                    let results_chirho = run_closure_chirho_chirho(n_chirho + 5, x_chirho, goal_chirho, &store_chirho);
+                    let results_chirho = run_closure_chirho(n_chirho + 5, x_chirho, goal_chirho, &store_chirho);
                     black_box(results_chirho)
                 })
             },

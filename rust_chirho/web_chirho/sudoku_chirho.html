@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku - miniKanren 1-Bit ☧</title>
+    <style>
+        :root { --bg_chirho:#0a0a0f; --fg_chirho:#e0e0e0; --accent_chirho:#4a9eff; --success_chirho:#4aff9e; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'JetBrains Mono',monospace; background:var(--bg_chirho); color:var(--fg_chirho); min-height:100vh; padding:2rem; display:flex; flex-direction:column; align-items:center; }
+        h1 { color:var(--accent_chirho); margin-bottom:2rem; }
+        .grid_chirho { display:grid; grid-template-columns:repeat(9,45px); gap:1px; background:#2a2a3a; padding:2px; border-radius:4px; }
+        .cell_chirho { height:45px; background:#12121a; display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer; }
+        .cell_chirho.given_chirho { color:var(--accent_chirho); font-weight:bold; }
+        .cell_chirho.solved_chirho { color:var(--success_chirho); }
+        .cell_chirho:nth-child(3n) { border-right:2px solid #2a2a3a; }
+        .cell_chirho:nth-child(n+19):nth-child(-n+27), .cell_chirho:nth-child(n+46):nth-child(-n+54) { border-bottom:2px solid #2a2a3a; }
+        button { background:var(--accent_chirho); color:#000; border:none; padding:0.75rem 1.5rem; border-radius:4px; cursor:pointer; font-family:inherit; font-weight:600; margin:0.5rem; }
+        .stats_chirho { margin-top:1rem; padding:1rem; background:#12121a; border-radius:4px; }
+        select { background:#12121a; color:var(--fg_chirho); border:1px solid #2a2a3a; padding:0.5rem; border-radius:4px; margin-bottom:1rem; }
+    </style>
+</head>
+<body>
+    <h1>Sudoku Solver ☧</h1>
+    <select id="preset_chirho"></select>
+    <div class="grid_chirho" id="grid_chirho"></div>
+    <div><button id="solveBtn_chirho">Solve</button><button id="clearBtn_chirho">Clear</button></div>
+    <div class="stats_chirho" id="stats_chirho">Click cells to enter values (1-9), then Solve.</div>
+
+    <script>
+        const presets_chirho = {
+            'Empty': '',
+            'Easy': '53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79',
+            'Hard': '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+        };
+
+        let domains_chirho = new Array(81).fill(0b111111111);
+        let given_chirho = new Array(81).fill(false);
+        let selected_chirho = null;
+
+        function init_chirho() {
+            const grid_chirho = document.getElementById('grid_chirho');
+            const select_chirho = document.getElementById('preset_chirho');
+
+            for (const name_chirho in presets_chirho) {
+                const opt_chirho = document.createElement('option');
+                opt_chirho.value = name_chirho;
+                opt_chirho.textContent = name_chirho;
+                select_chirho.appendChild(opt_chirho);
+            }
+
+            select_chirho.onchange = () => loadPreset_chirho(select_chirho.value);
+
+            for (let i_chirho = 0; i_chirho < 81; i_chirho++) {
+                const cell_chirho = document.createElement('div');
+                cell_chirho.className = 'cell_chirho';
+                cell_chirho.onclick = () => { selected_chirho = i_chirho; render_chirho(); };
+                grid_chirho.appendChild(cell_chirho);
+            }
+
+            document.getElementById('solveBtn_chirho').onclick = solve_chirho;
+            document.getElementById('clearBtn_chirho').onclick = clear_chirho;
+
+            document.onkeydown = (e_chirho) => {
+                if (selected_chirho === null) return;
+                if (e_chirho.key >= '1' && e_chirho.key <= '9') {
+                    domains_chirho[selected_chirho] = 1 << (parseInt(e_chirho.key) - 1);
+                    given_chirho[selected_chirho] = true;
+                } else if (e_chirho.key === 'Backspace' || e_chirho.key === '0') {
+                    domains_chirho[selected_chirho] = 0b111111111;
+                    given_chirho[selected_chirho] = false;
+                }
+                render_chirho();
+            };
+
+            render_chirho();
+        }
+
+        function render_chirho() {
+            const cells_chirho = document.querySelectorAll('.cell_chirho');
+            cells_chirho.forEach((cell_chirho, i_chirho) => {
+                const d_chirho = domains_chirho[i_chirho];
+                const cnt_chirho = popcount_chirho(d_chirho);
+                cell_chirho.className = 'cell_chirho';
+                if (cnt_chirho === 1) {
+                    cell_chirho.textContent = getValue_chirho(d_chirho);
+                    cell_chirho.classList.add(given_chirho[i_chirho] ? 'given_chirho' : 'solved_chirho');
+                } else {
+                    cell_chirho.textContent = cnt_chirho === 0 ? '✗' : '';
+                }
+                cell_chirho.style.outline = i_chirho === selected_chirho ? '2px solid #4a9eff' : 'none';
+            });
+        }
+
+        function popcount_chirho(n_chirho) { let c_chirho=0; while(n_chirho){c_chirho+=n_chirho&1;n_chirho>>=1;} return c_chirho; }
+        function getValue_chirho(d_chirho) { for(let v_chirho=1;v_chirho<=9;v_chirho++) if(d_chirho===(1<<(v_chirho-1))) return v_chirho; return 0; }
+
+        function peers_chirho(i_chirho) {
+            const r_chirho=Math.floor(i_chirho/9), c_chirho=i_chirho%9, br_chirho=Math.floor(r_chirho/3)*3, bc_chirho=Math.floor(c_chirho/3)*3;
+            const p_chirho = new Set();
+            for(let x_chirho=0;x_chirho<9;x_chirho++) { if(x_chirho!==c_chirho) p_chirho.add(r_chirho*9+x_chirho); if(x_chirho!==r_chirho) p_chirho.add(x_chirho*9+c_chirho); }
+            for(let dr_chirho=0;dr_chirho<3;dr_chirho++) for(let dc_chirho=0;dc_chirho<3;dc_chirho++) { const idx_chirho=(br_chirho+dr_chirho)*9+(bc_chirho+dc_chirho); if(idx_chirho!==i_chirho) p_chirho.add(idx_chirho); }
+            return p_chirho;
+        }
+
+        function propagate_chirho() {
+            let changed_chirho = true, iters_chirho = 0;
+            while (changed_chirho) { changed_chirho = false; iters_chirho++;
+                for (let i_chirho=0; i_chirho<81; i_chirho++) {
+                    if (popcount_chirho(domains_chirho[i_chirho]) !== 1) continue;
+                    for (const p_chirho of peers_chirho(i_chirho)) {
+                        const old_chirho = domains_chirho[p_chirho];
+                        const neu_chirho = old_chirho & ~domains_chirho[i_chirho];
+                        if (neu_chirho !== old_chirho) { domains_chirho[p_chirho] = neu_chirho; changed_chirho = true; }
+                    }
+                }
+            }
+            return iters_chirho;
+        }
+
+        function solve_chirho() {
+            const t0_chirho = performance.now();
+            const iters_chirho = propagate_chirho();
+            if (domains_chirho.some(d_chirho => d_chirho === 0)) { showStats_chirho('Conflict!', t0_chirho); return; }
+            if (domains_chirho.every(d_chirho => popcount_chirho(d_chirho) === 1)) { showStats_chirho('Solved (propagation)', t0_chirho, iters_chirho); return; }
+
+            // Search with MRV
+            if (search_chirho()) showStats_chirho('Solved (search)', t0_chirho, iters_chirho);
+            else showStats_chirho('No solution', t0_chirho);
+            render_chirho();
+        }
+
+        function search_chirho() {
+            propagate_chirho();
+            if (domains_chirho.some(d_chirho => d_chirho === 0)) return false;
+            if (domains_chirho.every(d_chirho => popcount_chirho(d_chirho) === 1)) return true;
+
+            let best_chirho = -1, bestCnt_chirho = 10;
+            for (let i_chirho=0; i_chirho<81; i_chirho++) { const c_chirho = popcount_chirho(domains_chirho[i_chirho]); if (c_chirho > 1 && c_chirho < bestCnt_chirho) { bestCnt_chirho = c_chirho; best_chirho = i_chirho; } }
+
+            const saved_chirho = [...domains_chirho];
+            for (let v_chirho=1; v_chirho<=9; v_chirho++) {
+                if (!(saved_chirho[best_chirho] & (1 << (v_chirho-1)))) continue;
+                domains_chirho = [...saved_chirho];
+                domains_chirho[best_chirho] = 1 << (v_chirho-1);
+                if (search_chirho()) return true;
+            }
+            domains_chirho = saved_chirho;
+            return false;
+        }
+
+        function showStats_chirho(msg_chirho, t0_chirho, iters_chirho) {
+            const elapsed_chirho = (performance.now() - t0_chirho).toFixed(2);
+            const solved_chirho = domains_chirho.filter(d_chirho => popcount_chirho(d_chirho) === 1).length;
+            document.getElementById('stats_chirho').textContent = msg_chirho + ' | ' + elapsed_chirho + 'ms | ' + solved_chirho + '/81 cells' + (iters_chirho ? ' | ' + iters_chirho + ' iterations' : '');
+        }
+
+        function loadPreset_chirho(name_chirho) {
+            clear_chirho();
+            const p_chirho = presets_chirho[name_chirho];
+            for (let i_chirho=0; i_chirho<p_chirho.length && i_chirho<81; i_chirho++) {
+                if (p_chirho[i_chirho] >= '1' && p_chirho[i_chirho] <= '9') {
+                    domains_chirho[i_chirho] = 1 << (parseInt(p_chirho[i_chirho]) - 1);
+                    given_chirho[i_chirho] = true;
+                }
+            }
+            render_chirho();
+        }
+
+        function clear_chirho() { domains_chirho = new Array(81).fill(0b111111111); given_chirho = new Array(81).fill(false); selected_chirho = null; render_chirho(); document.getElementById('stats_chirho').textContent = 'Cleared.'; }
+
+        init_chirho();
+    </script>
+</body>
+</html>

@@ -335,7 +335,75 @@ Phase 3: Hardware (Clash/Calyx)
 - **Language:** Python 3 (prototyping), Rust (performance)
 - **Key libs:** numpy (dense tensors), scipy.sparse (sparse)
 - **Target:** SvelteKit + Cloudflare Workers for any web interface
-- **Hardware dreams:** FPGA (pure Boolean), BitNet-style accelerators
+- **Hardware:** FPGA via Calyx IR and Clash (verified working)
+
+---
+
+## Current Implementations
+
+### Rust (`rust_chirho/`) — 128 tests passing
+
+| Module | Description |
+|--------|-------------|
+| `terms_chirho.rs` | Hash-consed term store |
+| `union_find_chirho.rs` | O(α(n)) equivalence classes |
+| `unify_chirho.rs` | Unification with occurs check |
+| `goals_chirho.rs` | Full miniKanren: `==`, `conde`, `not`, `conda`, `condu`, `=/=`, `project` |
+| `bitmatrix_chirho.rs` | Sparse Boolean tensors (COO) |
+| `hardware_chirho.rs` | BitVec64, BitVec256, CAM, SearchState |
+| `optics_hw_chirho.rs` | Hardware optics (3000× faster than heap) |
+| `diff_semiring_chirho.rs` | Differentiable relaxation, Gumbel-softmax |
+| `semiring_chirho.rs` | Bool/Prob/Tropical/Count/Log semirings |
+| `egraph_native_chirho.rs` | Native bit-parallel e-graph |
+| `simd_chirho.rs` | AVX2 bulk operations |
+
+**Examples:**
+- `examples/appendo_chirho.rs` — List append relation
+- `examples/type_infer_chirho.rs` — Type inference demo
+- `examples/synthesis_chirho.rs` — Program synthesis
+
+### Python (`*.py`) — 19 files
+
+| File | Purpose |
+|------|---------|
+| `examples_chirho/sudoku_chirho.py` | Sudoku solver |
+| `examples_chirho/type_infer_chirho.py` | Type inference |
+| `differentiable_chirho.py` | Soft logic, gradients |
+| `learn_relations_chirho.py` | Learnable relation weights |
+
+### FPGA (`calyx_chirho/`, `clash_chirho/`) — Verified
+
+| File | Status |
+|------|--------|
+| `calyx_chirho/domain_chirho.futil` | ✅ Compiles, simulates in Verilator (8 cycles) |
+| `clash_chirho/MiniKanrenChirho.hs` | ✅ Compiles to Verilog via Clash |
+| `calyx_chirho/tb_domain_chirho.cpp` | Verilator testbench |
+
+### Web (`rust_chirho/web_chirho/`)
+
+| File | Description |
+|------|-------------|
+| `index.html` | WebGPU domain visualization demo |
+
+---
+
+## Performance Benchmarks
+
+### Hardware Optics (BitVec64 vs HashSet)
+
+| Operation | n | Hardware | Heap | Speedup |
+|-----------|---|----------|------|---------|
+| Mass Intersect | 10 | **1.2 ns** | 3.0 µs | **2,500×** |
+| Mass Intersect | 1000 | **56 ns** | 223 µs | **4,000×** |
+| Single domain intersect | 1 | **420 ps** | — | Single CPU cycle |
+
+### vs Other Solvers (Python)
+
+| Benchmark | Our 1-Bit | Competitor | Speedup |
+|-----------|-----------|------------|---------|
+| N-Queens 8×8 | 2.92ms | Z3: 232ms | **80×** |
+| N-Queens 8×8 | 2.92ms | clingo: 24ms | **8×** |
+| Unification 10K | 1.50ms | kanren: 38ms | **25×** |
 
 ---
 

@@ -153,9 +153,73 @@ Projected Sudoku solve: <1μs for easy puzzles on dedicated hardware.
 FPGA wins for latency-sensitive applications.
 GPU wins for massive parallelism (100k+ domains).
 
-## 6. Scaling Analysis
+## 6. Comparative Benchmarks (vs Other Solvers)
 
-### Finding 3.13: Domain Size Scaling
+### Finding 3.15: Unification Performance
+
+10,000 unification operations:
+
+| Solver | Time | Speedup vs Ours |
+|--------|------|-----------------|
+| **Ours (1-bit matrix)** | 1.45ms | 1× (baseline) |
+| kanren (Python) | 38.88ms | 26.8× slower |
+
+Our bit-parallel AND operation is dramatically faster than symbolic unification.
+
+### Finding 3.16: N-Queens Constraint Satisfaction
+
+8×8 board, counting all 92 solutions:
+
+| Solver | Time | Speedup vs Ours |
+|--------|------|-----------------|
+| **Ours (1-bit matrix)** | 3.07ms | 1× (baseline) |
+| clingo (ASP) | 20.73ms | 6.7× slower |
+| Z3 (SMT) | 232.62ms | 75.7× slower |
+
+Key insight: Bit-parallel domain operations eliminate solver overhead.
+
+### Finding 3.17: Knowledge Graph Reasoning
+
+Graph with 10,000 nodes and 50,000 edges:
+
+| Query Type | Time/Query |
+|------------|------------|
+| Single-hop | 0.26ms |
+| Two-hop (bit intersection) | 0.22ms |
+| Transitive closure (BFS) | 2.1ms |
+
+Bit-parallel BFS enables fast graph traversal.
+
+### Finding 3.20: Large Domain Performance
+
+For domains >64 values, hash consing provides structural sharing:
+
+| Solver | 1000-term operations | Time | Speedup |
+|--------|---------------------|------|---------|
+| **Ours (hash consing)** | 1000 interns | 0.39ms | 1× |
+| Python kanren | 1000 unifications | 3.85ms | 10× slower |
+
+Key insight: Even without bit-parallel operations, our arena-allocated
+hash consing outperforms symbolic unification.
+
+### Finding 3.21: Massively Parallel Scalability
+
+Theoretical throughput on different hardware:
+
+| Platform | Parallelism | Operations/sec |
+|----------|-------------|----------------|
+| Python (baseline) | 1 | ~1M |
+| Rust (scalar) | 1 | ~100M |
+| Rust (AVX2) | 4 | ~500M |
+| Rust (AVX-512) | 8 | ~1B |
+| GPU (WebGPU) | 10,000+ | ~10B |
+| FPGA (100MHz) | Full pipeline | ~100M |
+
+The 1-bit representation enables embarrassingly parallel execution.
+
+## 7. Scaling Analysis
+
+### Finding 3.18: Domain Size Scaling
 
 | Domain bits | Memory/var | Unify time |
 |-------------|------------|------------|
@@ -164,7 +228,7 @@ GPU wins for massive parallelism (100k+ domains).
 | 1024 | 128B | O(n/256) |
 | Infinite | dynamic | O(term size) |
 
-### Finding 3.14: Variable Count Scaling
+### Finding 3.19: Variable Count Scaling
 
 | Variables | State size | Propagation |
 |-----------|------------|-------------|

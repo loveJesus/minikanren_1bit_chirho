@@ -13,11 +13,30 @@ pub struct SubstChirho {
     pub uf_chirho: UnionFindChirho,
     /// Canonical term for each class (root → term_id)
     pub canonical_chirho: HashMap<u32, TermIdChirho>,
+    /// Disequality constraints: list of (t1, t2) pairs that must not be equal
+    pub diseqs_chirho: Vec<(TermIdChirho, TermIdChirho)>,
 }
 
 impl SubstChirho {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Add a disequality constraint
+    pub fn add_diseq_chirho(&mut self, t1_chirho: TermIdChirho, t2_chirho: TermIdChirho) {
+        self.diseqs_chirho.push((t1_chirho, t2_chirho));
+    }
+
+    /// Check if all disequality constraints are satisfied
+    pub fn check_diseqs_chirho(&mut self, store_chirho: &TermStoreChirho) -> bool {
+        for i in 0..self.diseqs_chirho.len() {
+            let (t1_chirho, t2_chirho) = self.diseqs_chirho[i];
+            match ground_eq_chirho(t1_chirho, t2_chirho, self, store_chirho) {
+                Some(true) => return false, // Constraint violated
+                _ => {}
+            }
+        }
+        true
     }
 
     /// Walk a term through the substitution
@@ -144,6 +163,57 @@ fn occurs_chirho(
                 || occurs_chirho(var_chirho, *t, subst_chirho, store_chirho)
         }
         _ => false,
+    }
+}
+
+/// Check if two terms are definitively equal.
+/// Returns Some(true) if equal, Some(false) if definitely unequal, None if uncertain.
+pub fn ground_eq_chirho(
+    t1_chirho: TermIdChirho,
+    t2_chirho: TermIdChirho,
+    subst_chirho: &mut SubstChirho,
+    store_chirho: &TermStoreChirho,
+) -> Option<bool> {
+    let t1_walked_chirho = subst_chirho.walk_chirho(t1_chirho, store_chirho);
+    let t2_walked_chirho = subst_chirho.walk_chirho(t2_chirho, store_chirho);
+
+    if t1_walked_chirho == t2_walked_chirho {
+        return Some(true);
+    }
+
+    let term1_chirho = store_chirho.get_chirho(t1_walked_chirho);
+    let term2_chirho = store_chirho.get_chirho(t2_walked_chirho);
+
+    match (term1_chirho, term2_chirho) {
+        // Variables mean uncertainty
+        (Some(TermChirho::VarChirho(_)), _) | (_, Some(TermChirho::VarChirho(_))) => None,
+
+        // Same types, check equality
+        (Some(TermChirho::IntChirho(a)), Some(TermChirho::IntChirho(b))) => Some(a == b),
+        (Some(TermChirho::SymChirho(a)), Some(TermChirho::SymChirho(b))) => Some(a == b),
+        (Some(TermChirho::NilChirho), Some(TermChirho::NilChirho)) => Some(true),
+        (Some(TermChirho::ConsChirho(h1, t1)), Some(TermChirho::ConsChirho(h2, t2))) => {
+            let h1_val_chirho = *h1;
+            let t1_val_chirho = *t1;
+            let h2_val_chirho = *h2;
+            let t2_val_chirho = *t2;
+
+            let head_eq_chirho = ground_eq_chirho(h1_val_chirho, h2_val_chirho, subst_chirho, store_chirho);
+            match head_eq_chirho {
+                Some(false) => Some(false),
+                Some(true) => ground_eq_chirho(t1_val_chirho, t2_val_chirho, subst_chirho, store_chirho),
+                None => {
+                    let tail_eq_chirho = ground_eq_chirho(t1_val_chirho, t2_val_chirho, subst_chirho, store_chirho);
+                    match tail_eq_chirho {
+                        Some(false) => Some(false),
+                        _ => None,
+                    }
+                }
+            }
+        }
+
+        // Different types mean definitely unequal
+        _ => Some(false),
     }
 }
 

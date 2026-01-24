@@ -51,12 +51,21 @@ def list_chirho(*elems_chirho) -> TermChirho:
 class StateChirho:
     subst_chirho: Dict[int, TermChirho]
     counter_chirho: int
-    
+    diseqs_chirho: List[Tuple[TermChirho, TermChirho]] = None  # Disequality constraints
+
+    def __post_init__(self_chirho):
+        if self_chirho.diseqs_chirho is None:
+            self_chirho.diseqs_chirho = []
+
     def copy_chirho(self_chirho) -> 'StateChirho':
-        return StateChirho(self_chirho.subst_chirho.copy(), self_chirho.counter_chirho)
+        return StateChirho(
+            self_chirho.subst_chirho.copy(),
+            self_chirho.counter_chirho,
+            self_chirho.diseqs_chirho.copy()
+        )
 
 def empty_state_chirho() -> StateChirho:
-    return StateChirho({}, 0)
+    return StateChirho({}, 0, [])
 
 
 # === Substitution Operations ===
@@ -115,6 +124,44 @@ def unify_chirho(t1_chirho: TermChirho, t2_chirho: TermChirho,
     return None
 
 
+def ground_eq_chirho(t1_chirho: TermChirho, t2_chirho: TermChirho,
+                     subst_chirho: Dict[int, TermChirho]) -> Optional[bool]:
+    """
+    Check if two terms are definitively equal or unequal after walking.
+    Returns True if equal, False if definitely unequal, None if unknown.
+    """
+    t1_chirho = walk_chirho(t1_chirho, subst_chirho)
+    t2_chirho = walk_chirho(t2_chirho, subst_chirho)
+
+    if t1_chirho == t2_chirho:
+        return True
+
+    # Both ground and different
+    if not isinstance(t1_chirho, VarChirho) and not isinstance(t2_chirho, VarChirho):
+        if isinstance(t1_chirho, ConsChirho) and isinstance(t2_chirho, ConsChirho):
+            head_eq_chirho = ground_eq_chirho(t1_chirho.head_chirho, t2_chirho.head_chirho, subst_chirho)
+            if head_eq_chirho is False:
+                return False
+            tail_eq_chirho = ground_eq_chirho(t1_chirho.tail_chirho, t2_chirho.tail_chirho, subst_chirho)
+            if tail_eq_chirho is False:
+                return False
+            if head_eq_chirho and tail_eq_chirho:
+                return True
+            return None
+        return False  # Different ground terms
+
+    return None  # Contains variables, uncertain
+
+
+def check_diseqs_chirho(state_chirho: StateChirho) -> bool:
+    """Check if all disequality constraints are satisfied."""
+    for t1_chirho, t2_chirho in state_chirho.diseqs_chirho:
+        eq_result_chirho = ground_eq_chirho(t1_chirho, t2_chirho, state_chirho.subst_chirho)
+        if eq_result_chirho is True:
+            return False  # Constraint violated
+    return True
+
+
 # === Streams (lazy lists with interleaving) ===
 
 StreamChirho = Iterator[StateChirho]
@@ -143,7 +190,10 @@ def eq_goal_chirho(t1_chirho: TermChirho, t2_chirho: TermChirho) -> GoalChirho:
     def goal_chirho(state_chirho: StateChirho) -> StreamChirho:
         subst_chirho = unify_chirho(t1_chirho, t2_chirho, state_chirho.subst_chirho)
         if subst_chirho is not None:
-            yield StateChirho(subst_chirho, state_chirho.counter_chirho)
+            new_state_chirho = StateChirho(subst_chirho, state_chirho.counter_chirho, state_chirho.diseqs_chirho.copy())
+            # Check that disequality constraints still hold
+            if check_diseqs_chirho(new_state_chirho):
+                yield new_state_chirho
     return goal_chirho
 
 def call_fresh_chirho(fn_chirho: Callable[[VarChirho], GoalChirho]) -> GoalChirho:
@@ -165,6 +215,114 @@ def conj_chirho(g1_chirho: GoalChirho, g2_chirho: GoalChirho) -> GoalChirho:
     def goal_chirho(state_chirho: StateChirho) -> StreamChirho:
         yield from bind_chirho(g1_chirho(state_chirho), g2_chirho)
     return goal_chirho
+
+
+# === Advanced Control Operators ===
+
+def not_goal_chirho(goal_chirho: GoalChirho) -> GoalChirho:
+    """
+    Negation-as-failure: succeeds if goal fails, fails if goal succeeds.
+
+    WARNING: Not pure relational - depends on order and groundness.
+    Should only be used when goal arguments are sufficiently ground.
+    """
+    def inner_chirho(state_chirho: StateChirho) -> StreamChirho:
+        results_chirho = list(islice(goal_chirho(state_chirho), 1))
+        if not results_chirho:
+            yield state_chirho
+    return inner_chirho
+
+
+def conda_goal_chirho(cond_chirho: GoalChirho,
+                      then_chirho: GoalChirho,
+                      else_chirho: GoalChirho) -> GoalChirho:
+    """
+    Soft cut (conda): if cond succeeds, run then; otherwise run else.
+
+    Commits to first branch but explores all solutions in that branch.
+    """
+    def inner_chirho(state_chirho: StateChirho) -> StreamChirho:
+        cond_results_chirho = list(islice(cond_chirho(state_chirho), 1))
+        if cond_results_chirho:
+            # Condition succeeded - run then on the cond result state
+            for cond_state_chirho in cond_results_chirho:
+                yield from then_chirho(cond_state_chirho)
+        else:
+            # Condition failed - run else on original state
+            yield from else_chirho(state_chirho)
+    return inner_chirho
+
+
+def condu_goal_chirho(*clauses_chirho: GoalChirho) -> GoalChirho:
+    """
+    Committed choice (condu): try each clause, take first success and stop.
+
+    Unlike conde which explores all branches, condu commits to the first
+    successful clause and only takes one solution from it.
+    """
+    def inner_chirho(state_chirho: StateChirho) -> StreamChirho:
+        for clause_chirho in clauses_chirho:
+            results_chirho = list(islice(clause_chirho(state_chirho), 1))
+            if results_chirho:
+                yield results_chirho[0]
+                return  # Stop after first solution from first successful clause
+    return inner_chirho
+
+
+def diseq_goal_chirho(t1_chirho: TermChirho, t2_chirho: TermChirho) -> GoalChirho:
+    """
+    Disequality constraint: (=/= t1 t2) - t1 must never equal t2.
+
+    If they are already ground and equal, fail immediately.
+    Otherwise, record the constraint for later checking.
+    """
+    def inner_chirho(state_chirho: StateChirho) -> StreamChirho:
+        t1_walked_chirho = walk_chirho(t1_chirho, state_chirho.subst_chirho)
+        t2_walked_chirho = walk_chirho(t2_chirho, state_chirho.subst_chirho)
+
+        # Check if already definitively equal
+        eq_result_chirho = ground_eq_chirho(t1_walked_chirho, t2_walked_chirho, state_chirho.subst_chirho)
+        if eq_result_chirho is True:
+            return  # Fail: already equal
+
+        # Add constraint
+        new_state_chirho = state_chirho.copy_chirho()
+        new_state_chirho.diseqs_chirho.append((t1_chirho, t2_chirho))
+        yield new_state_chirho
+    return inner_chirho
+
+
+def project_goal_chirho(vars_chirho: List[VarChirho],
+                        fn_chirho: Callable[[List[TermChirho]], GoalChirho]) -> GoalChirho:
+    """
+    Project: access walked values of variables, then run a goal.
+
+    Enables accessing the current state of variables to make decisions.
+    Useful for arithmetic, printing, or conditional logic.
+
+    Example:
+        project_goal_chirho([x, y], lambda vals: eq_goal_chirho(z, vals[0] + vals[1]))
+    """
+    def inner_chirho(state_chirho: StateChirho) -> StreamChirho:
+        walked_chirho = [walk_deep_chirho(v_chirho, state_chirho.subst_chirho) for v_chirho in vars_chirho]
+        goal_chirho = fn_chirho(walked_chirho)
+        yield from goal_chirho(state_chirho)
+    return inner_chirho
+
+
+def succeed_goal_chirho() -> GoalChirho:
+    """Always succeeds with current state."""
+    def inner_chirho(state_chirho: StateChirho) -> StreamChirho:
+        yield state_chirho
+    return inner_chirho
+
+
+def fail_goal_chirho() -> GoalChirho:
+    """Always fails (produces no solutions)."""
+    def inner_chirho(state_chirho: StateChirho) -> StreamChirho:
+        return
+        yield  # Make it a generator
+    return inner_chirho
 
 
 # === Convenience ===

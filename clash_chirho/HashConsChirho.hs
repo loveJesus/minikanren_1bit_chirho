@@ -4,6 +4,8 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- | Hardware Hash Consing Module ☧
 --
@@ -20,26 +22,51 @@
 module HashConsChirho where
 
 import Clash.Prelude
-import GHC.Generics (Generic)
 
 -- | Term ID: unique identifier for interned terms
 newtype TermIdChirho = TermIdChirho (Unsigned 16)
   deriving (Show, Eq, Generic, NFDataX, BitPack)
 
--- | Term tag indicating structure type
+-- | Term tag indicating structure type (2-bit encoding)
+-- We use Unsigned 2 internally for clean BitPack support
 data TermTagChirho
-  = NilChirho      -- ^ Empty list / nil
-  | SymbolChirho   -- ^ Symbol (left child = symbol ID)
-  | ConsChirho     -- ^ Cons cell (left, right children)
-  | VarChirho      -- ^ Logic variable (left child = var ID)
-  deriving (Show, Eq, Generic, NFDataX, BitPack, Enum, Bounded)
+  = NilChirho      -- ^ Empty list / nil (0)
+  | SymbolChirho   -- ^ Symbol (left child = symbol ID) (1)
+  | ConsChirho     -- ^ Cons cell (left, right children) (2)
+  | VarChirho      -- ^ Logic variable (left child = var ID) (3)
+  deriving (Show, Eq, Generic, NFDataX, Enum, Bounded)
+
+-- Manual BitPack instance for TermTagChirho
+instance BitPack TermTagChirho where
+  type BitSize TermTagChirho = 2
+  pack tChirho = case tChirho of
+    NilChirho    -> 0
+    SymbolChirho -> 1
+    ConsChirho   -> 2
+    VarChirho    -> 3
+  unpack bChirho = case bChirho of
+    0 -> NilChirho
+    1 -> SymbolChirho
+    2 -> ConsChirho
+    _ -> VarChirho
 
 -- | A term structure stored in RAM
+-- BitSize = 2 (tag) + 16 (left) + 16 (right) = 34 bits
 data TermChirho = TermChirho
   { tagChirho   :: TermTagChirho
   , leftChirho  :: TermIdChirho
   , rightChirho :: TermIdChirho
-  } deriving (Show, Eq, Generic, NFDataX, BitPack)
+  } deriving (Show, Eq, Generic, NFDataX)
+
+-- Manual BitPack instance for TermChirho
+instance BitPack TermChirho where
+  type BitSize TermChirho = 34  -- 2 + 16 + 16
+  pack (TermChirho tChirho lChirho rChirho) =
+    pack tChirho ++# pack lChirho ++# pack rChirho
+  unpack bChirho =
+    let (tBitsChirho, restChirho) = split bChirho :: (BitVector 2, BitVector 32)
+        (lBitsChirho, rBitsChirho) = split restChirho :: (BitVector 16, BitVector 16)
+    in TermChirho (unpack tBitsChirho) (unpack lBitsChirho) (unpack rBitsChirho)
 
 -- | CAM entry for hash table
 data CamEntryChirho = CamEntryChirho
@@ -92,7 +119,8 @@ nilTermChirho = TermChirho NilChirho (TermIdChirho 0) (TermIdChirho 0)
 -- | Compute hash from term (XOR-based, 6-bit output for 64-entry CAM)
 hashTermChirho :: TermChirho -> Unsigned 6
 hashTermChirho (TermChirho tChirho (TermIdChirho lChirho) (TermIdChirho rChirho)) =
-  truncateB $ resize (pack tChirho) `xor` lChirho `xor` rChirho
+  let tagBitsChirho = resize (unpack (pack tChirho) :: Unsigned 2) :: Unsigned 16
+  in truncateB $ tagBitsChirho `xor` lChirho `xor` rChirho
 
 -- | Check if two terms are equal (for CAM matching)
 termEqChirho :: TermChirho -> TermChirho -> Bool
@@ -140,7 +168,7 @@ type RefCountsChirho = Vec 1024 (Unsigned 8)
 
 -- | Initialize ref counts (nil has count 1)
 initialRefCountsChirho :: RefCountsChirho
-initialRefCountsChirho = replace 0 1 $ repeat 0
+initialRefCountsChirho = replace (0 :: Index 1024) (1 :: Unsigned 8) (repeat 0)
 
 -- | Complete hash cons unit state including memories
 data HashConsUnitChirho = HashConsUnitChirho
@@ -229,15 +257,17 @@ mkVarChirho vidChirho = TermChirho VarChirho (TermIdChirho vidChirho) (TermIdChi
 {-# ANN hashConsTopChirho
   (Synthesize
     { t_name   = "hashconsChirho"
-    , t_inputs = [PortName "clk", PortName "rst", PortName "cmdChirho"]
+    , t_inputs = [PortName "clk", PortName "rst", PortName "enChirho", PortName "cmdChirho"]
     , t_output = PortName "respChirho"
     }) #-}
 hashConsTopChirho
   :: Clock System
   -> Reset System
+  -> Enable System
   -> Signal System HcCmdChirho
   -> Signal System HcRespChirho
-hashConsTopChirho = exposeClockResetEnable $ mealy hashConsStepChirho initialHashConsUnitChirho
+hashConsTopChirho clkChirho rstChirho enChirho =
+  exposeClockResetEnable (mealy hashConsStepChirho initialHashConsUnitChirho) clkChirho rstChirho enChirho
 
 -- | Test bench: intern some terms and verify structural sharing
 testHashConsChirho :: [HcRespChirho]
@@ -248,7 +278,7 @@ testHashConsChirho =
         , HcInternChirho (mkConsChirho (TermIdChirho 1) (TermIdChirho 0))  -- [a]
         , HcInternChirho (mkConsChirho (TermIdChirho 1) (TermIdChirho 0))  -- [a] again (should find)
         ]
-      goChirho unitChirho [] = []
+      goChirho _unitChirho [] = []
       goChirho unitChirho (cChirho:csChirho) =
         let (unitChirho', respChirho) = hashConsStepChirho unitChirho cChirho
         in respChirho : goChirho unitChirho' csChirho
