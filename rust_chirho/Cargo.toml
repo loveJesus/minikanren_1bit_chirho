@@ -1,9 +1,9 @@
 [package]
 name = "minikanren_1bit_chirho"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.70"
-description = "miniKanren as 1-bit matrix operations - hardware-accelerated logic programming with SIMD, GPU, and FPGA support"
+description = "miniKanren as 1-bit matrix operations - hardware-accelerated logic programming with SIMD, GPU, and FPGA support. Includes Sudoku solver (14μs), N-Queens, constraint propagation."
 license = "MIT"
 repository = "https://github.com/loveJesus/minikanren_1bit_chirho"
 documentation = "https://docs.rs/minikanren_1bit_chirho"

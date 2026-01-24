@@ -94,11 +94,12 @@ The 1-bit matrix representation is ideal for parallel hardware:
 
 | Application | Python | Rust | Speedup | Notes |
 |-------------|--------|------|---------|-------|
-| Sudoku (easy) | 0.1ms | **42μs** | 2× | Hidden singles + naked pairs |
-| Sudoku (hard 17-clue) | 2.1ms | **22μs** | **95×** | Advanced propagation shines |
-| Sudoku (Escargot) | — | **63μs** | — | Famous "hardest" |
-| Type inference | 0.05ms | ~0.5μs | 100× | 8 terms |
-| N-Queens 12 | 50ms | ~500μs | 100× | 14,200 solutions |
+| Sudoku (easy) | 0.1ms | **3μs** | **33×** | Adaptive propagation |
+| Sudoku (hard 17-clue) | 2.1ms | **10μs** | **210×** | Hidden singles + naked pairs |
+| Sudoku (Escargot) | — | **48μs** | — | Famous "hardest" |
+| N-Queens 8 (count 92) | — | **4μs** | — | Bit-parallel |
+| N-Queens 12 (count 14,200) | 50ms | **3.8ms** | **13×** | 64-bit domains |
+| N-Queens 20 (find one) | — | **1.5ms** | — | Scales to 32×32 |
 
 ## Quick Start
 
@@ -106,7 +107,7 @@ The 1-bit matrix representation is ideal for parallel hardware:
 
 ```bash
 cd rust_chirho
-cargo test              # Run 137 tests (125 lib + 12 proptest)
+cargo test              # Run 140 tests (128 lib + 12 proptest)
 cargo bench             # Run benchmarks
 cargo run --example appendo_chirho
 ```
@@ -158,7 +159,7 @@ clash --verilog MiniKanrenChirho.hs
 ```
 minikanren_1bit_chirho/
 ├── *.py                        # 19 Python files (~10K lines)
-├── rust_chirho/                # Rust implementation (137 tests)
+├── rust_chirho/                # Rust implementation (140 tests)
 │   └── web_chirho/             # WebGPU + Sudoku demos
 ├── calyx_chirho/               # Calyx IR for FPGA synthesis
 ├── clash_chirho/               # Clash/Haskell for FPGA
@@ -218,7 +219,7 @@ minikanren_1bit_chirho/
 | `linear_chirho.rs` | `linear_chirho` | Tensor/Par (linear logic) | ❌ Heap |
 | `optics_hw_chirho.rs` | (always on) | **BitVec64 optics** | ✅ FPGA |
 
-**137 tests passing** (125 lib + 12 proptest). Features: SIMD (AVX2), arena allocation, zero-copy.
+**140 tests passing** (128 lib + 12 proptest). Features: SIMD (AVX2), arena allocation, zero-copy.
 
 ## Hardware Targets
 

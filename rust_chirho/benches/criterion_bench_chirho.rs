@@ -308,6 +308,50 @@ fn bench_sudoku_chirho(c_chirho: &mut Criterion) {
     group_chirho.finish();
 }
 
+/// Benchmark N-Queens solver
+fn bench_nqueens_chirho(c_chirho: &mut Criterion) {
+    use minikanren_1bit_chirho::nqueens_chirho::NQueensSolverChirho;
+
+    let mut group_chirho = c_chirho.benchmark_group("NQueens");
+
+    group_chirho.bench_function("8_count", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = NQueensSolverChirho::new_chirho(8);
+            black_box(solver_chirho.count_solutions_chirho())
+        })
+    });
+
+    group_chirho.bench_function("12_count", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = NQueensSolverChirho::new_chirho(12);
+            black_box(solver_chirho.count_solutions_chirho())
+        })
+    });
+
+    group_chirho.bench_function("14_count", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = NQueensSolverChirho::new_chirho(14);
+            black_box(solver_chirho.count_solutions_chirho())
+        })
+    });
+
+    group_chirho.bench_function("20_one", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = NQueensSolverChirho::new_chirho(20);
+            black_box(solver_chirho.solve_one_chirho())
+        })
+    });
+
+    group_chirho.bench_function("32_one", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = NQueensSolverChirho::new_chirho(32);
+            black_box(solver_chirho.solve_one_chirho())
+        })
+    });
+
+    group_chirho.finish();
+}
+
 criterion_group!(
     benches_chirho,
     bench_bit_ops_chirho,
@@ -319,6 +363,7 @@ criterion_group!(
     bench_semiring_chirho,
     bench_neural_chirho,
     bench_sudoku_chirho,
+    bench_nqueens_chirho,
 );
 
 criterion_main!(benches_chirho);

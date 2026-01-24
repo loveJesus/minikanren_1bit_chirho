@@ -53,6 +53,7 @@ pub mod unify_matrix_chirho;
 pub mod simd_chirho;
 pub mod diff_semiring_chirho;
 pub mod sudoku_chirho;
+pub mod nqueens_chirho;
 
 // Goal-as-AST (feature-gated: introspection vs raw speed)
 #[cfg(feature = "goal_ast_chirho")]
@@ -147,3 +148,6 @@ pub use optics_hw_chirho::{DomainHwChirho, PrismHwChirho, LensHwChirho, StateHwC
 
 // Sudoku solver (practical 1-bit domain demo)
 pub use sudoku_chirho::{SudokuSolverChirho, puzzles_chirho};
+
+// N-Queens solver (scales to 64×64)
+pub use nqueens_chirho::{NQueensSolverChirho, KNOWN_SOLUTIONS_CHIRHO};
