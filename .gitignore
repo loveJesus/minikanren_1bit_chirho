@@ -16,3 +16,5 @@ clash_chirho/*.hi
 clash_chirho/*.o
 clash_chirho/verilog/
 rust_chirho/target/
+rust_chirho/pkg/
+rust_chirho/web_chirho/pkg_chirho/

@@ -28,6 +28,11 @@ bytemuck = { version = "1.14", features = ["derive"], optional = true }
 # Symbolic computation (optional, for expression simplification)
 # symbolic_expressions = "5"
 
+# WebAssembly bindings (optional)
+wasm-bindgen = { version = "0.2", optional = true }
+js-sys = { version = "0.3", optional = true }
+getrandom = { version = "0.2", features = ["js"], optional = true }
+
 [dev-dependencies]
 # For benchmarking on stable
 criterion = "0.5"
@@ -90,3 +95,9 @@ linear_chirho = []
 
 # All category-theoretic extensions
 kmett_chirho = ["optics_chirho", "free_goal_chirho", "comonad_chirho", "linear_chirho"]
+
+# WebAssembly support (enables JavaScript bindings)
+wasm_chirho = ["wasm-bindgen", "js-sys", "getrandom"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]

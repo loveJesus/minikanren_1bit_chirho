@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>miniKanren WASM Demo</title>
+    <style>
+        :root {
+            --bg-chirho: #0a0a0f;
+            --fg-chirho: #e0e0e0;
+            --accent-chirho: #4a9eff;
+            --success-chirho: #4aff9e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--bg-chirho);
+            color: var(--fg-chirho);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        h1 { color: var(--accent-chirho); margin-bottom: 0.5rem; }
+        .subtitle { color: #888; margin-bottom: 2rem; font-size: 0.9rem; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .panel {
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .panel h2 { color: var(--accent-chirho); font-size: 1rem; margin-bottom: 1rem; }
+        input, button, textarea {
+            font-family: inherit;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid #2a2a3a;
+            background: #1a1a2a;
+            color: var(--fg-chirho);
+        }
+        button {
+            background: var(--accent-chirho);
+            color: #000;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover { opacity: 0.9; }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #0a0a10;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+        }
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 32px);
+            gap: 2px;
+            margin-bottom: 1rem;
+        }
+        .sudoku-grid input {
+            width: 32px;
+            height: 32px;
+            text-align: center;
+            padding: 0;
+            font-size: 1rem;
+        }
+        .sudoku-grid input:nth-child(3n) { margin-right: 4px; }
+        .sudoku-grid input:nth-child(n+19):nth-child(-n+27),
+        .sudoku-grid input:nth-child(n+46):nth-child(-n+54) { margin-bottom: 4px; }
+        .nqueens-board {
+            display: grid;
+            gap: 1px;
+            background: #2a2a3a;
+            width: fit-content;
+            margin-bottom: 1rem;
+        }
+        .nqueens-cell {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .nqueens-light { background: #e0e0d0; }
+        .nqueens-dark { background: #5a8a5a; }
+        .stats { color: #888; font-size: 0.8rem; margin-top: 0.5rem; }
+        .success { color: var(--success-chirho); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>miniKanren 1-Bit Matrix Operations</h1>
+        <p class="subtitle">WebAssembly Demo - Rust solvers running in your browser</p>
+
+        <!-- Sudoku Panel -->
+        <div class="panel">
+            <h2>Sudoku Solver</h2>
+            <div class="sudoku-grid" id="sudoku-grid"></div>
+            <button onclick="loadEasy()">Load Easy</button>
+            <button onclick="loadHard()">Load Hard</button>
+            <button onclick="loadEscargot()">Load Escargot</button>
+            <button onclick="solveSudoku()" style="background: var(--success-chirho);">Solve</button>
+            <button onclick="clearSudoku()">Clear</button>
+            <div class="result" id="sudoku-result"></div>
+        </div>
+
+        <!-- N-Queens Panel -->
+        <div class="panel">
+            <h2>N-Queens Solver</h2>
+            <label>
+                Board size: <input type="number" id="nqueens-n" value="8" min="1" max="20" style="width: 60px;">
+            </label>
+            <button onclick="solveNQueens()">Find One Solution</button>
+            <button onclick="countNQueens()">Count All Solutions</button>
+            <div id="nqueens-board"></div>
+            <div class="result" id="nqueens-result"></div>
+        </div>
+
+        <!-- Version Info -->
+        <div class="panel">
+            <h2>Library Info</h2>
+            <div id="version-info">Loading WASM module...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import init, {
+            version_chirho,
+            solve_sudoku_chirho,
+            solve_nqueens_chirho,
+            count_nqueens_chirho
+        } from './pkg_chirho/minikanren_1bit_chirho.js';
+
+        let wasmReady = false;
+
+        // Initialize WASM
+        async function initWasm() {
+            await init();
+            wasmReady = true;
+            const versionDiv = document.getElementById('version-info');
+            versionDiv.textContent = '';
+            const successSpan = document.createElement('span');
+            successSpan.className = 'success';
+            successSpan.textContent = 'WASM loaded! ';
+            versionDiv.appendChild(successSpan);
+            versionDiv.appendChild(document.createTextNode('Version: ' + version_chirho()));
+            createSudokuGrid();
+        }
+
+        // Sudoku grid
+        function createSudokuGrid() {
+            const grid = document.getElementById('sudoku-grid');
+            grid.textContent = '';
+            for (let i = 0; i < 81; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.id = 'cell-' + i;
+                input.addEventListener('input', (e) => {
+                    const v = e.target.value;
+                    if (!/^[1-9]?$/.test(v)) e.target.value = '';
+                });
+                grid.appendChild(input);
+            }
+        }
+
+        function loadPuzzle(puzzle) {
+            for (let i = 0; i < 81; i++) {
+                const cell = document.getElementById('cell-' + i);
+                const c = puzzle[i];
+                cell.value = (c === '0' || c === '.') ? '' : c;
+            }
+        }
+
+        window.loadEasy = () => loadPuzzle('530070000600195000098000060800060003400803001700020006060000280000419005000080079');
+        window.loadHard = () => loadPuzzle('000000010400000000020000000000050407008000300001090000300400200050100000000806000');
+        window.loadEscargot = () => loadPuzzle('100007090030020008009600500005300900010080002600004000300000010040000007007000300');
+
+        window.clearSudoku = () => {
+            for (let i = 0; i < 81; i++) {
+                document.getElementById('cell-' + i).value = '';
+            }
+            document.getElementById('sudoku-result').textContent = '';
+        };
+
+        window.solveSudoku = () => {
+            if (!wasmReady) return;
+
+            // Build puzzle string
+            let puzzle = '';
+            for (let i = 0; i < 81; i++) {
+                const v = document.getElementById('cell-' + i).value;
+                puzzle += v || '0';
+            }
+
+            const t0 = performance.now();
+            const solution = solve_sudoku_chirho(puzzle);
+            const dt = performance.now() - t0;
+
+            const resultDiv = document.getElementById('sudoku-result');
+            resultDiv.textContent = '';
+
+            if (solution && solution.length === 81) {
+                for (let i = 0; i < 81; i++) {
+                    document.getElementById('cell-' + i).value = solution[i];
+                }
+                const successSpan = document.createElement('span');
+                successSpan.className = 'success';
+                successSpan.textContent = 'Solved!';
+                resultDiv.appendChild(successSpan);
+                resultDiv.appendChild(document.createTextNode('\nTime: ' + dt.toFixed(2) + 'ms'));
+            } else {
+                resultDiv.textContent = 'No solution found';
+            }
+        };
+
+        // N-Queens
+        function drawBoard(n, solution) {
+            const board = document.getElementById('nqueens-board');
+            board.textContent = '';
+            board.style.gridTemplateColumns = 'repeat(' + n + ', 24px)';
+
+            for (let r = 0; r < n; r++) {
+                for (let c = 0; c < n; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'nqueens-cell ' + ((r + c) % 2 === 0 ? 'nqueens-light' : 'nqueens-dark');
+                    if (solution && solution[r] === c) {
+                        cell.textContent = '\u265B'; // Queen symbol
+                    }
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        window.solveNQueens = () => {
+            if (!wasmReady) return;
+            const n = parseInt(document.getElementById('nqueens-n').value) || 8;
+
+            const t0 = performance.now();
+            const solution = solve_nqueens_chirho(n);
+            const dt = performance.now() - t0;
+
+            const resultDiv = document.getElementById('nqueens-result');
+            resultDiv.textContent = '';
+
+            if (solution.length > 0) {
+                drawBoard(n, solution);
+                const successSpan = document.createElement('span');
+                successSpan.className = 'success';
+                successSpan.textContent = 'Solution found!';
+                resultDiv.appendChild(successSpan);
+                resultDiv.appendChild(document.createTextNode('\nColumns: [' + Array.from(solution).join(', ') + ']'));
+                resultDiv.appendChild(document.createTextNode('\nTime: ' + dt.toFixed(2) + 'ms'));
+            } else {
+                drawBoard(n, null);
+                resultDiv.textContent = 'No solution exists';
+            }
+        };
+
+        window.countNQueens = () => {
+            if (!wasmReady) return;
+            const n = parseInt(document.getElementById('nqueens-n').value) || 8;
+
+            const resultDiv = document.getElementById('nqueens-result');
+            resultDiv.textContent = 'Counting...';
+
+            // Use setTimeout to allow UI update
+            setTimeout(() => {
+                const t0 = performance.now();
+                const count = count_nqueens_chirho(n);
+                const dt = performance.now() - t0;
+
+                resultDiv.textContent = '';
+                const successSpan = document.createElement('span');
+                successSpan.className = 'success';
+                successSpan.textContent = 'Found ' + count + ' solutions';
+                resultDiv.appendChild(successSpan);
+                resultDiv.appendChild(document.createTextNode('\nTime: ' + dt.toFixed(2) + 'ms'));
+            }, 10);
+        };
+
+        // Initialize on load
+        initWasm();
+    </script>
+</body>
+</html>

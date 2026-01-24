@@ -54,6 +54,11 @@ pub mod simd_chirho;
 pub mod diff_semiring_chirho;
 pub mod sudoku_chirho;
 pub mod nqueens_chirho;
+pub mod jsonschema_chirho;
+
+// WebAssembly bindings (feature-gated)
+#[cfg(feature = "wasm_chirho")]
+pub mod wasm_chirho;
 
 // Goal-as-AST (feature-gated: introspection vs raw speed)
 #[cfg(feature = "goal_ast_chirho")]
@@ -151,3 +156,6 @@ pub use sudoku_chirho::{SudokuSolverChirho, puzzles_chirho};
 
 // N-Queens solver (scales to 64×64)
 pub use nqueens_chirho::{NQueensSolverChirho, KNOWN_SOLUTIONS_CHIRHO};
+
+// JSON Schema validator (1-bit type domains)
+pub use jsonschema_chirho::{JsonValueChirho, SchemaChirho, ValidatorChirho, ValidationErrorChirho, validate_chirho};
