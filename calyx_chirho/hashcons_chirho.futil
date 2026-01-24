@@ -1,0 +1,300 @@
+// Hardware Hash Consing Module ☧
+// Enables infinite domains via demand-driven term creation
+//
+// Architecture:
+//   Term Store (RAM): stores term structures
+//   CAM (Content-Addressable Memory): deduplication lookup
+//   Free Pointer: next available term ID
+//   Reference Counter: optional GC support
+
+import "primitives/core.futil";
+import "primitives/memories/seq.futil";
+
+// Term representation: (tag, left_child, right_child)
+// tag = 0: nil
+// tag = 1: symbol (left_child = symbol_id)
+// tag = 2: cons (left_child, right_child)
+// tag = 3: variable (left_child = var_id)
+
+component hashcons_chirho(
+  // Input command
+  cmd_chirho: 3,           // 0=nop, 1=intern, 2=lookup, 3=deref, 4=gc_dec
+  tag_chirho: 2,           // Term tag for intern
+  left_chirho: 16,         // Left child term ID
+  right_chirho: 16         // Right child term ID
+) -> (
+  result_id_chirho: 16,    // Result term ID
+  result_tag_chirho: 2,    // Tag of dereferenced term
+  result_left_chirho: 16,  // Left child of dereferenced term
+  result_right_chirho: 16, // Right child of dereferenced term
+  found_chirho: 1,         // 1 if term found in CAM
+  done_chirho: 1           // Operation complete
+) {
+  cells {
+    // Term store: up to 1024 terms
+    // Each term = (tag:2, left:16, right:16) = 34 bits, stored across multiple memories
+    @external term_tags_chirho = seq_mem_d1(2, 1024, 10);
+    @external term_lefts_chirho = seq_mem_d1(16, 1024, 10);
+    @external term_rights_chirho = seq_mem_d1(16, 1024, 10);
+
+    // Reference counts for garbage collection
+    @external ref_counts_chirho = seq_mem_d1(8, 1024, 10);
+
+    // CAM for deduplication (simplified: 64-entry direct-mapped)
+    // Real implementation would use larger set-associative CAM
+    @external cam_valid_chirho = seq_mem_d1(1, 64, 6);
+    @external cam_tags_chirho = seq_mem_d1(2, 64, 6);
+    @external cam_lefts_chirho = seq_mem_d1(16, 64, 6);
+    @external cam_rights_chirho = seq_mem_d1(16, 64, 6);
+    @external cam_ids_chirho = seq_mem_d1(16, 64, 6);
+
+    // Free pointer (next available term ID)
+    free_ptr_chirho = std_reg(16);
+
+    // Hash computation components
+    hash_reg_chirho = std_reg(6);
+    xor1_chirho = std_xor(16);
+    xor2_chirho = std_xor(16);
+    slice_chirho = std_slice(16, 6);
+
+    // Comparison components
+    eq_tag_chirho = std_eq(2);
+    eq_left_chirho = std_eq(16);
+    eq_right_chirho = std_eq(16);
+    and1_chirho = std_and(1);
+    and2_chirho = std_and(1);
+
+    // Result registers
+    res_id_chirho = std_reg(16);
+    res_tag_chirho = std_reg(2);
+    res_left_chirho = std_reg(16);
+    res_right_chirho = std_reg(16);
+    res_found_chirho = std_reg(1);
+
+    // Increment for ref counting and free pointer
+    add_one_chirho = std_add(16);
+    sub_one_chirho = std_sub(8);
+
+    // State machine
+    state_chirho = std_reg(4);
+
+    // Constants
+    const_zero_chirho = std_const(16, 0);
+    const_one_chirho = std_const(16, 1);
+    const_one_8_chirho = std_const(8, 1);
+  }
+
+  wires {
+    // Compute hash: hash = ((tag XOR left) XOR right) mod 64
+    group compute_hash_chirho {
+      // Extend tag to 16 bits and XOR with left
+      xor1_chirho.left = tag_chirho;
+      xor1_chirho.right = left_chirho;
+
+      // XOR result with right
+      xor2_chirho.left = xor1_chirho.out;
+      xor2_chirho.right = right_chirho;
+
+      // Take lower 6 bits as hash
+      slice_chirho.in = xor2_chirho.out;
+      hash_reg_chirho.in = slice_chirho.out;
+      hash_reg_chirho.write_en = 1'd1;
+      compute_hash_chirho[done] = hash_reg_chirho.done;
+    }
+
+    // CAM lookup: check if term exists at hash location
+    group cam_lookup_chirho {
+      cam_valid_chirho.addr0 = hash_reg_chirho.out;
+      cam_valid_chirho.content_en = 1'd1;
+      cam_tags_chirho.addr0 = hash_reg_chirho.out;
+      cam_tags_chirho.content_en = 1'd1;
+      cam_lefts_chirho.addr0 = hash_reg_chirho.out;
+      cam_lefts_chirho.content_en = 1'd1;
+      cam_rights_chirho.addr0 = hash_reg_chirho.out;
+      cam_rights_chirho.content_en = 1'd1;
+      cam_ids_chirho.addr0 = hash_reg_chirho.out;
+      cam_ids_chirho.content_en = 1'd1;
+      cam_lookup_chirho[done] = cam_ids_chirho.done;
+    }
+
+    // Check if CAM entry matches input term
+    group check_match_chirho {
+      eq_tag_chirho.left = cam_tags_chirho.read_data;
+      eq_tag_chirho.right = tag_chirho;
+
+      eq_left_chirho.left = cam_lefts_chirho.read_data;
+      eq_left_chirho.right = left_chirho;
+
+      eq_right_chirho.left = cam_rights_chirho.read_data;
+      eq_right_chirho.right = right_chirho;
+
+      // match = valid AND tag_eq AND left_eq AND right_eq
+      and1_chirho.left = eq_tag_chirho.out;
+      and1_chirho.right = eq_left_chirho.out;
+      and2_chirho.left = and1_chirho.out;
+      and2_chirho.right = eq_right_chirho.out;
+
+      // If valid and match, found = 1 and use existing ID
+      res_found_chirho.in = cam_valid_chirho.read_data ? and2_chirho.out : 1'd0;
+      res_found_chirho.write_en = 1'd1;
+      res_id_chirho.in = cam_ids_chirho.read_data;
+      res_id_chirho.write_en = 1'd1;
+      check_match_chirho[done] = res_found_chirho.done;
+    }
+
+    // Allocate new term: write to term store at free_ptr
+    group alloc_term_chirho {
+      term_tags_chirho.addr0 = free_ptr_chirho.out;
+      term_tags_chirho.content_en = 1'd1;
+      term_tags_chirho.write_en = 1'd1;
+      term_tags_chirho.write_data = tag_chirho;
+
+      term_lefts_chirho.addr0 = free_ptr_chirho.out;
+      term_lefts_chirho.content_en = 1'd1;
+      term_lefts_chirho.write_en = 1'd1;
+      term_lefts_chirho.write_data = left_chirho;
+
+      term_rights_chirho.addr0 = free_ptr_chirho.out;
+      term_rights_chirho.content_en = 1'd1;
+      term_rights_chirho.write_en = 1'd1;
+      term_rights_chirho.write_data = right_chirho;
+
+      // Initialize ref count to 1
+      ref_counts_chirho.addr0 = free_ptr_chirho.out;
+      ref_counts_chirho.content_en = 1'd1;
+      ref_counts_chirho.write_en = 1'd1;
+      ref_counts_chirho.write_data = const_one_8_chirho.out;
+
+      alloc_term_chirho[done] = ref_counts_chirho.done;
+    }
+
+    // Update CAM with new term
+    group update_cam_chirho {
+      cam_valid_chirho.addr0 = hash_reg_chirho.out;
+      cam_valid_chirho.content_en = 1'd1;
+      cam_valid_chirho.write_en = 1'd1;
+      cam_valid_chirho.write_data = 1'd1;
+
+      cam_tags_chirho.addr0 = hash_reg_chirho.out;
+      cam_tags_chirho.content_en = 1'd1;
+      cam_tags_chirho.write_en = 1'd1;
+      cam_tags_chirho.write_data = tag_chirho;
+
+      cam_lefts_chirho.addr0 = hash_reg_chirho.out;
+      cam_lefts_chirho.content_en = 1'd1;
+      cam_lefts_chirho.write_en = 1'd1;
+      cam_lefts_chirho.write_data = left_chirho;
+
+      cam_rights_chirho.addr0 = hash_reg_chirho.out;
+      cam_rights_chirho.content_en = 1'd1;
+      cam_rights_chirho.write_en = 1'd1;
+      cam_rights_chirho.write_data = right_chirho;
+
+      cam_ids_chirho.addr0 = hash_reg_chirho.out;
+      cam_ids_chirho.content_en = 1'd1;
+      cam_ids_chirho.write_en = 1'd1;
+      cam_ids_chirho.write_data = free_ptr_chirho.out;
+
+      update_cam_chirho[done] = cam_ids_chirho.done;
+    }
+
+    // Increment free pointer
+    group incr_free_ptr_chirho {
+      add_one_chirho.left = free_ptr_chirho.out;
+      add_one_chirho.right = const_one_chirho.out;
+      free_ptr_chirho.in = add_one_chirho.out;
+      free_ptr_chirho.write_en = 1'd1;
+      incr_free_ptr_chirho[done] = free_ptr_chirho.done;
+    }
+
+    // Set result to free_ptr (for new allocation)
+    group set_result_new_chirho {
+      res_id_chirho.in = free_ptr_chirho.out;
+      res_id_chirho.write_en = 1'd1;
+      res_found_chirho.in = 1'd0;
+      res_found_chirho.write_en = 1'd1;
+      set_result_new_chirho[done] = res_found_chirho.done;
+    }
+
+    // Dereference: read term from store
+    group deref_term_chirho {
+      term_tags_chirho.addr0 = left_chirho;  // term_id passed in left
+      term_tags_chirho.content_en = 1'd1;
+      term_lefts_chirho.addr0 = left_chirho;
+      term_lefts_chirho.content_en = 1'd1;
+      term_rights_chirho.addr0 = left_chirho;
+      term_rights_chirho.content_en = 1'd1;
+
+      res_tag_chirho.in = term_tags_chirho.read_data;
+      res_tag_chirho.write_en = 1'd1;
+      res_left_chirho.in = term_lefts_chirho.read_data;
+      res_left_chirho.write_en = 1'd1;
+      res_right_chirho.in = term_rights_chirho.read_data;
+      res_right_chirho.write_en = 1'd1;
+      deref_term_chirho[done] = res_right_chirho.done;
+    }
+
+    // Output wiring
+    result_id_chirho = res_id_chirho.out;
+    result_tag_chirho = res_tag_chirho.out;
+    result_left_chirho = res_left_chirho.out;
+    result_right_chirho = res_right_chirho.out;
+    found_chirho = res_found_chirho.out;
+  }
+
+  control {
+    // Command dispatch
+    // cmd = 1: intern (hash-cons a new term)
+    // cmd = 3: deref (read term from store)
+    if cmd_chirho {
+      seq {
+        // Intern command: hash-cons a term
+        par {
+          compute_hash_chirho;
+        }
+        cam_lookup_chirho;
+        check_match_chirho;
+        if res_found_chirho.out {
+          // Term already exists, return existing ID
+          // (result already set by check_match)
+        } else {
+          // New term: allocate and update CAM
+          seq {
+            set_result_new_chirho;
+            alloc_term_chirho;
+            update_cam_chirho;
+            incr_free_ptr_chirho;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Convenience component: intern a cons cell
+component intern_cons_chirho(
+  left_chirho: 16,
+  right_chirho: 16
+) -> (
+  result_chirho: 16,
+  done_chirho: 1
+) {
+  cells {
+    hc_chirho = hashcons_chirho();
+    const_cons_tag_chirho = std_const(2, 2);  // cons tag = 2
+    const_intern_cmd_chirho = std_const(3, 1); // intern command = 1
+  }
+  wires {
+    group do_intern_chirho {
+      hc_chirho.cmd_chirho = const_intern_cmd_chirho.out;
+      hc_chirho.tag_chirho = const_cons_tag_chirho.out;
+      hc_chirho.left_chirho = left_chirho;
+      hc_chirho.right_chirho = right_chirho;
+      do_intern_chirho[done] = hc_chirho.done_chirho;
+    }
+    result_chirho = hc_chirho.result_id_chirho;
+  }
+  control {
+    do_intern_chirho;
+  }
+}
