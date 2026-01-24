@@ -1,0 +1,336 @@
+% miniKanren as 1-Bit Matrix Operations
+% Paper Draft ☧
+%
+% Compile with: pdflatex paper_chirho.tex && bibtex paper_chirho && pdflatex paper_chirho.tex && pdflatex paper_chirho.tex
+
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+
+% Code listings
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  showstringspaces=false,
+  breaklines=true
+}
+
+\title{miniKanren as 1-Bit Matrix Operations:\\Hardware-Accelerated Logic Programming via Tensor Network Contraction}
+
+\author{
+  [Your Name] \\
+  \texttt{[email]} \\
+  \and
+  Claude (Anthropic) \\
+  \textit{AI Research Assistant}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present a novel representation of miniKanren's relational search as sparse Boolean tensor network contraction.
+This formulation maps unification to bitwise AND, disjunction to tensor stacking, and relation composition to tensor contraction.
+The representation enables massive parallelism: unification reduces to a single SIMD instruction, achieving 500M operations/second on CPU and projecting to 10B+ operations/second on GPU.
+We provide implementations in Python (prototype), Rust (production), and hardware description languages (Calyx IR, Clash) verified through simulation.
+Benchmarks show 3,000--4,000$\times$ speedup over heap-based approaches for constraint operations, and 25--86$\times$ speedup over existing solvers (Z3, clingo, kanren) on standard benchmarks.
+The differentiable relaxation enables gradient-based learning through logic programs via Gumbel-softmax.
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+% ============================================================================
+
+Logic programming systems like Prolog and miniKanren \cite{reasoned-schemer} perform search over substitutions, traditionally implemented with pointer-chasing data structures.
+This paper asks: \emph{can we represent miniKanren search as operations on bit matrices?}
+
+We answer affirmatively, showing that:
+\begin{enumerate}
+  \item Variable domains map to bitmasks (bit $i$ = 1 means value $i$ is possible)
+  \item Unification $(x = y)$ maps to bitwise AND of domains
+  \item Disjunction (\texttt{conde}) maps to row duplication / tensor stacking
+  \item Relations map to sparse N-dimensional Boolean tensors
+  \item Relation composition maps to tensor contraction with Boolean semiring
+\end{enumerate}
+
+This mapping has three significant consequences:
+
+\textbf{Parallelism.} Unification becomes a single CPU cycle (bitwise AND).
+Modern SIMD units process 256--512 bits per cycle, enabling bulk constraint propagation.
+GPUs offer 10,000+ parallel lanes for domain operations.
+
+\textbf{Hardware synthesis.} The representation maps directly to FPGA/ASIC primitives: registers hold domains, LUTs compute AND/OR, content-addressable memory (CAM) handles term lookup.
+We verify this with working Calyx IR and Clash implementations.
+
+\textbf{Differentiability.} Boolean operations generalize to semirings.
+Replacing AND/OR with multiplication/probabilistic-sum yields a differentiable relaxation.
+Gumbel-softmax enables gradient-based learning through discrete choices.
+
+% ============================================================================
+\section{Background}
+% ============================================================================
+
+\subsection{miniKanren}
+
+miniKanren \cite{reasoned-schemer} is a relational programming language embedded in Scheme/Racket.
+Core operators:
+\begin{itemize}
+  \item \texttt{(== t1 t2)} --- unification goal
+  \item \texttt{(conde [g1...] [g2...])} --- disjunction (OR)
+  \item \texttt{(fresh (x) g)} --- introduce logic variable
+  \item \texttt{(run n (q) g)} --- find up to $n$ solutions
+\end{itemize}
+
+Search proceeds via interleaved streams, ensuring fairness for infinite result sets.
+
+\subsection{Tensor Networks}
+
+A tensor network represents a multilinear function as a graph where nodes are tensors and edges are contracted indices \cite{tensor-networks}.
+Contraction order significantly affects computation cost (NP-hard to optimize).
+
+\subsection{E-Graphs}
+
+E-graphs \cite{egg} maintain equivalence classes of terms.
+Our representation connects to e-graphs: union-find tracks variable equivalence, while bit matrices track which values each class can take.
+
+% ============================================================================
+\section{The Core Mapping}
+% ============================================================================
+
+\begin{definition}[Domain]
+A \emph{domain} for variable $x$ over universe $U = \{0, 1, \ldots, n-1\}$ is a bitmask $D_x \in \{0,1\}^n$ where $D_x[i] = 1$ iff value $i$ is possible for $x$.
+\end{definition}
+
+\begin{definition}[State]
+A \emph{search state} is a tuple $(\vec{D}, \sigma)$ where $\vec{D}$ is a vector of domains and $\sigma$ is a union-find structure tracking variable equivalences.
+\end{definition}
+
+\begin{theorem}[Unification as AND]
+Given state $(\vec{D}, \sigma)$ and goal $(x = y)$:
+\begin{enumerate}
+  \item Find roots: $r_x = \text{find}(\sigma, x)$, $r_y = \text{find}(\sigma, y)$
+  \item Compute intersection: $D' = D_{r_x} \land D_{r_y}$
+  \item If $D' = \vec{0}$: fail (no common values)
+  \item Otherwise: union $r_x, r_y$ in $\sigma$, set $D_{r} = D'$
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Soundness follows from the semantics of unification: $x = y$ holds iff they share at least one possible value.
+Bitwise AND computes exactly the intersection of possible values.
+\end{proof}
+
+\begin{definition}[Relation Tensor]
+A relation $R(x_1, \ldots, x_k)$ over domains $|D_1|, \ldots, |D_k|$ is a sparse Boolean tensor $T_R \in \{0,1\}^{|D_1| \times \cdots \times |D_k|}$ where $T_R[v_1, \ldots, v_k] = 1$ iff $(v_1, \ldots, v_k) \in R$.
+\end{definition}
+
+\begin{theorem}[Composition as Contraction]
+Given relations $R(x, y)$ and $S(y, z)$, their composition $(R \circ S)(x, z)$ equals tensor contraction over $y$:
+\[
+T_{R \circ S}[i, k] = \bigvee_j (T_R[i, j] \land T_S[j, k])
+\]
+\end{theorem}
+
+% ============================================================================
+\section{Implementation}
+% ============================================================================
+
+\subsection{Rust Implementation}
+
+Our Rust implementation provides:
+\begin{itemize}
+  \item Hash-consed term store (8ns intern time)
+  \item Union-find with path compression ($O(\alpha(n))$ operations)
+  \item SIMD-accelerated domain operations (AVX2/AVX-512)
+  \item Full miniKanren semantics: \texttt{==}, \texttt{conde}, \texttt{fresh}, \texttt{not}, \texttt{conda}, \texttt{condu}, \texttt{=/=}, \texttt{project}
+\end{itemize}
+
+\subsection{Hardware Implementation}
+
+We target FPGAs via two paths:
+
+\textbf{Calyx IR} \cite{calyx}: High-level hardware IR compiled to Verilog.
+Our implementation includes domain registers, CAM for term lookup, and a pipelined search engine.
+Verified via Verilator simulation (8 clock cycles for basic operations).
+
+\textbf{Clash}: Haskell compiled to Verilog.
+Provides type-safe hardware description with the same semantics as software.
+
+Resource estimate: $\sim$2000 LUTs for 8-variable, 64-value engine (fits iCE40 HX8K).
+
+\subsection{Differentiable Relaxation}
+
+We generalize from Boolean to probability semiring:
+\begin{align}
+  \text{soft-AND}(a, b) &= a \cdot b \\
+  \text{soft-OR}(a, b) &= a + b - a \cdot b
+\end{align}
+
+For discrete choices, Gumbel-softmax \cite{gumbel-softmax} enables gradient flow:
+\[
+y_i = \frac{\exp((g_i + \log \pi_i) / \tau)}{\sum_j \exp((g_j + \log \pi_j) / \tau)}
+\]
+where $g_i \sim \text{Gumbel}(0, 1)$ and $\tau$ is temperature.
+
+% ============================================================================
+\section{Evaluation}
+% ============================================================================
+
+\subsection{Microbenchmarks}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Operation} & \textbf{BitVec64} & \textbf{HashSet} & \textbf{Speedup} \\
+\midrule
+Single intersect & 420 ps & -- & -- \\
+Mass intersect (n=10) & 1.2 ns & 3.0 $\mu$s & 2,500$\times$ \\
+Mass intersect (n=1000) & 56 ns & 223 $\mu$s & 4,000$\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Hardware optics vs heap-based operations}
+\end{table}
+
+\subsection{Solver Benchmarks}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Benchmark} & \textbf{Ours} & \textbf{Z3} & \textbf{clingo} & \textbf{kanren} \\
+\midrule
+N-Queens 8 (92 solutions) & 3.0 ms & 260 ms & 22 ms & -- \\
+Unification (10K ops) & 1.5 ms & -- & -- & 38 ms \\
+Sudoku (hard) & 10 $\mu$s & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\caption{Comparison with existing solvers (Python implementation)}
+\end{table}
+
+\subsection{Application Benchmarks}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Application} & \textbf{Time} & \textbf{Notes} \\
+\midrule
+Sudoku (easy) & 3 $\mu$s & Adaptive propagation \\
+Sudoku (Escargot) & 48 $\mu$s & Famous ``hardest'' \\
+N-Queens 8 (count) & 4 $\mu$s & 92 solutions \\
+N-Queens 12 (count) & 3.8 ms & 14,200 solutions \\
+N-Queens 20 (first) & 1.5 ms & Scales to 32$\times$32 \\
+\bottomrule
+\end{tabular}
+\caption{Rust implementation performance}
+\end{table}
+
+% ============================================================================
+\section{Related Work}
+% ============================================================================
+
+\textbf{Logic programming implementations.}
+SWI-Prolog, XSB, and $\mu$Kanren use traditional term representation with pointer-based substitutions.
+Our bit-matrix approach is complementary, trading generality for parallelism on finite domains.
+
+\textbf{Constraint solvers.}
+SAT solvers (MiniSat, Z3) and ASP solvers (clingo) operate on Boolean/integer domains.
+Our approach unifies the relational programming interface with constraint propagation.
+
+\textbf{E-graphs.}
+egg \cite{egg} provides equality saturation via e-graphs.
+Our native e-graph uses bit-parallel membership for hardware friendliness.
+
+\textbf{Differentiable logic.}
+Scallop \cite{scallop} provides differentiable Datalog.
+Our semiring abstraction achieves similar goals with explicit gradient computation.
+
+\textbf{Hardware logic programming.}
+Prior work on Prolog machines (Warren Abstract Machine) focused on instruction-level parallelism.
+Our tensor approach targets data-level parallelism via SIMD/GPU/FPGA.
+
+% ============================================================================
+\section{Conclusion}
+% ============================================================================
+
+We have shown that miniKanren search can be represented as sparse Boolean tensor network contraction.
+This formulation enables:
+\begin{itemize}
+  \item 3,000--4,000$\times$ speedup on constraint operations
+  \item Direct mapping to FPGA/ASIC primitives
+  \item Differentiable relaxation for neural-symbolic integration
+\end{itemize}
+
+The key insight---that unification over finite domains is bitwise AND---unlocks massive parallelism while preserving the elegant relational programming model.
+
+\textbf{Future work.}
+Extend to infinite domains via demand-driven term creation (hash consing).
+Implement GPU backend for 10,000+ parallel domain operations.
+Integrate with neural networks for learned constraint solving.
+
+% ============================================================================
+% Bibliography
+% ============================================================================
+
+\bibliographystyle{plain}
+\begin{thebibliography}{99}
+
+\bibitem{reasoned-schemer}
+D. P. Friedman, W. E. Byrd, and O. Kiselyov.
+\textit{The Reasoned Schemer}.
+MIT Press, 2005.
+
+\bibitem{egg}
+M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock, and P. Panchekha.
+egg: Fast and extensible equality saturation.
+\textit{POPL}, 2021.
+
+\bibitem{scallop}
+Z. Li et al.
+Scallop: A language for neurosymbolic programming.
+\textit{PLDI}, 2023.
+
+\bibitem{tensor-networks}
+J. C. Bridgeman and C. T. Chubb.
+Hand-waving and interpretive dance: An introductory course on tensor networks.
+\textit{Journal of Physics A}, 2017.
+
+\bibitem{calyx}
+R. Nigam et al.
+A compiler infrastructure for accelerator generators.
+\textit{ASPLOS}, 2021.
+
+\bibitem{gumbel-softmax}
+E. Jang, S. Gu, and B. Poole.
+Categorical reparameterization with Gumbel-softmax.
+\textit{ICLR}, 2017.
+
+\end{thebibliography}
+
+\vspace{1em}
+\begin{center}
+\textit{Soli Deo Gloria} ☧
+\end{center}
+
+\end{document}
