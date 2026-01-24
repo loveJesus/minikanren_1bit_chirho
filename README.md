@@ -190,15 +190,30 @@ clash --verilog MiniKanrenChirho.hs
 
 ```
 minikanren_1bit_chirho/
-├── *.py                        # 19 Python files (~10K lines)
-├── rust_chirho/                # Rust implementation (150+ tests)
-│   └── web_chirho/             # WebGPU + Sudoku + WASM demos
-├── calyx_chirho/               # Calyx IR for FPGA synthesis
-├── clash_chirho/               # Clash/Haskell for FPGA
-├── examples_chirho/            # Sudoku, type inference (Python)
-├── benchmarks_chirho/          # Performance comparisons
-└── spec_chirho/findings_chirho/  # Research documentation
+│
+├── *.py                           # Python prototype (19 files, ~10K lines)
+│                                  # Each file proves a key insight
+│
+├── rust_chirho/                   # Production Rust implementation
+│   ├── src/                       #   Core library (150+ tests)
+│   ├── examples/                  #   type_infer, synthesis, zebra, etc.
+│   └── web_chirho/                #   WASM demos (Sudoku, N-Queens)
+│
+├── calyx_chirho/                  # FPGA via Calyx IR → Verilog
+│   └── *.futil                    #   domain, cam, search_engine
+│
+├── clash_chirho/                  # FPGA via Clash (Haskell → Verilog)
+│   └── *.hs                       #   MiniKanrenChirho, HashConsChirho
+│
+├── examples_chirho/               # Python examples
+├── benchmarks_chirho/             # Performance comparisons
+└── spec_chirho/findings_chirho/   # Research documentation
 ```
+
+**Three implementations, same algorithm:**
+- **Python**: Prototyping, proves concepts work
+- **Rust**: Production speed (100× faster), WASM for browsers
+- **FPGA**: Hardware acceleration (Calyx + Clash both verified)
 
 ## Python Implementation (19 files)
 
