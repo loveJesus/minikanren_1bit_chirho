@@ -99,8 +99,9 @@ result = compute(input)  # Missing _chirho
 | `constraint_chirho.rs` | AC-3 arc consistency | ✅ |
 | `tabling_chirho.rs` | SLG-style memoization | ✅ |
 | `semiring_chirho.rs` | Bool/Prob/Tropical/Count/Log | ✅ |
+| `hardware_chirho.rs` | FPGA primitives (BitVec64, CAM, parallel ops) | ✅ |
 
-**33 tests passing.** Run with: `cd rust_chirho && cargo test`
+**39 tests passing.** Run with: `cd rust_chirho && cargo test`
 
 Example: `cargo run --example appendo_chirho`
 
@@ -108,8 +109,9 @@ Example: `cargo run --example appendo_chirho`
 
 ```
 Phase 1: ✅ COMPLETE - Python prototype (19 files, ~10k lines)
-Phase 2: ✅ COMPLETE - Rust implementation (11 modules, 33 tests)
-Phase 3: PLANNED - Hardware (FPGA via Clash/Calyx)
+Phase 2: ✅ COMPLETE - Rust implementation (12 modules, 39 tests)
+Phase 3: 🚧 IN PROGRESS - Hardware primitives (BitVec64, CAM, parallel unify)
+Phase 4: PLANNED - FPGA synthesis via Clash/Calyx
 ```
 
 ## References

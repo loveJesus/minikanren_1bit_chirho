@@ -17,6 +17,7 @@
 //! - `constraint_chirho`: Arc consistency constraint propagation
 //! - `tabling_chirho`: SLG-style memoization for recursion
 //! - `semiring_chirho`: Semiring abstraction (Bool, Prob, Tropical, Count)
+//! - `hardware_chirho`: FPGA/ASIC-oriented primitives (BitVec64, CAM, parallel ops)
 
 pub mod terms_chirho;
 pub mod union_find_chirho;
@@ -29,6 +30,7 @@ pub mod goals_chirho;
 pub mod constraint_chirho;
 pub mod tabling_chirho;
 pub mod semiring_chirho;
+pub mod hardware_chirho;
 
 // Re-export key types (avoiding ambiguous globs)
 pub use terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};
@@ -39,3 +41,4 @@ pub use goals_chirho::{GoalFnChirho, eq_chirho, conj_chirho, disj_chirho, conde_
 pub use constraint_chirho::{DomainChirho, ConstraintStoreChirho, BinaryConstraintChirho};
 pub use tabling_chirho::{TableStoreChirho, CallPatternChirho, LookupResultChirho};
 pub use semiring_chirho::{SemiringChirho, BoolSemiringChirho, ProbSemiringChirho, TropicalSemiringChirho, CountSemiringChirho, LogSemiringChirho, WeightedMatrixChirho};
+pub use hardware_chirho::{BitVec64Chirho, SearchStateHwChirho, CamHwChirho, UnifyUnitHwChirho};
