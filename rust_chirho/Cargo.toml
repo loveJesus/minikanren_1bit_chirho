@@ -26,6 +26,10 @@ harness = false
 name = "packed_bench_chirho"
 harness = false
 
+[[bench]]
+name = "goal_bench_chirho"
+harness = false
+
 [features]
 default = ["egraph_native_chirho"]
 # Use external egg crate (general purpose, more features)
