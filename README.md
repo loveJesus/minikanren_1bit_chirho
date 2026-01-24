@@ -107,12 +107,24 @@ The 1-bit matrix representation is ideal for parallel hardware:
 
 ```bash
 cd rust_chirho
-cargo test              # Run 140 tests (128 lib + 12 proptest)
+cargo test              # Run 150+ tests (139 lib + 12 proptest)
 cargo bench             # Run benchmarks
 cargo run --example appendo_chirho
+cargo run --example graph_color_chirho   # Graph coloring CSP
+cargo run --example zebra_chirho         # Einstein's riddle
 ```
 
 **Features:** SIMD (AVX2), arena allocation, zero-copy, no_std compatible
+
+### WebAssembly
+
+```bash
+cd rust_chirho
+wasm-pack build --target web --features wasm_chirho
+# Open web_chirho/wasm_demo_chirho.html in browser
+```
+
+**Includes:** Sudoku solver, N-Queens solver running in browser
 
 ### Python (Prototype)
 
@@ -159,8 +171,8 @@ clash --verilog MiniKanrenChirho.hs
 ```
 minikanren_1bit_chirho/
 ├── *.py                        # 19 Python files (~10K lines)
-├── rust_chirho/                # Rust implementation (140 tests)
-│   └── web_chirho/             # WebGPU + Sudoku demos
+├── rust_chirho/                # Rust implementation (150+ tests)
+│   └── web_chirho/             # WebGPU + Sudoku + WASM demos
 ├── calyx_chirho/               # Calyx IR for FPGA synthesis
 ├── clash_chirho/               # Clash/Haskell for FPGA
 ├── examples_chirho/            # Sudoku, type inference (Python)
@@ -208,6 +220,10 @@ minikanren_1bit_chirho/
 | `hardware_chirho.rs` | FPGA primitives (BitVec64, CAM) |
 | `optics_hw_chirho.rs` | **Hardware optics (3000× faster)** |
 | `diff_semiring_chirho.rs` | Differentiable logic with gradients |
+| `sudoku_chirho.rs` | Sudoku solver (9-bit domains) |
+| `nqueens_chirho.rs` | N-Queens solver (64-bit domains) |
+| `jsonschema_chirho.rs` | JSON Schema validator (6-bit type domains) |
+| `wasm_chirho.rs` | WebAssembly bindings (feature-gated) |
 
 ### Category-Theoretic Extensions (Feature-Gated)
 
@@ -219,7 +235,7 @@ minikanren_1bit_chirho/
 | `linear_chirho.rs` | `linear_chirho` | Tensor/Par (linear logic) | ❌ Heap |
 | `optics_hw_chirho.rs` | (always on) | **BitVec64 optics** | ✅ FPGA |
 
-**140 tests passing** (128 lib + 12 proptest). Features: SIMD (AVX2), arena allocation, zero-copy.
+**150+ tests passing** (139 lib + 12 proptest). Features: SIMD (AVX2), arena allocation, zero-copy, WASM.
 
 ## Hardware Targets
 
