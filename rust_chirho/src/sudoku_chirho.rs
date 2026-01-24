@@ -219,20 +219,23 @@ impl SudokuSolverChirho {
         }
     }
 
+    /// Set a cell to a specific value (1-9) without propagation
+    /// Returns false if this leads to immediate contradiction
+    #[inline]
+    fn set_value_raw_chirho(&mut self, idx_chirho: usize, val_chirho: u8) -> bool {
+        let domain_chirho = value_to_domain_chirho(val_chirho);
+        self.domains_chirho[idx_chirho] &= domain_chirho;
+        self.domains_chirho[idx_chirho] != EMPTY_DOMAIN_CHIRHO
+    }
+
     /// Set a cell to a specific value (1-9) and propagate constraints
     /// Returns false if this leads to a contradiction
     #[inline]
     pub fn set_value_chirho(&mut self, idx_chirho: usize, val_chirho: u8) -> bool {
-        let domain_chirho = value_to_domain_chirho(val_chirho);
-
-        // Intersect with current domain (unification!)
-        self.domains_chirho[idx_chirho] &= domain_chirho;
-
-        if self.domains_chirho[idx_chirho] == EMPTY_DOMAIN_CHIRHO {
+        if !self.set_value_raw_chirho(idx_chirho, val_chirho) {
             return false;
         }
-
-        self.propagate_chirho()
+        self.propagate_basic_chirho()
     }
 
     /// Naked singles: propagate singleton domains to peers
@@ -558,10 +561,10 @@ impl SudokuSolverChirho {
         false
     }
 
-    /// Adaptive solve: starts fast, escalates to full propagation if stuck
-    /// Best general-purpose solver
+    /// Adaptive solve: uses basic propagation for easy puzzles,
+    /// escalates to full propagation only when needed
     pub fn solve_adaptive_chirho(&mut self) -> bool {
-        // First try fast solve with basic propagation
+        // First try basic propagation
         if !self.propagate_basic_chirho() {
             return false;
         }
@@ -575,17 +578,29 @@ impl SudokuSolverChirho {
             .filter(|&&d_chirho| !is_singleton_chirho(d_chirho))
             .count();
 
-        // If many cells remain, try advanced propagation before searching
-        if unsolved_chirho > 30 {
+        // If many cells remain after basic propagation, puzzle is hard
+        // Use advanced propagation to reduce search space
+        if unsolved_chirho > 15 {
             if !self.propagate_chirho() {
                 return false;
             }
             if self.is_solved_chirho() {
                 return true;
             }
+            // After advanced propagation, continue with full solve
+            return self.solve_after_propagation_chirho();
         }
 
-        // Search with adaptive recursion
+        // Few cells remain - basic propagation is enough, just search
+        self.solve_after_propagation_chirho()
+    }
+
+    /// Internal: solve after propagation is complete
+    fn solve_after_propagation_chirho(&mut self) -> bool {
+        if self.is_solved_chirho() {
+            return true;
+        }
+
         let branch_idx_chirho = match self.find_branch_cell_chirho() {
             Some(idx_chirho) => idx_chirho,
             None => return self.is_solved_chirho(),
