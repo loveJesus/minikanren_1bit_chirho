@@ -1,0 +1,321 @@
+// Domain Operations for miniKanren ☧
+// Calyx IR for FPGA synthesis
+//
+// A domain is a 64-bit bitmask where bit i=1 means value i is possible.
+// Unification = AND of domains
+// Disjunction = OR of domains
+
+import "primitives/core.futil";
+import "primitives/binary_operators.futil";
+
+// Domain register: holds a 64-bit bitmask
+component domain_reg_chirho() -> () {
+  cells {
+    // 64-bit register for the domain bitmask
+    reg_chirho = std_reg(64);
+
+    // Constant for full domain (all 1s)
+    full_chirho = std_const(64, 18446744073709551615);
+
+    // Constant for empty domain (all 0s)
+    empty_chirho = std_const(64, 0);
+  }
+
+  wires {
+    // Output the current domain value
+    group read_chirho {
+      read_chirho[done] = reg_chirho.done;
+    }
+
+    // Initialize to full domain
+    group init_full_chirho {
+      reg_chirho.in = full_chirho.out;
+      reg_chirho.write_en = 1'd1;
+      init_full_chirho[done] = reg_chirho.done;
+    }
+
+    // Clear to empty domain
+    group clear_chirho {
+      reg_chirho.in = empty_chirho.out;
+      reg_chirho.write_en = 1'd1;
+      clear_chirho[done] = reg_chirho.done;
+    }
+  }
+
+  control {
+    seq {
+      init_full_chirho;
+    }
+  }
+}
+
+// Unification unit: AND two domains together
+// This is the core operation: domain1 ∩ domain2
+component unify_unit_chirho() -> () {
+  cells {
+    // Two input domain registers
+    domain1_chirho = std_reg(64);
+    domain2_chirho = std_reg(64);
+
+    // Result register
+    result_chirho = std_reg(64);
+
+    // AND gate (64-bit parallel)
+    and_gate_chirho = std_and(64);
+
+    // Zero comparator for failure detection
+    zero_chirho = std_const(64, 0);
+    eq_chirho = std_eq(64);
+
+    // Failure flag
+    failed_chirho = std_reg(1);
+  }
+
+  wires {
+    // Compute domain1 AND domain2
+    group compute_and_chirho {
+      and_gate_chirho.left = domain1_chirho.out;
+      and_gate_chirho.right = domain2_chirho.out;
+      result_chirho.in = and_gate_chirho.out;
+      result_chirho.write_en = 1'd1;
+      compute_and_chirho[done] = result_chirho.done;
+    }
+
+    // Check if result is zero (failure)
+    group check_failure_chirho {
+      eq_chirho.left = result_chirho.out;
+      eq_chirho.right = zero_chirho.out;
+      failed_chirho.in = eq_chirho.out;
+      failed_chirho.write_en = 1'd1;
+      check_failure_chirho[done] = failed_chirho.done;
+    }
+
+    // Load domain1
+    group load_domain1_chirho<"promotable"=1> {
+      domain1_chirho.write_en = 1'd1;
+      load_domain1_chirho[done] = domain1_chirho.done;
+    }
+
+    // Load domain2
+    group load_domain2_chirho<"promotable"=1> {
+      domain2_chirho.write_en = 1'd1;
+      load_domain2_chirho[done] = domain2_chirho.done;
+    }
+  }
+
+  control {
+    seq {
+      par {
+        load_domain1_chirho;
+        load_domain2_chirho;
+      }
+      compute_and_chirho;
+      check_failure_chirho;
+    }
+  }
+}
+
+// Disjunction unit: OR two domains (for conde)
+component disj_unit_chirho() -> () {
+  cells {
+    domain1_chirho = std_reg(64);
+    domain2_chirho = std_reg(64);
+    result_chirho = std_reg(64);
+    or_gate_chirho = std_or(64);
+  }
+
+  wires {
+    group compute_or_chirho {
+      or_gate_chirho.left = domain1_chirho.out;
+      or_gate_chirho.right = domain2_chirho.out;
+      result_chirho.in = or_gate_chirho.out;
+      result_chirho.write_en = 1'd1;
+      compute_or_chirho[done] = result_chirho.done;
+    }
+  }
+
+  control {
+    compute_or_chirho;
+  }
+}
+
+// Singleton checker: is exactly one bit set?
+// Used to check if variable is bound to single value
+component singleton_check_chirho() -> () {
+  cells {
+    domain_chirho = std_reg(64);
+
+    // x & (x-1) == 0 means singleton (or zero)
+    // Also need x != 0
+    sub_one_chirho = std_sub(64);
+    one_chirho = std_const(64, 1);
+    and_chirho = std_and(64);
+    zero_chirho = std_const(64, 0);
+    eq_zero_chirho = std_eq(64);
+    neq_zero_chirho = std_neq(64);
+
+    // Final result
+    is_singleton_chirho = std_reg(1);
+
+    // Temp registers
+    x_minus_1_chirho = std_reg(64);
+    and_result_chirho = std_reg(64);
+    is_power_of_2_chirho = std_reg(1);
+    is_nonzero_chirho = std_reg(1);
+
+    // Final AND for result
+    final_and_chirho = std_and(1);
+  }
+
+  wires {
+    // Compute x - 1
+    group compute_sub_chirho {
+      sub_one_chirho.left = domain_chirho.out;
+      sub_one_chirho.right = one_chirho.out;
+      x_minus_1_chirho.in = sub_one_chirho.out;
+      x_minus_1_chirho.write_en = 1'd1;
+      compute_sub_chirho[done] = x_minus_1_chirho.done;
+    }
+
+    // Compute x & (x-1)
+    group compute_and_chirho {
+      and_chirho.left = domain_chirho.out;
+      and_chirho.right = x_minus_1_chirho.out;
+      and_result_chirho.in = and_chirho.out;
+      and_result_chirho.write_en = 1'd1;
+      compute_and_chirho[done] = and_result_chirho.done;
+    }
+
+    // Check if x & (x-1) == 0
+    group check_power2_chirho {
+      eq_zero_chirho.left = and_result_chirho.out;
+      eq_zero_chirho.right = zero_chirho.out;
+      is_power_of_2_chirho.in = eq_zero_chirho.out;
+      is_power_of_2_chirho.write_en = 1'd1;
+      check_power2_chirho[done] = is_power_of_2_chirho.done;
+    }
+
+    // Check if x != 0
+    group check_nonzero_chirho {
+      neq_zero_chirho.left = domain_chirho.out;
+      neq_zero_chirho.right = zero_chirho.out;
+      is_nonzero_chirho.in = neq_zero_chirho.out;
+      is_nonzero_chirho.write_en = 1'd1;
+      check_nonzero_chirho[done] = is_nonzero_chirho.done;
+    }
+
+    // Final: is_singleton = is_power_of_2 AND is_nonzero
+    group final_check_chirho {
+      final_and_chirho.left = is_power_of_2_chirho.out;
+      final_and_chirho.right = is_nonzero_chirho.out;
+      is_singleton_chirho.in = final_and_chirho.out;
+      is_singleton_chirho.write_en = 1'd1;
+      final_check_chirho[done] = is_singleton_chirho.done;
+    }
+  }
+
+  control {
+    seq {
+      compute_sub_chirho;
+      compute_and_chirho;
+      par {
+        check_power2_chirho;
+        check_nonzero_chirho;
+      }
+      final_check_chirho;
+    }
+  }
+}
+
+// Population count (count number of possible values)
+// Uses parallel tree reduction
+component popcount_chirho() -> () {
+  cells {
+    input_chirho = std_reg(64);
+    count_chirho = std_reg(7);  // 0-64 needs 7 bits
+
+    // We'll use the SWAR algorithm in hardware
+    // This is a simplified version - real impl would be more complex
+
+    // Masks for SWAR popcount
+    m1_chirho = std_const(64, 6148914691236517205);   // 0x5555...
+    m2_chirho = std_const(64, 3689348814741910323);   // 0x3333...
+    m4_chirho = std_const(64, 1085102592571150095);   // 0x0f0f...
+
+    // Intermediate registers
+    t1_chirho = std_reg(64);
+    t2_chirho = std_reg(64);
+    t3_chirho = std_reg(64);
+
+    // Operations
+    rsh1_chirho = std_rsh(64);
+    rsh2_chirho = std_rsh(64);
+    rsh4_chirho = std_rsh(64);
+    and1_chirho = std_and(64);
+    and2_chirho = std_and(64);
+    and3_chirho = std_and(64);
+    and4_chirho = std_and(64);
+    add1_chirho = std_add(64);
+    add2_chirho = std_add(64);
+
+    one_chirho = std_const(64, 1);
+    two_chirho = std_const(64, 2);
+    four_chirho = std_const(64, 4);
+  }
+
+  wires {
+    // Placeholder - full SWAR popcount implementation would go here
+    // For synthesis, many FPGAs have built-in popcount
+    group compute_popcount_chirho {
+      // Simplified: just use the register
+      compute_popcount_chirho[done] = input_chirho.done;
+    }
+  }
+
+  control {
+    compute_popcount_chirho;
+  }
+}
+
+// Main component: N-variable search state
+// Each variable has a 64-bit domain
+component main() -> () {
+  cells {
+    // 4 variable domains (expandable)
+    var0_chirho = std_reg(64);
+    var1_chirho = std_reg(64);
+    var2_chirho = std_reg(64);
+    var3_chirho = std_reg(64);
+
+    // Unification unit
+    unify_chirho = unify_unit_chirho();
+
+    // Full domain constant
+    full_chirho = std_const(64, 18446744073709551615);
+
+    // Valid flag
+    valid_chirho = std_reg(1);
+    one_chirho = std_const(1, 1);
+  }
+
+  wires {
+    // Initialize all variables to full domain
+    group init_all_chirho {
+      var0_chirho.in = full_chirho.out;
+      var0_chirho.write_en = 1'd1;
+      var1_chirho.in = full_chirho.out;
+      var1_chirho.write_en = 1'd1;
+      var2_chirho.in = full_chirho.out;
+      var2_chirho.write_en = 1'd1;
+      var3_chirho.in = full_chirho.out;
+      var3_chirho.write_en = 1'd1;
+      valid_chirho.in = one_chirho.out;
+      valid_chirho.write_en = 1'd1;
+      init_all_chirho[done] = var3_chirho.done;
+    }
+  }
+
+  control {
+    init_all_chirho;
+  }
+}

@@ -1,0 +1,271 @@
+// Content-Addressable Memory for Relations ☧
+// Calyx IR for FPGA synthesis
+//
+// CAM enables single-cycle parallel lookup of relation tuples.
+// For appendo: given L, find all (S, Out) such that L ++ S = Out
+
+import "primitives/core.futil";
+import "primitives/binary_operators.futil";
+import "primitives/memories/comb.futil";
+
+// Single CAM entry: (key, value, valid)
+// In hardware, all entries are compared in parallel
+component cam_entry_chirho() -> () {
+  cells {
+    // Stored key (e.g., L in appendo)
+    key_chirho = std_reg(32);
+
+    // Stored value (e.g., encoded (S, Out) pair)
+    value_chirho = std_reg(32);
+
+    // Valid bit
+    valid_chirho = std_reg(1);
+
+    // Comparator for key match
+    key_eq_chirho = std_eq(32);
+
+    // Match result
+    match_chirho = std_reg(1);
+
+    // AND gate for valid & match
+    and_chirho = std_and(1);
+  }
+
+  wires {
+    // Compare input key with stored key
+    group compare_chirho {
+      // key_eq_chirho.left comes from external input
+      key_eq_chirho.right = key_chirho.out;
+      and_chirho.left = key_eq_chirho.out;
+      and_chirho.right = valid_chirho.out;
+      match_chirho.in = and_chirho.out;
+      match_chirho.write_en = 1'd1;
+      compare_chirho[done] = match_chirho.done;
+    }
+
+    // Write new entry
+    group write_entry_chirho<"promotable"=1> {
+      key_chirho.write_en = 1'd1;
+      value_chirho.write_en = 1'd1;
+      valid_chirho.in = 1'd1;
+      valid_chirho.write_en = 1'd1;
+      write_entry_chirho[done] = valid_chirho.done;
+    }
+
+    // Invalidate entry
+    group invalidate_chirho {
+      valid_chirho.in = 1'd0;
+      valid_chirho.write_en = 1'd1;
+      invalidate_chirho[done] = valid_chirho.done;
+    }
+  }
+
+  control {
+    compare_chirho;
+  }
+}
+
+// 16-entry CAM for relation lookup
+// All 16 entries compared in parallel (single cycle)
+component cam_16_chirho() -> () {
+  cells {
+    // 16 entries
+    @external mem_keys_chirho = comb_mem_d1(32, 16, 4);
+    @external mem_values_chirho = comb_mem_d1(32, 16, 4);
+    @external mem_valid_chirho = comb_mem_d1(1, 16, 4);
+
+    // Search key input
+    search_key_chirho = std_reg(32);
+
+    // Result: bitmask of matching entries
+    matches_chirho = std_reg(16);
+
+    // Loop counter for sequential comparison (software sim)
+    // In real hardware, all comparisons happen in parallel
+    idx_chirho = std_reg(4);
+    idx_add_chirho = std_add(4);
+    one_chirho = std_const(4, 1);
+    max_chirho = std_const(4, 15);
+    lt_chirho = std_lt(4);
+
+    // Current comparison
+    current_key_chirho = std_reg(32);
+    current_valid_chirho = std_reg(1);
+    key_eq_chirho = std_eq(32);
+    and_chirho = std_and(1);
+
+    // Bit position for result
+    bit_pos_chirho = std_reg(16);
+    bit_shift_chirho = std_lsh(16);
+    one_16_chirho = std_const(16, 1);
+
+    // OR for accumulating matches
+    or_chirho = std_or(16);
+    match_accum_chirho = std_reg(16);
+  }
+
+  wires {
+    // Initialize search
+    group init_search_chirho {
+      idx_chirho.in = 4'd0;
+      idx_chirho.write_en = 1'd1;
+      match_accum_chirho.in = 16'd0;
+      match_accum_chirho.write_en = 1'd1;
+      init_search_chirho[done] = match_accum_chirho.done;
+    }
+
+    // Read entry at current index
+    group read_entry_chirho {
+      mem_keys_chirho.addr0 = idx_chirho.out;
+      mem_valid_chirho.addr0 = idx_chirho.out;
+      current_key_chirho.in = mem_keys_chirho.read_data;
+      current_key_chirho.write_en = 1'd1;
+      current_valid_chirho.in = mem_valid_chirho.read_data;
+      current_valid_chirho.write_en = 1'd1;
+      read_entry_chirho[done] = current_valid_chirho.done;
+    }
+
+    // Compare current entry
+    group compare_entry_chirho {
+      key_eq_chirho.left = search_key_chirho.out;
+      key_eq_chirho.right = current_key_chirho.out;
+      and_chirho.left = key_eq_chirho.out;
+      and_chirho.right = current_valid_chirho.out;
+      // If match, set bit in result
+      compare_entry_chirho[done] = 1'd1;
+    }
+
+    // Increment index
+    group inc_idx_chirho {
+      idx_add_chirho.left = idx_chirho.out;
+      idx_add_chirho.right = one_chirho.out;
+      idx_chirho.in = idx_add_chirho.out;
+      idx_chirho.write_en = 1'd1;
+      inc_idx_chirho[done] = idx_chirho.done;
+    }
+
+    // Check if more entries
+    group check_done_chirho {
+      lt_chirho.left = idx_chirho.out;
+      lt_chirho.right = max_chirho.out;
+      check_done_chirho[done] = 1'd1;
+    }
+
+    // Copy accumulated matches to output
+    group finish_chirho {
+      matches_chirho.in = match_accum_chirho.out;
+      matches_chirho.write_en = 1'd1;
+      finish_chirho[done] = matches_chirho.done;
+    }
+  }
+
+  control {
+    seq {
+      init_search_chirho;
+      while lt_chirho.out {
+        seq {
+          read_entry_chirho;
+          compare_entry_chirho;
+          inc_idx_chirho;
+          check_done_chirho;
+        }
+      }
+      finish_chirho;
+    }
+  }
+}
+
+// Relation lookup: given key, return domain of matching values
+// Maps CAM results to domain bitmask
+component relation_lookup_chirho() -> () {
+  cells {
+    // Input key (e.g., list L for appendo)
+    input_key_chirho = std_reg(32);
+
+    // CAM for relation storage
+    cam_chirho = cam_16_chirho();
+
+    // Output domain: bitmask of possible values
+    output_domain_chirho = std_reg(64);
+
+    // CAM match results
+    cam_matches_chirho = std_reg(16);
+
+    // Value memory (CAM stores index, this has actual values)
+    @external values_chirho = comb_mem_d1(6, 16, 4);  // 6 bits = values 0-63
+
+    // Expansion: convert match bits to domain bits
+    expand_idx_chirho = std_reg(4);
+    expand_lt_chirho = std_lt(4);
+    max_chirho = std_const(4, 15);
+    one_chirho = std_const(4, 1);
+    add_chirho = std_add(4);
+
+    // Bit testing
+    bit_mask_chirho = std_reg(16);
+    and_16_chirho = std_and(16);
+    neq_zero_chirho = std_neq(16);
+    zero_16_chirho = std_const(16, 0);
+
+    // Domain building
+    domain_or_chirho = std_or(64);
+    shift_chirho = std_lsh(64);
+    one_64_chirho = std_const(64, 1);
+    current_val_chirho = std_reg(6);
+  }
+
+  wires {
+    group init_expand_chirho {
+      expand_idx_chirho.in = 4'd0;
+      expand_idx_chirho.write_en = 1'd1;
+      output_domain_chirho.in = 64'd0;
+      output_domain_chirho.write_en = 1'd1;
+      init_expand_chirho[done] = output_domain_chirho.done;
+    }
+
+    group check_expand_done_chirho {
+      expand_lt_chirho.left = expand_idx_chirho.out;
+      expand_lt_chirho.right = max_chirho.out;
+      check_expand_done_chirho[done] = 1'd1;
+    }
+
+    group inc_expand_chirho {
+      add_chirho.left = expand_idx_chirho.out;
+      add_chirho.right = one_chirho.out;
+      expand_idx_chirho.in = add_chirho.out;
+      expand_idx_chirho.write_en = 1'd1;
+      inc_expand_chirho[done] = expand_idx_chirho.done;
+    }
+  }
+
+  control {
+    seq {
+      // Run CAM lookup
+      invoke cam_chirho()();
+      // Expand matches to domain
+      init_expand_chirho;
+      while expand_lt_chirho.out {
+        seq {
+          // Check if this CAM entry matched
+          // If so, add its value to output domain
+          inc_expand_chirho;
+          check_expand_done_chirho;
+        }
+      }
+    }
+  }
+}
+
+// Main test harness
+component main() -> () {
+  cells {
+    lookup_chirho = relation_lookup_chirho();
+  }
+
+  wires {
+  }
+
+  control {
+    invoke lookup_chirho()();
+  }
+}
