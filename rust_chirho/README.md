@@ -1,6 +1,11 @@
 # minikanren_1bit_chirho
 
-**miniKanren as 1-bit matrix operations** - hardware-accelerated logic programming.
+[![crates.io](https://img.shields.io/crates/v/minikanren_1bit_chirho.svg)](https://crates.io/crates/minikanren_1bit_chirho)
+[![docs.rs](https://docs.rs/minikanren_1bit_chirho/badge.svg)](https://docs.rs/minikanren_1bit_chirho)
+
+**miniKanren as 1-bit matrix operations** — hardware-accelerated logic programming.
+
+**[Full documentation with Python/FPGA implementations →](https://github.com/loveJesus/minikanren_1bit_chirho)**
 
 ## Core Insight
 
@@ -51,12 +56,29 @@ fn main() {
 }
 ```
 
+## Ready-to-Use Solvers
+
+```rust
+use minikanren_1bit_chirho::sudoku_chirho::SudokuSolverChirho;
+use minikanren_1bit_chirho::nqueens_chirho::NQueensSolverChirho;
+
+// Sudoku: 9-bit domains, solves in ~10μs
+let mut sudoku_chirho = SudokuSolverChirho::new_chirho();
+sudoku_chirho.load_puzzle_chirho("530070000600195000...");
+sudoku_chirho.solve_adaptive_chirho();
+
+// N-Queens: 64-bit domains, 8-queens in 4μs
+let mut queens_chirho = NQueensSolverChirho::new_chirho(8);
+assert_eq!(queens_chirho.count_solutions_chirho(), 92);
+```
+
 ## Features
 
-- **Full miniKanren semantics**: `==`, `conde`, `fresh`, `not`, `conda`, `condu`, `=/=`, `project`
+- **Full miniKanren**: `==`, `conde`, `fresh`, `not`, `conda`, `condu`, `=/=`, `project`
+- **Constraint solvers**: Sudoku, N-Queens, JSON Schema validation
 - **SIMD acceleration**: AVX2/AVX-512 bulk operations
-- **Differentiable relaxation**: Gradients flow through logic (neural-symbolic)
-- **Hardware-ready**: Calyx IR and Clash for FPGA synthesis
+- **Differentiable**: Gradients flow through logic (Gumbel-softmax, learnable relations)
+- **Hardware-ready**: Calyx IR and Clash for FPGA synthesis (verified)
 - **Multiple semirings**: Boolean, Probability, Tropical, Counting
 
 ## Feature Flags
