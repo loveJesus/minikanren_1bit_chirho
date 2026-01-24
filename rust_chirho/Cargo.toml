@@ -36,5 +36,9 @@ default = ["egraph_native_chirho"]
 egg_chirho = ["egg"]
 # Use native e-graph (hardware-optimized, bit-parallel, full _chirho compliance)
 egraph_native_chirho = []
+# Goal-as-AST for introspection/optimization (15-70% slower execution)
+# Enable for: goal analysis, optimization passes, serialization
+# Disable for: FPGA/hardware targets where raw speed matters
+goal_ast_chirho = []
 # Enable GPU backend (requires wgpu)
 # gpu = ["wgpu"]

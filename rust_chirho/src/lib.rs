@@ -8,6 +8,7 @@
 //!
 //! - `egraph_native_chirho` (default): Native hardware-optimized e-graph
 //! - `egg_chirho`: External egg crate integration (more features, less hw-friendly)
+//! - `goal_ast_chirho`: Goals as AST for introspection (15-70% slower, not for FPGA)
 //!
 //! # Modules
 //!
@@ -51,6 +52,9 @@ pub mod recursion_chirho;
 pub mod contraction_semiring_chirho;
 pub mod unify_matrix_chirho;
 pub mod simd_chirho;
+
+// Goal-as-AST (feature-gated: introspection vs raw speed)
+#[cfg(feature = "goal_ast_chirho")]
 pub mod goal_ast_chirho;
 
 // E-graph implementations (feature-gated)

@@ -1,6 +1,11 @@
 //! Benchmarks for goal representations ☧
 //!
 //! Compare AST-based goals vs closure-based goals.
+//!
+//! Requires feature: goal_ast_chirho
+//! Run with: cargo bench --bench goal_bench_chirho --features goal_ast_chirho
+
+#![cfg(feature = "goal_ast_chirho")]
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
 use minikanren_1bit_chirho::{
