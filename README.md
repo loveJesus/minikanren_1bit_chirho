@@ -84,11 +84,31 @@ class State:  # Missing Chirho
 result = compute(input)  # Missing _chirho
 ```
 
+## Rust Implementation (`rust_chirho/`)
+
+| Module | Description | Tests |
+|--------|-------------|-------|
+| `terms_chirho.rs` | Hash-consed term store | ✅ |
+| `union_find_chirho.rs` | O(α(n)) equivalence classes + HW variant | ✅ |
+| `unify_chirho.rs` | Unification with occurs check | ✅ |
+| `bitmatrix_chirho.rs` | Sparse Boolean tensors (COO format) | ✅ |
+| `relations_chirho.rs` | appendo, membero as tensors | ✅ |
+| `contraction_chirho.rs` | Greedy/min-degree heuristics | ✅ |
+| `stream_chirho.rs` | Lazy streams with interleaving | ✅ |
+| `goals_chirho.rs` | Goal combinators (==, conde, conj) | ✅ |
+| `constraint_chirho.rs` | AC-3 arc consistency | ✅ |
+| `tabling_chirho.rs` | SLG-style memoization | ✅ |
+| `semiring_chirho.rs` | Bool/Prob/Tropical/Count/Log | ✅ |
+
+**33 tests passing.** Run with: `cd rust_chirho && cargo test`
+
+Example: `cargo run --example appendo_chirho`
+
 ## Roadmap
 
 ```
-Phase 1: ✅ COMPLETE - Python prototype
-Phase 2: 🚧 IN PROGRESS - Rust implementation
+Phase 1: ✅ COMPLETE - Python prototype (19 files, ~10k lines)
+Phase 2: ✅ COMPLETE - Rust implementation (11 modules, 33 tests)
 Phase 3: PLANNED - Hardware (FPGA via Clash/Calyx)
 ```
 
