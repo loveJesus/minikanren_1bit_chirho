@@ -3,3 +3,5 @@ __pycache__/
 *.zip
 *.pyc
 .DS_Store
+target/
+Cargo.lock
