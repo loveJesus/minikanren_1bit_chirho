@@ -246,35 +246,62 @@ fn bench_sudoku_chirho(c_chirho: &mut Criterion) {
 
     let mut group_chirho = c_chirho.benchmark_group("Sudoku");
 
-    group_chirho.bench_function("easy", |b| {
-        b.iter(|| {
+    // Fast solver (basic propagation only)
+    group_chirho.bench_function("fast/easy", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::EASY_CHIRHO);
+            black_box(solver_chirho.solve_fast_chirho())
+        })
+    });
+
+    group_chirho.bench_function("fast/hard_17clue", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::HARD_CHIRHO);
+            black_box(solver_chirho.solve_fast_chirho())
+        })
+    });
+
+    // Full solver (with hidden singles + naked pairs)
+    group_chirho.bench_function("full/easy", |b_chirho| {
+        b_chirho.iter(|| {
             let mut solver_chirho = SudokuSolverChirho::new_chirho();
             solver_chirho.load_puzzle_chirho(puzzles_chirho::EASY_CHIRHO);
             black_box(solver_chirho.solve_chirho())
         })
     });
 
-    group_chirho.bench_function("medium", |b| {
-        b.iter(|| {
-            let mut solver_chirho = SudokuSolverChirho::new_chirho();
-            solver_chirho.load_puzzle_chirho(puzzles_chirho::MEDIUM_CHIRHO);
-            black_box(solver_chirho.solve_chirho())
-        })
-    });
-
-    group_chirho.bench_function("hard_17clue", |b| {
-        b.iter(|| {
+    group_chirho.bench_function("full/hard_17clue", |b_chirho| {
+        b_chirho.iter(|| {
             let mut solver_chirho = SudokuSolverChirho::new_chirho();
             solver_chirho.load_puzzle_chirho(puzzles_chirho::HARD_CHIRHO);
             black_box(solver_chirho.solve_chirho())
         })
     });
 
-    group_chirho.bench_function("escargot", |b| {
-        b.iter(|| {
+    // Adaptive solver (best of both)
+    group_chirho.bench_function("adaptive/easy", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::EASY_CHIRHO);
+            black_box(solver_chirho.solve_adaptive_chirho())
+        })
+    });
+
+    group_chirho.bench_function("adaptive/hard_17clue", |b_chirho| {
+        b_chirho.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::HARD_CHIRHO);
+            black_box(solver_chirho.solve_adaptive_chirho())
+        })
+    });
+
+    group_chirho.bench_function("adaptive/escargot", |b_chirho| {
+        b_chirho.iter(|| {
             let mut solver_chirho = SudokuSolverChirho::new_chirho();
             solver_chirho.load_puzzle_chirho(puzzles_chirho::ESCARGOT_CHIRHO);
-            black_box(solver_chirho.solve_chirho())
+            black_box(solver_chirho.solve_adaptive_chirho())
         })
     });
 

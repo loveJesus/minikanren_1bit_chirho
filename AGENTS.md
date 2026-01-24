@@ -341,7 +341,7 @@ Phase 3: Hardware (Clash/Calyx)
 
 ## Current Implementations
 
-### Rust (`rust_chirho/`) — 134 tests passing
+### Rust (`rust_chirho/`) — 137 tests passing
 
 | Module | Description |
 |--------|-------------|
@@ -356,7 +356,7 @@ Phase 3: Hardware (Clash/Calyx)
 | `semiring_chirho.rs` | Bool/Prob/Tropical/Count/Log semirings |
 | `egraph_native_chirho.rs` | Native bit-parallel e-graph |
 | `simd_chirho.rs` | AVX2 bulk operations |
-| `sudoku_chirho.rs` | Sudoku solver (9-bit domains, 14-676μs) |
+| `sudoku_chirho.rs` | Sudoku solver (hidden singles, naked pairs, 22-63μs) |
 
 **Examples:**
 - `examples/appendo_chirho.rs` — List append relation
