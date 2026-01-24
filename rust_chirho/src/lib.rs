@@ -18,6 +18,7 @@
 //! - `tabling_chirho`: SLG-style memoization for recursion
 //! - `semiring_chirho`: Semiring abstraction (Bool, Prob, Tropical, Count)
 //! - `hardware_chirho`: FPGA/ASIC-oriented primitives (BitVec64, CAM, parallel ops)
+//! - `gpu_chirho`: GPU backend sketch (SIMT-style parallel search)
 
 pub mod terms_chirho;
 pub mod union_find_chirho;
@@ -31,13 +32,14 @@ pub mod constraint_chirho;
 pub mod tabling_chirho;
 pub mod semiring_chirho;
 pub mod hardware_chirho;
+pub mod gpu_chirho;
 
 // Re-export key types (avoiding ambiguous globs)
 pub use terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};
 pub use union_find_chirho::{UnionFindChirho, UnionFindHwChirho};
 pub use unify_chirho::{SubstChirho, UnifyResultChirho, unify_chirho};
 pub use bitmatrix_chirho::{BitMatrixChirho, BitTensor3Chirho};
-pub use goals_chirho::{GoalFnChirho, eq_chirho, conj_chirho, disj_chirho, conde_chirho, run_chirho, run_all_chirho};
+pub use goals_chirho::{GoalFnChirho, eq_chirho, conj_chirho, disj_chirho, conde_chirho, conj_all_chirho, disj_all_chirho, succeed_chirho, fail_chirho, run_chirho, run_all_chirho};
 pub use constraint_chirho::{DomainChirho, ConstraintStoreChirho, BinaryConstraintChirho};
 pub use tabling_chirho::{TableStoreChirho, CallPatternChirho, LookupResultChirho};
 pub use semiring_chirho::{SemiringChirho, BoolSemiringChirho, ProbSemiringChirho, TropicalSemiringChirho, CountSemiringChirho, LogSemiringChirho, WeightedMatrixChirho};

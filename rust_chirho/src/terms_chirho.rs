@@ -36,6 +36,10 @@ pub struct TermStoreChirho {
     id_to_term_chirho: Vec<TermChirho>,
     /// Next variable ID
     next_var_chirho: AtomicU32,
+    /// Symbol table: string → symbol ID
+    sym_to_id_chirho: HashMap<String, u32>,
+    /// Reverse: symbol ID → string
+    id_to_sym_chirho: Vec<String>,
 }
 
 impl TermStoreChirho {
@@ -96,6 +100,24 @@ impl TermStoreChirho {
     pub fn list_ints_chirho(&mut self, vals_chirho: &[i64]) -> TermIdChirho {
         let ids_chirho: Vec<_> = vals_chirho.iter().map(|&v| self.int_chirho(v)).collect();
         self.list_chirho(&ids_chirho)
+    }
+
+    /// Create or lookup a symbol by name
+    pub fn sym_chirho(&mut self, name_chirho: &str) -> TermIdChirho {
+        let sym_id_chirho = if let Some(&id_chirho) = self.sym_to_id_chirho.get(name_chirho) {
+            id_chirho
+        } else {
+            let id_chirho = self.id_to_sym_chirho.len() as u32;
+            self.id_to_sym_chirho.push(name_chirho.to_string());
+            self.sym_to_id_chirho.insert(name_chirho.to_string(), id_chirho);
+            id_chirho
+        };
+        self.intern_chirho(TermChirho::SymChirho(sym_id_chirho))
+    }
+
+    /// Get symbol name by symbol ID
+    pub fn sym_name_chirho(&self, sym_id_chirho: u32) -> Option<&str> {
+        self.id_to_sym_chirho.get(sym_id_chirho as usize).map(|s| s.as_str())
     }
 
     /// Check if term is a variable
