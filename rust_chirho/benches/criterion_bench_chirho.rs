@@ -240,6 +240,47 @@ fn bench_neural_chirho(c_chirho: &mut Criterion) {
     group_chirho.finish();
 }
 
+/// Benchmark Sudoku solver (practical application)
+fn bench_sudoku_chirho(c_chirho: &mut Criterion) {
+    use minikanren_1bit_chirho::sudoku_chirho::{SudokuSolverChirho, puzzles_chirho};
+
+    let mut group_chirho = c_chirho.benchmark_group("Sudoku");
+
+    group_chirho.bench_function("easy", |b| {
+        b.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::EASY_CHIRHO);
+            black_box(solver_chirho.solve_chirho())
+        })
+    });
+
+    group_chirho.bench_function("medium", |b| {
+        b.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::MEDIUM_CHIRHO);
+            black_box(solver_chirho.solve_chirho())
+        })
+    });
+
+    group_chirho.bench_function("hard_17clue", |b| {
+        b.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::HARD_CHIRHO);
+            black_box(solver_chirho.solve_chirho())
+        })
+    });
+
+    group_chirho.bench_function("escargot", |b| {
+        b.iter(|| {
+            let mut solver_chirho = SudokuSolverChirho::new_chirho();
+            solver_chirho.load_puzzle_chirho(puzzles_chirho::ESCARGOT_CHIRHO);
+            black_box(solver_chirho.solve_chirho())
+        })
+    });
+
+    group_chirho.finish();
+}
+
 criterion_group!(
     benches_chirho,
     bench_bit_ops_chirho,
@@ -250,6 +291,7 @@ criterion_group!(
     bench_hw_state_chirho,
     bench_semiring_chirho,
     bench_neural_chirho,
+    bench_sudoku_chirho,
 );
 
 criterion_main!(benches_chirho);

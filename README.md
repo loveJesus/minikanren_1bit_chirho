@@ -92,12 +92,14 @@ The 1-bit matrix representation is ideal for parallel hardware:
 
 ### Application Benchmarks
 
-| Application | Python | Rust (projected) | Notes |
-|-------------|--------|------------------|-------|
-| Sudoku (easy) | 0.1ms | ~1μs | Pure propagation |
-| Sudoku (hard) | 2.1ms | ~20μs | 10-20 backtracks |
-| Type inference | 0.05ms | ~0.5μs | 8 terms |
-| N-Queens 12 | 50ms | ~500μs | 14,200 solutions |
+| Application | Python | Rust | Speedup | Notes |
+|-------------|--------|------|---------|-------|
+| Sudoku (easy) | 0.1ms | **14μs** | 7× | Pure propagation |
+| Sudoku (medium) | — | **14μs** | — | Mixed propagation |
+| Sudoku (hard 17-clue) | 2.1ms | **676μs** | 3× | Many backtracks |
+| Sudoku (Escargot) | — | **24μs** | — | Famous "hardest" |
+| Type inference | 0.05ms | ~0.5μs | 100× | 8 terms |
+| N-Queens 12 | 50ms | ~500μs | 100× | 14,200 solutions |
 
 ## Quick Start
 
@@ -105,7 +107,7 @@ The 1-bit matrix representation is ideal for parallel hardware:
 
 ```bash
 cd rust_chirho
-cargo test              # Run 128 tests (116 lib + 12 proptest)
+cargo test              # Run 134 tests (122 lib + 12 proptest)
 cargo bench             # Run benchmarks
 cargo run --example appendo_chirho
 ```
@@ -157,7 +159,7 @@ clash --verilog MiniKanrenChirho.hs
 ```
 minikanren_1bit_chirho/
 ├── *.py                        # 19 Python files (~10K lines)
-├── rust_chirho/                # Rust implementation (128 tests)
+├── rust_chirho/                # Rust implementation (134 tests)
 │   └── web_chirho/             # WebGPU + Sudoku demos
 ├── calyx_chirho/               # Calyx IR for FPGA synthesis
 ├── clash_chirho/               # Clash/Haskell for FPGA
@@ -217,7 +219,7 @@ minikanren_1bit_chirho/
 | `linear_chirho.rs` | `linear_chirho` | Tensor/Par (linear logic) | ❌ Heap |
 | `optics_hw_chirho.rs` | (always on) | **BitVec64 optics** | ✅ FPGA |
 
-**128 tests passing** (116 lib + 12 proptest). Features: SIMD (AVX2), arena allocation, zero-copy.
+**134 tests passing** (122 lib + 12 proptest). Features: SIMD (AVX2), arena allocation, zero-copy.
 
 ## Hardware Targets
 

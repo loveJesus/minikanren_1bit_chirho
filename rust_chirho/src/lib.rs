@@ -52,6 +52,7 @@ pub mod contraction_semiring_chirho;
 pub mod unify_matrix_chirho;
 pub mod simd_chirho;
 pub mod diff_semiring_chirho;
+pub mod sudoku_chirho;
 
 // Goal-as-AST (feature-gated: introspection vs raw speed)
 #[cfg(feature = "goal_ast_chirho")]
@@ -143,3 +144,6 @@ pub use linear_chirho::{LinearGoalChirho, ReusableGoalChirho, tensor_chirho, par
 
 // Hardware-ready abstractions (always available, no overhead)
 pub use optics_hw_chirho::{DomainHwChirho, PrismHwChirho, LensHwChirho, StateHwChirho, PartitionedDomainChirho, traverse_all_chirho, collect_nonempty_chirho};
+
+// Sudoku solver (practical 1-bit domain demo)
+pub use sudoku_chirho::{SudokuSolverChirho, puzzles_chirho};
