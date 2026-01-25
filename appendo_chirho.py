@@ -28,12 +28,12 @@ LISTS = [
 LIST_TO_IDX = {l: i for i, l in enumerate(LISTS)}
 NUM_LISTS = len(LISTS)
 
-def list_name(idx):
+def list_name_chirho(idx_chirho):
     """Pretty print a list value"""
-    l = LISTS[idx]
-    if len(l) == 0:
+    l_chirho = LISTS[idx_chirho]
+    if len(l_chirho) == 0:
         return "[]"
-    return "[" + ",".join(str(x) for x in l) + "]"
+    return "[" + ",".join(str(x_chirho) for x_chirho in l_chirho) + "]"
 
 # === State Representation ===
 # 3 variables: l, s, out
@@ -52,19 +52,19 @@ class AppendoStateChirho:
             self.data = data
     
     @property
-    def num_worlds(self):
+    def num_worlds_chirho(self):
         return self.data.shape[0]
-    
-    def copy(self):
+
+    def copy_chirho(self):
         return AppendoStateChirho(self.data.copy())
-    
-    def failed_worlds(self):
+
+    def failed_worlds_chirho(self):
         """Return mask of which worlds have failed (any var has no possible values)"""
         return ~self.data.any(axis=2).all(axis=1)
     
     def prune_failed_chirho(self):
         """Remove failed worlds"""
-        valid = ~self.failed_worlds()
+        valid = ~self.failed_worlds_chirho()
         return AppendoStateChirho(self.data[valid])
     
     def unify_value_chirho(self, var, list_idx):
@@ -88,7 +88,7 @@ class AppendoStateChirho:
         results = []
         for branch in branches:
             new_state = branch(self.copy())
-            if new_state.num_worlds > 0:
+            if new_state.num_worlds_chirho > 0:
                 results.append(new_state.data)
         if not results:
             return AppendoStateChirho(np.zeros((0, 3, NUM_LISTS), dtype=np.uint8))
@@ -103,7 +103,7 @@ class AppendoStateChirho:
         """
         result_worlds = []
         
-        for w in range(self.num_worlds):
+        for w in range(self.num_worlds_chirho):
             # Get possible values for each var
             l_possible = np.where(self.data[w, VAR_L, :])[0]
             s_possible = np.where(self.data[w, VAR_S, :])[0]
@@ -138,17 +138,17 @@ class AppendoStateChirho:
     
     def display_chirho(self, label=""):
         print(f"\n{'='*50}")
-        print(f"{label} ({self.num_worlds} worlds)")
+        print(f"{label} ({self.num_worlds_chirho} worlds)")
         print('='*50)
         
-        if self.num_worlds == 0:
+        if self.num_worlds_chirho == 0:
             print("  (no valid states)")
             return
         
-        for w in range(min(self.num_worlds, 10)):  # Show max 10
-            l_vals = [list_name(i) for i in range(NUM_LISTS) if self.data[w, VAR_L, i]]
-            s_vals = [list_name(i) for i in range(NUM_LISTS) if self.data[w, VAR_S, i]]
-            out_vals = [list_name(i) for i in range(NUM_LISTS) if self.data[w, VAR_OUT, i]]
+        for w in range(min(self.num_worlds_chirho, 10)):  # Show max 10
+            l_vals = [list_name_chirho(i) for i in range(NUM_LISTS) if self.data[w, VAR_L, i]]
+            s_vals = [list_name_chirho(i) for i in range(NUM_LISTS) if self.data[w, VAR_S, i]]
+            out_vals = [list_name_chirho(i) for i in range(NUM_LISTS) if self.data[w, VAR_OUT, i]]
             
             # If determined (single value), show cleanly
             l_str = l_vals[0] if len(l_vals) == 1 else "{" + ",".join(l_vals) + "}"
@@ -157,8 +157,8 @@ class AppendoStateChirho:
             
             print(f"  w{w}: l={l_str}, s={s_str}, out={out_str}")
         
-        if self.num_worlds > 10:
-            print(f"  ... and {self.num_worlds - 10} more")
+        if self.num_worlds_chirho > 10:
+            print(f"  ... and {self.num_worlds_chirho - 10} more")
     
     def matrix_view_chirho(self, label=""):
         """Show the raw bit tensor"""
@@ -166,22 +166,22 @@ class AppendoStateChirho:
         print(f"MATRIX VIEW: {label}")
         print('='*50)
         print("\nShape:", self.data.shape, "(worlds × vars × list_values)")
-        print("\nList encoding:", " ".join(f"{i}={list_name(i)}" for i in range(NUM_LISTS)))
+        print("\nList encoding:", " ".join(f"{i}={list_name_chirho(i)}" for i in range(NUM_LISTS)))
         print()
         
-        for w in range(min(self.num_worlds, 5)):
+        for w in range(min(self.num_worlds_chirho, 5)):
             print(f"World {w}:")
-            print("        " + " ".join(f"{list_name(i):>5}" for i in range(NUM_LISTS)))
-            for v, name in enumerate(VAR_NAMES):
-                bits = " ".join(f"{self.data[w, v, i]:>5}" for i in range(NUM_LISTS))
-                print(f"  {name:>4}: {bits}")
+            print("        " + " ".join(f"{list_name_chirho(i):>5}" for i in range(NUM_LISTS)))
+            for v_chirho, name_chirho in enumerate(VAR_NAMES):
+                bits_chirho = " ".join(f"{self.data[w, v_chirho, i]:>5}" for i in range(NUM_LISTS))
+                print(f"  {name_chirho:>4}: {bits_chirho}")
             print()
 
 
 def main():
     print("=== appendo in 1-Bit Matrices ☧ ===")
     print("\nDomain: lists up to length 2, elements ∈ {0, 1}")
-    print("Lists:", [list_name(i) for i in range(NUM_LISTS)])
+    print("Lists:", [list_name_chirho(i) for i in range(NUM_LISTS)])
     
     # === Query 1: Run appendo forward ===
     print("\n" + "#"*60)
@@ -273,10 +273,10 @@ def main():
     print(f"Density: {100*relation.sum()/relation.size:.1f}%")
     
     print("\nSlice where l=[] (index 0):")
-    print("       " + " ".join(f"{list_name(i):>5}" for i in range(NUM_LISTS)))
+    print("       " + " ".join(f"{list_name_chirho(i):>5}" for i in range(NUM_LISTS)))
     for s_idx in range(NUM_LISTS):
         row = " ".join(f"{relation[0, s_idx, o]:>5}" for o in range(NUM_LISTS))
-        print(f"s={list_name(s_idx):>5}: {row}")
+        print(f"s={list_name_chirho(s_idx):>5}: {row}")
     
     print("\n" + "="*60)
     print("NEXT STEP: TENSOR NETWORK")

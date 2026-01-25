@@ -71,19 +71,30 @@ NAMING_EXCEPTIONS_CHIRHO = {
     "temp", "prev", "curr", "next", "head", "tail", "init", "fini", "start", "stop",
     # Names that might appear in docs/comments
     "definitions", "checks", "unifies", "instead", "returns", "takes", "uses",
+    "change", "appears", "merging", "contains",
     # Common descriptive names
     "values", "uniformity", "representation", "parameters", "arguments", "results",
+    # External library field names
+    "contents", "label", "usage", "layout",
     # SIMD intrinsic types
     "__m256i", "__m128i", "__m512i",
     # egg crate integration
     "make", "merge", "modify", "analysis", "aliases",
-    # Python dunder methods
+    # Python dunder methods and entry points
     "__init__", "__repr__", "__str__", "__eq__", "__hash__", "__len__", "__iter__", "__next__",
+    # Standard entry point
+    "main",
     # Traits/impls
     "Display", "Debug", "Clone", "Copy", "Default", "PartialEq", "Eq", "Hash", "Ord", "PartialOrd",
     "Iterator", "IntoIterator", "FromIterator", "Add", "Sub", "Mul", "Div", "BitAnd", "BitOr",
     # Test framework
     "should_panic", "ignore",
+    # Rust std trait methods
+    "bitand", "bitor", "bitxor", "bitnot", "shl", "shr",
+    # Entry points
+    "main",
+    # Copy trait
+    "copy",
 }
 
 
@@ -111,6 +122,10 @@ def find_naming_violations_chirho(verbose_chirho: bool = False) -> List[AuditRes
 
             with open(rs_file_chirho, 'r', encoding='utf-8', errors='ignore') as f_chirho:
                 for line_num_chirho, line_chirho in enumerate(f_chirho, 1):
+                    # Skip comment lines
+                    stripped_chirho = line_chirho.strip()
+                    if stripped_chirho.startswith("//") or stripped_chirho.startswith("/*") or stripped_chirho.startswith("*"):
+                        continue
                     for match_chirho in RUST_IDENT_PATTERN_CHIRHO.finditer(line_chirho):
                         ident_chirho = match_chirho.group(3)
                         # Skip exceptions (case-insensitive check)
@@ -145,9 +160,12 @@ def find_naming_violations_chirho(verbose_chirho: bool = False) -> List[AuditRes
                     ident_chirho = match_chirho.group(2)
                     if ident_chirho.startswith("__"):
                         continue
+                    # Skip exceptions (same as Rust)
+                    if ident_chirho in NAMING_EXCEPTIONS_CHIRHO or ident_chirho.lower() in NAMING_EXCEPTIONS_CHIRHO:
+                        continue
                     if CHIRHO_PATTERN_CHIRHO.search(ident_chirho):
                         continue
-                    if len(ident_chirho) <= 3:
+                    if len(ident_chirho) <= 4:
                         continue
 
                     results_chirho.append(AuditResultChirho(

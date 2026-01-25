@@ -25,8 +25,7 @@ pub mod unify_matrix_chirho;
 #[cfg(feature = "egraph_native_chirho")]
 pub mod egraph_native_chirho;
 
-#[cfg(feature = "egg_chirho")]
-pub mod egg_chirho;
+// egg_chirho moved to reference_chirho (external library comparison)
 
 #[cfg(feature = "goal_ast_chirho")]
 pub mod goal_ast_chirho;
@@ -76,10 +75,7 @@ pub use egraph_native_chirho::{
     EClassDataChirho, EClassIdChirho, EGraphNativeChirho, ENodeChirho, ENodeIdChirho,
 };
 
-#[cfg(feature = "egg_chirho")]
-pub use egg_chirho::{
-    arith_rules_chirho, list_rules_chirho, EggStoreChirho, TermAnalysisChirho, TermLangChirho,
-};
+// egg_chirho re-exports moved to reference_chirho
 
 #[cfg(feature = "gpu_chirho")]
 pub use gpu_chirho::GpuContextChirho;

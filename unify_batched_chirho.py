@@ -17,15 +17,15 @@ import numpy as np
 VAR_X, VAR_Y, VAR_Z = 0, 1, 2
 VAL_A, VAL_B, VAL_C = 0, 1, 2
 
-def var_slice(v):
+def var_slice_chirho(v_chirho):
     """Get column indices for variable v"""
-    return slice(v*3, v*3+3)
+    return slice(v_chirho*3, v_chirho*3+3)
 
-def val_mask(v, val):
+def val_mask_chirho(v_chirho, val_chirho):
     """Mask that's 1 only at variable v, value val"""
-    m = np.zeros(9, dtype=np.uint8)
-    m[v*3 + val] = 1
-    return m
+    m_chirho = np.zeros(9, dtype=np.uint8)
+    m_chirho[v_chirho*3 + val_chirho] = 1
+    return m_chirho
 
 def fresh_state_chirho():
     """Single fresh state: all 1s"""
@@ -47,11 +47,11 @@ def unify_vars_chirho(states, v1, v2):
     result = states.copy()
     for i in range(states.shape[0]):
         # Get possible values for each var
-        poss1 = states[i, var_slice(v1)]
-        poss2 = states[i, var_slice(v2)]
+        poss1 = states[i, var_slice_chirho(v1)]
+        poss2 = states[i, var_slice_chirho(v2)]
         intersection = poss1 & poss2
-        result[i, var_slice(v1)] = intersection
-        result[i, var_slice(v2)] = intersection
+        result[i, var_slice_chirho(v1)] = intersection
+        result[i, var_slice_chirho(v2)] = intersection
     return result
 
 def conde_chirho(states, *branches):
@@ -65,7 +65,7 @@ def conde_chirho(states, *branches):
     # Remove failed states (any row where a variable has all zeros)
     valid_mask = np.ones(combined.shape[0], dtype=bool)
     for v in range(3):
-        var_has_value = combined[:, var_slice(v)].any(axis=1)
+        var_has_value = combined[:, var_slice_chirho(v)].any(axis=1)
         valid_mask &= var_has_value
     return combined[valid_mask]
 
@@ -77,9 +77,9 @@ def display_states_chirho(states, label=""):
     for i, state in enumerate(states):
         print(f"\nState {i}:")
         print("       a b c")
-        for v, name in enumerate(['x', 'y', 'z']):
-            bits = state[var_slice(v)]
-            print(f"    {name} [{bits[0]} {bits[1]} {bits[2]}]")
+        for v_chirho, name_chirho in enumerate(['x', 'y', 'z']):
+            bits_chirho = state[var_slice_chirho(v_chirho)]
+            print(f"    {name_chirho} [{bits_chirho[0]} {bits_chirho[1]} {bits_chirho[2]}]")
 
 def main():
     print("=== Batched 1-Bit Unification ☧ ===")

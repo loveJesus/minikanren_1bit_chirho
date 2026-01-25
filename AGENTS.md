@@ -379,7 +379,7 @@ Phase 3: Hardware (Clash/Calyx)
 
 ## Current Implementations
 
-### Rust (`rust_chirho/`) — 137 tests passing
+### Rust (`rust_chirho/`) — 215+ tests passing
 
 | Module | Description |
 |--------|-------------|
@@ -395,6 +395,10 @@ Phase 3: Hardware (Clash/Calyx)
 | `egraph_native_chirho.rs` | Native bit-parallel e-graph |
 | `simd_chirho.rs` | AVX2 bulk operations |
 | `sudoku_chirho.rs` | Sudoku solver (hidden singles, naked pairs, 22-63μs) |
+| `hierarchical_chirho.rs` | 2-level (4k) and 3-level (256k) bit hierarchies |
+| `adaptive_chirho.rs` | Automatic strategy selection by problem size |
+| `diff_hierarchical_chirho.rs` | Differentiable hierarchical domains with gradients |
+| `egg_chirho.rs` | External egg library comparison (in `reference_chirho/`) |
 
 **Examples:**
 - `examples/appendo_chirho.rs` — List append relation

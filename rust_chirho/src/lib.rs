@@ -215,7 +215,7 @@ pub use experimental_chirho::egraph_native_chirho::{
 };
 
 #[cfg(feature = "egg_chirho")]
-pub use experimental_chirho::egg_chirho::{
+pub use reference_chirho::egg_chirho::{
     arith_rules_chirho, list_rules_chirho, EggStoreChirho, TermAnalysisChirho, TermLangChirho,
 };
 
@@ -289,7 +289,7 @@ pub use experimental_chirho::unify_matrix_chirho as unify_matrix_mod_chirho;
 pub use experimental_chirho::egraph_native_chirho;
 
 #[cfg(feature = "egg_chirho")]
-pub use experimental_chirho::egg_chirho;
+pub use reference_chirho::egg_chirho;
 
 #[cfg(feature = "goal_ast_chirho")]
 pub use experimental_chirho::goal_ast_chirho;

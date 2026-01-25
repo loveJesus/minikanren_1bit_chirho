@@ -17,9 +17,9 @@ LISTS = [(), (0,), (1,), (0,0), (0,1), (1,0), (1,1)]
 LIST_TO_IDX = {l: i for i, l in enumerate(LISTS)}
 NUM_LISTS = len(LISTS)
 
-def list_name(idx):
-    l = LISTS[idx]
-    return "[]" if len(l) == 0 else "[" + ",".join(str(x) for x in l) + "]"
+def list_name_chirho(idx_chirho):
+    l_chirho = LISTS[idx_chirho]
+    return "[]" if len(l_chirho) == 0 else "[" + ",".join(str(x_chirho) for x_chirho in l_chirho) + "]"
 
 def build_appendo_tensor_chirho():
     """Build the appendo relation as a 3D tensor"""
@@ -106,17 +106,17 @@ def main():
     
     slice_ab = composed[a_idx, b_idx, :, :]  # shape (c, out)
     print("\nSlice [a=[0], b=[1], :, :]:")
-    print("         " + " ".join(f"{list_name(i):>5}" for i in range(NUM_LISTS)))
+    print("         " + " ".join(f"{list_name_chirho(i):>5}" for i in range(NUM_LISTS)))
     for c_idx in range(NUM_LISTS):
         row = " ".join(f"{slice_ab[c_idx, o]:>5}" for o in range(NUM_LISTS))
         if slice_ab[c_idx].any():
-            print(f"c={list_name(c_idx):>5}: {row}")
+            print(f"c={list_name_chirho(c_idx):>5}: {row}")
     
     print("\nResults (nonzeros):")
     for c_idx in range(NUM_LISTS):
         for out_idx in range(NUM_LISTS):
             if slice_ab[c_idx, out_idx]:
-                print(f"  c={list_name(c_idx)}, out={list_name(out_idx)}")
+                print(f"  c={list_name_chirho(c_idx)}, out={list_name_chirho(out_idx)}")
     
     # === Composition 2: append then reverse ===
     print("\n" + "="*60)
@@ -137,7 +137,7 @@ def main():
     slice_result = composed2[a_idx, b_idx, :]
     for out_idx in range(NUM_LISTS):
         if slice_result[out_idx]:
-            print(f"  out={list_name(out_idx)}")
+            print(f"  out={list_name_chirho(out_idx)}")
     # [0] ++ [1] = [0,1], reversed = [1,0]
     
     # === Backward query ===
@@ -150,11 +150,11 @@ def main():
     slice_back = composed2[:, :, out_idx]  # shape (a, b)
     
     print("\nSlice [:, :, out=[1,0]]:")
-    print("         " + " ".join(f"{list_name(i):>5}" for i in range(NUM_LISTS)))
+    print("         " + " ".join(f"{list_name_chirho(i):>5}" for i in range(NUM_LISTS)))
     for a_i in range(NUM_LISTS):
         row = " ".join(f"{slice_back[a_i, b_i]:>5}" for b_i in range(NUM_LISTS))
         if slice_back[a_i].any():
-            print(f"a={list_name(a_i):>5}: {row}")
+            print(f"a={list_name_chirho(a_i):>5}: {row}")
     
     print("\nResults:")
     for a_i in range(NUM_LISTS):
@@ -162,7 +162,7 @@ def main():
             if slice_back[a_i, b_i]:
                 # Verify: a ++ b = x, reverse(x) = [1,0]
                 x = LISTS[a_i] + LISTS[b_i]
-                print(f"  a={list_name(a_i)}, b={list_name(b_i)} → x={list(x)} → rev={list(reversed(x))}")
+                print(f"  a={list_name_chirho(a_i)}, b={list_name_chirho(b_i)} → x={list(x)} → rev={list(reversed(x))}")
     
     # === The Big Picture ===
     print("\n" + "="*60)
