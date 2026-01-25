@@ -7,7 +7,7 @@
 //!
 //! Key insight: Linear goals must be consumed exactly once.
 
-use crate::unify_chirho::SubstChirho;
+use crate::SubstChirho;
 use crate::stream_chirho::StreamChirho;
 use crate::terms_chirho::TermStoreChirho;
 use std::sync::Arc;

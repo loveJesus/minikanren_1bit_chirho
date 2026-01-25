@@ -90,6 +90,44 @@ CREATE TABLE terms_chirho (id_chirho INTEGER, ...);
 
 ---
 
+## Framework Rules: FPGA/GPU-Friendly Logic Solver ☧
+
+These rules ensure the codebase remains hardware-accelerable and integrated.
+
+### Rule 1: NO POINTER CHASING
+All operations must be expressible as bit-parallel operations:
+- ✅ Bitwise AND/OR/NOT on bitmasks
+- ✅ Fixed-size arrays (BitVec64, Hierarchical4k)
+- ✅ Contiguous memory layouts
+- ❌ HashMap lookups in hot paths
+- ❌ Dynamic allocation during search
+- ❌ Recursive tree traversal
+
+### Rule 2: DOMAIN HIERARCHY
+Use the correct domain type for the problem size:
+
+| Domain | Values | Hardware | Use Case |
+|--------|--------|----------|----------|
+| `BitVec64Chirho` | ≤64 | Single u64 | Default, fastest |
+| `Hierarchical4kChirho` | ≤4096 | 64 × 64 bits | Medium scale |
+| `Hierarchical256kChirho` | ≤262144 | 64 × 64 × 64 | Large scale |
+| `SymbolicChirho` | ∞ | Algebraic | Linear constraints |
+| `DiffHierarchical4kChirho` | ≤4096 | f64 arrays | Learning mode |
+
+### Rule 3: INTEGRATION OVER EXTENSION
+New features must integrate with the core, not sit beside it:
+- Extend `AdaptiveDomainChirho` for new domain types
+- Use existing semiring abstraction for new algebras
+- Add to the type hierarchy, don't create parallel systems
+
+### Rule 4: AUDIT BEFORE COMMIT
+Run `/audit-chirho` or `python3 audit_integration_chirho.py` to verify:
+- All tests pass
+- Naming conventions followed
+- No integration violations
+
+---
+
 ## Current Implementation Layers
 
 | Layer | File | What it proves |

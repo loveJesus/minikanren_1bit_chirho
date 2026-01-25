@@ -7,7 +7,7 @@
 //!
 //! Key insight: Comonads for local computation (extend).
 
-use crate::unify_chirho::SubstChirho;
+use crate::SubstChirho;
 use crate::stream_chirho::StreamChirho;
 use std::collections::HashSet;
 

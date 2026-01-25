@@ -6,7 +6,7 @@
 //! Key insight: Optics unify walk, reify, and substitution application.
 
 use crate::terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho, VarIdChirho};
-use crate::unify_chirho::SubstChirho;
+use crate::SubstChirho;
 
 /// Prism: focus on one case of a sum type
 /// preview_chirho: S → Option<A>

@@ -10,7 +10,7 @@
 //! - Testable: property tests on goal structure
 
 use crate::terms_chirho::{TermIdChirho, TermStoreChirho};
-use crate::unify_chirho::{SubstChirho, UnifyResultChirho, unify_chirho};
+use crate::{SubstChirho, UnifyResultChirho, unify_chirho};
 use std::rc::Rc;
 
 /// Goal AST - goals as data, not functions ☧

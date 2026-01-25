@@ -8,7 +8,7 @@
 //! Key insight: Same AST, different backends (Bool, Prob, SMT).
 
 use crate::terms_chirho::{TermIdChirho, TermStoreChirho, VarIdChirho};
-use crate::unify_chirho::SubstChirho;
+use crate::SubstChirho;
 use crate::stream_chirho::StreamChirho;
 use crate::diff_semiring_chirho::{DiffProbChirho, soft_eq_chirho};
 use std::sync::Arc;
@@ -146,9 +146,9 @@ pub fn run_bool_chirho(
         FreeGoalChirho::FreeChirho(gf) => match *gf {
             GoalFChirho::EqChirho(t1, t2, k) => {
                 let mut new_subst_chirho = subst_chirho.clone();
-                match crate::unify_chirho::unify_chirho(t1, t2, &mut new_subst_chirho, store_chirho)
+                match crate::unify_chirho(t1, t2, &mut new_subst_chirho, store_chirho)
                 {
-                    crate::unify_chirho::UnifyResultChirho::Success => {
+                    crate::UnifyResultChirho::Success => {
                         run_bool_chirho(k, new_subst_chirho, store_chirho)
                     }
                     _ => StreamChirho::empty_chirho(),
