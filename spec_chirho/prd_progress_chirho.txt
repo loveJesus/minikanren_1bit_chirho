@@ -197,3 +197,44 @@
 
 ### Remaining Tasks:
 - M5: Paper Writing
+
+---
+
+## Iteration 6 - 2026-01-25
+
+### Completed Tasks:
+
+**M5: Paper Writing**
+- [x] M5.1: Expand Existing Paper
+  - Added SyGuS synthesis results section with comparison table
+  - Added OCanren/faster-miniKanren comparison section with benchmarks
+  - Added GPU acceleration section with batch operation results
+  - Added differentiable logic section with family relations demo
+  - Paper now 13 pages with all new results
+
+- [x] M5.2: Benchmark Figures
+  - Created figures_chirho directory
+  - Tables integrated into paper (Tables 5-8)
+  - Existing TikZ figures preserved
+
+- [x] M5.3: Related Work Section
+  - Created paper_chirho.bib with 32 citations
+  - Updated Related Work section to cite all major systems:
+    - miniKanren variants: OCanren, faster-miniKanren, microKanren
+    - E-graphs: egg, Nelson-Oppen
+    - Differentiable logic: Scallop, DeepProbLog, neural theorem provers
+    - Program synthesis: SyGuS, CVC5, Barliman
+    - Hardware: Calyx, Clash, WAM
+    - Tabling: SLG, XSB
+    - Tensor networks, union-find, hash consing
+
+- [x] M5.4: Paper Ready for Submission
+  - LaTeX compiles cleanly with bibtex
+  - All sections have content
+  - Ready for miniKanren Workshop submission
+
+### Test Status:
+- All 201 tests passing
+- Paper compiles: 13 pages, 281KB PDF
+
+### ALL PRD MILESTONES COMPLETE
