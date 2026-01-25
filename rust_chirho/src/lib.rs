@@ -107,6 +107,12 @@ pub mod semiring_chirho;
 /// Experimental and research modules
 pub mod experimental_chirho;
 
+/// Program synthesis via domain-pruned enumeration
+pub mod synthesis_chirho;
+
+/// Differentiable learning for miniKanren
+pub mod learn_chirho;
+
 /// Domain approaches for infinite/hybrid miniKanren
 /// - paged_chirho: Hierarchical bit vectors for large finite domains
 /// - symbolic_chirho: Algebraic constraints (ranges, modular arithmetic)

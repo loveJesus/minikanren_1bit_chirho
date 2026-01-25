@@ -1,0 +1,354 @@
+//! Hierarchical BitVec64 Domain ☧
+//!
+//! Tree structure for domains larger than 64 values while preserving
+//! hardware-accelerated operations.
+//!
+//! ```text
+//! 2-level hierarchy (4096 values):
+//!   root: BitVec64 where bit i → leaves[i] is non-empty
+//!   leaves: [BitVec64; 64] → actual value membership
+//!
+//! 3-level hierarchy (262,144 values):
+//!   root: BitVec64 → which level-1 nodes are non-empty
+//!   index: [BitVec64; 64] → which leaves are non-empty
+//!   leaves: [[BitVec64; 64]; 64] → actual values
+//! ```
+//!
+//! Key insight: Intersection first ANDs the root masks to find
+//! which subtrees need checking. Sparse domains skip most work.
+
+use crate::hardware_chirho::BitVec64Chirho;
+
+/// 2-level hierarchical domain: 64 × 64 = 4096 values
+#[derive(Clone, Debug)]
+pub struct Hierarchical4kChirho {
+    /// Bit i set means leaves[i] is non-empty
+    pub root_chirho: BitVec64Chirho,
+    /// Actual value membership, grouped by 64s
+    pub leaves_chirho: Box<[BitVec64Chirho; 64]>,
+}
+
+impl Hierarchical4kChirho {
+    /// Empty domain
+    pub fn empty_chirho() -> Self {
+        Self {
+            root_chirho: BitVec64Chirho::ZERO_CHIRHO,
+            leaves_chirho: Box::new([BitVec64Chirho::ZERO_CHIRHO; 64]),
+        }
+    }
+
+    /// Full domain (all 4096 values)
+    pub fn full_chirho() -> Self {
+        Self {
+            root_chirho: BitVec64Chirho::ONES_CHIRHO,
+            leaves_chirho: Box::new([BitVec64Chirho::ONES_CHIRHO; 64]),
+        }
+    }
+
+    /// Range domain [0, n)
+    pub fn range_chirho(n_chirho: u32) -> Self {
+        let mut result_chirho = Self::empty_chirho();
+
+        let full_leaves_chirho = n_chirho / 64;
+        let remainder_chirho = n_chirho % 64;
+
+        // Fill complete leaves
+        for i in 0..full_leaves_chirho as usize {
+            result_chirho.leaves_chirho[i] = BitVec64Chirho::ONES_CHIRHO;
+            result_chirho.root_chirho = result_chirho.root_chirho
+                .or_chirho(BitVec64Chirho(1 << i));
+        }
+
+        // Partial last leaf
+        if remainder_chirho > 0 && (full_leaves_chirho as usize) < 64 {
+            let mask_chirho = (1u64 << remainder_chirho) - 1;
+            result_chirho.leaves_chirho[full_leaves_chirho as usize] = BitVec64Chirho(mask_chirho);
+            result_chirho.root_chirho = result_chirho.root_chirho
+                .or_chirho(BitVec64Chirho(1 << full_leaves_chirho));
+        }
+
+        result_chirho
+    }
+
+    /// Single value domain
+    pub fn singleton_chirho(value_chirho: u32) -> Self {
+        assert!(value_chirho < 4096, "Value must be < 4096");
+        let mut result_chirho = Self::empty_chirho();
+
+        let leaf_idx_chirho = (value_chirho / 64) as usize;
+        let bit_idx_chirho = value_chirho % 64;
+
+        result_chirho.leaves_chirho[leaf_idx_chirho] = BitVec64Chirho(1 << bit_idx_chirho);
+        result_chirho.root_chirho = BitVec64Chirho(1 << leaf_idx_chirho);
+
+        result_chirho
+    }
+
+    /// Check if value is in domain
+    pub fn contains_chirho(&self, value_chirho: u32) -> bool {
+        if value_chirho >= 4096 {
+            return false;
+        }
+
+        let leaf_idx_chirho = (value_chirho / 64) as usize;
+        let bit_idx_chirho = value_chirho % 64;
+
+        // First check root (fast path for sparse domains)
+        if !self.root_chirho.test_bit_chirho(leaf_idx_chirho as u32) {
+            return false;
+        }
+
+        self.leaves_chirho[leaf_idx_chirho].test_bit_chirho(bit_idx_chirho)
+    }
+
+    /// Intersect two hierarchical domains
+    ///
+    /// Key optimization: Only check leaves where BOTH roots have bits set
+    pub fn intersect_chirho(&self, other_chirho: &Self) -> Self {
+        // Step 1: AND roots to find candidate leaves
+        let candidate_mask_chirho = self.root_chirho.and_chirho(other_chirho.root_chirho);
+
+        // Fast path: no overlap at root level
+        if candidate_mask_chirho.is_zero_chirho() {
+            return Self::empty_chirho();
+        }
+
+        // Step 2: Intersect only candidate leaves
+        let mut new_leaves_chirho = Box::new([BitVec64Chirho::ZERO_CHIRHO; 64]);
+        let mut new_root_chirho = BitVec64Chirho::ZERO_CHIRHO;
+
+        let mut bits_chirho = candidate_mask_chirho.0;
+        while bits_chirho != 0 {
+            let i_chirho = bits_chirho.trailing_zeros() as usize;
+            bits_chirho &= bits_chirho - 1; // Clear lowest bit
+
+            let leaf_result_chirho = self.leaves_chirho[i_chirho]
+                .and_chirho(other_chirho.leaves_chirho[i_chirho]);
+
+            new_leaves_chirho[i_chirho] = leaf_result_chirho;
+
+            if !leaf_result_chirho.is_zero_chirho() {
+                new_root_chirho = new_root_chirho.or_chirho(BitVec64Chirho(1 << i_chirho));
+            }
+        }
+
+        Self {
+            root_chirho: new_root_chirho,
+            leaves_chirho: new_leaves_chirho,
+        }
+    }
+
+    /// Union two hierarchical domains
+    pub fn union_chirho(&self, other_chirho: &Self) -> Self {
+        let new_root_chirho = self.root_chirho.or_chirho(other_chirho.root_chirho);
+        let mut new_leaves_chirho = Box::new([BitVec64Chirho::ZERO_CHIRHO; 64]);
+
+        let mut bits_chirho = new_root_chirho.0;
+        while bits_chirho != 0 {
+            let i_chirho = bits_chirho.trailing_zeros() as usize;
+            bits_chirho &= bits_chirho - 1;
+
+            new_leaves_chirho[i_chirho] = self.leaves_chirho[i_chirho]
+                .or_chirho(other_chirho.leaves_chirho[i_chirho]);
+        }
+
+        Self {
+            root_chirho: new_root_chirho,
+            leaves_chirho: new_leaves_chirho,
+        }
+    }
+
+    /// Check if domain is empty
+    pub fn is_empty_chirho(&self) -> bool {
+        self.root_chirho.is_zero_chirho()
+    }
+
+    /// Count values in domain
+    pub fn count_chirho(&self) -> u32 {
+        let mut count_chirho = 0u32;
+        let mut bits_chirho = self.root_chirho.0;
+
+        while bits_chirho != 0 {
+            let i_chirho = bits_chirho.trailing_zeros() as usize;
+            bits_chirho &= bits_chirho - 1;
+            count_chirho += self.leaves_chirho[i_chirho].0.count_ones();
+        }
+
+        count_chirho
+    }
+
+    /// Iterate over all values in domain
+    pub fn iter_chirho(&self) -> impl Iterator<Item = u32> + '_ {
+        let mut leaf_idx_chirho = 0usize;
+        let mut root_bits_chirho = self.root_chirho.0;
+        let mut leaf_bits_chirho = 0u64;
+
+        std::iter::from_fn(move || {
+            loop {
+                // Try to get next bit from current leaf
+                if leaf_bits_chirho != 0 {
+                    let bit_chirho = leaf_bits_chirho.trailing_zeros();
+                    leaf_bits_chirho &= leaf_bits_chirho - 1;
+                    return Some((leaf_idx_chirho as u32) * 64 + bit_chirho);
+                }
+
+                // Move to next non-empty leaf
+                if root_bits_chirho == 0 {
+                    return None;
+                }
+
+                leaf_idx_chirho = root_bits_chirho.trailing_zeros() as usize;
+                root_bits_chirho &= root_bits_chirho - 1;
+                leaf_bits_chirho = self.leaves_chirho[leaf_idx_chirho].0;
+            }
+        })
+    }
+}
+
+/// 3-level hierarchical domain: 64 × 64 × 64 = 262,144 values
+#[derive(Clone)]
+pub struct Hierarchical256kChirho {
+    /// Root: bit i set means index[i] has non-empty leaves
+    pub root_chirho: BitVec64Chirho,
+    /// Index: bit j in index[i] means leaves[i][j] is non-empty
+    pub index_chirho: Box<[BitVec64Chirho; 64]>,
+    /// Leaves: actual value membership
+    pub leaves_chirho: Box<[[BitVec64Chirho; 64]; 64]>,
+}
+
+impl Hierarchical256kChirho {
+    /// Empty domain
+    pub fn empty_chirho() -> Self {
+        Self {
+            root_chirho: BitVec64Chirho::ZERO_CHIRHO,
+            index_chirho: Box::new([BitVec64Chirho::ZERO_CHIRHO; 64]),
+            leaves_chirho: Box::new([[BitVec64Chirho::ZERO_CHIRHO; 64]; 64]),
+        }
+    }
+
+    /// Range domain [0, n)
+    pub fn range_chirho(n_chirho: u32) -> Self {
+        assert!(n_chirho <= 262144, "Value must be <= 262144");
+        let mut result_chirho = Self::empty_chirho();
+
+        for v in 0..n_chirho {
+            let idx1_chirho = (v / 4096) as usize;
+            let idx2_chirho = ((v % 4096) / 64) as usize;
+            let bit_chirho = v % 64;
+
+            result_chirho.leaves_chirho[idx1_chirho][idx2_chirho].0 |= 1 << bit_chirho;
+            result_chirho.index_chirho[idx1_chirho].0 |= 1 << idx2_chirho;
+            result_chirho.root_chirho.0 |= 1 << idx1_chirho;
+        }
+
+        result_chirho
+    }
+
+    /// Intersect with 3-level hierarchy
+    pub fn intersect_chirho(&self, other_chirho: &Self) -> Self {
+        // Level 1: AND roots
+        let candidate_root_chirho = self.root_chirho.and_chirho(other_chirho.root_chirho);
+
+        if candidate_root_chirho.is_zero_chirho() {
+            return Self::empty_chirho();
+        }
+
+        let mut result_chirho = Self::empty_chirho();
+
+        // Level 2: For each candidate in root, AND indices
+        let mut root_bits_chirho = candidate_root_chirho.0;
+        while root_bits_chirho != 0 {
+            let i_chirho = root_bits_chirho.trailing_zeros() as usize;
+            root_bits_chirho &= root_bits_chirho - 1;
+
+            let candidate_index_chirho = self.index_chirho[i_chirho]
+                .and_chirho(other_chirho.index_chirho[i_chirho]);
+
+            if candidate_index_chirho.is_zero_chirho() {
+                continue;
+            }
+
+            // Level 3: For each candidate in index, AND leaves
+            let mut index_bits_chirho = candidate_index_chirho.0;
+            while index_bits_chirho != 0 {
+                let j_chirho = index_bits_chirho.trailing_zeros() as usize;
+                index_bits_chirho &= index_bits_chirho - 1;
+
+                let leaf_result_chirho = self.leaves_chirho[i_chirho][j_chirho]
+                    .and_chirho(other_chirho.leaves_chirho[i_chirho][j_chirho]);
+
+                if !leaf_result_chirho.is_zero_chirho() {
+                    result_chirho.leaves_chirho[i_chirho][j_chirho] = leaf_result_chirho;
+                    result_chirho.index_chirho[i_chirho].0 |= 1 << j_chirho;
+                    result_chirho.root_chirho.0 |= 1 << i_chirho;
+                }
+            }
+        }
+
+        result_chirho
+    }
+
+    /// Check if empty
+    pub fn is_empty_chirho(&self) -> bool {
+        self.root_chirho.is_zero_chirho()
+    }
+}
+
+#[cfg(test)]
+mod tests_chirho {
+    use super::*;
+
+    #[test]
+    fn test_hierarchical_4k_basic_chirho() {
+        let a_chirho = Hierarchical4kChirho::range_chirho(100);
+        assert!(a_chirho.contains_chirho(0));
+        assert!(a_chirho.contains_chirho(99));
+        assert!(!a_chirho.contains_chirho(100));
+        assert_eq!(a_chirho.count_chirho(), 100);
+    }
+
+    #[test]
+    fn test_hierarchical_4k_intersection_chirho() {
+        let a_chirho = Hierarchical4kChirho::range_chirho(1000);
+        let b_chirho = Hierarchical4kChirho::range_chirho(500);
+        let c_chirho = a_chirho.intersect_chirho(&b_chirho);
+
+        assert_eq!(c_chirho.count_chirho(), 500);
+        assert!(c_chirho.contains_chirho(499));
+        assert!(!c_chirho.contains_chirho(500));
+    }
+
+    #[test]
+    fn test_hierarchical_4k_sparse_intersection_chirho() {
+        // Two domains that don't overlap at root level
+        let mut a_chirho = Hierarchical4kChirho::empty_chirho();
+        a_chirho.leaves_chirho[0] = BitVec64Chirho::ONES_CHIRHO; // Values 0-63
+        a_chirho.root_chirho = BitVec64Chirho(1);
+
+        let mut b_chirho = Hierarchical4kChirho::empty_chirho();
+        b_chirho.leaves_chirho[10] = BitVec64Chirho::ONES_CHIRHO; // Values 640-703
+        b_chirho.root_chirho = BitVec64Chirho(1 << 10);
+
+        let c_chirho = a_chirho.intersect_chirho(&b_chirho);
+
+        // Root AND is 0, so intersection should be empty
+        // This is O(1) - no leaf checks needed!
+        assert!(c_chirho.is_empty_chirho());
+    }
+
+    #[test]
+    fn test_hierarchical_4k_iteration_chirho() {
+        let domain_chirho = Hierarchical4kChirho::range_chirho(10);
+        let values_chirho: Vec<u32> = domain_chirho.iter_chirho().collect();
+        assert_eq!(values_chirho, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    }
+
+    #[test]
+    fn test_hierarchical_256k_basic_chirho() {
+        let a_chirho = Hierarchical256kChirho::range_chirho(1000);
+        let b_chirho = Hierarchical256kChirho::range_chirho(500);
+        let c_chirho = a_chirho.intersect_chirho(&b_chirho);
+
+        assert!(!c_chirho.is_empty_chirho());
+    }
+}

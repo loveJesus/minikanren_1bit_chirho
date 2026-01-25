@@ -1,0 +1,421 @@
+{
+  "title_chirho": "miniKanren 1-Bit: Paper-Ready Benchmarks & Applications",
+  "version_chirho": "1.0.0",
+  "description_chirho": "Complete the miniKanren 1-bit matrix operations project with publishable benchmarks, GPU integration, and differentiable logic applications",
+
+  "core_principle_chirho": "All logic operations reduce to sparse Boolean tensor network contraction, enabling hardware acceleration via SIMD, GPU, and FPGA",
+
+  "existing_codebase_chirho": {
+    "rust_library_chirho": "rust_chirho/src/",
+    "key_modules_chirho": [
+      "hardware_chirho.rs - BitVec64Chirho, BitVec256Chirho, CAM",
+      "approaches_chirho/ - Hierarchical4kChirho, Hierarchical256kChirho, SymbolicDomainChirho",
+      "diff_semiring_chirho.rs - DiffProbChirho, soft logic",
+      "semiring_chirho.rs - Bool/Prob/Tropical/Count semirings",
+      "goals_chirho.rs - eq, conde, fresh, not, conda, condu, diseq",
+      "unify_chirho.rs - unification with occurs check",
+      "sudoku_chirho.rs - constraint propagation solver"
+    ],
+    "gpu_feature_chirho": "gpu_chirho feature flag (wgpu, pollster, bytemuck)",
+    "benchmarks_chirho": [
+      "benches/synthesis_bench_chirho.rs - type inference, synthesis enumeration",
+      "benches/approaches_bench_chirho.rs - domain comparison",
+      "benches/criterion_bench_chirho.rs - core operations"
+    ]
+  },
+
+  "directory_structure_chirho": {
+    "description_chirho": "Keep main src/ clean, organize new code in submodules",
+    "layout_chirho": {
+      "rust_chirho/src/": {
+        "lib.rs": "Main exports - add mod declarations only",
+        "synthesis_chirho/": {
+          "mod.rs": "Synthesis submodule",
+          "sygus_chirho.rs": "SyGuS parser",
+          "grammar_chirho.rs": "Grammar domain encoding",
+          "enumerate_chirho.rs": "Domain-pruned enumeration"
+        },
+        "learn_chirho/": {
+          "mod.rs": "Differentiable learning submodule",
+          "learnable_chirho.rs": "LearnableRelationChirho",
+          "anneal_chirho.rs": "Temperature annealing",
+          "gumbel_chirho.rs": "Gumbel-softmax"
+        },
+        "gpu_chirho/": {
+          "mod.rs": "GPU submodule (extends existing)",
+          "pipeline_chirho.rs": "WebGPU pipeline",
+          "shaders_chirho/": {
+            "domain_intersect_chirho.wgsl": "Batch intersection",
+            "batch_unify_chirho.wgsl": "Parallel unification",
+            "arc_consistency_chirho.wgsl": "Constraint propagation"
+          }
+        }
+      },
+      "rust_chirho/benches/": {
+        "sygus_bench_chirho.rs": "SyGuS benchmarks",
+        "comparison_bench_chirho.rs": "OCanren/faster-mk comparison",
+        "gpu_bench_chirho.rs": "GPU vs CPU benchmarks",
+        "differentiable_bench_chirho.rs": "Learning benchmarks"
+      },
+      "rust_chirho/examples/": {
+        "learn_family_chirho.rs": "Family relations learning demo",
+        "gpu_sudoku_chirho.rs": "Batch Sudoku on GPU",
+        "sygus_max2_chirho.rs": "SyGuS synthesis demo"
+      },
+      "benchmarks_chirho/": {
+        "sygus/": {
+          "max2.sl": "Conditional max problem",
+          "array_search.sl": "Array search problem",
+          "string_replace.sl": "String manipulation"
+        },
+        "ocanren/": {
+          "appendo_chirho.ml": "OCanren appendo",
+          "nqueens_chirho.ml": "OCanren N-Queens"
+        },
+        "faster/": {
+          "appendo_chirho.scm": "faster-miniKanren appendo",
+          "nqueens_chirho.scm": "faster-miniKanren N-Queens"
+        },
+        "scripts/": {
+          "run_comparison_chirho.sh": "Run all comparisons",
+          "generate_table_chirho.py": "Generate LaTeX tables"
+        }
+      }
+    }
+  },
+
+  "milestones_chirho": [
+    {
+      "id_chirho": "M1",
+      "name_chirho": "SyGuS Program Synthesis",
+      "description_chirho": "Solve real SyGuS problems faster than existing tools using domain-pruned enumeration",
+      "priority_chirho": "high",
+      "tasks_chirho": [
+        {
+          "id_chirho": "M1.1",
+          "name_chirho": "Create synthesis_chirho submodule",
+          "description_chirho": "Create rust_chirho/src/synthesis_chirho/mod.rs with sygus, grammar, enumerate submodules",
+          "files_chirho": [
+            "rust_chirho/src/synthesis_chirho/mod.rs",
+            "rust_chirho/src/synthesis_chirho/sygus_chirho.rs",
+            "rust_chirho/src/synthesis_chirho/grammar_chirho.rs",
+            "rust_chirho/src/synthesis_chirho/enumerate_chirho.rs"
+          ],
+          "acceptance_chirho": "Module compiles and exports types"
+        },
+        {
+          "id_chirho": "M1.2",
+          "name_chirho": "SyGuS Parser",
+          "description_chirho": "Parse SyGuS .sl files into GrammarChirho and ExamplesChirho",
+          "files_chirho": ["rust_chirho/src/synthesis_chirho/sygus_chirho.rs"],
+          "acceptance_chirho": "Can parse max2.sl from SyGuS-Comp"
+        },
+        {
+          "id_chirho": "M1.3",
+          "name_chirho": "Grammar Domain Encoding",
+          "description_chirho": "Encode grammar productions as Hierarchical4kChirho domain values",
+          "files_chirho": ["rust_chirho/src/synthesis_chirho/grammar_chirho.rs"],
+          "acceptance_chirho": "Grammar with 100 productions encoded as domain"
+        },
+        {
+          "id_chirho": "M1.4",
+          "name_chirho": "Example Propagation",
+          "description_chirho": "Propagate I/O examples to prune domain using constraint propagation",
+          "files_chirho": ["rust_chirho/src/synthesis_chirho/enumerate_chirho.rs"],
+          "acceptance_chirho": "Domain pruning reduces search space by 10x on max2"
+        },
+        {
+          "id_chirho": "M1.5",
+          "name_chirho": "SyGuS Test Problems",
+          "description_chirho": "Add 5+ SyGuS benchmark files",
+          "files_chirho": [
+            "benchmarks_chirho/sygus/max2.sl",
+            "benchmarks_chirho/sygus/array_search.sl",
+            "benchmarks_chirho/sygus/string_replace.sl"
+          ],
+          "acceptance_chirho": "All parse correctly"
+        },
+        {
+          "id_chirho": "M1.6",
+          "name_chirho": "SyGuS Benchmarks",
+          "description_chirho": "Run benchmarks comparing with CVC5/EUSolver",
+          "files_chirho": ["rust_chirho/benches/sygus_bench_chirho.rs"],
+          "acceptance_chirho": "Solve at least 2 problems 10x faster than CVC5"
+        }
+      ]
+    },
+    {
+      "id_chirho": "M2",
+      "name_chirho": "OCanren/faster-miniKanren Comparison",
+      "description_chirho": "Direct benchmark against optimized miniKanren implementations",
+      "priority_chirho": "high",
+      "tasks_chirho": [
+        {
+          "id_chirho": "M2.1",
+          "name_chirho": "Setup Scripts",
+          "description_chirho": "Create setup scripts for comparison systems",
+          "files_chirho": ["benchmarks_chirho/scripts/setup_comparison_chirho.sh"],
+          "acceptance_chirho": "OCanren and faster-miniKanren install successfully"
+        },
+        {
+          "id_chirho": "M2.2",
+          "name_chirho": "Port appendo to OCanren",
+          "description_chirho": "Implement appendo benchmark in OCanren",
+          "files_chirho": ["benchmarks_chirho/ocanren/appendo_chirho.ml"],
+          "acceptance_chirho": "Produces correct results"
+        },
+        {
+          "id_chirho": "M2.3",
+          "name_chirho": "Port appendo to faster-miniKanren",
+          "description_chirho": "Implement appendo benchmark in faster-miniKanren",
+          "files_chirho": ["benchmarks_chirho/faster/appendo_chirho.scm"],
+          "acceptance_chirho": "Produces correct results"
+        },
+        {
+          "id_chirho": "M2.4",
+          "name_chirho": "Our appendo Implementation",
+          "description_chirho": "Optimized appendo using our library",
+          "files_chirho": ["rust_chirho/benches/comparison_bench_chirho.rs"],
+          "acceptance_chirho": "Uses Hierarchical domains, 10x faster"
+        },
+        {
+          "id_chirho": "M2.5",
+          "name_chirho": "N-Queens Comparison",
+          "description_chirho": "N-Queens 8 in all systems",
+          "files_chirho": [
+            "benchmarks_chirho/ocanren/nqueens_chirho.ml",
+            "benchmarks_chirho/faster/nqueens_chirho.scm"
+          ],
+          "acceptance_chirho": "All find 92 solutions"
+        },
+        {
+          "id_chirho": "M2.6",
+          "name_chirho": "Comparison Runner",
+          "description_chirho": "Script to run all benchmarks and collect times",
+          "files_chirho": ["benchmarks_chirho/scripts/run_comparison_chirho.sh"],
+          "acceptance_chirho": "Outputs CSV with all timings"
+        },
+        {
+          "id_chirho": "M2.7",
+          "name_chirho": "Results Table Generator",
+          "description_chirho": "Generate LaTeX table from benchmark results",
+          "files_chirho": ["benchmarks_chirho/scripts/generate_table_chirho.py"],
+          "acceptance_chirho": "Produces paper-ready table"
+        }
+      ]
+    },
+    {
+      "id_chirho": "M3",
+      "name_chirho": "GPU Acceleration",
+      "description_chirho": "Complete GPU backend using existing gpu_chirho feature",
+      "priority_chirho": "medium",
+      "tasks_chirho": [
+        {
+          "id_chirho": "M3.1",
+          "name_chirho": "Create shaders_chirho directory",
+          "description_chirho": "Set up shader directory structure",
+          "files_chirho": ["rust_chirho/src/gpu_chirho/shaders_chirho/"],
+          "acceptance_chirho": "Directory exists with mod.rs"
+        },
+        {
+          "id_chirho": "M3.2",
+          "name_chirho": "Domain Intersection Shader",
+          "description_chirho": "WebGPU shader for batch BitVec64 intersection",
+          "files_chirho": ["rust_chirho/src/gpu_chirho/shaders_chirho/domain_intersect_chirho.wgsl"],
+          "acceptance_chirho": "Computes 1M intersections correctly"
+        },
+        {
+          "id_chirho": "M3.3",
+          "name_chirho": "Batch Unification Shader",
+          "description_chirho": "GPU kernel for parallel unification tasks",
+          "files_chirho": ["rust_chirho/src/gpu_chirho/shaders_chirho/batch_unify_chirho.wgsl"],
+          "acceptance_chirho": "Matches CPU unification results"
+        },
+        {
+          "id_chirho": "M3.4",
+          "name_chirho": "Arc Consistency Shader",
+          "description_chirho": "GPU constraint propagation for domains",
+          "files_chirho": ["rust_chirho/src/gpu_chirho/shaders_chirho/arc_consistency_chirho.wgsl"],
+          "acceptance_chirho": "Converges to same fixpoint as CPU"
+        },
+        {
+          "id_chirho": "M3.5",
+          "name_chirho": "GPU Pipeline",
+          "description_chirho": "Integrate shaders with existing rust library",
+          "files_chirho": ["rust_chirho/src/gpu_chirho/pipeline_chirho.rs"],
+          "acceptance_chirho": "Can call GPU operations from library API"
+        },
+        {
+          "id_chirho": "M3.6",
+          "name_chirho": "GPU Benchmarks",
+          "description_chirho": "Benchmark GPU vs CPU for batch operations",
+          "files_chirho": ["rust_chirho/benches/gpu_bench_chirho.rs"],
+          "acceptance_chirho": "10x+ speedup at 100k batch size"
+        },
+        {
+          "id_chirho": "M3.7",
+          "name_chirho": "Batch Sudoku Demo",
+          "description_chirho": "Solve 1000 Sudoku puzzles in parallel on GPU",
+          "files_chirho": ["rust_chirho/examples/gpu_sudoku_chirho.rs"],
+          "acceptance_chirho": "50x faster than sequential CPU"
+        }
+      ]
+    },
+    {
+      "id_chirho": "M4",
+      "name_chirho": "Differentiable Logic",
+      "description_chirho": "Complete differentiable miniKanren using existing diff_semiring_chirho",
+      "priority_chirho": "medium",
+      "tasks_chirho": [
+        {
+          "id_chirho": "M4.1",
+          "name_chirho": "Create learn_chirho submodule",
+          "description_chirho": "Create rust_chirho/src/learn_chirho/ with submodules",
+          "files_chirho": [
+            "rust_chirho/src/learn_chirho/mod.rs",
+            "rust_chirho/src/learn_chirho/learnable_chirho.rs",
+            "rust_chirho/src/learn_chirho/anneal_chirho.rs",
+            "rust_chirho/src/learn_chirho/gumbel_chirho.rs"
+          ],
+          "acceptance_chirho": "Module compiles and exports types"
+        },
+        {
+          "id_chirho": "M4.2",
+          "name_chirho": "Learnable Relations",
+          "description_chirho": "LearnableRelationChirho with forward/backward using DiffProbChirho",
+          "files_chirho": ["rust_chirho/src/learn_chirho/learnable_chirho.rs"],
+          "acceptance_chirho": "Gradients flow correctly"
+        },
+        {
+          "id_chirho": "M4.3",
+          "name_chirho": "Temperature Annealing",
+          "description_chirho": "Schedule for soft-to-hard transition",
+          "files_chirho": ["rust_chirho/src/learn_chirho/anneal_chirho.rs"],
+          "acceptance_chirho": "Annealing converges to discrete logic"
+        },
+        {
+          "id_chirho": "M4.4",
+          "name_chirho": "Gumbel-Softmax",
+          "description_chirho": "Differentiable branch selection for conde",
+          "files_chirho": ["rust_chirho/src/learn_chirho/gumbel_chirho.rs"],
+          "acceptance_chirho": "Gradients flow through discrete choices"
+        },
+        {
+          "id_chirho": "M4.5",
+          "name_chirho": "Family Relations Demo",
+          "description_chirho": "Learn parent relation from grandparent examples",
+          "files_chirho": ["rust_chirho/examples/learn_family_chirho.rs"],
+          "acceptance_chirho": "Correctly learns which tuples are parents"
+        },
+        {
+          "id_chirho": "M4.6",
+          "name_chirho": "Differentiable Benchmarks",
+          "description_chirho": "Compare with Scallop on learning tasks",
+          "files_chirho": ["rust_chirho/benches/differentiable_bench_chirho.rs"],
+          "acceptance_chirho": "Competitive training time"
+        }
+      ]
+    },
+    {
+      "id_chirho": "M5",
+      "name_chirho": "Paper Writing",
+      "description_chirho": "Write and submit paper to miniKanren Workshop / ICFP",
+      "priority_chirho": "high",
+      "depends_on_chirho": ["M1", "M2"],
+      "tasks_chirho": [
+        {
+          "id_chirho": "M5.1",
+          "name_chirho": "Expand Existing Paper",
+          "description_chirho": "Extend paper_chirho/paper_chirho.tex with new results",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "All sections have content"
+        },
+        {
+          "id_chirho": "M5.2",
+          "name_chirho": "Benchmark Figures",
+          "description_chirho": "Generate publication-quality benchmark charts",
+          "files_chirho": ["paper_chirho/figures/"],
+          "acceptance_chirho": "All tables and figures ready"
+        },
+        {
+          "id_chirho": "M5.3",
+          "name_chirho": "Related Work Section",
+          "description_chirho": "Cite OCanren, faster-miniKanren, Scallop, etc.",
+          "files_chirho": ["paper_chirho/paper_chirho.bib"],
+          "acceptance_chirho": "20+ relevant citations"
+        },
+        {
+          "id_chirho": "M5.4",
+          "name_chirho": "Submit to miniKanren Workshop",
+          "description_chirho": "First submission target",
+          "files_chirho": [],
+          "acceptance_chirho": "Paper submitted"
+        }
+      ]
+    }
+  ],
+
+  "coding_standards_chirho": {
+    "suffix_chirho": "ALL identifiers must end with _chirho (variables, functions, types)",
+    "casing_chirho": {
+      "types_chirho": "PascalChirho (e.g., BitVec64Chirho)",
+      "functions_chirho": "snake_chirho (e.g., unify_chirho)",
+      "variables_chirho": "snake_chirho (e.g., result_chirho)",
+      "constants_chirho": "UPPER_CHIRHO (e.g., MAX_DEPTH_CHIRHO)"
+    },
+    "integration_chirho": "New code must use existing library types (BitVec64Chirho, Hierarchical4kChirho, DiffProbChirho)"
+  },
+
+  "architecture_constraints_chirho": [
+    "Domain operations must reduce to bitwise AND/OR on BitVec64Chirho or hierarchical variants",
+    "GPU shaders must mirror CPU algorithms exactly for verification",
+    "Differentiable logic must use DiffProbChirho semiring from diff_semiring_chirho.rs",
+    "All benchmarks must use criterion for consistent measurement",
+    "New modules go in submodules (synthesis_chirho/, learn_chirho/, gpu_chirho/) not main src/"
+  ],
+
+  "success_metrics_chirho": {
+    "sygus_chirho": "10x faster than CVC5 on 2+ problems",
+    "ocanren_comparison_chirho": "10x faster than OCanren on 2+ benchmarks",
+    "gpu_speedup_chirho": "10x faster than CPU at batch size 100k",
+    "differentiable_chirho": "Training converges in <1000 iterations",
+    "paper_chirho": "Accepted at miniKanren Workshop or ICFP"
+  },
+
+  "paper_reproducibility_chirho": {
+    "requirement_chirho": "Paper must be self-contained enough that an LLM could reconstruct the code and reproduce results",
+    "mandatory_content_chirho": [
+      {
+        "section_chirho": "Data Structures",
+        "content_chirho": "Complete type definitions with field layouts (BitVec64Chirho = u64 wrapper, Hierarchical4kChirho = root BitVec64 + 64 leaf BitVec64s)"
+      },
+      {
+        "section_chirho": "Algorithms",
+        "content_chirho": "Pseudocode or actual code for: domain intersection, hierarchical early-exit, unification with occurs check, constraint propagation"
+      },
+      {
+        "section_chirho": "Mathematical Formulation",
+        "content_chirho": "Formal definitions: domain as bitmask, unification as AND, disjunction as tensor stack, soft equality formula exp(-|a-b|/τ)"
+      },
+      {
+        "section_chirho": "GPU Shaders",
+        "content_chirho": "Complete WGSL code for domain intersection kernel (small enough to include verbatim)"
+      },
+      {
+        "section_chirho": "Benchmark Methodology",
+        "content_chirho": "Exact benchmark parameters: sample sizes, warmup, input generation seeds, hardware specs"
+      },
+      {
+        "section_chirho": "Test Cases",
+        "content_chirho": "Concrete examples with expected outputs: Sudoku puzzle input/solution, N-Queens expected count, SyGuS I/O examples"
+      }
+    ],
+    "appendix_chirho": [
+      "Full Rust type definitions for all domain types",
+      "Complete WGSL shader source code",
+      "SyGuS .sl file format examples",
+      "Benchmark input generation code"
+    ],
+    "verification_chirho": "Before submission, test that paper content alone (without repo access) enables reimplementation"
+  }
+}

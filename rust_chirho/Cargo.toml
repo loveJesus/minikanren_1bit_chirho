@@ -56,6 +56,14 @@ harness = false
 name = "optics_bench_chirho"
 harness = false
 
+[[bench]]
+name = "approaches_bench_chirho"
+harness = false
+
+[[bench]]
+name = "synthesis_bench_chirho"
+harness = false
+
 [features]
 default = ["egraph_native_chirho"]
 # Use reference (stream-based) implementation instead of hardware (bit-parallel)
