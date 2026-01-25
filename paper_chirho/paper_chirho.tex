@@ -575,6 +575,34 @@ Learning parent relation from grandparent supervision:
   \item Convergence: 50 iterations, 0.01 learning rate
 \end{itemize}
 
+\textbf{Differentiable Hierarchical Domains.}
+We extend the 1-bit approach to soft probabilities with \texttt{DiffHierarchical4kChirho}:
+\begin{itemize}
+  \item Each bit position has probability $p \in [0,1]$ instead of hard 0/1
+  \item Soft AND: $P(x \in A \cap B) = P(x \in A) \cdot P(x \in B)$
+  \item Soft OR: $P(x \in A \cup B) = P(A) + P(B) - P(A) \cdot P(B)$
+  \item Gradients flow through operations for end-to-end learning
+  \item Temperature annealing sharpens distributions during training
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Domain Type} & \textbf{Size} & \textbf{Intersect} & \textbf{Overhead} \\
+\midrule
+BitVec64Chirho & 64 & 420 ps & 1$\times$ \\
+Hierarchical4kChirho & 4,096 & 39 ns & 93$\times$ \\
+Hierarchical256kChirho & 262,144 & 367 ns & 870$\times$ \\
+\textbf{DiffHierarchical4kChirho} & \textbf{4,096 soft} & \textbf{1.26 $\mu$s} & \textbf{3,000$\times$} \\
+\bottomrule
+\end{tabular}
+\caption{Domain composition benchmarks: hard vs soft operations}
+\label{tab:domain_composition}
+\end{table}
+
+The soft version incurs 36$\times$ overhead vs hard Hierarchical4kChirho, but enables gradient-based learning through logic programs. GPU domains use \texttt{Vec<u32>} arrays and scale to unlimited size.
+
 % ============================================================================
 \section{Related Work}
 % ============================================================================
