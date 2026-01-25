@@ -111,6 +111,36 @@
 ### Remaining Tasks:
 - M1.6: SyGuS Benchmarks (comparison with CVC5)
 - M3: GPU Acceleration
-- M4.5: Family Relations Demo
-- M4.6: Differentiable Benchmarks
+- M5: Paper Writing
+
+---
+
+## Iteration 3 - 2026-01-25
+
+### Completed Tasks:
+
+**M4.5: Family Relations Demo**
+- [x] Created rust_chirho/examples/learn_family_chirho.rs
+- Demonstrates learning parent relation from grandparent supervision
+- Uses LearnableRelationExtChirho with soft composition
+- Temperature annealing via AnnealingScheduleChirho
+- Successfully distinguishes true parents from noise
+
+**M4.6: Differentiable Benchmarks**
+- [x] Created rust_chirho/benches/differentiable_bench_chirho.rs
+- LearnableRelation: soft_query, train_step, weights (10/100/1000 tuples)
+- Annealing: exponential, linear, cosine temperature
+- GumbelSoftmax: sample, sample_hard (2/4/8/16 branches)
+- StraightThrough: forward, backward
+- DifferentiableBranch: branch_probs, soft_conde
+- DiffProb: and, or, not, chain operations
+- Training epoch simulation
+
+### Test Status:
+- All 201 tests passing
+- cargo check clean
+
+### Remaining Tasks:
+- M1.6: SyGuS Benchmarks (comparison with CVC5)
+- M3: GPU Acceleration
 - M5: Paper Writing

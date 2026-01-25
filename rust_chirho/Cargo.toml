@@ -68,6 +68,10 @@ harness = false
 name = "comparison_bench_chirho"
 harness = false
 
+[[bench]]
+name = "differentiable_bench_chirho"
+harness = false
+
 [features]
 default = ["egraph_native_chirho"]
 # Use reference (stream-based) implementation instead of hardware (bit-parallel)
