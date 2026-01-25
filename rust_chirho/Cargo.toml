@@ -84,6 +84,14 @@ harness = false
 name = "domain_composition_bench_chirho"
 harness = false
 
+[[bench]]
+name = "contraction_bench_chirho"
+harness = false
+
+[[bench]]
+name = "family_bench_chirho"
+harness = false
+
 [features]
 default = ["egraph_native_chirho"]
 # Use reference (stream-based) implementation instead of hardware (bit-parallel)
