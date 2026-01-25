@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.7)  25 JAN 2026 12:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.7)  25 JAN 2026 16:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -826,7 +826,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 {/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
 al/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
-Overfull \hbox (27.84338pt too wide) in paragraph at lines 97--99
+Overfull \hbox (33.31839pt too wide) in paragraph at lines 97--99
 \OT1/cmr/m/n/10.95 miniKanren [[]] is a re-la-tional pro-gram-ming lan-guage em
 -bed-ded in Scheme/Racket.
  []
@@ -870,27 +870,14 @@ put line 272.
 [5]
 
 [6]
-
-LaTeX Warning: Reference `tab:nqueens' on page 7 undefined on input line 376.
-
-
 Overfull \hbox (40.90346pt too wide) in paragraph at lines 380--389
  [][] 
  []
 
 
-LaTeX Warning: Reference `tab:sudoku' on page 7 undefined on input line 393.
-
-
-LaTeX Warning: Reference `tab:unify' on page 7 undefined on input line 410.
-
-
 Overfull \hbox (10.93782pt too wide) in paragraph at lines 414--424
  [][] 
  []
-
-
-LaTeX Warning: Reference `tab:goals' on page 7 undefined on input line 428.
 
 
 Overfull \hbox (6.83846pt too wide) in paragraph at lines 432--441
@@ -900,84 +887,106 @@ Overfull \hbox (6.83846pt too wide) in paragraph at lines 432--441
 
 
 [7]
-Overfull \hbox (3.1105pt too wide) in paragraph at lines 489--492
-[]\OT1/cmr/bx/n/10.95 Constraint solvers. \OT1/cmr/m/n/10.95 SAT solvers (Min-i
-Sat, Z3) and ASP solvers (clingo)
+Overfull \hbox (12.66547pt too wide) in paragraph at lines 507--508
+\OT1/cmr/m/n/10.95 We bench-marked against OCan-ren [[]], a typed OCaml em-bed-
+ding of miniKan-
+ []
+
+
+Overfull \hbox (13.50035pt too wide) in paragraph at lines 511--521
+ [][] 
  []
 
 
 
 [8]
-Overfull \hbox (28.57382pt too wide) in paragraph at lines 523--524
-[]\OT1/cmr/m/n/10.95 The Rust im-ple-men-ta-tion is avail-able on crates.io as 
-\OT1/cmtt/m/n/10.95 minikanren[]1bit[]chirho\OT1/cmr/m/n/10.95 . 
+Overfull \hbox (11.66049pt too wide) in paragraph at lines 563--564
+[]\OT1/cmr/bx/n/10.95 LearnableRelationExtChirho\OT1/cmr/m/n/10.95 : Re-la-tion
+s with learn-able tu-ple weights 
  []
 
 
 
 [9]
+Overfull \hbox (4.56833pt too wide) in paragraph at lines 604--609
+\OT1/cmr/m/n/10.95 lems. CVC5 [[]] is a state-of-the-art Sy-GuS solver. Bar-li-
+man [[]] uses miniKan-
+ []
 
-[10] (./paper_chirho.aux)
+
+
+[10]
+Overfull \hbox (28.57382pt too wide) in paragraph at lines 641--642
+[]\OT1/cmr/m/n/10.95 The Rust im-ple-men-ta-tion is avail-able on crates.io as 
+\OT1/cmtt/m/n/10.95 minikanren[]1bit[]chirho\OT1/cmr/m/n/10.95 . 
+ []
+
+(./paper_chirho.bbl
+
+! LaTeX Error: Unicode character λ (U+03BB)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.15 \newblock {Cλ
+                   aSH}: Structural descriptions of synchronous hardware using
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+
+[11]
+Underfull \hbox (badness 1389) in paragraph at lines 37--41
+[]\OT1/cmr/m/n/10.95 William E. Byrd, Michael Bal-lan-tyne, Gre-gory Rosen-blat
+t, and
+ []
+
+
+
+[12])
+
+[13] (./paper_chirho.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `paper_chirho.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `paper_chirho.out':
-(rerunfilecheck)             Before: CE91D7F99B1FD864AC8BA3D4F47D41B4;3164
-(rerunfilecheck)             After:  4B113BEDB69AE76855F509632F67B6EF;2796.
+Package rerunfilecheck Info: File `paper_chirho.out' has not changed.
+(rerunfilecheck)             Checksum: 0427FDD35C4B7EC896D9C9A123F2D6A9;3615.
  ) 
 Here is how much of TeX's memory you used:
- 25094 strings out of 473190
- 482758 string characters out of 5715801
- 878211 words of memory out of 5000000
- 47861 multiletter control sequences out of 15000+600000
+ 25152 strings out of 473190
+ 483736 string characters out of 5715801
+ 879259 words of memory out of 5000000
+ 47890 multiletter control sequences out of 15000+600000
  571094 words of font info for 83 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,10n,87p,549b,707s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{subsection.5.4} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.5.3} has been referenced but does not ex
-ist, replaced by a fixed one
-
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><
-/usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></
-usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></u
-sr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
-r/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/
-local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/lo
-cal/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/loca
-l/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/
-texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/te
-xlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texli
-ve/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/
-2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/202
-5/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2025/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2025/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2025/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2025/texmf
--dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2025/texmf-
-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025/te
-xmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb>
-Output written on paper_chirho.pdf (10 pages, 268772 bytes).
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
+></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
+/usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
+usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></us
+r/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/
+local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/lo
+cal/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/loca
+l/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/
+texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/tex
+live/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texliv
+e/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2
+025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/20
+25/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2025
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2025/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2025/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2025/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2025/texm
+f-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025/
+texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb>
+Output written on paper_chirho.pdf (13 pages, 281492 bytes).
 PDF statistics:
- 303 PDF objects out of 1000 (max. 8388607)
- 248 compressed objects within 3 object streams
- 67 named destinations out of 1000 (max. 500000)
- 181 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 380 PDF objects out of 1000 (max. 8388607)
+ 321 compressed objects within 4 object streams
+ 93 named destinations out of 1000 (max. 500000)
+ 197 words of extra memory for PDF output out of 10000 (max. 10000000)
 

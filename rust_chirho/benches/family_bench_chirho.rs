@@ -229,7 +229,9 @@ impl FamilyTreeChirho {
     }
 }
 
-static EMPTY_SET_CHIRHO: HashSet<u32> = HashSet::new();
+use std::sync::LazyLock;
+
+static EMPTY_SET_CHIRHO: LazyLock<HashSet<u32>> = LazyLock::new(HashSet::new);
 
 // ============================================================================
 // Domain Representations for Family Queries

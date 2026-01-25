@@ -36,6 +36,19 @@ miniKanren search = sparse Boolean tensor network contraction
 | Mutual recursion | Coupled tensor equations (SCC) |
 | Variable binding | Union-Find equivalence classes |
 | Soft logic | Semiring generalization (Bool/Prob/Tropical/Count) |
+| **Differentiable domains** | **Soft hierarchical (probabilities instead of bits)** |
+
+## Domain Types
+
+| Domain Type | Size | Memory | Use Case |
+|-------------|------|--------|----------|
+| `BitVec64Chirho` | 64 | 8 bytes | Small enums, flags |
+| `Hierarchical4kChirho` | 4,096 | 520 bytes | ASCII, small integers |
+| `Hierarchical256kChirho` | 262,144 | 32 KB | Unicode BMP |
+| `DiffHierarchical4kChirho` | 4,096 soft | 65 KB | Learning/gradient flow |
+| GPU `Vec<u32>` | **Unlimited** | N/4 bytes | Massive parallel search |
+
+**Key insight:** GPU version is NOT limited to 64 values — uses `Vec<u32>` arrays where each u32 holds 32 bits, scaling to any domain size.
 
 ## Benchmarks
 
@@ -69,6 +82,20 @@ miniKanren search = sparse Boolean tensor network contraction
 | Mass Intersect | 10000 | **714 ns** | 2.2 ms | **3,100×** |
 
 Single operations (hardware): **~420 picoseconds** (single CPU cycle)
+
+### Domain Composition Benchmarks
+
+| Domain Type | Intersect | Overhead | Notes |
+|-------------|-----------|----------|-------|
+| BitVec64 (64) | 420 ps | 1× | Single CPU cycle |
+| Hierarchical4k (4096) | 39 ns | 93× | 2-level hierarchy |
+| Hierarchical256k (262k) | 367 ns | 870× | 3-level hierarchy |
+| **DiffHierarchical4k (soft)** | **1.26 µs** | **3000×** | Enables gradients |
+
+**Hard vs Soft (4096 values):**
+- Hard intersect: 35 ns
+- Soft intersect: 1.26 µs (**36× slower**)
+- But soft enables gradient-based learning through logic programs
 
 ### Massively Parallel Hardware
 
@@ -260,6 +287,9 @@ minikanren_1bit_chirho/
 | `constraint_chirho.rs` | AC-3 arc consistency |
 | `tabling_chirho.rs` | SLG-style memoization |
 | `semiring_chirho.rs` | Bool/Prob/Tropical/Count/Log |
+| `approaches_chirho/` | Domain types for infinite miniKanren |
+| `hierarchical_chirho.rs` | 4k/256k value hierarchical domains |
+| `diff_hierarchical_chirho.rs` | **Differentiable 4k domains (soft)** |
 | `hardware_chirho.rs` | FPGA primitives (BitVec64, CAM) |
 | `optics_hw_chirho.rs` | **Hardware optics (3000× faster)** |
 | `diff_semiring_chirho.rs` | Differentiable logic with gradients |

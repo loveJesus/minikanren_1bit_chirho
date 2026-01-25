@@ -21,6 +21,7 @@ pub mod hybrid_chirho;
 pub mod complement_chirho;
 pub mod hw_symbolic_chirho;
 pub mod hierarchical_chirho;
+pub mod diff_hierarchical_chirho;
 
 pub use paged_chirho::PagedDomainChirho;
 pub use symbolic_chirho::{SymbolicDomainChirho, SymbolicConstraintChirho};
@@ -28,3 +29,4 @@ pub use hybrid_chirho::{HybridDomainChirho, HybridStateChirho};
 pub use complement_chirho::ComplementDomainChirho;
 pub use hw_symbolic_chirho::{HwSymbolicDomainChirho, SymbolicOpChirho};
 pub use hierarchical_chirho::{Hierarchical4kChirho, Hierarchical256kChirho};
+pub use diff_hierarchical_chirho::{DiffHierarchical4kChirho, DiffUnifyStateChirho};

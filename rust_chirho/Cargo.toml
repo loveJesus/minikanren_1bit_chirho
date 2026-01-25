@@ -76,6 +76,14 @@ harness = false
 name = "gpu_bench_chirho"
 harness = false
 
+[[bench]]
+name = "sygus_bench_chirho"
+harness = false
+
+[[bench]]
+name = "domain_composition_bench_chirho"
+harness = false
+
 [features]
 default = ["egraph_native_chirho"]
 # Use reference (stream-based) implementation instead of hardware (bit-parallel)

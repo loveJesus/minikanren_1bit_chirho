@@ -2,11 +2,11 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{reasoned-schemer}
+\citation{reasoned_schemer_chirho}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
-\citation{reasoned-schemer}
-\citation{tensor-networks}
-\citation{egg}
+\citation{reasoned_schemer_chirho}
+\citation{tensor_networks_intro_chirho}
+\citation{egg_chirho}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Background}{2}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}miniKanren}{2}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Tensor Networks}{2}{subsection.2.2}\protected@file@percent }
@@ -14,7 +14,7 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture: Terms are hash-consed to IDs, IDs index into domain bitmasks, unification is bitwise AND.}}{3}{figure.1}\protected@file@percent }
 \newlabel{fig:architecture}{{1}{3}{Architecture: Terms are hash-consed to IDs, IDs index into domain bitmasks, unification is bitwise AND}{figure.1}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}The Core Mapping}{3}{section.3}\protected@file@percent }
-\citation{reasoned-schemer}
+\citation{slg_chirho}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Handling Infinite Domains via Hash Consing}{4}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Tabling for Recursive Relations}{4}{subsection.3.2}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Mode-driven goal reordering: process ground arguments first.}}{5}{figure.2}\protected@file@percent }
@@ -22,8 +22,8 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Arc Consistency (AC-3)}{5}{subsection.3.3}\protected@file@percent }
 \@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces AC-3 Domain Propagation}}{5}{algorithm.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Contraction Order Optimization}{5}{subsection.3.4}\protected@file@percent }
-\citation{calyx}
-\citation{gumbel-softmax}
+\citation{calyx_chirho}
+\citation{gumbel_softmax_chirho}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Implementation}{6}{section.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Rust Implementation}{6}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Hardware Implementation}{6}{subsection.4.2}\protected@file@percent }
@@ -39,20 +39,73 @@
 \newlabel{tab:sudoku}{{3}{7}{Sudoku solver performance (Rust)}{table.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Unification: Rust hardware is 6.8$\times $ faster than streams, 4000$\times $ faster than heap}}{7}{table.4}\protected@file@percent }
 \newlabel{tab:unify}{{4}{7}{Unification: Rust hardware is 6.8$\times $ faster than streams, 4000$\times $ faster than heap}{table.4}{}}
-\citation{egg}
-\citation{scallop}
+\citation{ocanren_chirho}
+\citation{faster_minikanren_chirho}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Bit-parallel goals vs stream-based goals (Rust)}}{8}{table.5}\protected@file@percent }
 \newlabel{tab:goals}{{5}{8}{Bit-parallel goals vs stream-based goals (Rust)}{table.5}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures.}}{8}{figure.3}\protected@file@percent }
 \newlabel{fig:speedup}{{3}{8}{Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures}{figure.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Related Work}{8}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}New Results: SyGuS Synthesis}{8}{section.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces SyGuS synthesis: Domain pruning vs CVC5}}{8}{table.6}\protected@file@percent }
+\newlabel{tab:sygus}{{6}{8}{SyGuS synthesis: Domain pruning vs CVC5}{table.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}New Results: OCanren Comparison}{8}{section.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Comparison with optimized miniKanren implementations}}{9}{table.7}\protected@file@percent }
+\newlabel{tab:ocanren}{{7}{9}{Comparison with optimized miniKanren implementations}{table.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}New Results: GPU Acceleration}{9}{section.8}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces GPU vs CPU: Speedup at large batch sizes}}{9}{table.8}\protected@file@percent }
+\newlabel{tab:gpu}{{8}{9}{GPU vs CPU: Speedup at large batch sizes}{table.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}New Results: Differentiable Logic}{9}{section.9}\protected@file@percent }
+\citation{xsb_chirho}
+\citation{microkanren_chirho}
+\citation{faster_minikanren_chirho}
+\citation{ocanren_chirho}
+\citation{minisat_chirho}
+\citation{z3_chirho}
+\citation{clingo_chirho}
+\citation{clpfd_chirho}
+\citation{egg_chirho}
+\citation{nelson_oppen_chirho}
+\citation{scallop_chirho}
+\citation{deepproblog_chirho}
+\citation{neural_theorem_provers_chirho}
+\citation{gumbel_softmax_chirho}
+\citation{sygus_chirho}
+\citation{cvc5_chirho}
+\citation{barliman_chirho}
+\citation{wam_chirho}
+\citation{calyx_chirho}
+\citation{clash_chirho}
+\citation{slg_chirho}
+\citation{xsb_chirho}
+\citation{tensor_networks_intro_chirho}
+\citation{tensor_train_chirho}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Related Work}{10}{section.10}\protected@file@percent }
 \bibstyle{plain}
-\bibcite{reasoned-schemer}{1}
-\bibcite{egg}{2}
-\bibcite{scallop}{3}
-\bibcite{tensor-networks}{4}
-\bibcite{calyx}{5}
-\bibcite{gumbel-softmax}{6}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{9}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Code Availability.}{9}{section*.1}\protected@file@percent }
-\gdef \@abspage@last{10}
+\bibdata{paper_chirho}
+\bibcite{wam_chirho}{1}
+\bibcite{sygus_chirho}{2}
+\bibcite{clash_chirho}{3}
+\bibcite{faster_minikanren_chirho}{4}
+\bibcite{cvc5_chirho}{5}
+\bibcite{tensor_networks_intro_chirho}{6}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusion}{11}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Code Availability.}{11}{section*.1}\protected@file@percent }
+\bibcite{barliman_chirho}{7}
+\bibcite{slg_chirho}{8}
+\bibcite{z3_chirho}{9}
+\bibcite{minisat_chirho}{10}
+\bibcite{reasoned_schemer_chirho}{11}
+\bibcite{clpfd_chirho}{12}
+\bibcite{clingo_chirho}{13}
+\bibcite{microkanren_chirho}{14}
+\bibcite{gumbel_softmax_chirho}{15}
+\bibcite{ocanren_chirho}{16}
+\bibcite{scallop_chirho}{17}
+\bibcite{deepproblog_chirho}{18}
+\bibcite{nelson_oppen_chirho}{19}
+\bibcite{calyx_chirho}{20}
+\bibcite{tensor_train_chirho}{21}
+\bibcite{neural_theorem_provers_chirho}{22}
+\bibcite{xsb_chirho}{23}
+\bibcite{egg_chirho}{24}
+\gdef \@abspage@last{13}
