@@ -9,7 +9,7 @@
       "name_chirho": "Scaling Beyond 64 Bits (Paper)",
       "description_chirho": "Document our multi-word domain solutions in the paper",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "G1.1",
@@ -32,7 +32,7 @@
       "name_chirho": "GPU Memory Bottleneck Explanation",
       "description_chirho": "Explain why small batch GPU is slower than CPU",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "G2.1",
@@ -48,7 +48,7 @@
       "name_chirho": "Solver Comparison Caveat",
       "description_chirho": "Acknowledge that Z3/clingo solve more general problems",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "G3.1",
@@ -64,7 +64,7 @@
       "name_chirho": "Contraction Order Ablation",
       "description_chirho": "Quantify heuristic overhead vs execution time",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE (benchmark added, paper table pending)",
       "tasks_chirho": [
         {
           "id_chirho": "G4.1",
