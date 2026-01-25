@@ -38,7 +38,7 @@ fn bitvec64_range_chirho(n_chirho: u32) -> BitVec64Chirho {
 // =============================================================================
 
 fn bench_single_ops_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SingleDomainOps");
+    let mut group_chirho = c_chirho.benchmark_group("single_domain_ops_chirho");
 
     // --- BitVec64 (64 values) ---
     let bv_full_chirho = BitVec64Chirho::ONES_CHIRHO;
@@ -109,7 +109,7 @@ fn bench_single_ops_chirho(c_chirho: &mut Criterion) {
 // =============================================================================
 
 fn bench_gradient_ops_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("GradientOps");
+    let mut group_chirho = c_chirho.benchmark_group("gradient_ops_chirho");
 
     let a_chirho = DiffHierarchical4kChirho::full_chirho();
     let b_chirho = DiffHierarchical4kChirho::from_hard_chirho(&Hierarchical4kChirho::range_chirho(2048));
@@ -154,7 +154,7 @@ fn bench_gradient_ops_chirho(c_chirho: &mut Criterion) {
 // =============================================================================
 
 fn bench_unify_state_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("UnifyState");
+    let mut group_chirho = c_chirho.benchmark_group("unify_state_chirho");
 
     // Soft unification state
     for n_vars_chirho in [4, 16, 64, 256] {
@@ -216,7 +216,7 @@ fn bench_unify_state_chirho(c_chirho: &mut Criterion) {
 // =============================================================================
 
 fn bench_hard_vs_soft_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("HardVsSoft");
+    let mut group_chirho = c_chirho.benchmark_group("hard_vs_soft_chirho");
 
     // Compare hard hierarchical vs soft hierarchical
     let hard_a_chirho = Hierarchical4kChirho::range_chirho(2000);
@@ -259,7 +259,7 @@ fn bench_hard_vs_soft_chirho(c_chirho: &mut Criterion) {
 // =============================================================================
 
 fn bench_bulk_ops_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("BulkOps");
+    let mut group_chirho = c_chirho.benchmark_group("bulk_ops_chirho");
 
     // Multiple intersections in sequence (simulates constraint propagation)
     for n_ops_chirho in [10, 100, 1000] {
@@ -332,7 +332,7 @@ fn bench_bulk_ops_chirho(c_chirho: &mut Criterion) {
 // =============================================================================
 
 fn bench_memory_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Memory");
+    let mut group_chirho = c_chirho.benchmark_group("memory_chirho");
 
     // Allocation benchmarks
     group_chirho.bench_function("alloc_bitvec64", |b| {
@@ -381,7 +381,7 @@ fn bench_memory_chirho(c_chirho: &mut Criterion) {
 // =============================================================================
 
 fn bench_sparsity_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Sparsity");
+    let mut group_chirho = c_chirho.benchmark_group("sparsity_chirho");
 
     // Test performance with different sparsity levels
     for density_chirho in [1, 10, 50, 100] {
@@ -422,7 +422,7 @@ fn bench_sparsity_chirho(c_chirho: &mut Criterion) {
 // =============================================================================
 
 fn bench_training_loop_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("TrainingLoop");
+    let mut group_chirho = c_chirho.benchmark_group("training_loop_chirho");
 
     // Simulate one training step
     group_chirho.bench_function("training_step_4vars", |b| {
