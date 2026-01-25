@@ -117,6 +117,7 @@ pub mod simd_chirho;
 pub mod diff_semiring_chirho;
 pub mod sudoku_chirho;
 pub mod nqueens_chirho;
+pub mod relation_chirho;
 pub mod jsonschema_chirho;
 
 // WebAssembly bindings (feature-gated)

@@ -9,12 +9,17 @@
 
 ## Project Vision
 
-Explore whether miniKanren's relational search can be represented as 1-bit matrix operations, enabling hardware acceleration of logic programming.
+miniKanren's relational search can be represented as sparse Boolean tensor operations. Variable domains become bitmasks, unification becomes bitwise AND. For infinite domains (lists, trees), hash consing interns terms to integer IDs on demand.
 
 **Core equation:**
 ```
 miniKanren search = sparse Boolean tensor network contraction
 ```
+
+**Three consequences:**
+1. **Parallelism** — Unification reduces to a single SIMD instruction
+2. **Hardware synthesis** — Maps directly to FPGA primitives (registers, LUTs, CAM)
+3. **Differentiability** — Boolean ops generalize to semirings, enabling gradient-based learning
 
 ## Key Mappings
 
@@ -25,9 +30,12 @@ miniKanren search = sparse Boolean tensor network contraction
 | `conde` (or) | Row duplication / tensor stack |
 | Relation | Sparse N-D Boolean tensor |
 | Composition | Tensor contraction |
+| Infinite domains | Hash consing (terms → integer IDs on demand) |
+| Constraint propagation | Arc consistency (AC-3) via bitmask ops |
 | Tabling | Incremental tensor construction |
 | Mutual recursion | Coupled tensor equations (SCC) |
 | Variable binding | Union-Find equivalence classes |
+| Soft logic | Semiring generalization (Bool/Prob/Tropical/Count) |
 
 ## Benchmarks
 

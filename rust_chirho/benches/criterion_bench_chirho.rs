@@ -352,6 +352,104 @@ fn bench_nqueens_chirho(c_chirho: &mut Criterion) {
     group_chirho.finish();
 }
 
+/// Build sparse family tree
+fn build_sparse_tree_chirho(gen_chirho: u32) -> (relation_chirho::SparseRelationChirho, u32) {
+    let mut parent_chirho = relation_chirho::SparseRelationChirho::new_chirho("parent");
+    let roots_chirho = 1u32 << gen_chirho;
+    let mut current_chirho: Vec<u32> = (0..roots_chirho).collect();
+    let mut next_id_chirho = roots_chirho;
+
+    for _ in 0..gen_chirho {
+        let mut next_chirho = Vec::new();
+        for pair_chirho in current_chirho.chunks(2) {
+            if pair_chirho.len() == 2 {
+                parent_chirho.add_chirho(pair_chirho[0], next_id_chirho);
+                parent_chirho.add_chirho(pair_chirho[1], next_id_chirho);
+                next_chirho.push(next_id_chirho);
+                next_id_chirho += 1;
+            }
+        }
+        current_chirho = next_chirho;
+    }
+    (parent_chirho, next_id_chirho)
+}
+
+/// Build dense family tree (uses BitVec64Chirho!)
+fn build_dense_tree_chirho(gen_chirho: usize) -> (relation_chirho::DenseRelationChirho, usize) {
+    let size_chirho = (1usize << (gen_chirho + 1)) - 1;
+    let mut parent_chirho = relation_chirho::DenseRelationChirho::new_chirho("parent", size_chirho);
+    let roots_chirho = 1usize << gen_chirho;
+    let mut current_chirho: Vec<usize> = (0..roots_chirho).collect();
+    let mut next_id_chirho = roots_chirho;
+
+    for _ in 0..gen_chirho {
+        let mut next_chirho = Vec::new();
+        for pair_chirho in current_chirho.chunks(2) {
+            if pair_chirho.len() == 2 {
+                parent_chirho.add_chirho(pair_chirho[0], next_id_chirho);
+                parent_chirho.add_chirho(pair_chirho[1], next_id_chirho);
+                next_chirho.push(next_id_chirho);
+                next_id_chirho += 1;
+            }
+        }
+        current_chirho = next_chirho;
+    }
+    (parent_chirho, size_chirho)
+}
+
+/// Benchmark family tree / relational operations - COMPARING Sparse vs Dense
+fn bench_family_tree_chirho(c_chirho: &mut Criterion) {
+    let mut group_chirho = c_chirho.benchmark_group("FamilyTree");
+
+    // === SPARSE (HashSet) implementation ===
+    for gen_chirho in [4, 5, 6].iter() {
+        group_chirho.bench_with_input(
+            BenchmarkId::new("sparse_compose", gen_chirho),
+            gen_chirho,
+            |b_chirho, &g_chirho| {
+                let (parent_chirho, _) = build_sparse_tree_chirho(g_chirho);
+                b_chirho.iter(|| black_box(parent_chirho.compose_chirho(&parent_chirho)))
+            },
+        );
+    }
+
+    for gen_chirho in [4, 5, 6].iter() {
+        group_chirho.bench_with_input(
+            BenchmarkId::new("sparse_closure", gen_chirho),
+            gen_chirho,
+            |b_chirho, &g_chirho| {
+                let (parent_chirho, _) = build_sparse_tree_chirho(g_chirho);
+                b_chirho.iter(|| black_box(parent_chirho.transitive_closure_chirho()))
+            },
+        );
+    }
+
+    // === DENSE (BitVec64Chirho) implementation - THE THESIS! ===
+    for gen_chirho in [4, 5, 6].iter() {
+        group_chirho.bench_with_input(
+            BenchmarkId::new("dense_compose", gen_chirho),
+            gen_chirho,
+            |b_chirho, &g_chirho| {
+                let (parent_chirho, _) = build_dense_tree_chirho(g_chirho as usize);
+                b_chirho.iter(|| black_box(parent_chirho.compose_chirho(&parent_chirho)))
+            },
+        );
+    }
+
+    for gen_chirho in [4, 5, 6].iter() {
+        group_chirho.bench_with_input(
+            BenchmarkId::new("dense_closure", gen_chirho),
+            gen_chirho,
+            |b_chirho, &g_chirho| {
+                let (parent_chirho, _) = build_dense_tree_chirho(g_chirho as usize);
+                b_chirho.iter(|| black_box(parent_chirho.transitive_closure_chirho()))
+            },
+        );
+    }
+
+    group_chirho.finish();
+}
+
 criterion_group!(
     benches_chirho,
     bench_bit_ops_chirho,
@@ -364,6 +462,7 @@ criterion_group!(
     bench_neural_chirho,
     bench_sudoku_chirho,
     bench_nqueens_chirho,
+    bench_family_tree_chirho,
 );
 
 criterion_main!(benches_chirho);

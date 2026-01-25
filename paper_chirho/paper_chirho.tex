@@ -38,10 +38,7 @@
 
 \author{
   L.J. Brian Cowan \\
-  \texttt{loveJesus@loveJes.us} \\
-  \and
-  Claude AKA Toto (Anthropic) \\
-  \textit{``We aren't in Kansas anymore''}
+  \texttt{loveJesus@loveJes.us}
 }
 
 \date{\today}
@@ -357,7 +354,9 @@ where $g_i \sim \text{Gumbel}(0, 1)$ and $\tau$ is temperature.
 
 \subsection{Microbenchmarks}
 
-\begin{table}[h]
+Table~\ref{tab:micro} compares \texttt{BitVec64} against heap-allocated \texttt{HashSet}. Mass intersection of 1000 domains achieves 4000$\times$ speedup.
+
+\begin{table}[H]
 \centering
 \begin{tabular}{lrrr}
 \toprule
@@ -369,11 +368,14 @@ Mass intersect (n=1000) & 56 ns & 223 $\mu$s & 4,000$\times$ \\
 \bottomrule
 \end{tabular}
 \caption{Hardware optics vs heap-based operations}
+\label{tab:micro}
 \end{table}
 
 \subsection{Solver Benchmarks}
 
-\begin{table}[h]
+Table~\ref{tab:solvers} compares our Python prototype against Z3, clingo, and kanren.
+
+\begin{table}[H]
 \centering
 \begin{tabular}{lrrrr}
 \toprule
@@ -385,17 +387,21 @@ Sudoku (hard) & 10 $\mu$s & -- & -- & -- \\
 \bottomrule
 \end{tabular}
 \caption{Comparison with existing solvers (Python implementation)}
+\label{tab:solvers}
 \end{table}
 
 \subsection{Application Benchmarks}
 
-\begin{table}[h]
+Table~\ref{tab:apps} shows our production Rust implementation performance.
+
+\begin{table}[H]
 \centering
 \begin{tabular}{lrr}
 \toprule
 \textbf{Application} & \textbf{Time} & \textbf{Notes} \\
 \midrule
 Sudoku (easy) & 3 $\mu$s & Adaptive propagation \\
+Sudoku (hard 17-clue) & 10 $\mu$s & Hidden singles + naked pairs \\
 Sudoku (Escargot) & 48 $\mu$s & Famous ``hardest'' \\
 N-Queens 8 (count) & 4 $\mu$s & 92 solutions \\
 N-Queens 12 (count) & 3.8 ms & 14,200 solutions \\
@@ -403,6 +409,7 @@ N-Queens 20 (first) & 1.5 ms & Scales to 32$\times$32 \\
 \bottomrule
 \end{tabular}
 \caption{Rust implementation performance}
+\label{tab:apps}
 \end{table}
 
 \begin{figure}[ht]
@@ -489,6 +496,12 @@ The Rust implementation is available on crates.io as \texttt{minikanren\_1bit\_c
 Extend to infinite domains via demand-driven term creation (hash consing).
 Implement GPU backend for 10,000+ parallel domain operations.
 Integrate with neural networks for learned constraint solving.
+
+% ============================================================================
+\section*{Acknowledgments}
+% ============================================================================
+
+This paper was developed with assistance from Claude (Anthropic), which contributed to structure, refinement, and iterative rewriting. The core technical insights emerged through collaborative exploration.
 
 % ============================================================================
 % Bibliography
