@@ -142,5 +142,36 @@
 
 ### Remaining Tasks:
 - M1.6: SyGuS Benchmarks (comparison with CVC5)
-- M3: GPU Acceleration
+- M5: Paper Writing
+
+---
+
+## Iteration 4 - 2026-01-25
+
+### Completed Tasks:
+
+**M3: GPU Acceleration**
+- [x] M3.1-M3.5: GPU infrastructure already exists in experimental_chirho/gpu_chirho.rs
+  - GpuContextChirho with WebGPU backend
+  - AND_SHADER_CHIRHO, OR_SHADER_CHIRHO, MATMUL_SHADER_CHIRHO embedded
+  - bulk_and_chirho, bulk_or_chirho, matmul_chirho, transitive_closure_chirho
+
+- [x] M3.6: GPU Benchmarks
+  - Created rust_chirho/benches/gpu_bench_chirho.rs
+  - CPU baselines: BulkAnd, BoolMatMul
+  - GPU benchmarks (with gpu_chirho feature): bulk_and, matmul, transitive_closure
+  - BitVec64 micro-benchmarks: and, or, popcount, is_zero
+
+- [x] M3.7: Batch Sudoku Demo
+  - Created rust_chirho/examples/gpu_sudoku_chirho.rs
+  - Batch puzzle generation and solving
+  - CPU vs GPU comparison
+  - Hard puzzle benchmarks (Inkala, Escargot)
+
+### Test Status:
+- All 201 tests passing
+- cargo check clean
+
+### Remaining Tasks:
+- M1.6: SyGuS Benchmarks (comparison with CVC5)
 - M5: Paper Writing
