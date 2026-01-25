@@ -11,9 +11,9 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}miniKanren}{2}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Tensor Networks}{2}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}E-Graphs}{2}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}The Core Mapping}{3}{section.3}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture: Terms are hash-consed to IDs, IDs index into domain bitmasks, unification is bitwise AND.}}{3}{figure.1}\protected@file@percent }
 \newlabel{fig:architecture}{{1}{3}{Architecture: Terms are hash-consed to IDs, IDs index into domain bitmasks, unification is bitwise AND}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}The Core Mapping}{3}{section.3}\protected@file@percent }
 \citation{reasoned-schemer}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Handling Infinite Domains via Hash Consing}{4}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Tabling for Recursive Relations}{4}{subsection.3.2}\protected@file@percent }
@@ -28,22 +28,25 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Rust Implementation}{6}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Hardware Implementation}{6}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Differentiable Relaxation}{6}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Evaluation}{6}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Microbenchmarks}{6}{subsection.5.1}\protected@file@percent }
 \citation{egg}
-\citation{scallop}
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Hardware optics vs heap-based operations}}{7}{table.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Comparison with existing solvers (Python implementation)}}{7}{table.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Evaluation}{7}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Microbenchmarks}{7}{subsection.5.1}\protected@file@percent }
+\newlabel{tab:micro}{{1}{7}{Hardware optics vs heap-based operations}{table.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Solver Benchmarks}{7}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Comparison with existing solvers (Python implementation)}}{7}{table.2}\protected@file@percent }
+\newlabel{tab:solvers}{{2}{7}{Comparison with existing solvers (Python implementation)}{table.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Application Benchmarks}{7}{subsection.5.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Rust implementation performance}}{7}{table.3}\protected@file@percent }
+\newlabel{tab:apps}{{3}{7}{Rust implementation performance}{table.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6}Related Work}{7}{section.6}\protected@file@percent }
-\bibstyle{plain}
-\bibcite{reasoned-schemer}{1}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Rust implementation performance}}{8}{table.3}\protected@file@percent }
+\citation{scallop}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures.}}{8}{figure.3}\protected@file@percent }
 \newlabel{fig:speedup}{{3}{8}{Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures}{figure.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{8}{section.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Code Availability.}{8}{section*.1}\protected@file@percent }
+\bibstyle{plain}
+\bibcite{reasoned-schemer}{1}
 \bibcite{egg}{2}
 \bibcite{scallop}{3}
 \bibcite{tensor-networks}{4}

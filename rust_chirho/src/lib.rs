@@ -89,11 +89,14 @@
 // Module hierarchy ☧
 // ============================================================================
 
-/// Core miniKanren primitives
-pub mod core_chirho;
+/// Reference implementation: traditional stream-based miniKanren
+pub mod reference_chirho;
 
 /// Hardware-accelerated primitives (FPGA-friendly, SIMD)
 pub mod hardware_chirho;
+
+/// Core API: facade that selects reference or hardware backend
+pub mod core_chirho;
 
 /// Ready-to-use constraint solvers
 pub mod solvers_chirho;
@@ -114,18 +117,18 @@ pub mod wasm_chirho;
 
 // These allow `use minikanren_1bit_chirho::TermStoreChirho` to keep working
 
-// Core types
-pub use core_chirho::terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};
-pub use core_chirho::union_find_chirho::{UnionFindChirho, UnionFindHwChirho};
-pub use core_chirho::unify_chirho::{ground_eq_chirho, unify_chirho, SubstChirho, UnifyResultChirho};
-pub use core_chirho::goals_chirho::{
+// Core types (from reference implementation)
+pub use reference_chirho::terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};
+pub use reference_chirho::union_find_chirho::{UnionFindChirho, UnionFindHwChirho};
+pub use reference_chirho::unify_chirho::{ground_eq_chirho, unify_chirho, SubstChirho, UnifyResultChirho};
+pub use reference_chirho::goals_chirho::{
     conda_chirho, conde_chirho, conj_all_chirho, conj_chirho, condu_chirho, diseq_chirho,
     disj_all_chirho, disj_chirho, eq_chirho, fail_chirho, not_chirho, project_chirho,
     run_all_chirho, run_chirho, succeed_chirho, GoalFnChirho,
 };
-pub use core_chirho::constraint_chirho::{BinaryConstraintChirho, ConstraintStoreChirho, DomainChirho};
-pub use core_chirho::tabling_chirho::{CallPatternChirho, LookupResultChirho, TableStoreChirho};
-pub use core_chirho::types_chirho::{
+pub use reference_chirho::constraint_chirho::{BinaryConstraintChirho, ConstraintStoreChirho, DomainChirho};
+pub use reference_chirho::tabling_chirho::{CallPatternChirho, LookupResultChirho, TableStoreChirho};
+pub use reference_chirho::types_chirho::{
     EClassIdChirhoSafe, ENodeIdChirhoSafe, GoalIdChirho, SymIdChirho, TensorIdChirho,
     TermIdChirhoSafe, TypedIndexChirho, TypedVecChirho, VarIdChirho,
 };
@@ -232,15 +235,15 @@ pub use experimental_chirho::linear_chirho::{
 // ============================================================================
 
 // These allow `use minikanren_1bit_chirho::terms_chirho::TermStoreChirho` to keep working
-pub use core_chirho::constraint_chirho;
-pub use core_chirho::goals_chirho;
-pub use core_chirho::stream_chirho;
-pub use core_chirho::tabling_chirho;
-pub use core_chirho::terms_chirho;
-pub use core_chirho::types_chirho;
+pub use reference_chirho::constraint_chirho;
+pub use reference_chirho::goals_chirho;
+pub use reference_chirho::stream_chirho;
+pub use reference_chirho::tabling_chirho;
+pub use reference_chirho::terms_chirho;
+pub use reference_chirho::types_chirho;
 // Note: unify_chirho module aliased to avoid conflict with unify_chirho function
-pub use core_chirho::unify_chirho as unify_mod_chirho;
-pub use core_chirho::union_find_chirho;
+pub use reference_chirho::unify_chirho as unify_mod_chirho;
+pub use reference_chirho::union_find_chirho;
 
 pub use hardware_chirho::bitmatrix_chirho;
 pub use hardware_chirho::bitmatrix_packed_chirho;
