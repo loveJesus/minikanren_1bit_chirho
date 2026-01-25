@@ -29,7 +29,7 @@ pub use symbolic_chirho::{SymbolicDomainChirho, SymbolicConstraintChirho};
 pub use hybrid_chirho::{HybridDomainChirho, HybridStateChirho};
 pub use complement_chirho::ComplementDomainChirho;
 pub use hw_symbolic_chirho::{HwSymbolicDomainChirho, SymbolicOpChirho};
-pub use hierarchical_chirho::{Hierarchical4kChirho, Hierarchical256kChirho};
+pub use hierarchical_chirho::{Hierarchical4kChirho, Hierarchical16kChirho, Hierarchical256kChirho};
 pub use diff_hierarchical_chirho::{DiffHierarchical4kChirho, DiffUnifyStateChirho};
 pub use adaptive_chirho::{
     ProblemAnalysisChirho, StrategyChirho, AdaptiveDomainChirho,

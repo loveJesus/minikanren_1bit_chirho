@@ -344,10 +344,14 @@ We provide three complementary solutions:
 \textbf{2. Hierarchical Domains}: Tree-structured bit vectors with early-exit optimization:
 \begin{itemize}
   \item \textbf{Hierarchical4kChirho}: 2-level tree (64$\times$64 = 4,096 values). Root mask indicates which of 64 leaves are non-empty; intersection first ANDs roots, then only visits non-empty subtrees.
+  \item \textbf{Hierarchical16kChirho}: 2-level tree with 256-bit leaves (64$\times$256 = 16,384 values). Uses BitVec256 at each leaf for 4$\times$ capacity with similar performance.
   \item \textbf{Hierarchical256kChirho}: 3-level tree (64$\times$64$\times$64 = 262,144 values). Same early-exit principle scales further.
 \end{itemize}
 
-\textbf{3. GPU Unlimited Domains}: GPU kernels use \texttt{Vec<u32>} arrays with no fixed size limit. Memory scales dynamically.
+\textbf{3. GPU Unlimited Domains}: GPU kernels use dynamically-sized \texttt{Vec<u32>} arrays---there is \emph{no fixed upper bound}.
+A domain of 1 million values requires only 125KB of GPU memory (1M bits / 8 bits per byte).
+Modern GPUs have 8--80GB of memory, enabling domains of billions of values if needed.
+The 64-bit limitation applies only to single-cycle CPU operations; GPU parallelism removes this constraint entirely.
 
 \begin{table}[H]
 \centering
@@ -358,6 +362,7 @@ We provide three complementary solutions:
 BitVec64Chirho & 64 & 420 ps & 1$\times$ \\
 BitVec256Chirho & 256 & 1.8 ns & 4$\times$ \\
 Hierarchical4kChirho & 4,096 & 39 ns & 93$\times$ \\
+Hierarchical16kChirho & 16,384 & 52 ns & 124$\times$ \\
 Hierarchical256kChirho & 262,144 & 367 ns & 870$\times$ \\
 GPU (batch 100K) & unlimited & 2.8 ns/op & 7$\times$ \\
 \bottomrule
@@ -567,6 +572,9 @@ Type inference & 15 $\mu$s & -- & -- & -- \\
 % ============================================================================
 
 Using WebGPU (wgpu), we implemented GPU kernels for bulk domain operations.
+\textbf{Crucially, GPU domains have no fixed size limit}---unlike CPU operations constrained to 64-bit words, GPU kernels operate on arbitrary-length bit arrays stored in VRAM.
+This eliminates the ``64-bit horizon'' entirely for GPU-accelerated workloads.
+
 Table~\ref{tab:gpu} shows batch operation performance.
 
 \begin{table}[H]

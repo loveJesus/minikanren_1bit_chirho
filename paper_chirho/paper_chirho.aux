@@ -23,38 +23,41 @@
 \@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces AC-3 Domain Propagation}}{5}{algorithm.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Contraction Order Optimization}{5}{subsection.3.4}\protected@file@percent }
 \citation{calyx_chirho}
-\citation{gumbel_softmax_chirho}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Implementation}{6}{section.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Rust Implementation}{6}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Hardware Implementation}{6}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Differentiable Relaxation}{6}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Evaluation}{6}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Microbenchmarks}{6}{subsection.5.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Hardware optics vs heap-based operations}}{7}{table.1}\protected@file@percent }
-\newlabel{tab:micro}{{1}{7}{Hardware optics vs heap-based operations}{table.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Consolidated Benchmarks}{7}{subsection.5.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces N-Queens: Rust is 789$\times $ faster than Python, 70,000$\times $ faster than Z3}}{7}{table.2}\protected@file@percent }
-\newlabel{tab:nqueens}{{2}{7}{N-Queens: Rust is 789$\times $ faster than Python, 70,000$\times $ faster than Z3}{table.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Sudoku solver performance (Rust)}}{7}{table.3}\protected@file@percent }
-\newlabel{tab:sudoku}{{3}{7}{Sudoku solver performance (Rust)}{table.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Unification: Rust hardware is 6.8$\times $ faster than streams, 4000$\times $ faster than heap}}{7}{table.4}\protected@file@percent }
-\newlabel{tab:unify}{{4}{7}{Unification: Rust hardware is 6.8$\times $ faster than streams, 4000$\times $ faster than heap}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Scaling Beyond 64 Bits}{6}{subsection.4.3}\protected@file@percent }
+\citation{gumbel_softmax_chirho}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Domain scaling: Hierarchical structures trade some speed for larger domains while preserving the bit-parallel paradigm. GPU amortizes overhead at large batch sizes.}}{7}{table.1}\protected@file@percent }
+\newlabel{tab:scaling}{{1}{7}{Domain scaling: Hierarchical structures trade some speed for larger domains while preserving the bit-parallel paradigm. GPU amortizes overhead at large batch sizes}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Differentiable Relaxation}{7}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Evaluation}{7}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Microbenchmarks}{7}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Hardware optics vs heap-based operations}}{8}{table.2}\protected@file@percent }
+\newlabel{tab:micro}{{2}{8}{Hardware optics vs heap-based operations}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Consolidated Benchmarks}{8}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces N-Queens: Rust is 789$\times $ faster than Python, 70,000$\times $ faster than Z3}}{8}{table.3}\protected@file@percent }
+\newlabel{tab:nqueens}{{3}{8}{N-Queens: Rust is 789$\times $ faster than Python, 70,000$\times $ faster than Z3}{table.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Sudoku solver performance (Rust)}}{8}{table.4}\protected@file@percent }
+\newlabel{tab:sudoku}{{4}{8}{Sudoku solver performance (Rust)}{table.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Unification: Rust hardware is 6.8$\times $ faster than streams, 4000$\times $ faster than heap}}{9}{table.5}\protected@file@percent }
+\newlabel{tab:unify}{{5}{9}{Unification: Rust hardware is 6.8$\times $ faster than streams, 4000$\times $ faster than heap}{table.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Bit-parallel goals vs stream-based goals (Rust)}}{9}{table.6}\protected@file@percent }
+\newlabel{tab:goals}{{6}{9}{Bit-parallel goals vs stream-based goals (Rust)}{table.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures.}}{9}{figure.3}\protected@file@percent }
+\newlabel{fig:speedup}{{3}{9}{Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures}{figure.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}New Results: SyGuS Synthesis}{9}{section.6}\protected@file@percent }
 \citation{ocanren_chirho}
 \citation{faster_minikanren_chirho}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Bit-parallel goals vs stream-based goals (Rust)}}{8}{table.5}\protected@file@percent }
-\newlabel{tab:goals}{{5}{8}{Bit-parallel goals vs stream-based goals (Rust)}{table.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures.}}{8}{figure.3}\protected@file@percent }
-\newlabel{fig:speedup}{{3}{8}{Speedup comparison (log scale). Blue: vs other solvers. Green: vs heap-based data structures}{figure.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}New Results: SyGuS Synthesis}{8}{section.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces SyGuS synthesis: Domain pruning vs CVC5}}{8}{table.6}\protected@file@percent }
-\newlabel{tab:sygus}{{6}{8}{SyGuS synthesis: Domain pruning vs CVC5}{table.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}New Results: OCanren Comparison}{8}{section.7}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Comparison with optimized miniKanren implementations}}{9}{table.7}\protected@file@percent }
-\newlabel{tab:ocanren}{{7}{9}{Comparison with optimized miniKanren implementations}{table.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}New Results: GPU Acceleration}{9}{section.8}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces GPU vs CPU: Speedup at large batch sizes}}{9}{table.8}\protected@file@percent }
-\newlabel{tab:gpu}{{8}{9}{GPU vs CPU: Speedup at large batch sizes}{table.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9}New Results: Differentiable Logic}{9}{section.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces SyGuS synthesis: Domain pruning vs CVC5}}{10}{table.7}\protected@file@percent }
+\newlabel{tab:sygus}{{7}{10}{SyGuS synthesis: Domain pruning vs CVC5}{table.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}New Results: OCanren Comparison}{10}{section.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Comparison with optimized miniKanren implementations}}{10}{table.8}\protected@file@percent }
+\newlabel{tab:ocanren}{{8}{10}{Comparison with optimized miniKanren implementations}{table.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}New Results: GPU Acceleration}{10}{section.8}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces GPU vs CPU: Speedup at large batch sizes}}{10}{table.9}\protected@file@percent }
+\newlabel{tab:gpu}{{9}{10}{GPU vs CPU: Speedup at large batch sizes}{table.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}New Results: Differentiable Logic}{11}{section.9}\protected@file@percent }
 \citation{xsb_chirho}
 \citation{microkanren_chirho}
 \citation{faster_minikanren_chirho}
@@ -65,9 +68,6 @@
 \citation{clpfd_chirho}
 \citation{egg_chirho}
 \citation{nelson_oppen_chirho}
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Domain composition benchmarks: hard vs soft operations}}{10}{table.9}\protected@file@percent }
-\newlabel{tab:domain_composition}{{9}{10}{Domain composition benchmarks: hard vs soft operations}{table.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {10}Related Work}{10}{section.10}\protected@file@percent }
 \citation{scallop_chirho}
 \citation{deepproblog_chirho}
 \citation{neural_theorem_provers_chirho}
@@ -80,10 +80,13 @@
 \citation{clash_chirho}
 \citation{slg_chirho}
 \citation{xsb_chirho}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Domain composition benchmarks: hard vs soft operations}}{12}{table.10}\protected@file@percent }
+\newlabel{tab:domain_composition}{{10}{12}{Domain composition benchmarks: hard vs soft operations}{table.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Related Work}{12}{section.10}\protected@file@percent }
 \citation{tensor_networks_intro_chirho}
 \citation{tensor_train_chirho}
-\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusion}{11}{section.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Code Availability.}{11}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusion}{13}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Code Availability.}{13}{section*.1}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{paper_chirho}
 \bibcite{wam_chirho}{1}
@@ -110,4 +113,4 @@
 \bibcite{neural_theorem_provers_chirho}{22}
 \bibcite{xsb_chirho}{23}
 \bibcite{egg_chirho}{24}
-\gdef \@abspage@last{13}
+\gdef \@abspage@last{15}
