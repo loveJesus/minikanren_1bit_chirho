@@ -107,6 +107,14 @@ pub mod semiring_chirho;
 /// Experimental and research modules
 pub mod experimental_chirho;
 
+/// Domain approaches for infinite/hybrid miniKanren
+/// - paged_chirho: Hierarchical bit vectors for large finite domains
+/// - symbolic_chirho: Algebraic constraints (ranges, modular arithmetic)
+/// - hybrid_chirho: Mixed finite/infinite with mode analysis
+/// - complement_chirho: Cofinite sets (all except X)
+/// - hw_symbolic_chirho: Hardware-accelerated symbolic operations
+pub mod approaches_chirho;
+
 // WebAssembly bindings (feature-gated, stays at root)
 #[cfg(feature = "wasm_chirho")]
 pub mod wasm_chirho;
