@@ -175,3 +175,25 @@
 ### Remaining Tasks:
 - M1.6: SyGuS Benchmarks (comparison with CVC5)
 - M5: Paper Writing
+
+---
+
+## Iteration 5 - 2026-01-25
+
+### Completed Tasks:
+
+**M1.6: SyGuS Benchmarks**
+- [x] Created rust_chirho/benches/sygus_bench_chirho.rs
+  - Grammar encoding benchmarks (max2_encode, domain_lookup, leaf_domain)
+  - Enumeration benchmarks at different max sizes (3, 5, 7)
+  - Domain pruning benchmarks (intersect_large, union_large, count_sparse)
+  - End-to-end synthesis benchmarks (max2_synth, abs_synth)
+  - State propagation benchmarks (propagate_examples, pruning_factor)
+  - Comparison notes (methodology for CVC5 comparison)
+
+### Test Status:
+- All 201 tests passing
+- cargo check clean
+
+### Remaining Tasks:
+- M5: Paper Writing
