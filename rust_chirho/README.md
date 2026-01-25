@@ -23,16 +23,31 @@ miniKanren search = sparse Boolean tensor network contraction
 
 ## Performance
 
-| Operation | Time | Notes |
-|-----------|------|-------|
-| Domain AND (BitVec64) | **423ps** | Single CPU cycle |
-| Hardware optics | **420ps** | Sub-nanosecond |
-| Simple unify (hardware) | **40ns** | vs 271ns streams = 6.8× |
-| N-Queens 8 (92 solutions) | **3.7μs** | All solutions |
-| Sudoku (hard 17-clue) | **9.4μs** | Adaptive strategy |
+### N-Queens (all 92 solutions for N=8)
 
-vs Heap-based alternatives: **3000-4000× faster**
-vs Traditional miniKanren streams: **6-8× faster**
+| Implementation | Time | Speedup vs Z3 |
+|----------------|------|---------------|
+| **Rust 1-bit** | **3.7 μs** | 70,000× |
+| Python 1-bit | 2.9 ms | 90× |
+| clingo | 22 ms | 12× |
+| Z3 | 260 ms | 1× |
+
+### Unification Primitives
+
+| Operation | Rust HW | Rust Streams | Speedup |
+|-----------|---------|--------------|---------|
+| Domain AND | **423 ps** | — | — |
+| Simple unify | **40 ns** | 271 ns | 6.8× |
+| Mass intersect (1000) | **56 ns** | 223 μs | 4000× |
+
+### Solvers
+
+| Puzzle | Time |
+|--------|------|
+| Sudoku (easy) | 3.1 μs |
+| Sudoku (hard 17-clue) | 9.4 μs |
+| N-Queens 12 (14,200 solutions) | 3.9 ms |
+| N-Queens 20 (first solution) | 923 μs |
 
 ## Usage
 

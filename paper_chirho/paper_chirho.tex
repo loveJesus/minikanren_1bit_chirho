@@ -371,65 +371,75 @@ Mass intersect (n=1000) & 56 ns & 223 $\mu$s & 4,000$\times$ \\
 \label{tab:micro}
 \end{table}
 
-\subsection{Solver Benchmarks}
+\subsection{Consolidated Benchmarks}
 
-Table~\ref{tab:solvers} compares our Python prototype against Z3, clingo, and kanren.
+Table~\ref{tab:nqueens} shows N-Queens performance across all implementations.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lrrrr}
+\begin{tabular}{lrrrrr}
 \toprule
-\textbf{Benchmark} & \textbf{Ours} & \textbf{Z3} & \textbf{clingo} & \textbf{kanren} \\
+\textbf{N-Queens} & \textbf{Rust 1-bit} & \textbf{Python 1-bit} & \textbf{Z3} & \textbf{clingo} & \textbf{kanren} \\
 \midrule
-N-Queens 8 (92 solutions) & 3.0 ms & 260 ms & 22 ms & -- \\
-Unification (10K ops) & 1.5 ms & -- & -- & 38 ms \\
-Sudoku (hard) & 10 $\mu$s & -- & -- & -- \\
+8 (92 solutions) & \textbf{3.7 $\mu$s} & 2.9 ms & 260 ms & 22 ms & -- \\
+12 (14,200 solutions) & \textbf{3.9 ms} & -- & -- & -- & -- \\
+20 (first solution) & \textbf{923 $\mu$s} & -- & -- & -- & -- \\
 \bottomrule
 \end{tabular}
-\caption{Comparison with existing solvers (Python implementation)}
-\label{tab:solvers}
+\caption{N-Queens: Rust is 789$\times$ faster than Python, 70,000$\times$ faster than Z3}
+\label{tab:nqueens}
 \end{table}
 
-\subsection{Application Benchmarks}
-
-Table~\ref{tab:apps} shows our production Rust implementation performance.
+Table~\ref{tab:sudoku} shows Sudoku solver performance.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lrr}
 \toprule
-\textbf{Application} & \textbf{Time} & \textbf{Notes} \\
+\textbf{Sudoku Puzzle} & \textbf{Rust 1-bit} & \textbf{Notes} \\
 \midrule
-Sudoku (easy) & 3 $\mu$s & Adaptive propagation \\
-Sudoku (hard 17-clue) & 10 $\mu$s & Hidden singles + naked pairs \\
-Sudoku (Escargot) & 48 $\mu$s & Famous ``hardest'' \\
-N-Queens 8 (count) & 4 $\mu$s & 92 solutions \\
-N-Queens 12 (count) & 3.8 ms & 14,200 solutions \\
-N-Queens 20 (first) & 923 $\mu$s & Scales to 32$\times$32 \\
+Easy & \textbf{3.1 $\mu$s} & Adaptive propagation \\
+Hard (17-clue) & \textbf{9.4 $\mu$s} & Hidden singles + naked pairs \\
+Escargot (``hardest'') & \textbf{48 $\mu$s} & Full backtracking \\
 \bottomrule
 \end{tabular}
-\caption{Rust implementation performance}
-\label{tab:apps}
+\caption{Sudoku solver performance (Rust)}
+\label{tab:sudoku}
 \end{table}
 
-\subsection{Hardware vs Reference miniKanren}
+Table~\ref{tab:unify} shows unification microbenchmarks.
 
-Table~\ref{tab:hw-vs-ref} compares our bit-parallel hardware implementation against a traditional stream-based miniKanren.
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Operation} & \textbf{Rust HW} & \textbf{Rust Streams} & \textbf{Python} & \textbf{kanren} \\
+\midrule
+Simple unify & \textbf{40 ns} & 271 ns & -- & -- \\
+Unification (10K ops) & -- & -- & 1.5 ms & 38 ms \\
+Domain AND (single) & \textbf{423 ps} & -- & -- & -- \\
+Mass intersect (1000) & \textbf{56 ns} & 223 $\mu$s & -- & -- \\
+\bottomrule
+\end{tabular}
+\caption{Unification: Rust hardware is 6.8$\times$ faster than streams, 4000$\times$ faster than heap}
+\label{tab:unify}
+\end{table}
+
+Table~\ref{tab:goals} compares miniKanren goal execution.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Operation} & \textbf{Hardware (1-bit)} & \textbf{Streams} & \textbf{Speedup} \\
+\textbf{Goal Chain} & \textbf{Rust HW (1-bit)} & \textbf{Rust Streams} & \textbf{Speedup} \\
 \midrule
-Simple unify & 40 ns & 271 ns & 6.8$\times$ \\
-Conjunction chain (2) & 78 ns & 514 ns & 6.6$\times$ \\
-Conjunction chain (4) & 144 ns & 1.1 $\mu$s & 7.6$\times$ \\
-Conjunction chain (8) & 288 ns & 2.2 $\mu$s & 7.6$\times$ \\
+Conjunction (2 goals) & \textbf{78 ns} & 514 ns & 6.6$\times$ \\
+Conjunction (4 goals) & \textbf{144 ns} & 1.1 $\mu$s & 7.6$\times$ \\
+Conjunction (8 goals) & \textbf{288 ns} & 2.2 $\mu$s & 7.6$\times$ \\
 \bottomrule
 \end{tabular}
-\caption{Bit-parallel goals vs stream-based goals}
-\label{tab:hw-vs-ref}
+\caption{Bit-parallel goals vs stream-based goals (Rust)}
+\label{tab:goals}
 \end{table}
 
 \begin{figure}[ht]
