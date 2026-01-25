@@ -50,7 +50,7 @@ harness = false
 [[bench]]
 name = "goal_bench_chirho"
 harness = false
-required-features = ["goal_ast_chirho"]
+# AST comparison available with: --features goal_ast_chirho
 
 [[bench]]
 name = "optics_bench_chirho"
