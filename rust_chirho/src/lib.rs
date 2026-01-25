@@ -31,8 +31,7 @@
 //! Ready-to-use constraint solvers:
 //!
 //! ```rust
-//! use minikanren_1bit_chirho::sudoku_chirho::SudokuSolverChirho;
-//! use minikanren_1bit_chirho::nqueens_chirho::NQueensSolverChirho;
+//! use minikanren_1bit_chirho::solvers_chirho::{SudokuSolverChirho, NQueensSolverChirho};
 //!
 //! // Sudoku: 9-bit domains per cell
 //! let mut sudoku_chirho = SudokuSolverChirho::new_chirho();
@@ -60,166 +59,235 @@
 //! - `wasm_chirho`: WebAssembly bindings
 //! - `goal_ast_chirho`: Goals as AST for introspection
 //!
-//! ## Modules
+//! ## Module Organization
 //!
-//! **Core:**
-//! - [`terms_chirho`]: Hash-consed term storage
-//! - [`union_find_chirho`]: O(α(n)) variable equivalence classes
-//! - [`unify_chirho`]: Unification with occurs check
-//! - [`goals_chirho`]: Goal combinators (==, conde, conj, disj, not, conda, condu, =/=)
-//! - [`stream_chirho`]: Lazy streams with interleaving
+//! **Core** ([`core_chirho`]):
+//! - [`core_chirho::terms_chirho`]: Hash-consed term storage
+//! - [`core_chirho::union_find_chirho`]: O(α(n)) variable equivalence classes
+//! - [`core_chirho::unify_chirho`]: Unification with occurs check
+//! - [`core_chirho::goals_chirho`]: Goal combinators (==, conde, conj, disj, not, conda, condu, =/=)
+//! - [`core_chirho::stream_chirho`]: Lazy streams with interleaving
 //!
-//! **Constraint Solving:**
-//! - [`constraint_chirho`]: Arc consistency (AC-3) propagation
-//! - [`sudoku_chirho`]: Sudoku solver (9-bit domains)
-//! - [`nqueens_chirho`]: N-Queens solver (64-bit domains)
-//! - [`jsonschema_chirho`]: JSON Schema validator
+//! **Hardware** ([`hardware_chirho`]):
+//! - [`hardware_chirho::hardware_chirho`]: FPGA primitives (BitVec64, CAM)
+//! - [`hardware_chirho::simd_chirho`]: AVX2 bulk operations
+//! - [`hardware_chirho::optics_hw_chirho`]: Hardware optics (3000× faster than heap)
+//! - [`hardware_chirho::bitmatrix_chirho`]: Sparse Boolean tensors (COO format)
 //!
-//! **Tensors & Relations:**
-//! - [`bitmatrix_chirho`]: Sparse Boolean tensors (COO format)
-//! - [`relations_chirho`]: Relations as sparse tensors (appendo, membero)
-//! - [`contraction_chirho`]: Tensor network contraction heuristics
+//! **Solvers** ([`solvers_chirho`]):
+//! - [`solvers_chirho::sudoku_chirho`]: Sudoku solver (9-bit domains)
+//! - [`solvers_chirho::nqueens_chirho`]: N-Queens solver (64-bit domains)
 //!
-//! **Advanced:**
-//! - [`semiring_chirho`]: Semiring abstraction (Bool, Prob, Tropical, Count)
-//! - [`diff_semiring_chirho`]: Differentiable relaxation with gradients
-//! - [`tabling_chirho`]: SLG-style memoization
-//! - [`egraph_native_chirho`]: Bit-parallel e-graph
+//! **Semirings** ([`semiring_chirho`]):
+//! - [`semiring_chirho::semiring_chirho`]: Semiring abstraction (Bool, Prob, Tropical, Count)
+//! - [`semiring_chirho::diff_semiring_chirho`]: Differentiable relaxation with gradients
 //!
-//! **Hardware:**
-//! - [`hardware_chirho`]: FPGA primitives (BitVec64, CAM)
-//! - [`simd_chirho`]: AVX2 bulk operations
-//! - [`optics_hw_chirho`]: Hardware optics (3000× faster than heap)
+//! **Experimental** ([`experimental_chirho`]):
+//! - E-graphs, SMT, neural heuristics, category-theoretic abstractions
 
-pub mod types_chirho;
-pub mod terms_chirho;
-pub mod union_find_chirho;
-pub mod unify_chirho;
-pub mod bitmatrix_chirho;
-pub mod bitmatrix_packed_chirho;
-pub mod relations_chirho;
-pub mod contraction_chirho;
-pub mod stream_chirho;
-pub mod goals_chirho;
-pub mod constraint_chirho;
-pub mod tabling_chirho;
-pub mod semiring_chirho;
+// ============================================================================
+// Module hierarchy ☧
+// ============================================================================
+
+/// Core miniKanren primitives
+pub mod core_chirho;
+
+/// Hardware-accelerated primitives (FPGA-friendly, SIMD)
 pub mod hardware_chirho;
-pub mod neural_chirho;
-pub mod smt_chirho;
-pub mod contraction_learn_chirho;
-pub mod slg_complete_chirho;
-pub mod nested_pattern_chirho;
-pub mod recursion_chirho;
-pub mod contraction_semiring_chirho;
-pub mod unify_matrix_chirho;
-pub mod simd_chirho;
-pub mod diff_semiring_chirho;
-pub mod sudoku_chirho;
-pub mod nqueens_chirho;
-pub mod relation_chirho;
-pub mod jsonschema_chirho;
 
-// WebAssembly bindings (feature-gated)
+/// Ready-to-use constraint solvers
+pub mod solvers_chirho;
+
+/// Semiring abstractions for generalized provenance
+pub mod semiring_chirho;
+
+/// Experimental and research modules
+pub mod experimental_chirho;
+
+// WebAssembly bindings (feature-gated, stays at root)
 #[cfg(feature = "wasm_chirho")]
 pub mod wasm_chirho;
 
-// Goal-as-AST (feature-gated: introspection vs raw speed)
+// ============================================================================
+// Backward-compatible re-exports (crate root)
+// ============================================================================
+
+// These allow `use minikanren_1bit_chirho::TermStoreChirho` to keep working
+
+// Core types
+pub use core_chirho::terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};
+pub use core_chirho::union_find_chirho::{UnionFindChirho, UnionFindHwChirho};
+pub use core_chirho::unify_chirho::{ground_eq_chirho, unify_chirho, SubstChirho, UnifyResultChirho};
+pub use core_chirho::goals_chirho::{
+    conda_chirho, conde_chirho, conj_all_chirho, conj_chirho, condu_chirho, diseq_chirho,
+    disj_all_chirho, disj_chirho, eq_chirho, fail_chirho, not_chirho, project_chirho,
+    run_all_chirho, run_chirho, succeed_chirho, GoalFnChirho,
+};
+pub use core_chirho::constraint_chirho::{BinaryConstraintChirho, ConstraintStoreChirho, DomainChirho};
+pub use core_chirho::tabling_chirho::{CallPatternChirho, LookupResultChirho, TableStoreChirho};
+pub use core_chirho::types_chirho::{
+    EClassIdChirhoSafe, ENodeIdChirhoSafe, GoalIdChirho, SymIdChirho, TensorIdChirho,
+    TermIdChirhoSafe, TypedIndexChirho, TypedVecChirho, VarIdChirho,
+};
+
+// Hardware types
+pub use hardware_chirho::bitmatrix_chirho::{BitMatrixChirho, BitTensor3Chirho};
+pub use hardware_chirho::bitmatrix_packed_chirho::{BitMatrix64Chirho, BitMatrixPackedChirho, Word64Chirho};
+pub use hardware_chirho::hardware_chirho::{
+    BitVec256Chirho, BitVec64Chirho, CamHwChirho, SearchState256HwChirho, SearchStateHwChirho,
+    UnifyUnitHwChirho,
+};
+pub use hardware_chirho::optics_hw_chirho::{
+    collect_nonempty_chirho, traverse_all_chirho, DomainHwChirho, LensHwChirho,
+    PartitionedDomainChirho, PrismHwChirho, StateHwChirho,
+};
+pub use hardware_chirho::simd_chirho::{
+    bulk_and_chirho, bulk_not_chirho, bulk_or_chirho, bulk_popcount_chirho, bulk_xor_chirho,
+    AlignedBitMatrixChirho,
+};
+
+// Solver types
+pub use solvers_chirho::nqueens_chirho::{NQueensSolverChirho, KNOWN_SOLUTIONS_CHIRHO};
+pub use solvers_chirho::sudoku_chirho::{puzzles_chirho, SudokuSolverChirho};
+
+// Semiring types
+pub use semiring_chirho::contraction_semiring_chirho::{
+    BoolTensorChirho, CountTensorChirho, ProbTensorChirho, SemiringNetworkChirho,
+    SemiringTensorChirho, TropicalTensorChirho,
+};
+pub use semiring_chirho::diff_semiring_chirho::{
+    annealed_temp_chirho, log_sum_exp_chirho, soft_eq_chirho, soft_eq_with_grad_chirho,
+    DiffProbChirho, GumbelSoftmaxChirho, LearnableRelationChirho, StraightThroughChirho,
+    WeightedTupleChirho,
+};
+pub use semiring_chirho::semiring_chirho::{
+    BoolSemiringChirho, CountSemiringChirho, LogSemiringChirho, ProbSemiringChirho,
+    SemiringChirho, TropicalSemiringChirho, WeightedMatrixChirho,
+};
+
+// Experimental types (always available)
+pub use experimental_chirho::contraction_learn_chirho::{
+    EdgeFeaturesChirho, LearnedContractionChirho, LinearEdgeScorerChirho, TensorNetworkChirho,
+};
+pub use experimental_chirho::jsonschema_chirho::{
+    validate_chirho, JsonValueChirho, SchemaChirho, ValidationErrorChirho, ValidatorChirho,
+};
+pub use experimental_chirho::nested_pattern_chirho::{
+    NestedPatternChirho, NodeConstraintChirho, NodeTypeChirho, PathStepChirho, TreePathChirho,
+};
+pub use experimental_chirho::neural_chirho::{
+    beam_search_chirho, NeuralHeuristicChirho, NeuralStateChirho, SoftDomainChirho,
+};
+pub use experimental_chirho::recursion_chirho::{
+    cata_indexed_chirho, depth_algebra_chirho, is_ground_algebra_chirho, para_indexed_chirho,
+    size_algebra_chirho, vars_algebra_chirho, OccursCheckAlgebraChirho, TermFChirho,
+    TermStoreIndexedChirho,
+};
+pub use experimental_chirho::slg_complete_chirho::{
+    EvenOddTensorChirho, GoalStatusChirho, SlgGoalChirho, SlgTableChirho,
+};
+pub use experimental_chirho::smt_chirho::{
+    domain_to_smt_chirho, SmtExprChirho, SmtProblemChirho, SmtSortChirho,
+};
+pub use experimental_chirho::unify_matrix_chirho::{unify_matrix_chirho, SubstMatrixChirho};
+
+// Feature-gated experimental re-exports
+#[cfg(feature = "egraph_native_chirho")]
+pub use experimental_chirho::egraph_native_chirho::{
+    EClassDataChirho, EClassIdChirho, EGraphNativeChirho, ENodeChirho, ENodeIdChirho,
+};
+
+#[cfg(feature = "egg_chirho")]
+pub use experimental_chirho::egg_chirho::{
+    arith_rules_chirho, list_rules_chirho, EggStoreChirho, TermAnalysisChirho, TermLangChirho,
+};
+
+#[cfg(feature = "gpu_chirho")]
+pub use experimental_chirho::gpu_chirho::GpuContextChirho;
+
+#[cfg(feature = "optics_chirho")]
+pub use experimental_chirho::optics_chirho::{
+    reify_optic_chirho, walk_deep_optic_chirho, ChildrenTraversalChirho, ConsPrismChirho,
+    HeadLensChirho, IntPrismChirho, LensChirho, NilPrismChirho, PrismChirho,
+    SubtermTraversalChirho, TailLensChirho, TraversalChirho, VarPrismChirho, VarsTraversalChirho,
+};
+
+#[cfg(feature = "free_goal_chirho")]
+pub use experimental_chirho::free_goal_chirho::{
+    conj_free_chirho, diseq_free_chirho, disj_free_chirho, eq_free_chirho, fresh_free_chirho,
+    goal_to_smt_chirho, run_bool_chirho, run_prob_chirho, FreeGoalChirho, GoalFChirho as GoalFChirhoFree,
+    SmtFormulaChirho,
+};
+
+#[cfg(feature = "comonad_chirho")]
+pub use experimental_chirho::comonad_chirho::{propagate_chirho, ComonadChirho, SearchZipperChirho};
+
+#[cfg(feature = "linear_chirho")]
+pub use experimental_chirho::linear_chirho::{
+    bang_chirho, par_chirho, tensor_chirho, LinearGoalChirho, ReusableGoalChirho,
+};
+
+// ============================================================================
+// Legacy module aliases (for old import paths)
+// ============================================================================
+
+// These allow `use minikanren_1bit_chirho::terms_chirho::TermStoreChirho` to keep working
+pub use core_chirho::constraint_chirho;
+pub use core_chirho::goals_chirho;
+pub use core_chirho::stream_chirho;
+pub use core_chirho::tabling_chirho;
+pub use core_chirho::terms_chirho;
+pub use core_chirho::types_chirho;
+// Note: unify_chirho module aliased to avoid conflict with unify_chirho function
+pub use core_chirho::unify_chirho as unify_mod_chirho;
+pub use core_chirho::union_find_chirho;
+
+pub use hardware_chirho::bitmatrix_chirho;
+pub use hardware_chirho::bitmatrix_packed_chirho;
+pub use hardware_chirho::hardware_chirho as hardware_mod_chirho;
+pub use hardware_chirho::optics_hw_chirho;
+pub use hardware_chirho::simd_chirho;
+
+pub use solvers_chirho::nqueens_chirho;
+pub use solvers_chirho::sudoku_chirho;
+
+pub use semiring_chirho::contraction_semiring_chirho;
+pub use semiring_chirho::diff_semiring_chirho;
+pub use semiring_chirho::semiring_chirho as semiring_mod_chirho;
+
+pub use experimental_chirho::contraction_chirho;
+pub use experimental_chirho::contraction_learn_chirho;
+pub use experimental_chirho::jsonschema_chirho;
+pub use experimental_chirho::nested_pattern_chirho;
+pub use experimental_chirho::neural_chirho;
+pub use experimental_chirho::recursion_chirho;
+pub use experimental_chirho::relation_chirho;
+pub use experimental_chirho::relations_chirho;
+pub use experimental_chirho::slg_complete_chirho;
+pub use experimental_chirho::smt_chirho;
+// Note: unify_matrix_chirho module aliased to avoid conflict with unify_matrix_chirho function
+pub use experimental_chirho::unify_matrix_chirho as unify_matrix_mod_chirho;
+
+#[cfg(feature = "egraph_native_chirho")]
+pub use experimental_chirho::egraph_native_chirho;
+
+#[cfg(feature = "egg_chirho")]
+pub use experimental_chirho::egg_chirho;
+
 #[cfg(feature = "goal_ast_chirho")]
-pub mod goal_ast_chirho;
-
-// GPU backend (feature-gated: requires wgpu)
-#[cfg(feature = "gpu_chirho")]
-pub mod gpu_chirho;
-
-// E-graph implementations (feature-gated)
-#[cfg(feature = "egraph_native_chirho")]
-pub mod egraph_native_chirho;
-
-#[cfg(feature = "egg_chirho")]
-pub mod egg_chirho;
-
-// ============================================================================
-// Category-theoretic extensions (Kmett-inspired, feature-gated)
-// ============================================================================
-
-// Optics: Prisms, Traversals, Lenses for term manipulation
-#[cfg(feature = "optics_chirho")]
-pub mod optics_chirho;
-
-// Free Monad Goals: Same AST, multiple interpreters (Bool, Prob, SMT)
-#[cfg(feature = "free_goal_chirho")]
-pub mod free_goal_chirho;
-
-// Comonadic Streams: Search zipper, extend, constraint propagation
-#[cfg(feature = "comonad_chirho")]
-pub mod comonad_chirho;
-
-// Linear Logic: Tensor/Par connectives, session types
-#[cfg(feature = "linear_chirho")]
-pub mod linear_chirho;
-
-// ============================================================================
-// Hardware-ready category-theoretic extensions (1-bit, FPGA-friendly)
-// ============================================================================
-
-// Hardware Optics: Prisms, Lenses over BitVec64 domains
-pub mod optics_hw_chirho;
-
-// Re-export key types (avoiding ambiguous globs)
-pub use terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};
-pub use union_find_chirho::{UnionFindChirho, UnionFindHwChirho};
-pub use unify_chirho::{SubstChirho, UnifyResultChirho, unify_chirho, ground_eq_chirho};
-pub use bitmatrix_chirho::{BitMatrixChirho, BitTensor3Chirho};
-pub use goals_chirho::{GoalFnChirho, eq_chirho, conj_chirho, disj_chirho, conde_chirho, conj_all_chirho, disj_all_chirho, succeed_chirho, fail_chirho, not_chirho, conda_chirho, condu_chirho, diseq_chirho, project_chirho, run_chirho, run_all_chirho};
-pub use constraint_chirho::{DomainChirho, ConstraintStoreChirho, BinaryConstraintChirho};
-pub use tabling_chirho::{TableStoreChirho, CallPatternChirho, LookupResultChirho};
-pub use semiring_chirho::{SemiringChirho, BoolSemiringChirho, ProbSemiringChirho, TropicalSemiringChirho, CountSemiringChirho, LogSemiringChirho, WeightedMatrixChirho};
-pub use hardware_chirho::{BitVec64Chirho, BitVec256Chirho, SearchStateHwChirho, SearchState256HwChirho, CamHwChirho, UnifyUnitHwChirho};
-pub use neural_chirho::{SoftDomainChirho, NeuralStateChirho, NeuralHeuristicChirho, beam_search_chirho};
-pub use smt_chirho::{SmtSortChirho, SmtExprChirho, SmtProblemChirho, domain_to_smt_chirho};
-pub use contraction_learn_chirho::{TensorNetworkChirho, EdgeFeaturesChirho, LinearEdgeScorerChirho, LearnedContractionChirho};
-pub use slg_complete_chirho::{SlgTableChirho, SlgGoalChirho, GoalStatusChirho, EvenOddTensorChirho};
-pub use nested_pattern_chirho::{TreePathChirho, PathStepChirho, NodeTypeChirho, NodeConstraintChirho, NestedPatternChirho};
-pub use types_chirho::{TermIdChirhoSafe, VarIdChirho, EClassIdChirhoSafe, ENodeIdChirhoSafe, SymIdChirho, GoalIdChirho, TensorIdChirho, TypedIndexChirho, TypedVecChirho};
-pub use bitmatrix_packed_chirho::{Word64Chirho, BitMatrix64Chirho, BitMatrixPackedChirho};
-pub use recursion_chirho::{TermFChirho, TermStoreIndexedChirho, cata_indexed_chirho, para_indexed_chirho, is_ground_algebra_chirho, vars_algebra_chirho, size_algebra_chirho, depth_algebra_chirho, OccursCheckAlgebraChirho};
-pub use contraction_semiring_chirho::{SemiringTensorChirho, SemiringNetworkChirho, BoolTensorChirho, ProbTensorChirho, TropicalTensorChirho, CountTensorChirho};
-pub use unify_matrix_chirho::{SubstMatrixChirho, unify_matrix_chirho};
-pub use simd_chirho::{bulk_and_chirho, bulk_or_chirho, bulk_xor_chirho, bulk_not_chirho, bulk_popcount_chirho, AlignedBitMatrixChirho};
-pub use diff_semiring_chirho::{DiffProbChirho, soft_eq_chirho, soft_eq_with_grad_chirho, annealed_temp_chirho, GumbelSoftmaxChirho, StraightThroughChirho, log_sum_exp_chirho, WeightedTupleChirho, LearnableRelationChirho};
-
-// E-graph re-exports (feature-gated)
-#[cfg(feature = "egraph_native_chirho")]
-pub use egraph_native_chirho::{ENodeChirho, ENodeIdChirho, EClassIdChirho, EClassDataChirho, EGraphNativeChirho};
-
-#[cfg(feature = "egg_chirho")]
-pub use egg_chirho::{TermLangChirho, TermAnalysisChirho, EggStoreChirho, list_rules_chirho, arith_rules_chirho};
+pub use experimental_chirho::goal_ast_chirho;
 
 #[cfg(feature = "gpu_chirho")]
-pub use gpu_chirho::GpuContextChirho;
+pub use experimental_chirho::gpu_chirho;
 
-// Category-theoretic extensions re-exports (feature-gated)
 #[cfg(feature = "optics_chirho")]
-pub use optics_chirho::{PrismChirho, TraversalChirho, LensChirho, ConsPrismChirho, IntPrismChirho, VarPrismChirho, NilPrismChirho, ChildrenTraversalChirho, SubtermTraversalChirho, VarsTraversalChirho, HeadLensChirho, TailLensChirho, walk_deep_optic_chirho, reify_optic_chirho};
+pub use experimental_chirho::optics_chirho;
 
 #[cfg(feature = "free_goal_chirho")]
-pub use free_goal_chirho::{GoalFChirho, FreeGoalChirho, SmtFormulaChirho, eq_free_chirho, fresh_free_chirho, disj_free_chirho, conj_free_chirho, diseq_free_chirho, run_bool_chirho, run_prob_chirho, goal_to_smt_chirho};
+pub use experimental_chirho::free_goal_chirho;
 
 #[cfg(feature = "comonad_chirho")]
-pub use comonad_chirho::{SearchZipperChirho, ComonadChirho, propagate_chirho};
+pub use experimental_chirho::comonad_chirho;
 
 #[cfg(feature = "linear_chirho")]
-pub use linear_chirho::{LinearGoalChirho, ReusableGoalChirho, tensor_chirho, par_chirho, bang_chirho};
-
-// Hardware-ready abstractions (always available, no overhead)
-pub use optics_hw_chirho::{DomainHwChirho, PrismHwChirho, LensHwChirho, StateHwChirho, PartitionedDomainChirho, traverse_all_chirho, collect_nonempty_chirho};
-
-// Sudoku solver (practical 1-bit domain demo)
-pub use sudoku_chirho::{SudokuSolverChirho, puzzles_chirho};
-
-// N-Queens solver (scales to 64×64)
-pub use nqueens_chirho::{NQueensSolverChirho, KNOWN_SOLUTIONS_CHIRHO};
-
-// JSON Schema validator (1-bit type domains)
-pub use jsonschema_chirho::{JsonValueChirho, SchemaChirho, ValidatorChirho, ValidationErrorChirho, validate_chirho};
+pub use experimental_chirho::linear_chirho;

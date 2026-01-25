@@ -3,7 +3,7 @@
 //! Streams represent potentially infinite sequences of solutions.
 //! This enables interleaving search for completeness.
 
-use crate::unify_chirho::SubstChirho;
+use super::unify_chirho::SubstChirho;
 
 /// A lazy stream of substitutions (solutions)
 pub enum StreamChirho {

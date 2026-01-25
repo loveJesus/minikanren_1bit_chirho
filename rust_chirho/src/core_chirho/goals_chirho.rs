@@ -5,9 +5,9 @@
 
 use std::sync::Arc;
 
-use crate::stream_chirho::StreamChirho;
-use crate::terms_chirho::{TermIdChirho, TermStoreChirho};
-use crate::unify_chirho::{unify_chirho, ground_eq_chirho, SubstChirho, UnifyResultChirho};
+use super::stream_chirho::StreamChirho;
+use super::terms_chirho::{TermIdChirho, TermStoreChirho};
+use super::unify_chirho::{unify_chirho, ground_eq_chirho, SubstChirho, UnifyResultChirho};
 
 /// Goal: substitution → stream of substitutions
 pub type GoalFnChirho = Arc<dyn Fn(SubstChirho, &TermStoreChirho) -> StreamChirho + Send + Sync>;
