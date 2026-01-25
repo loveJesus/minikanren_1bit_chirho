@@ -334,6 +334,41 @@ Provides type-safe hardware description with the same semantics as software.
 
 Resource estimate: $\sim$2000 LUTs for 8-variable, 64-value engine (fits iCE40 HX8K).
 
+\subsection{Scaling Beyond 64 Bits}
+
+A natural concern: what happens when domains exceed 64 values?
+We provide three complementary solutions:
+
+\textbf{1. BitVec256Chirho}: 256-bit domains using 4$\times$64-bit words. Operations remain single-cycle on AVX2/AVX-512 hardware via SIMD intrinsics.
+
+\textbf{2. Hierarchical Domains}: Tree-structured bit vectors with early-exit optimization:
+\begin{itemize}
+  \item \textbf{Hierarchical4kChirho}: 2-level tree (64$\times$64 = 4,096 values). Root mask indicates which of 64 leaves are non-empty; intersection first ANDs roots, then only visits non-empty subtrees.
+  \item \textbf{Hierarchical256kChirho}: 3-level tree (64$\times$64$\times$64 = 262,144 values). Same early-exit principle scales further.
+\end{itemize}
+
+\textbf{3. GPU Unlimited Domains}: GPU kernels use \texttt{Vec<u32>} arrays with no fixed size limit. Memory scales dynamically.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Domain Type} & \textbf{Max Size} & \textbf{Intersect Time} & \textbf{Relative} \\
+\midrule
+BitVec64Chirho & 64 & 420 ps & 1$\times$ \\
+BitVec256Chirho & 256 & 1.8 ns & 4$\times$ \\
+Hierarchical4kChirho & 4,096 & 39 ns & 93$\times$ \\
+Hierarchical256kChirho & 262,144 & 367 ns & 870$\times$ \\
+GPU (batch 100K) & unlimited & 2.8 ns/op & 7$\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Domain scaling: Hierarchical structures trade some speed for larger domains while preserving the bit-parallel paradigm. GPU amortizes overhead at large batch sizes.}
+\label{tab:scaling}
+\end{table}
+
+The hierarchical approach preserves the core insight---intersection is still bitwise AND---while enabling domains far beyond hardware word size.
+Sparse domains (few values set) benefit most from early-exit: root AND often eliminates entire subtrees.
+
 \subsection{Differentiable Relaxation}
 
 We generalize from Boolean to probability semiring:
@@ -389,6 +424,11 @@ Table~\ref{tab:nqueens} shows N-Queens performance across all implementations.
 \caption{N-Queens: Rust is 789$\times$ faster than Python, 70,000$\times$ faster than Z3}
 \label{tab:nqueens}
 \end{table}
+
+\textbf{A note on solver comparisons.}
+Z3 and clingo are \emph{general-purpose} solvers: Z3 handles arbitrary SMT formulas with quantifiers and theories, while clingo solves answer set programs with aggregates and optimization.
+Our speedups reflect the advantage of domain-specific representation, not algorithmic superiority on general problems.
+For fair comparison with miniKanren specifically, see Table~\ref{tab:ocanren} (OCanren, faster-miniKanren)---these implement the same relational semantics and are the appropriate baseline.
 
 Table~\ref{tab:sudoku} shows Sudoku solver performance.
 
@@ -546,6 +586,12 @@ Transitive Closure (64$\times$64) & 890 $\mu$s & 18 $\mu$s & 49$\times$ \\
 \label{tab:gpu}
 \end{table}
 
+\textbf{Memory Transfer Bottleneck.}
+The 0.3$\times$ slowdown for Bulk AND (1K) reflects PCIe transfer overhead dominating compute.
+GPU dispatch requires uploading data to VRAM, launching the kernel, and downloading results---a fixed cost of $\sim$100$\mu$s regardless of workload.
+For small batches, this overhead exceeds CPU execution time.
+The crossover point occurs around 10K operations; beyond that, GPU parallelism dominates and speedup grows with batch size.
+
 \textbf{Batch Sudoku.}
 Solving 1000 random Sudoku puzzles:
 \begin{itemize}
@@ -669,15 +715,21 @@ All implementations (Python prototype, Rust library, FPGA via Calyx/Clash) are o
 The Rust implementation is available on crates.io as \texttt{minikanren\_1bit\_chirho}.
 
 \textbf{Future work.}
-Extend to infinite domains via demand-driven term creation (hash consing).
-Implement GPU backend for 10,000+ parallel domain operations.
-Integrate with neural networks for learned constraint solving.
+While we have demonstrated hierarchical domains up to 262K values and GPU acceleration, several directions remain:
+(1) Tighter neural-symbolic integration, including differentiable parsing and program induction;
+(2) FPGA deployment on production boards with full tabling support;
+(3) Application to larger synthesis benchmarks (SyGuS-Comp full suite).
 
 % ============================================================================
 \section*{Acknowledgments}
 % ============================================================================
 
-This paper was developed with assistance from Claude (Anthropic), which contributed to structure, refinement, and iterative rewriting. The core technical insights emerged through collaborative exploration.
+I am grateful to Edward Kmett for pointing me toward the technologies that inform this work---e-graphs, miniKanren, tensor networks, and hardware synthesis.
+His learning path provided the roadmap that made this exploration possible.
+
+I also thank my father, Roger Cowan, for his patient support in working through ideas and ensuring I was thinking clearly about the problem space.
+
+This paper was developed with assistance from Claude (Anthropic), which contributed to structure, refinement, and iterative rewriting.
 
 % ============================================================================
 % Bibliography
