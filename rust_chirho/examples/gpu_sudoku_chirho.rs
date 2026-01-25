@@ -69,7 +69,7 @@ fn solve_cpu_chirho(puzzles_chirho: &[String]) -> (usize, std::time::Duration) {
 /// GPU-accelerated solving (falls back to CPU if no GPU)
 #[cfg(feature = "gpu_chirho")]
 fn solve_gpu_chirho(puzzles_chirho: &[String]) -> (usize, std::time::Duration) {
-    use minikanren_1bit_chirho::experimental_chirho::gpu_chirho::GpuContextChirho;
+    use minikanren_1bit_chirho::hardware_chirho::gpu_chirho::GpuContextChirho;
 
     let ctx_chirho = match GpuContextChirho::new_chirho() {
         Some(c_chirho) => c_chirho,

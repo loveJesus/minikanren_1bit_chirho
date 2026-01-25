@@ -6,6 +6,9 @@
 //! - SIMD: AVX2 bulk operations on domain arrays
 //! - Optics: Hardware prisms/lenses over bit domains (3000× faster than heap)
 //! - Goals: miniKanren goal combinators over bit-parallel states
+//! - E-graphs: Bit-parallel equivalence classes
+//! - Relations: Boolean relations as bit matrices
+//! - GPU: WebGPU acceleration
 
 pub mod bitmatrix_chirho;
 pub mod bitmatrix_packed_chirho;
@@ -13,6 +16,16 @@ pub mod goals_chirho;
 pub mod hardware_chirho;
 pub mod optics_hw_chirho;
 pub mod simd_chirho;
+
+// Integrated modules (use our 1-bit primitives)
+pub mod relation_chirho;
+pub mod unify_matrix_chirho;
+
+#[cfg(feature = "egraph_native_chirho")]
+pub mod egraph_native_chirho;
+
+#[cfg(feature = "gpu_chirho")]
+pub mod gpu_chirho;
 
 // Re-export key types
 pub use bitmatrix_chirho::{BitMatrixChirho, BitTensor3Chirho};
@@ -33,3 +46,13 @@ pub use goals_chirho::{
     GoalHwChirho, conde_hw_chirho, conj_hw_chirho, disj_hw_chirho, eq_hw_chirho,
     fail_hw_chirho, run_hw_chirho, succeed_hw_chirho, unify_hw_chirho,
 };
+pub use relation_chirho::{DenseRelationChirho, SparseRelationChirho};
+pub use unify_matrix_chirho::{unify_matrix_chirho, SubstMatrixChirho};
+
+#[cfg(feature = "egraph_native_chirho")]
+pub use egraph_native_chirho::{
+    EClassDataChirho, EClassIdChirho, EGraphNativeChirho, ENodeChirho, ENodeIdChirho,
+};
+
+#[cfg(feature = "gpu_chirho")]
+pub use gpu_chirho::GpuContextChirho;

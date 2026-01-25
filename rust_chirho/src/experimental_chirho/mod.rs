@@ -1,12 +1,12 @@
 //! Experimental modules ☧
 //!
 //! Research explorations and advanced features:
-//! - E-graphs (native and egg-based)
 //! - SMT integration
 //! - Neural heuristics
 //! - Category-theoretic abstractions (optics, free monads, comonads, linear logic)
 //! - Tensor network learning
-//! - Relations as bit-matrices
+//!
+//! Note: Integrated modules (egraph_native, relation, unify_matrix, gpu) moved to hardware_chirho
 
 // Core experimental modules (always available)
 pub mod contraction_chirho;
@@ -15,23 +15,13 @@ pub mod jsonschema_chirho;
 pub mod nested_pattern_chirho;
 pub mod neural_chirho;
 pub mod recursion_chirho;
-pub mod relation_chirho;
 pub mod relations_chirho;
 pub mod slg_complete_chirho;
 pub mod smt_chirho;
-pub mod unify_matrix_chirho;
 
 // Feature-gated modules
-#[cfg(feature = "egraph_native_chirho")]
-pub mod egraph_native_chirho;
-
-// egg_chirho moved to reference_chirho (external library comparison)
-
 #[cfg(feature = "goal_ast_chirho")]
 pub mod goal_ast_chirho;
-
-#[cfg(feature = "gpu_chirho")]
-pub mod gpu_chirho;
 
 #[cfg(feature = "optics_chirho")]
 pub mod optics_chirho;
@@ -64,21 +54,11 @@ pub use recursion_chirho::{
     size_algebra_chirho, vars_algebra_chirho, OccursCheckAlgebraChirho, TermFChirho,
     TermStoreIndexedChirho,
 };
-pub use relation_chirho::{DenseRelationChirho, SparseRelationChirho};
 pub use slg_complete_chirho::{EvenOddTensorChirho, GoalStatusChirho, SlgGoalChirho, SlgTableChirho};
 pub use smt_chirho::{domain_to_smt_chirho, SmtExprChirho, SmtProblemChirho, SmtSortChirho};
-pub use unify_matrix_chirho::{unify_matrix_chirho, SubstMatrixChirho};
 
-// Feature-gated re-exports
-#[cfg(feature = "egraph_native_chirho")]
-pub use egraph_native_chirho::{
-    EClassDataChirho, EClassIdChirho, EGraphNativeChirho, ENodeChirho, ENodeIdChirho,
-};
-
-// egg_chirho re-exports moved to reference_chirho
-
-#[cfg(feature = "gpu_chirho")]
-pub use gpu_chirho::GpuContextChirho;
+// Note: relation_chirho, unify_matrix_chirho, egraph_native_chirho, gpu_chirho
+// moved to hardware_chirho (they use our 1-bit primitives)
 
 #[cfg(feature = "optics_chirho")]
 pub use optics_chirho::{

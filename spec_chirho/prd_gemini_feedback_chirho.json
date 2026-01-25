@@ -1,0 +1,155 @@
+{
+  "title_chirho": "Address Gemini Paper Review Feedback",
+  "version_chirho": "1.0.0",
+  "description_chirho": "Address all feedback from Gemini's review of the miniKanren 1-bit paper",
+
+  "milestones_chirho": [
+    {
+      "id_chirho": "G1",
+      "name_chirho": "Scaling Beyond 64 Bits (Paper)",
+      "description_chirho": "Document our multi-word domain solutions in the paper",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "G1.1",
+          "name_chirho": "Add 'Scaling Beyond 64 Bits' subsection",
+          "description_chirho": "Add new subsection to Section 4 explaining BitVec256, Hierarchical4k/256k, GPU Vec<u32>",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Section explains 3 scaling strategies with performance table"
+        },
+        {
+          "id_chirho": "G1.2",
+          "name_chirho": "Add scaling benchmarks table",
+          "description_chirho": "Table showing BitVec64 vs Hierarchical4k vs Hierarchical256k performance",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Table shows intersection time for each domain size"
+        }
+      ]
+    },
+    {
+      "id_chirho": "G2",
+      "name_chirho": "GPU Memory Bottleneck Explanation",
+      "description_chirho": "Explain why small batch GPU is slower than CPU",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "G2.1",
+          "name_chirho": "Add GPU bottleneck paragraph",
+          "description_chirho": "Add sentence/paragraph in Section 8 explaining PCIe transfer overhead",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Readers understand why Bulk AND (1K) shows 0.3x"
+        }
+      ]
+    },
+    {
+      "id_chirho": "G3",
+      "name_chirho": "Solver Comparison Caveat",
+      "description_chirho": "Acknowledge that Z3/clingo solve more general problems",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "G3.1",
+          "name_chirho": "Add comparison caveat paragraph",
+          "description_chirho": "Add paragraph acknowledging Z3 solves general SMT, our comparison is domain-specific",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Fair comparison with OCanren highlighted as primary benchmark"
+        }
+      ]
+    },
+    {
+      "id_chirho": "G4",
+      "name_chirho": "Contraction Order Ablation",
+      "description_chirho": "Quantify heuristic overhead vs execution time",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "G4.1",
+          "name_chirho": "Add contraction timing benchmark",
+          "description_chirho": "Benchmark that measures heuristic time separately from execution time",
+          "files_chirho": ["rust_chirho/benches/contraction_bench_chirho.rs"],
+          "acceptance_chirho": "Outputs: heuristic_ns, execution_ns, total_ns"
+        },
+        {
+          "id_chirho": "G4.2",
+          "name_chirho": "Add ablation table to paper",
+          "description_chirho": "Table showing heuristic vs execution time breakdown",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Table shows overhead is acceptable (<10% of total)"
+        }
+      ]
+    },
+    {
+      "id_chirho": "G5",
+      "name_chirho": "FPGA Resource Analysis",
+      "description_chirho": "Document CAM capacity limits",
+      "priority_chirho": "low",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "G5.1",
+          "name_chirho": "Extract Calyx synthesis stats",
+          "description_chirho": "Run Calyx synthesis and capture LUT/FF/BRAM usage",
+          "files_chirho": ["calyx_chirho/resource_report_chirho.txt"],
+          "acceptance_chirho": "Have actual synthesis numbers"
+        },
+        {
+          "id_chirho": "G5.2",
+          "name_chirho": "Add FPGA scaling analysis",
+          "description_chirho": "Add paragraph on how resources scale with variables/domain size",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Shows resource usage curve or formula"
+        }
+      ]
+    },
+    {
+      "id_chirho": "G6",
+      "name_chirho": "Neurosymbolic Validation",
+      "description_chirho": "Demonstrate gradient stability on non-trivial benchmark",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "G6.1",
+          "name_chirho": "Implement gradient norm tracking",
+          "description_chirho": "Track gradient magnitudes during training to show stability",
+          "files_chirho": ["rust_chirho/src/learn_chirho/diagnostics_chirho.rs"],
+          "acceptance_chirho": "Can log gradient norms per iteration"
+        },
+        {
+          "id_chirho": "G6.2",
+          "name_chirho": "Add deeper benchmark",
+          "description_chirho": "Either MNIST-Sudoku or multi-hop reasoning (grandparent of grandparent)",
+          "files_chirho": ["rust_chirho/examples/learn_deep_chirho.rs"],
+          "acceptance_chirho": "Training converges on 3+ hop reasoning"
+        },
+        {
+          "id_chirho": "G6.3",
+          "name_chirho": "Add stability results to paper",
+          "description_chirho": "Add gradient stability plot or variance analysis",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Shows gradients don't vanish/explode"
+        }
+      ]
+    }
+  ],
+
+  "priority_order_chirho": [
+    "G1 - Scaling (EASY, code exists)",
+    "G2 - GPU explanation (EASY, one sentence)",
+    "G3 - Solver caveat (EASY, one paragraph)",
+    "G4 - Contraction ablation (MEDIUM, need benchmark)",
+    "G5 - FPGA resources (LOW, need synthesis run)",
+    "G6 - Neurosymbolic (HARD, need new benchmark)"
+  ],
+
+  "acceptance_criteria_chirho": [
+    "Paper addresses all 4 weaknesses explicitly",
+    "Paper addresses all 4 technical feedback items",
+    "Code has new benchmarks for contraction order",
+    "All tests pass after changes"
+  ]
+}

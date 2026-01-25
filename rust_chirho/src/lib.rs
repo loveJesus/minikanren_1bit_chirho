@@ -206,11 +206,11 @@ pub use experimental_chirho::slg_complete_chirho::{
 pub use experimental_chirho::smt_chirho::{
     domain_to_smt_chirho, SmtExprChirho, SmtProblemChirho, SmtSortChirho,
 };
-pub use experimental_chirho::unify_matrix_chirho::{unify_matrix_chirho, SubstMatrixChirho};
+pub use hardware_chirho::unify_matrix_chirho::{unify_matrix_chirho, SubstMatrixChirho};
 
 // Feature-gated experimental re-exports
 #[cfg(feature = "egraph_native_chirho")]
-pub use experimental_chirho::egraph_native_chirho::{
+pub use hardware_chirho::egraph_native_chirho::{
     EClassDataChirho, EClassIdChirho, EGraphNativeChirho, ENodeChirho, ENodeIdChirho,
 };
 
@@ -220,7 +220,7 @@ pub use reference_chirho::egg_chirho::{
 };
 
 #[cfg(feature = "gpu_chirho")]
-pub use experimental_chirho::gpu_chirho::GpuContextChirho;
+pub use hardware_chirho::gpu_chirho::GpuContextChirho;
 
 #[cfg(feature = "optics_chirho")]
 pub use experimental_chirho::optics_chirho::{
@@ -278,15 +278,15 @@ pub use experimental_chirho::jsonschema_chirho;
 pub use experimental_chirho::nested_pattern_chirho;
 pub use experimental_chirho::neural_chirho;
 pub use experimental_chirho::recursion_chirho;
-pub use experimental_chirho::relation_chirho;
+pub use hardware_chirho::relation_chirho;
 pub use experimental_chirho::relations_chirho;
 pub use experimental_chirho::slg_complete_chirho;
 pub use experimental_chirho::smt_chirho;
 // Note: unify_matrix_chirho module aliased to avoid conflict with unify_matrix_chirho function
-pub use experimental_chirho::unify_matrix_chirho as unify_matrix_mod_chirho;
+pub use hardware_chirho::unify_matrix_chirho as unify_matrix_mod_chirho;
 
 #[cfg(feature = "egraph_native_chirho")]
-pub use experimental_chirho::egraph_native_chirho;
+pub use hardware_chirho::egraph_native_chirho;
 
 #[cfg(feature = "egg_chirho")]
 pub use reference_chirho::egg_chirho;
@@ -295,7 +295,7 @@ pub use reference_chirho::egg_chirho;
 pub use experimental_chirho::goal_ast_chirho;
 
 #[cfg(feature = "gpu_chirho")]
-pub use experimental_chirho::gpu_chirho;
+pub use hardware_chirho::gpu_chirho;
 
 #[cfg(feature = "optics_chirho")]
 pub use experimental_chirho::optics_chirho;
