@@ -1,0 +1,116 @@
+# PRD Progress Log ☧
+
+## Iteration 1 - 2026-01-25
+
+### Completed Tasks:
+
+**M1: SyGuS Program Synthesis**
+- [x] M1.1: Create synthesis_chirho submodule
+  - Created rust_chirho/src/synthesis_chirho/mod.rs
+  - Created rust_chirho/src/synthesis_chirho/sygus_chirho.rs
+  - Created rust_chirho/src/synthesis_chirho/grammar_chirho.rs
+  - Created rust_chirho/src/synthesis_chirho/enumerate_chirho.rs
+  - All 5 synthesis tests passing
+
+- [x] M1.2: SyGuS Parser
+  - Parses synth-fun, constraints, I/O examples
+  - test_parse_max2_chirho passing
+
+- [x] M1.3: Grammar Domain Encoding
+  - EncodedGrammarChirho maps productions to Hierarchical4kChirho
+  - test_encode_grammar_chirho passing
+
+- [x] M1.4: Example Propagation
+  - SynthesisStateChirho with propagate_examples_chirho
+  - EnumeratorChirho with bottom-up domain-pruned search
+
+- [x] M1.5: SyGuS Test Problems
+  - Created benchmarks_chirho/sygus/max2.sl
+  - Created benchmarks_chirho/sygus/min2.sl
+  - Created benchmarks_chirho/sygus/abs.sl
+  - Created benchmarks_chirho/sygus/clamp.sl
+  - Created benchmarks_chirho/sygus/sign.sl
+
+**M4: Differentiable Logic**
+- [x] M4.1: Create learn_chirho submodule
+  - Created rust_chirho/src/learn_chirho/mod.rs
+  - Created rust_chirho/src/learn_chirho/learnable_chirho.rs
+  - Created rust_chirho/src/learn_chirho/anneal_chirho.rs
+  - Created rust_chirho/src/learn_chirho/gumbel_chirho.rs
+  - All 10 learn tests passing
+
+- [x] M4.2: Learnable Relations
+  - LearnableRelationExtChirho with train_step_chirho
+  - soft_query_chirho with DiffProbChirho
+
+- [x] M4.3: Temperature Annealing
+  - AnnealingScheduleChirho (exponential)
+  - LinearAnnealChirho, CosineAnnealChirho
+  - soft_eq_annealed_chirho, soft_and/or_annealed_chirho
+
+- [x] M4.4: Gumbel-Softmax
+  - GumbelSoftmaxSamplerChirho
+  - StraightThroughEstimatorChirho
+  - DifferentiableBranchChirho for soft conde
+
+### Test Status:
+- All 187+ tests passing
+- cargo check clean (no errors)
+- Only benign warnings for unused params
+
+### Remaining Tasks:
+- M1.6: SyGuS Benchmarks (comparison with CVC5)
+- M3: GPU Acceleration
+- M4.5: Family Relations Demo
+- M4.6: Differentiable Benchmarks
+- M5: Paper Writing
+
+### Commit: 8496675
+
+---
+
+## Iteration 2 - 2026-01-25
+
+### Completed Tasks:
+
+**M2: OCanren/faster-miniKanren Comparison**
+- [x] M2.1: Setup Scripts
+  - Created benchmarks_chirho/scripts/setup_comparison_chirho.sh
+  - Installs OCanren (opam), faster-miniKanren (git)
+
+- [x] M2.2: Port appendo to OCanren
+  - Created benchmarks_chirho/ocanren/appendo_chirho.ml
+  - Forward and backward benchmarks
+
+- [x] M2.3: Port appendo to faster-miniKanren
+  - Created benchmarks_chirho/faster/appendo_chirho.scm
+  - Uses conde, fresh, == from mk.scm
+
+- [x] M2.4: Our appendo Implementation
+  - Created rust_chirho/benches/comparison_bench_chirho.rs
+  - Uses Hierarchical4kChirho for domains
+  - Forward and backward_domain benchmarks
+
+- [x] M2.5: N-Queens Comparison
+  - Created benchmarks_chirho/ocanren/nqueens_chirho.ml
+  - Created benchmarks_chirho/faster/nqueens_chirho.scm
+  - 8-queens benchmark, expects 92 solutions
+
+- [x] M2.6: Comparison Runner
+  - Created benchmarks_chirho/scripts/run_comparison_chirho.sh
+  - Outputs CSV with timings for all implementations
+
+- [x] M2.7: Results Table Generator
+  - Created benchmarks_chirho/scripts/generate_table_chirho.py
+  - Generates LaTeX table with speedup calculations
+
+### Test Status:
+- All 201 tests passing (187 unit + 12 proptest + 2 doctests)
+- cargo check clean
+
+### Remaining Tasks:
+- M1.6: SyGuS Benchmarks (comparison with CVC5)
+- M3: GPU Acceleration
+- M4.5: Family Relations Demo
+- M4.6: Differentiable Benchmarks
+- M5: Paper Writing
