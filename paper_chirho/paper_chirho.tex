@@ -405,11 +405,31 @@ Sudoku (hard 17-clue) & 10 $\mu$s & Hidden singles + naked pairs \\
 Sudoku (Escargot) & 48 $\mu$s & Famous ``hardest'' \\
 N-Queens 8 (count) & 4 $\mu$s & 92 solutions \\
 N-Queens 12 (count) & 3.8 ms & 14,200 solutions \\
-N-Queens 20 (first) & 1.5 ms & Scales to 32$\times$32 \\
+N-Queens 20 (first) & 923 $\mu$s & Scales to 32$\times$32 \\
 \bottomrule
 \end{tabular}
 \caption{Rust implementation performance}
 \label{tab:apps}
+\end{table}
+
+\subsection{Hardware vs Reference miniKanren}
+
+Table~\ref{tab:hw-vs-ref} compares our bit-parallel hardware implementation against a traditional stream-based miniKanren.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Operation} & \textbf{Hardware (1-bit)} & \textbf{Streams} & \textbf{Speedup} \\
+\midrule
+Simple unify & 40 ns & 271 ns & 6.8$\times$ \\
+Conjunction chain (2) & 78 ns & 514 ns & 6.6$\times$ \\
+Conjunction chain (4) & 144 ns & 1.1 $\mu$s & 7.6$\times$ \\
+Conjunction chain (8) & 288 ns & 2.2 $\mu$s & 7.6$\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Bit-parallel goals vs stream-based goals}
+\label{tab:hw-vs-ref}
 \end{table}
 
 \begin{figure}[ht]

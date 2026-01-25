@@ -25,11 +25,14 @@ miniKanren search = sparse Boolean tensor network contraction
 
 | Operation | Time | Notes |
 |-----------|------|-------|
-| Unify (64-bit AND) | **2ns** | Single SIMD instruction |
-| Domain intersection (AVX2) | **8ns** | 8 domains parallel |
-| Hardware optics (BitVec64) | **420ps** | Single CPU cycle |
+| Domain AND (BitVec64) | **423ps** | Single CPU cycle |
+| Hardware optics | **420ps** | Sub-nanosecond |
+| Simple unify (hardware) | **40ns** | vs 271ns streams = 6.8× |
+| N-Queens 8 (92 solutions) | **3.7μs** | All solutions |
+| Sudoku (hard 17-clue) | **9.4μs** | Adaptive strategy |
 
-vs Heap-based alternatives: **3000-4000x faster**
+vs Heap-based alternatives: **3000-4000× faster**
+vs Traditional miniKanren streams: **6-8× faster**
 
 ## Usage
 
@@ -62,12 +65,12 @@ fn main() {
 use minikanren_1bit_chirho::sudoku_chirho::SudokuSolverChirho;
 use minikanren_1bit_chirho::nqueens_chirho::NQueensSolverChirho;
 
-// Sudoku: 9-bit domains, solves in ~10μs
+// Sudoku: 9-bit domains, solves in 3-10μs
 let mut sudoku_chirho = SudokuSolverChirho::new_chirho();
 sudoku_chirho.load_puzzle_chirho("530070000600195000...");
 sudoku_chirho.solve_adaptive_chirho();
 
-// N-Queens: 64-bit domains, 8-queens in 4μs
+// N-Queens: 64-bit domains, 8-queens in 3.7μs
 let mut queens_chirho = NQueensSolverChirho::new_chirho(8);
 assert_eq!(queens_chirho.count_solutions_chirho(), 92);
 ```
