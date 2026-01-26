@@ -130,6 +130,10 @@ gpu_chirho = ["wgpu", "pollster", "bytemuck"]
 # Enable multi-core parallel processing (requires rayon)
 parallel_chirho = ["rayon"]
 
+# Enable Verilator co-simulation for hardware verification (P5-00)
+# Requires: verilator installed, searchEngineChirho.v compiled
+verilator_chirho = []
+
 # ============================================================================
 # Category-theoretic extensions (Kmett-inspired)
 # ============================================================================
