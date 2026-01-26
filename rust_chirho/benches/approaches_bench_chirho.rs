@@ -16,6 +16,7 @@ use minikanren_1bit_chirho::approaches_chirho::{
     HybridDomainChirho,
     HwSymbolicDomainChirho,
     Hierarchical4kChirho,
+    Hierarchical256kChirho,
     hw_symbolic_chirho::{range_bits_chirho, mod_lut_chirho, range_mod_hw_chirho},
 };
 
@@ -99,6 +100,22 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
             |bench_chirho, &n_chirho| {
                 let a_chirho = Hierarchical4kChirho::range_chirho(n_chirho);
                 let b_chirho = Hierarchical4kChirho::range_chirho(n_chirho / 2);
+                bench_chirho.iter(|| {
+                    black_box(a_chirho.intersect_chirho(&b_chirho))
+                })
+            },
+        );
+    }
+
+    // Hierarchical 256K domain (tree of trees of BitVec64s)
+    // This shows we scale MASSIVELY beyond 64 bits
+    for size_chirho in [1_000, 10_000, 50_000, 100_000, 200_000, 262_000] {
+        group_chirho.bench_with_input(
+            BenchmarkId::new("Hierarchical256k", size_chirho),
+            &size_chirho,
+            |bench_chirho, &n_chirho| {
+                let a_chirho = Hierarchical256kChirho::range_chirho(n_chirho);
+                let b_chirho = Hierarchical256kChirho::range_chirho(n_chirho / 2);
                 bench_chirho.iter(|| {
                     black_box(a_chirho.intersect_chirho(&b_chirho))
                 })
