@@ -80,6 +80,18 @@ reg_chirho = std_reg(64);
 - Magic methods (`__init__`, `__repr__`)
 - Calyx `main` component (required by toolchain)
 
+### Tool-Specific Exceptions
+**Vivado/XDC files:** Standard hardware signal names and Vivado commands keep original conventions:
+- `clk`, `rst` - standard clock/reset signal names (industry convention)
+- `create_clock`, `set_input_delay`, `set_output_delay` - Vivado TCL commands
+- Custom signals use suffix: `enChirho`, `cmdChirho`, `respChirho`
+
+**AWS Resources:** Use hyphens (AWS naming convention, S3 buckets don't allow underscores):
+- `minikanren-fpga-chirho-*` (S3 buckets, instance tags)
+- `afi-*-chirho` (AFI names)
+
+**LaTeX:** Inline type name references (e.g., `Hierarchical256kChirho`) are acceptable without macro wrapping. Semantic macros (`\domainSmallChirho`) are optional convenience.
+
 ### Database/Routes
 ```sql
 CREATE TABLE terms_chirho (id_chirho INTEGER, ...);
