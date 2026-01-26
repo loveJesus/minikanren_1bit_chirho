@@ -344,10 +344,18 @@ The full Clash-generated searchEngineChirho design synthesizes to:
   \item Fits Cyclone V at $\sim$8\% utilization, Artix-7 A35 at $\sim$65\%
 \end{itemize}
 
+\textbf{AWS F1 Synthesis (Vivado 2023.2, January 2026):}
+Full place-and-route on Xilinx VU9P (AWS F1 target) achieved timing closure at 50 MHz:
+\begin{itemize}
+  \item WNS (setup slack): +0.461 ns $\checkmark$
+  \item WHS (hold slack): +0.042 ns $\checkmark$
+  \item Zero failing endpoints (10,311 hold paths verified)
+  \item Build time: 22 minutes on c5.9xlarge
+\end{itemize}
+
 \textbf{Hardware Scope Clarification.}
 The FPGA implementation covers the \emph{constraint propagation engine}: domain registers, bitwise unification, branching logic, and CAM-based term lookup.
 SLG tabling (recursive relation memoization, SCC detection) remains in software.
-Timing verification on physical hardware is pending; current Fmax estimate is 100--200 MHz based on similar designs.
 
 \subsection{Scaling Beyond 64 Bits}
 
@@ -911,8 +919,9 @@ This is acceptable for training (where gradient flow is essential) but prohibiti
 Users must compile trained models back to hard operations for deployment.
 
 \textbf{5. FPGA Hardware Status.}
-Yosys synthesis (January 2025) reports 43,136 cells for the Clash-generated searchEngineChirho, fitting Cyclone V at $\sim$8\% utilization.
-Timing closure on physical hardware is pending; Fmax is estimated at 100--200 MHz but unverified.
+AWS F1 synthesis (Vivado 2023.2, January 2026) achieved timing closure on VU9P at 50 MHz with positive setup (+0.461 ns) and hold (+0.042 ns) slack.
+Higher frequencies (100--200 MHz) may be achievable with additional pipelining.
+AFI generation and runtime validation on physical F1 instances are pending.
 The constraint propagation engine is synthesizable; SLG tabling remains software-only.
 
 \textbf{6. Contraction Order Complexity.}
