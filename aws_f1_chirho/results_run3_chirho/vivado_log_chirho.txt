@@ -1,0 +1,1160 @@
+
+****** Vivado v2024.2 (64-bit)
+  **** SW Build 5239630 on Fri Nov 08 22:34:34 MST 2024
+  **** IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+  **** SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+  **** Start of session at: Mon Jan 26 17:17:19 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source synth_vivado_chirho.tcl
+# set project_name_chirho "minikanren_chirho"
+# set part_name_chirho "xcvu9p-flgb2104-2-i"
+# set top_module_chirho "searchEngineChirho"
+# create_project -force ${project_name_chirho} ./${project_name_chirho} -part ${part_name_chirho}
+create_project: Time (s): cpu = 00:00:00.72 ; elapsed = 00:00:06 . Memory (MB): peak = 1329.484 ; gain = 0.027 ; free physical = 68319 ; free virtual = 79752
+# add_files -fileset sources_1 ./searchEngineChirho.v
+# add_files -fileset constrs_1 ./timing_chirho.xdc
+# set_property top ${top_module_chirho} [current_fileset]
+# synth_design -top ${top_module_chirho} -part ${part_name_chirho}
+Command: synth_design -top searchEngineChirho -part xcvu9p-flgb2104-2-i
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xcvu9p'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xcvu9p'
+INFO: [Device 21-403] Loading part xcvu9p-flgb2104-2-i
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 7 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 2198
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:09 . Memory (MB): peak = 2651.895 ; gain = 328.777 ; free physical = 66596 ; free virtual = 78148
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'searchEngineChirho' [/root/minikanren_chirho/searchEngineChirho.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'searchEngineChirho' (0#1) [/root/minikanren_chirho/searchEngineChirho.v:6]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:11 . Memory (MB): peak = 2766.598 ; gain = 443.480 ; free physical = 66454 ; free virtual = 78010
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:11 . Memory (MB): peak = 2775.504 ; gain = 452.387 ; free physical = 66454 ; free virtual = 78010
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:11 . Memory (MB): peak = 2775.504 ; gain = 452.387 ; free physical = 66454 ; free virtual = 78010
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00.25 ; elapsed = 00:00:00.26 . Memory (MB): peak = 2775.504 ; gain = 0.000 ; free physical = 66454 ; free virtual = 78010
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/root/minikanren_chirho/timing_chirho.xdc]
+Finished Parsing XDC File [/root/minikanren_chirho/timing_chirho.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/root/minikanren_chirho/timing_chirho.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/searchEngineChirho_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/searchEngineChirho_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3003.270 ; gain = 0.000 ; free physical = 66371 ; free virtual = 77945
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.03 . Memory (MB): peak = 3003.270 ; gain = 0.000 ; free physical = 66371 ; free virtual = 77945
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:21 ; elapsed = 00:00:30 . Memory (MB): peak = 3003.270 ; gain = 680.152 ; free physical = 66363 ; free virtual = 77938
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xcvu9p-flgb2104-2-i
+INFO: [Synth 8-6742] Reading net delay rules and data
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:21 ; elapsed = 00:00:30 . Memory (MB): peak = 3011.273 ; gain = 688.156 ; free physical = 66363 ; free virtual = 77938
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:21 ; elapsed = 00:00:30 . Memory (MB): peak = 3011.273 ; gain = 688.156 ; free physical = 66363 ; free virtual = 77938
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:33 ; elapsed = 00:00:42 . Memory (MB): peak = 3011.273 ; gain = 688.156 ; free physical = 66381 ; free virtual = 77957
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   64 Bit       Adders := 9     
+	   2 Input    4 Bit       Adders := 2     
++---Registers : 
+	             9797 Bit    Registers := 1     
++---Muxes : 
+	   2 Input 9797 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 6840 (col length:120)
+BRAMs: 4320 (col length: RAMB18 360 RAMB36 180)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:12 ; elapsed = 00:01:21 . Memory (MB): peak = 3298.758 ; gain = 975.641 ; free physical = 66057 ; free virtual = 77669
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:01:20 ; elapsed = 00:01:41 . Memory (MB): peak = 3457.680 ; gain = 1134.562 ; free physical = 65921 ; free virtual = 77566
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:04:54 ; elapsed = 00:05:16 . Memory (MB): peak = 3965.984 ; gain = 1642.867 ; free physical = 65389 ; free virtual = 77081
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:05:09 ; elapsed = 00:05:32 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65431 ; free virtual = 77077
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:05:16 ; elapsed = 00:05:39 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65439 ; free virtual = 77085
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:05:16 ; elapsed = 00:05:39 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65439 ; free virtual = 77085
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:05:17 ; elapsed = 00:05:40 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65439 ; free virtual = 77085
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:05:17 ; elapsed = 00:05:41 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65439 ; free virtual = 77085
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:05:37 ; elapsed = 00:06:00 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65440 ; free virtual = 77086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:05:37 ; elapsed = 00:06:00 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65440 ; free virtual = 77086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-------+------+
+|      |Cell   |Count |
++------+-------+------+
+|1     |BUFG   |     1|
+|2     |CARRY8 |   140|
+|3     |LUT1   |   639|
+|4     |LUT2   |    31|
+|5     |LUT3   |  9002|
+|6     |LUT4   |  1464|
+|7     |LUT5   |   753|
+|8     |LUT6   | 13954|
+|9     |MUXF7  |  1227|
+|10    |MUXF8  |    68|
+|11    |FDCE   |    20|
+|12    |FDPE   |   513|
+|13    |FDRE   |  9264|
+|14    |IBUF   |    73|
+|15    |OBUF   |   514|
++------+-------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:05:37 ; elapsed = 00:06:01 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65440 ; free virtual = 77086
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 1 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:05:27 ; elapsed = 00:05:47 . Memory (MB): peak = 3973.984 ; gain = 1423.102 ; free physical = 65440 ; free virtual = 77086
+Synthesis Optimization Complete : Time (s): cpu = 00:05:38 ; elapsed = 00:06:01 . Memory (MB): peak = 3973.984 ; gain = 1650.867 ; free physical = 65440 ; free virtual = 77086
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00.23 ; elapsed = 00:00:00.23 . Memory (MB): peak = 3973.984 ; gain = 0.000 ; free physical = 65606 ; free virtual = 77255
+INFO: [Netlist 29-17] Analyzing 1509 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'searchEngineChirho' is not ideal for floorplanning, since the cellview 'searchEngineChirho' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/root/minikanren_chirho/timing_chirho.xdc]
+WARNING: [Constraints 18-401] set_max_delay: 'clk_IBUF_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[0]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[10]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[11]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[12]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[13]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[14]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[15]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[16]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[17]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[18]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[19]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[1]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[20]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[21]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[22]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[23]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[24]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[25]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[26]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[27]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[28]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[29]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[2]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[30]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[31]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[32]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[33]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[34]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[35]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[36]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[37]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[38]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[39]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[3]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[40]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[41]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[42]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[43]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[44]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[45]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[46]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[47]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[48]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[49]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[4]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[50]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[51]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[52]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[53]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[54]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[55]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[56]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[57]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[58]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[59]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[5]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[60]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[61]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[62]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[63]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[64]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[65]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[66]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[67]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[68]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[69]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[6]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[7]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[8]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'cmdChirho_IBUF[9]_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'enChirho_IBUF_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_max_delay: 'rst_IBUF_inst/INBUF_INST' is not a valid endpoint. [/root/minikanren_chirho/timing_chirho.xdc:26]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+Finished Parsing XDC File [/root/minikanren_chirho/timing_chirho.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3990.371 ; gain = 0.000 ; free physical = 65608 ; free virtual = 77258
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 74 instances were transformed.
+  BUFG => BUFGCE: 1 instance 
+  IBUF => IBUF (IBUFCTRL, INBUF): 73 instances
+
+Synth Design complete | Checksum: 5875a9c0
+INFO: [Common 17-83] Releasing license: Synthesis
+18 Infos, 75 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:06:01 ; elapsed = 00:06:53 . Memory (MB): peak = 3990.371 ; gain = 2660.887 ; free physical = 65608 ; free virtual = 77258
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 3506.811; main = 3324.116; forked = 337.273
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 4883.398; main = 3990.375; forked = 909.410
+# report_utilization -file utilization_post_synth_chirho.rpt
+# report_timing_summary -file timing_post_synth_chirho.rpt
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: I, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+report_timing_summary: Time (s): cpu = 00:00:37 ; elapsed = 00:01:08 . Memory (MB): peak = 4696.824 ; gain = 706.453 ; free physical = 64446 ; free virtual = 76515
+# opt_design
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xcvu9p'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xcvu9p'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.53 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64446 ; free virtual = 76515
+
+Starting Cache Timing Information Task
+Ending Cache Timing Information Task | Checksum: 106cc86a4
+
+Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64446 ; free virtual = 76515
+
+Starting Logic Optimization Task
+
+Phase 1 Initialization
+
+Phase 1.1 Core Generation And Design Setup
+Phase 1.1 Core Generation And Design Setup | Checksum: 106cc86a4
+
+Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+
+Phase 1.2 Setup Constraints And Sort Netlist
+Phase 1.2 Setup Constraints And Sort Netlist | Checksum: 106cc86a4
+
+Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.03 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Phase 1 Initialization | Checksum: 106cc86a4
+
+Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.03 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+
+Phase 2 Timer Update And Timing Data Collection
+
+Phase 2.1 Timer Update
+Phase 2.1 Timer Update | Checksum: 106cc86a4
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.41 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+
+Phase 2.2 Timing Data Collection
+Phase 2.2 Timing Data Collection | Checksum: 106cc86a4
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.46 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Phase 2 Timer Update And Timing Data Collection | Checksum: 106cc86a4
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.46 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+
+Phase 3 Retarget
+INFO: [Opt 31-1851] Number of loadless carry chains removed were: 0
+INFO: [Opt 31-1834] Total Chains To Be Transformed Were: 0 AND Number of Transformed insts Created are: 0
+INFO: [Opt 31-1566] Pulled 1 inverters resulting in an inversion of 9 pins
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 3 Retarget | Checksum: 24bb4f8f4
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Retarget | Checksum: 24bb4f8f4
+INFO: [Opt 31-389] Phase Retarget created 0 cells and removed 1 cells
+
+Phase 4 Constant propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Phase 4 Constant propagation | Checksum: 24bb4f8f4
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Constant propagation | Checksum: 24bb4f8f4
+INFO: [Opt 31-389] Phase Constant propagation created 0 cells and removed 0 cells
+
+Phase 5 Sweep
+INFO: [Constraints 18-11670] Building netlist checker database with flags, 0x8
+Done building netlist checker database: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Phase 5 Sweep | Checksum: 185033591
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 4696.824 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Sweep | Checksum: 185033591
+INFO: [Opt 31-389] Phase Sweep created 0 cells and removed 0 cells
+
+Phase 6 BUFG optimization
+INFO: [Opt 31-1077] Phase BUFG optimization inserted 0 global clock buffer(s) for CLOCK_LOW_FANOUT.
+Phase 6 BUFG optimization | Checksum: 185033591
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+BUFG optimization | Checksum: 185033591
+INFO: [Opt 31-662] Phase BUFG optimization created 0 cells of which 0 are BUFGs and removed 0 cells.
+INFO: [Opt 31-1021] In phase BUFG optimization, 1 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 7 Shift Register Optimization
+INFO: [Opt 31-1064] SRL Remap converted 0 SRLs to 0 registers and converted 0 registers of register chains to 0 SRLs
+Phase 7 Shift Register Optimization | Checksum: 185033591
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+Shift Register Optimization | Checksum: 185033591
+INFO: [Opt 31-389] Phase Shift Register Optimization created 0 cells and removed 0 cells
+
+Phase 8 Post Processing Netlist
+Phase 8 Post Processing Netlist | Checksum: 185033591
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+Post Processing Netlist | Checksum: 185033591
+INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
+
+Phase 9 Finalization
+
+Phase 9.1 Finalizing Design Cores and Updating Shapes
+Phase 9.1 Finalizing Design Cores and Updating Shapes | Checksum: 19f4e14e8
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+
+Phase 9.2 Verifying Netlist Connectivity
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.08 ; elapsed = 00:00:00.08 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Phase 9.2 Verifying Netlist Connectivity | Checksum: 19f4e14e8
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+Phase 9 Finalization | Checksum: 19f4e14e8
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+Opt_design Change Summary
+=========================
+
+
+-------------------------------------------------------------------------------------------------------------------------
+|  Phase                        |  #Cells created  |  #Cells Removed  |  #Constrained objects preventing optimizations  |
+-------------------------------------------------------------------------------------------------------------------------
+|  Retarget                     |               0  |               1  |                                              0  |
+|  Constant propagation         |               0  |               0  |                                              0  |
+|  Sweep                        |               0  |               0  |                                              0  |
+|  BUFG optimization            |               0  |               0  |                                              1  |
+|  Shift Register Optimization  |               0  |               0  |                                              0  |
+|  Post Processing Netlist      |               0  |               0  |                                              0  |
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Ending Logic Optimization Task | Checksum: 19f4e14e8
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+Ending Power Optimization Task | Checksum: 19f4e14e8
+
+Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+
+Starting Final Cleanup Task
+Ending Final Cleanup Task | Checksum: 19f4e14e8
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+
+Starting Netlist Obfuscation Task
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+Ending Netlist Obfuscation Task | Checksum: 19f4e14e8
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64407 ; free virtual = 76476
+INFO: [Common 17-83] Releasing license: Implementation
+22 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:08 ; elapsed = 00:00:06 . Memory (MB): peak = 4728.840 ; gain = 32.016 ; free physical = 64407 ; free virtual = 76476
+# place_design
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xcvu9p'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xcvu9p'
+INFO: [Common 17-83] Releasing license: Implementation
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Starting Placer Task
+
+Phase 1 Placer Initialization
+
+Phase 1.1 Placer Initialization Netlist Sorting
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64404 ; free virtual = 76474
+Phase 1.1 Placer Initialization Netlist Sorting | Checksum: 119653c37
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64404 ; free virtual = 76474
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64404 ; free virtual = 76474
+
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: 1b8c04124
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:09 . Memory (MB): peak = 4728.840 ; gain = 0.000 ; free physical = 64400 ; free virtual = 76478
+
+Phase 1.3 Build Placer Netlist Model
+Phase 1.3 Build Placer Netlist Model | Checksum: 1d9fc7d6f
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:17 . Memory (MB): peak = 4957.586 ; gain = 228.746 ; free physical = 63961 ; free virtual = 76287
+
+Phase 1.4 Constrain Clocks/Macros
+Phase 1.4 Constrain Clocks/Macros | Checksum: 1d9fc7d6f
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:17 . Memory (MB): peak = 4957.586 ; gain = 228.746 ; free physical = 63961 ; free virtual = 76287
+Phase 1 Placer Initialization | Checksum: 1d9fc7d6f
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:18 . Memory (MB): peak = 4957.586 ; gain = 228.746 ; free physical = 63962 ; free virtual = 76288
+
+Phase 2 Global Placement
+
+Phase 2.1 Floorplanning
+
+Phase 2.1.1 Partition Driven Placement
+
+Phase 2.1.1.1 PBP: Partition Driven Placement
+Phase 2.1.1.1 PBP: Partition Driven Placement | Checksum: 1ccf057a6
+
+Time (s): cpu = 00:00:41 ; elapsed = 00:00:23 . Memory (MB): peak = 4957.586 ; gain = 228.746 ; free physical = 64056 ; free virtual = 76383
+
+Phase 2.1.1.2 PBP: Clock Region Placement
+Phase 2.1.1.2 PBP: Clock Region Placement | Checksum: 1ccf057a6
+
+Time (s): cpu = 00:00:43 ; elapsed = 00:00:25 . Memory (MB): peak = 4957.586 ; gain = 228.746 ; free physical = 64058 ; free virtual = 76385
+
+Phase 2.1.1.3 PBP: Compute Congestion
+Phase 2.1.1.3 PBP: Compute Congestion | Checksum: 1ccf057a6
+
+Time (s): cpu = 00:01:10 ; elapsed = 00:00:58 . Memory (MB): peak = 5365.570 ; gain = 636.730 ; free physical = 63178 ; free virtual = 75934
+
+Phase 2.1.1.4 PBP: UpdateTiming
+Phase 2.1.1.4 PBP: UpdateTiming | Checksum: 2b477d68e
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:00:58 . Memory (MB): peak = 5397.586 ; gain = 668.746 ; free physical = 63178 ; free virtual = 75933
+
+Phase 2.1.1.5 PBP: Add part constraints
+Phase 2.1.1.5 PBP: Add part constraints | Checksum: 2b477d68e
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:00:58 . Memory (MB): peak = 5397.586 ; gain = 668.746 ; free physical = 63178 ; free virtual = 75933
+Phase 2.1.1 Partition Driven Placement | Checksum: 2b477d68e
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:00:59 . Memory (MB): peak = 5397.586 ; gain = 668.746 ; free physical = 63178 ; free virtual = 75933
+Phase 2.1 Floorplanning | Checksum: 24b41c997
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:00:59 . Memory (MB): peak = 5397.586 ; gain = 668.746 ; free physical = 63178 ; free virtual = 75933
+
+Phase 2.2 Physical Synthesis After Floorplan
+INFO: [Physopt 32-670] No setup violation found.  PSIP Post Floorplan SLR Replication was not performed.
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 5397.586 ; gain = 0.000 ; free physical = 63175 ; free virtual = 75934
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization                         |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-----------------------------------------------------------------------------------------------------------------------------------------------
+|  PSIP Post Floorplan SLR Replication  |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Total                                |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Phase 2.2 Physical Synthesis After Floorplan | Checksum: 24b41c997
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:00:59 . Memory (MB): peak = 5397.586 ; gain = 668.746 ; free physical = 63175 ; free virtual = 75933
+
+Phase 2.3 Update Timing before SLR Path Opt
+Phase 2.3 Update Timing before SLR Path Opt | Checksum: 24b41c997
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:00:59 . Memory (MB): peak = 5397.586 ; gain = 668.746 ; free physical = 63175 ; free virtual = 75933
+
+Phase 2.4 Post-Processing in Floorplanning
+Phase 2.4 Post-Processing in Floorplanning | Checksum: 24b41c997
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:00:59 . Memory (MB): peak = 5397.586 ; gain = 668.746 ; free physical = 63175 ; free virtual = 75933
+
+Phase 2.5 Global Place Phase1
+Phase 2.5 Global Place Phase1 | Checksum: 2983ee5ff
+
+Time (s): cpu = 00:02:32 ; elapsed = 00:01:35 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62744 ; free virtual = 75505
+
+Phase 2.6 Global Place Phase2
+
+Phase 2.6.1 UpdateTiming Before Physical Synthesis
+Phase 2.6.1 UpdateTiming Before Physical Synthesis | Checksum: 1f8f775b8
+
+Time (s): cpu = 00:02:34 ; elapsed = 00:01:36 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62744 ; free virtual = 75506
+
+Phase 2.6.2 Physical Synthesis In Placer
+INFO: [Physopt 32-1035] Found 0 LUTNM shape to break, 51 LUT instances to create LUTNM shape
+INFO: [Physopt 32-1044] Break lutnm for timing: one critical 0, two critical 0, total 0, new lutff created 0
+INFO: [Physopt 32-1138] End 1 Pass. Optimized 22 nets or LUTs. Breaked 0 LUT, combined 22 existing LUTs and moved 0 existing LUT
+INFO: [Physopt 32-1030] Pass 1. Identified 2 candidate driver sets for equivalent driver rewiring.
+INFO: [Physopt 32-661] Optimized 2 nets.  Re-placed 20 instances.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 2 nets or cells. Created 0 new cell, deleted 0 existing cell and moved 20 existing cells
+Netlist sorting complete. Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.09 . Memory (MB): peak = 5918.617 ; gain = 0.000 ; free physical = 62745 ; free virtual = 75506
+INFO: [Physopt 32-65] No nets found for high-fanout optimization.
+INFO: [Physopt 32-232] Optimized 0 net. Created 0 new instance.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-670] No setup violation found.  DSP Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  Shift Register to Pipeline Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  Shift Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  BRAM Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  URAM Register Optimization was not performed.
+INFO: [Physopt 32-949] No candidate nets found for dynamic/static region interface net replication
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 5918.617 ; gain = 0.000 ; free physical = 62745 ; free virtual = 75506
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization                                     |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  LUT Combining                                    |            0  |             22  |                    22  |           0  |           1  |  00:00:01  |
+|  Retime                                           |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Equivalent Driver Rewiring                       |            0  |              0  |                     2  |           0  |           1  |  00:00:06  |
+|  Very High Fanout                                 |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  DSP Register                                     |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Shift Register to Pipeline                       |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Shift Register                                   |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  BRAM Register                                    |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  URAM Register                                    |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Dynamic/Static Region Interface Net Replication  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Total                                            |            0  |             22  |                    24  |           0  |           5  |  00:00:07  |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Phase 2.6.2 Physical Synthesis In Placer | Checksum: 297222565
+
+Time (s): cpu = 00:02:44 ; elapsed = 00:01:45 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62744 ; free virtual = 75506
+Phase 2.6 Global Place Phase2 | Checksum: 260ea954a
+
+Time (s): cpu = 00:04:17 ; elapsed = 00:02:15 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62880 ; free virtual = 75642
+Phase 2 Global Placement | Checksum: 260ea954a
+
+Time (s): cpu = 00:04:17 ; elapsed = 00:02:15 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62880 ; free virtual = 75642
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 2787471ff
+
+Time (s): cpu = 00:04:48 ; elapsed = 00:02:24 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62882 ; free virtual = 75644
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 2a350d896
+
+Time (s): cpu = 00:04:52 ; elapsed = 00:02:26 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62882 ; free virtual = 75644
+
+Phase 3.3 Small Shape DP
+
+Phase 3.3.1 Small Shape Clustering
+Phase 3.3.1 Small Shape Clustering | Checksum: 334aa3386
+
+Time (s): cpu = 00:05:21 ; elapsed = 00:02:36 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62875 ; free virtual = 75637
+
+Phase 3.3.2 Slice Area Swap
+
+Phase 3.3.2.1 Slice Area Swap Initial
+Phase 3.3.2.1 Slice Area Swap Initial | Checksum: 255b0e91f
+
+Time (s): cpu = 00:05:24 ; elapsed = 00:02:38 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62805 ; free virtual = 75567
+Phase 3.3.2 Slice Area Swap | Checksum: 2a35ff3a7
+
+Time (s): cpu = 00:05:26 ; elapsed = 00:02:39 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62797 ; free virtual = 75559
+Phase 3.3 Small Shape DP | Checksum: 2529f9e2f
+
+Time (s): cpu = 00:05:35 ; elapsed = 00:02:42 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62797 ; free virtual = 75559
+
+Phase 3.4 Re-assign LUT pins
+Phase 3.4 Re-assign LUT pins | Checksum: 2d5062929
+
+Time (s): cpu = 00:05:37 ; elapsed = 00:02:44 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62797 ; free virtual = 75559
+
+Phase 3.5 Pipeline Register Optimization
+Phase 3.5 Pipeline Register Optimization | Checksum: 2d5062929
+
+Time (s): cpu = 00:05:37 ; elapsed = 00:02:44 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62797 ; free virtual = 75559
+Phase 3 Detail Placement | Checksum: 2d5062929
+
+Time (s): cpu = 00:05:37 ; elapsed = 00:02:44 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62797 ; free virtual = 75559
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 Post Placement Optimization
+Post Placement Optimization Initialization | Checksum: 1b90a1e84
+
+Phase 4.1.1.1 BUFG Insertion
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 8 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=1.467 | TNS=0.000 |
+Phase 1 Physical Synthesis Initialization | Checksum: f75fc7db
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.33 . Memory (MB): peak = 5918.617 ; gain = 0.000 ; free physical = 62718 ; free virtual = 75481
+INFO: [Place 46-56] BUFG insertion identified 0 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 0.
+Ending Physical Synthesis Task | Checksum: 171b8d36b
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.58 . Memory (MB): peak = 5918.617 ; gain = 0.000 ; free physical = 62718 ; free virtual = 75481
+Phase 4.1.1.1 BUFG Insertion | Checksum: 1b90a1e84
+
+Time (s): cpu = 00:06:25 ; elapsed = 00:03:00 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62718 ; free virtual = 75481
+
+Phase 4.1.1.2 BUFG Replication
+INFO: [Place 46-63] BUFG replication identified 0 candidate nets: Replicated nets: 0, Replicated BUFGs: 0, Replicated BUFG Driver: 0, moved BUFGs: 0, Skipped due to Placement / Routing Conflict: 0, Skipped due to Timing: 0, Skipped due to constraints: 0
+Phase 4.1.1.2 BUFG Replication | Checksum: 1b90a1e84
+
+Time (s): cpu = 00:06:25 ; elapsed = 00:03:00 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62718 ; free virtual = 75481
+
+Phase 4.1.1.3 Post Placement Timing Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=1.467. For the most accurate timing information please run report_timing.
+Phase 4.1.1.3 Post Placement Timing Optimization | Checksum: 14b95cae9
+
+Time (s): cpu = 00:06:25 ; elapsed = 00:03:00 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62718 ; free virtual = 75481
+
+Phase 4.1.1.4 Replication
+INFO: [Place 46-19] Post Replication Timing Summary WNS=1.467. For the most accurate timing information please run report_timing.
+Phase 4.1.1.4 Replication | Checksum: 14b95cae9
+
+Time (s): cpu = 00:06:25 ; elapsed = 00:03:00 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62718 ; free virtual = 75481
+
+Time (s): cpu = 00:06:25 ; elapsed = 00:03:00 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62718 ; free virtual = 75481
+Phase 4.1 Post Commit Optimization | Checksum: 14b95cae9
+
+Time (s): cpu = 00:06:26 ; elapsed = 00:03:00 . Memory (MB): peak = 5918.617 ; gain = 1189.777 ; free physical = 62718 ; free virtual = 75481
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 5977.219 ; gain = 0.000 ; free physical = 62625 ; free virtual = 75388
+
+Phase 4.2 Post Placement Cleanup
+Phase 4.2 Post Placement Cleanup | Checksum: 113db6e83
+
+Time (s): cpu = 00:07:20 ; elapsed = 00:03:35 . Memory (MB): peak = 5977.219 ; gain = 1248.379 ; free physical = 62625 ; free virtual = 75388
+
+Phase 4.3 Placer Reporting
+
+Phase 4.3.1 Print Estimated Congestion
+INFO: [Place 30-612] Post-Placement Estimated Congestion 
+ ________________________________________________________________________
+|           | Global Congestion | Long Congestion   | Short Congestion  |
+| Direction | Region Size       | Region Size       | Region Size       |
+|___________|___________________|___________________|___________________|
+|      North|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|      South|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       East|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       West|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+
+SLR0:
+ ________________________________________________________________________
+|           | Global Congestion | Long Congestion   | Short Congestion  |
+| Direction | Region Size       | Region Size       | Region Size       |
+|___________|___________________|___________________|___________________|
+|      North|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|      South|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       East|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       West|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+
+SLR1:
+ ________________________________________________________________________
+|           | Global Congestion | Long Congestion   | Short Congestion  |
+| Direction | Region Size       | Region Size       | Region Size       |
+|___________|___________________|___________________|___________________|
+|      North|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|      South|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       East|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       West|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+
+SLR2:
+ ________________________________________________________________________
+|           | Global Congestion | Long Congestion   | Short Congestion  |
+| Direction | Region Size       | Region Size       | Region Size       |
+|___________|___________________|___________________|___________________|
+|      North|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|      South|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       East|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       West|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+
+Phase 4.3.1 Print Estimated Congestion | Checksum: 113db6e83
+
+Time (s): cpu = 00:07:21 ; elapsed = 00:03:35 . Memory (MB): peak = 5977.219 ; gain = 1248.379 ; free physical = 62624 ; free virtual = 75387
+Phase 4.3 Placer Reporting | Checksum: 113db6e83
+
+Time (s): cpu = 00:07:21 ; elapsed = 00:03:35 . Memory (MB): peak = 5977.219 ; gain = 1248.379 ; free physical = 62624 ; free virtual = 75387
+
+Phase 4.4 Final Placement Cleanup
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 5977.219 ; gain = 0.000 ; free physical = 62624 ; free virtual = 75387
+
+Time (s): cpu = 00:07:21 ; elapsed = 00:03:35 . Memory (MB): peak = 5977.219 ; gain = 1248.379 ; free physical = 62624 ; free virtual = 75387
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 11b66bc60
+
+Time (s): cpu = 00:07:21 ; elapsed = 00:03:35 . Memory (MB): peak = 5977.219 ; gain = 1248.379 ; free physical = 62624 ; free virtual = 75387
+Ending Placer Task | Checksum: ed268e0c
+
+Time (s): cpu = 00:07:21 ; elapsed = 00:03:35 . Memory (MB): peak = 5977.219 ; gain = 1248.379 ; free physical = 62624 ; free virtual = 75387
+35 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:07:27 ; elapsed = 00:03:37 . Memory (MB): peak = 5977.219 ; gain = 1248.379 ; free physical = 62624 ; free virtual = 75387
+# phys_opt_design
+Command: phys_opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xcvu9p'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xcvu9p'
+
+Starting Initial Update Timing Task
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:03 . Memory (MB): peak = 5977.219 ; gain = 0.000 ; free physical = 62624 ; free virtual = 75387
+INFO: [Vivado_Tcl 4-2279] Estimated Timing Summary | WNS= 1.468 | TNS= 0.000 | 
+INFO: [Vivado_Tcl 4-383] Design worst setup slack (WNS) is greater than or equal to 0.000 ns. All physical synthesis setup optimizations will be skipped.
+INFO: [Vivado_Tcl 4-232] No setup violation found. The netlist was not modified.
+INFO: [Common 17-83] Releasing license: Implementation
+5 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+phys_opt_design completed successfully
+# route_design
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xcvu9p'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xcvu9p'
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+
+Phase 1 Build RT Design
+Checksum: PlaceDB: a2cf6ec9 ConstDB: 0 ShapeSum: ed35cf3 RouteDB: 3b83c250
+Nodegraph reading from file.  Time (s): cpu = 00:00:01 ; elapsed = 00:00:03 . Memory (MB): peak = 5977.219 ; gain = 0.000 ; free physical = 62616 ; free virtual = 75386
+Post Restoration Checksum: NetGraph: 2bd8a24e | NumContArr: 3860f714 | Constraints: 9a26453d | Timing: c2a8fa9d
+Phase 1 Build RT Design | Checksum: 1c108d93c
+
+Time (s): cpu = 00:00:25 ; elapsed = 00:00:12 . Memory (MB): peak = 5977.219 ; gain = 0.000 ; free physical = 62608 ; free virtual = 75378
+
+Phase 2 Router Initialization
+
+Phase 2.1 Fix Topology Constraints
+Phase 2.1 Fix Topology Constraints | Checksum: 1c108d93c
+
+Time (s): cpu = 00:00:26 ; elapsed = 00:00:12 . Memory (MB): peak = 5977.219 ; gain = 0.000 ; free physical = 62608 ; free virtual = 75379
+
+Phase 2.2 Pre Route Cleanup
+Phase 2.2 Pre Route Cleanup | Checksum: 1c108d93c
+
+Time (s): cpu = 00:00:26 ; elapsed = 00:00:12 . Memory (MB): peak = 5977.219 ; gain = 0.000 ; free physical = 62608 ; free virtual = 75379
+
+Phase 2.3 Global Clock Net Routing
+ Number of Nodes with overlaps = 0
+Phase 2.3 Global Clock Net Routing | Checksum: 26a8c2677
+
+Time (s): cpu = 00:00:35 ; elapsed = 00:00:15 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62403 ; free virtual = 75174
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 13e0cf44a
+
+Time (s): cpu = 00:00:41 ; elapsed = 00:00:17 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62401 ; free virtual = 75173
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=1.824  | TNS=0.000  | WHS=0.038  | THS=0.000  |
+
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0 %
+  Global Horizontal Routing Utilization  = 0 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 24831
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 20647
+  Number of Partially Routed Nets     = 4184
+  Number of Node Overlaps             = 0
+
+Phase 2 Router Initialization | Checksum: 2070a3d3d
+
+Time (s): cpu = 00:00:58 ; elapsed = 00:00:22 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62401 ; free virtual = 75173
+
+Phase 3 Global Routing
+Phase 3 Global Routing | Checksum: 2070a3d3d
+
+Time (s): cpu = 00:00:58 ; elapsed = 00:00:22 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62401 ; free virtual = 75173
+
+Phase 4 Initial Routing
+
+Phase 4.1 Initial Net Routing Pass
+Phase 4.1 Initial Net Routing Pass | Checksum: 1ef07fbea
+
+Time (s): cpu = 00:01:46 ; elapsed = 00:00:38 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62399 ; free virtual = 75171
+Phase 4 Initial Routing | Checksum: 1c5c01645
+
+Time (s): cpu = 00:01:47 ; elapsed = 00:00:38 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62399 ; free virtual = 75171
+
+Phase 5 Rip-up And Reroute
+
+Phase 5.1 Global Iteration 0
+INFO: [Route 35-443] CLB routing congestion detected. Several CLBs have high routing utilization, which can impact timing closure. Congested CLBs and Nets are dumped in: iter_2_CongestedCLBsAndNets.txt
+ Number of Nodes with overlaps = 7881
+ Number of Nodes with overlaps = 640
+ Number of Nodes with overlaps = 173
+ Number of Nodes with overlaps = 60
+ Number of Nodes with overlaps = 23
+ Number of Nodes with overlaps = 15
+ Number of Nodes with overlaps = 10
+ Number of Nodes with overlaps = 5
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.440  | TNS=0.000  | WHS=0.041  | THS=0.000  |
+
+Phase 5.1 Global Iteration 0 | Checksum: b045e668
+
+Time (s): cpu = 00:07:11 ; elapsed = 00:05:00 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 5.2 Additional Iteration for Hold
+Phase 5.2 Additional Iteration for Hold | Checksum: 1567c834b
+
+Time (s): cpu = 00:07:12 ; elapsed = 00:05:00 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+Phase 5 Rip-up And Reroute | Checksum: 1567c834b
+
+Time (s): cpu = 00:07:12 ; elapsed = 00:05:00 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 6 Delay and Skew Optimization
+
+Phase 6.1 Delay CleanUp
+Phase 6.1 Delay CleanUp | Checksum: 19ba44588
+
+Time (s): cpu = 00:07:12 ; elapsed = 00:05:00 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 6.2 Clock Skew Optimization
+Phase 6.2 Clock Skew Optimization | Checksum: 19ba44588
+
+Time (s): cpu = 00:07:13 ; elapsed = 00:05:00 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+Phase 6 Delay and Skew Optimization | Checksum: 19ba44588
+
+Time (s): cpu = 00:07:13 ; elapsed = 00:05:00 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 7 Post Hold Fix
+
+Phase 7.1 Hold Fix Iter
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.440  | TNS=0.000  | WHS=0.041  | THS=0.000  |
+
+Phase 7.1 Hold Fix Iter | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:20 ; elapsed = 00:05:02 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+Phase 7 Post Hold Fix | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:20 ; elapsed = 00:05:02 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 8 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0.544345 %
+  Global Horizontal Routing Utilization  = 0.396383 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 8 Route finalize | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:24 ; elapsed = 00:05:03 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 9 Verifying routed nets
+
+ Verification completed successfully
+Phase 9 Verifying routed nets | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:24 ; elapsed = 00:05:03 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 10 Depositing Routes
+Phase 10 Depositing Routes | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:27 ; elapsed = 00:05:06 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 11 Resolve XTalk
+Phase 11 Resolve XTalk | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:28 ; elapsed = 00:05:06 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 12 Post Process Routing
+Phase 12 Post Process Routing | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:28 ; elapsed = 00:05:06 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+
+Phase 13 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=0.440  | TNS=0.000  | WHS=0.041  | THS=0.000  |
+
+INFO: [Route 35-327] The final timing numbers are based on the router estimated timing analysis. For a complete and accurate timing signoff, please run report_timing_summary.
+Phase 13 Post Router Timing | Checksum: 105ac582b
+
+Time (s): cpu = 00:07:28 ; elapsed = 00:05:06 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62398 ; free virtual = 75170
+Total Elapsed time in route_design: 306.03 secs
+
+Phase 14 Post-Route Event Processing
+Phase 14 Post-Route Event Processing | Checksum: dab9758b
+
+Time (s): cpu = 00:07:29 ; elapsed = 00:05:06 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62399 ; free virtual = 75171
+INFO: [Route 35-16] Router Completed Successfully
+Ending Routing Task | Checksum: dab9758b
+
+Time (s): cpu = 00:07:29 ; elapsed = 00:05:06 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62399 ; free virtual = 75171
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+10 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:07:30 ; elapsed = 00:05:07 . Memory (MB): peak = 6210.953 ; gain = 233.734 ; free physical = 62392 ; free virtual = 75164
+# report_utilization -file utilization_chirho.rpt
+# report_utilization -hierarchical -file utilization_hierarchical_chirho.rpt
+# report_timing_summary -file timing_chirho.rpt
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: I, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+# report_timing -max_paths 20 -file timing_paths_chirho.rpt
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: I, Delay Type: max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+INFO: [Timing 38-78] ReportTimingParams: -max_paths 20 -nworst 1 -delay_type max -sort_by slack.
+# report_clock_utilization -file clock_utilization_chirho.rpt
+report_clock_utilization: Time (s): cpu = 00:00:18 ; elapsed = 00:00:16 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62385 ; free virtual = 75157
+# set wns [get_property SLACK [get_timing_paths -max_paths 1 -setup]]
+# set whs [get_property SLACK [get_timing_paths -max_paths 1 -hold]]
+# puts ""
+
+# puts "=== TIMING SUMMARY ==="
+=== TIMING SUMMARY ===
+# puts "WNS (Setup): ${wns} ns"
+WNS (Setup): 0.461 ns
+# puts "WHS (Hold):  ${whs} ns"
+WHS (Hold):  0.042 ns
+# write_checkpoint -force ${project_name_chirho}_routed.dcp
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.32 ; elapsed = 00:00:00.07 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62379 ; free virtual = 75156
+Wrote PlaceDB: Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62341 ; free virtual = 75143
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62341 ; free virtual = 75143
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00.37 ; elapsed = 00:00:00.19 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62337 ; free virtual = 75143
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.05 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62329 ; free virtual = 75138
+Wrote Device Cache: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62329 ; free virtual = 75140
+Write Physdb Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 6210.953 ; gain = 0.000 ; free physical = 62329 ; free virtual = 75140
+INFO: [Common 17-1381] The checkpoint '/root/minikanren_chirho/minikanren_chirho_routed.dcp' has been generated.
+# puts "Checkpoint saved: ${project_name_chirho}_routed.dcp"
+Checkpoint saved: minikanren_chirho_routed.dcp
+# set period 20.0
+# if {$wns >= 0} {
+#     puts "SETUP TIMING MET!"
+#     set achieved_period [expr {$period - $wns}]
+#     set achieved_freq [expr {1000.0 / $achieved_period}]
+#     puts "Achieved Frequency: ${achieved_freq} MHz"
+# } else {
+#     puts "WARNING: Setup timing not met (WNS negative)"
+# }
+SETUP TIMING MET!
+Achieved Frequency: 51.17969189825477 MHz
+# if {$whs < 0} {
+#     puts "NOTE: Hold violations present but often fixed by downstream tools"
+# }
+# puts "=== DONE ☧ ==="
+=== DONE ☧ ===
+INFO: [Common 17-206] Exiting Vivado at Mon Jan 26 17:37:15 2026...
