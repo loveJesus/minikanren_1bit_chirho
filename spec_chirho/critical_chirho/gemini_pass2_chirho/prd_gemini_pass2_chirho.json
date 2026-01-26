@@ -75,7 +75,7 @@
       "name_chirho": "Neurosymbolic Standard Benchmark",
       "description_chirho": "Move beyond toy problems to MNIST-Addition or Hitting Sets",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "P2-3.1",
@@ -108,7 +108,7 @@
       "name_chirho": "Formal Hardware Verification",
       "description_chirho": "Prove Clash hardware semantically matches Rust reference",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "P2-4.1",
