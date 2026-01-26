@@ -33,6 +33,9 @@ wasm-bindgen = { version = "0.2", optional = true }
 js-sys = { version = "0.3", optional = true }
 getrandom = { version = "0.2", features = ["js"], optional = true }
 
+# Parallel processing (optional)
+rayon = { version = "1.10", optional = true }
+
 [dev-dependencies]
 # For benchmarking on stable
 criterion = "0.5"
@@ -92,6 +95,11 @@ harness = false
 name = "family_bench_chirho"
 harness = false
 
+[[bench]]
+name = "parallel_bench_chirho"
+harness = false
+required-features = ["parallel_chirho"]
+
 [features]
 default = ["egraph_native_chirho"]
 # Use reference (stream-based) implementation instead of hardware (bit-parallel)
@@ -107,6 +115,8 @@ egraph_native_chirho = []
 goal_ast_chirho = []
 # Enable GPU backend (requires wgpu)
 gpu_chirho = ["wgpu", "pollster", "bytemuck"]
+# Enable multi-core parallel processing (requires rayon)
+parallel_chirho = ["rayon"]
 
 # ============================================================================
 # Category-theoretic extensions (Kmett-inspired)
