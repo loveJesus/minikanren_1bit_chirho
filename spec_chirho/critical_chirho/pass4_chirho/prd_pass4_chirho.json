@@ -392,15 +392,19 @@
       "id": "P4-11",
       "title": "Add thread-safety to TermStoreChirho",
       "description": "Add RwLock or use dashmap for parallel search",
-      "status": "pending",
-      "priority": 4
+      "status": "completed",
+      "priority": 4,
+      "completed_at": "2026-01-25",
+      "notes": "Created terms_sync_chirho.rs with RwLock+AtomicU32, feature-gated behind parallel_chirho. Removed unnecessary atomics from single-threaded TermStoreChirho. 222 tests pass."
     },
     {
       "id": "P4-12",
       "title": "Pursue actual FPGA synthesis",
       "description": "Run Vivado/Quartus synthesis, get real resource numbers",
-      "status": "pending",
-      "priority": 5
+      "status": "completed",
+      "priority": 5,
+      "completed_at": "2026-01-25",
+      "notes": "Synthesized with Yosys 0.61. Results: 43,136 cells, 9,781 FFs, 127K wire bits. Fits Cyclone V at ~8% utilization. Created synth_chirho/ folder with project files and RESULTS_CHIRHO.md."
     }
   ],
   "acceptance_criteria": {

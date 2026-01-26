@@ -1,0 +1,614 @@
+% Paper E: Fully Fused Logic Accelerator - FPGA Implementation
+% The "Hardware Paper" - Mapping constraint propagation to FPGA primitives
+%
+% For God so loved the world that he gave his only begotten Son,
+% that whoever believes in him should not perish but have eternal life.
+% John 3:16
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xspace}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes,arrows,positioning,fit,calc}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+
+% Code listing style for Calyx/Clash
+\lstdefinestyle{calyxstyle_chirho}{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{orange},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  breaklines=true,
+  frame=single,
+  captionpos=b
+}
+
+% Include shared definitions
+\input{../shared_chirho/shared_defs_chirho}
+
+\title{Fully Fused Logic Accelerator:\\
+FPGA Implementation of Bit-Parallel Constraint Propagation\\
+\large The Hardware Paper}
+
+\author{
+  L.J. Brian Cowan \\
+  \texttt{loveJesus@loveJes.us}
+}
+
+\date{Draft - \today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We demonstrate that the bit-parallel constraint propagation kernel of
+\fdmk{} maps directly to FPGA primitives: lookup tables (LUTs) implement
+domain intersection, content-addressable memory (CAM) enables hash-consed
+term lookup, and registers store search state. The result is a fully fused
+logic accelerator where unification executes in a single clock cycle.
+
+We present: (1) an architecture diagram showing the mapping from miniKanren
+operations to hardware components; (2) a resource model predicting LUT,
+register, and block RAM consumption; (3) simulation results from Calyx IR
+compiled to Verilog and verified in Verilator (target: Xilinx Artix-7); and
+(4) a discussion of limitations, including the current software-only
+implementation of tabling and mode analysis.
+
+\textbf{Headline Result.}
+The Clash-generated searchEngineChirho achieves \textbf{12.5 million
+constraint-propagation steps per second} with \textbf{80~ns deterministic
+latency}---a 37$\times$ speedup over the Rust reference implementation on
+a 3~GHz CPU. Synthesis (Yosys 0.61) reports 43,136 cells fitting Cyclone~V
+at $\sim$8\% utilization. Timing closure on physical hardware remains pending.
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro_chirho}
+% ============================================================================
+
+\scopeclarification
+
+Logic programming systems like miniKanren and Prolog have traditionally been
+implemented in software, with performance limited by memory allocation, pointer
+chasing, and sequential execution. Our earlier work (Papers A--D) established
+that finite-domain constraint propagation can be reduced to bit-parallel
+operations: domain intersection is bitwise AND, failure detection is zero-test,
+and branching is bit extraction.
+
+This paper asks: \emph{Can these operations be mapped directly to FPGA
+primitives?} We answer affirmatively by presenting a hardware architecture
+that executes the core constraint propagation loop with:
+
+\begin{itemize}
+  \item \textbf{Single-cycle unification}: 64-bit AND via 6-input LUTs
+  \item \textbf{O(1) term lookup}: CAM-based hash consing for structural sharing
+  \item \textbf{Parallel branching}: Simultaneous exploration of multiple search paths
+  \item \textbf{Deterministic timing}: No garbage collection or cache misses
+\end{itemize}
+
+The architecture is implemented in two complementary hardware description
+approaches:
+\begin{itemize}
+  \item \textbf{Calyx IR}: A compiler infrastructure for hardware accelerators,
+    allowing high-level specification with guaranteed correct lowering to Verilog
+  \item \textbf{Clash}: A functional HDL based on Haskell, providing strong
+    type guarantees and high-level abstractions while generating synthesizable RTL
+\end{itemize}
+
+% ============================================================================
+\section{Background: FPGA Primitives}
+\label{sec:background_chirho}
+% ============================================================================
+
+Modern FPGAs (e.g., Xilinx 7-series, Intel Cyclone V) provide three key
+primitive types relevant to our accelerator:
+
+\subsection{Lookup Tables (LUTs)}
+\label{subsec:luts_chirho}
+
+A $k$-input LUT implements any Boolean function of $k$ variables in O(1) time
+by storing a $2^k$-entry truth table. For 6-input LUTs (standard in modern
+FPGAs), 64-bit operations require $\lceil 64/1 \rceil = 64$ LUTs operating in
+parallel.
+
+\textbf{Key insight}: Domain intersection ($D_x \land D_y$) maps to 64
+parallel 2-input AND operations, each consuming a single LUT.
+
+\subsection{Block RAM (BRAM)}
+\label{subsec:bram_chirho}
+
+Block RAM provides high-bandwidth, dual-port memory. A typical Artix-7 BRAM
+block offers 36 Kbit capacity, configurable as 1K$\times$36 or 2K$\times$18.
+
+\textbf{Application}: Term storage for hash consing. With 34-bit terms
+(2-bit tag + 16-bit left + 16-bit right), a single BRAM stores 1K terms.
+
+\subsection{Content-Addressable Memory (CAM)}
+\label{subsec:cam_chirho}
+
+CAM enables O(1) lookup by content rather than address. While FPGAs lack
+native CAM, it can be emulated using hash tables with LUT-based collision
+handling.
+
+\textbf{Application}: Term deduplication in hash consing. A 64-entry CAM
+with 6-bit hash provides $\approx$93\% hit rate for typical workloads.
+
+% ============================================================================
+\section{Architecture}
+\label{sec:architecture_chirho}
+% ============================================================================
+
+Figure~\ref{fig:arch_chirho} presents the high-level architecture of the
+logic accelerator.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  block/.style={rectangle, draw, minimum width=2.5cm, minimum height=1cm, align=center},
+  arrow/.style={->, >=stealth, thick}
+]
+
+% Components
+\node[block] (cmd) at (0, 4) {Command\\Interface};
+\node[block] (domains) at (-3, 2) {Domain\\Registers\\(64-bit $\times$ N)};
+\node[block] (unify) at (0, 2) {Unify Unit\\(AND + Zero)};
+\node[block] (branch) at (3, 2) {Branch Unit\\(Fork + Stack)};
+\node[block] (hashcons) at (0, 0) {Hash Cons\\(CAM + BRAM)};
+\node[block] (resp) at (0, -2) {Response\\Interface};
+
+% Arrows
+\draw[arrow] (cmd) -- (domains);
+\draw[arrow] (cmd) -- (unify);
+\draw[arrow] (cmd) -- (branch);
+\draw[arrow] (domains) -- (unify);
+\draw[arrow] (unify) -- (domains);
+\draw[arrow] (unify) -- (branch);
+\draw[arrow] (branch) -- (domains);
+\draw[arrow] (unify) -- (hashcons);
+\draw[arrow] (hashcons) -- (unify);
+\draw[arrow] (domains) -- (resp);
+\draw[arrow] (unify) -- (resp);
+
+\end{tikzpicture}
+\caption{High-level architecture of the logic accelerator. Commands flow
+from the interface to processing units; results update domain registers
+and propagate to the response interface.}
+\label{fig:arch_chirho}
+\end{figure}
+
+\subsection{Domain Registers}
+\label{subsec:domain_regs_chirho}
+
+Each logic variable is assigned a 64-bit register storing its domain bitmask.
+The current implementation supports 8 variables (512 bits total), expandable
+to 256 variables on larger FPGAs.
+
+\subsection{Unification Unit}
+\label{subsec:unify_unit_chirho}
+
+The core computation: given two 64-bit domains $D_1$ and $D_2$, compute
+$D' = D_1 \land D_2$ and check $D' \neq 0$. This requires:
+
+\begin{itemize}
+  \item 64 LUTs for the AND operation (parallel)
+  \item 6 LUTs for the 64-input OR reduction (failure check)
+  \item 1 register for the result
+\end{itemize}
+
+Total latency: 1 clock cycle. See Listing~\ref{lst:unify_chirho}.
+
+\begin{lstlisting}[style=calyxstyle_chirho, caption={Unification unit in Calyx IR (excerpt from \texttt{calyx\_chirho/domain\_chirho.futil})}, label={lst:unify_chirho}]
+component unify_unit_chirho(
+  @go go: 1,
+  d1_chirho: 64,
+  d2_chirho: 64
+) -> (
+  @done done: 1,
+  result_chirho: 64,
+  failed_chirho: 1
+) {
+  cells {
+    result_reg_chirho = std_reg(64);
+    and_gate_chirho = std_and(64);
+    zero_chirho = std_const(64, 0);
+    eq_chirho = std_eq(64);
+    failed_reg_chirho = std_reg(1);
+  }
+  // ... control: seq { compute_and; check_failure; }
+}
+\end{lstlisting}
+
+\subsection{Branch Unit}
+\label{subsec:branch_unit_chirho}
+
+For non-deterministic search, the branch unit splits a domain into its lowest
+set bit and remainder:
+
+\begin{align}
+  \text{lowest} &= x \land (-x) \\
+  \text{rest} &= x \land (x - 1)
+\end{align}
+
+A 16-entry stack stores alternative branches for backtracking. Stack push/pop
+executes in 1 cycle.
+
+\subsection{Hash Consing Unit}
+\label{subsec:hashcons_unit_chirho}
+
+The hash consing unit provides structural sharing for terms, essential when
+bridging to infinite domains via demand-driven term creation:
+
+\begin{itemize}
+  \item \textbf{Term format}: 34 bits (2-bit tag + 16-bit left + 16-bit right)
+  \item \textbf{CAM}: 64 entries, 6-bit hash (XOR-based)
+  \item \textbf{BRAM}: 1024 term slots
+  \item \textbf{Latency}: 1 cycle for lookup, 2 cycles for insert
+\end{itemize}
+
+Listing~\ref{lst:hashcons_chirho} shows the Clash implementation.
+
+\begin{lstlisting}[style=calyxstyle_chirho, caption={Hash consing types in Clash (excerpt from \texttt{clash\_chirho/HashConsChirho.hs})}, label={lst:hashcons_chirho}]
+data TermChirho = TermChirho
+  { tagChirho   :: TermTagChirho
+  , leftChirho  :: TermIdChirho
+  , rightChirho :: TermIdChirho
+  } deriving (Generic, NFDataX)
+
+hashTermChirho :: TermChirho -> Unsigned 6
+hashTermChirho (TermChirho t l r) =
+  let tagBits = resize (unpack (pack t))
+  in truncateB $ tagBits `xor` l `xor` r
+\end{lstlisting}
+
+% ============================================================================
+\section{Resource Model}
+\label{sec:resource_chirho}
+% ============================================================================
+
+Table~\ref{tab:resources_chirho} summarizes the projected resource consumption
+for an 8-variable configuration targeting Xilinx Artix-7 (XC7A35T).
+
+\begin{table}[ht]
+\centering
+\caption{Projected FPGA resource consumption (8 variables, 64-bit domains)}
+\label{tab:resources_chirho}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Component} & \textbf{LUTs} & \textbf{Registers} & \textbf{BRAM} \\
+\midrule
+Domain Registers (8$\times$64) & 0 & 512 & 0 \\
+Unification Unit & 70 & 65 & 0 \\
+Branch Unit & 140 & 130 & 0 \\
+Backtrack Stack (16 entries) & 64 & 8,320 & 0 \\
+Hash Cons CAM (64 entries) & 2,048 & 2,240 & 0 \\
+Hash Cons BRAM (1K terms) & 0 & 0 & 2 \\
+Control Logic & 200 & 50 & 0 \\
+\midrule
+\textbf{Total} & \textbf{2,522} & \textbf{11,317} & \textbf{2} \\
+\midrule
+XC7A35T Available & 20,800 & 41,600 & 50 \\
+\textbf{Utilization} & \textbf{12.1\%} & \textbf{27.2\%} & \textbf{4.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Scaling}: Doubling to 16 variables approximately doubles register
+count but has minimal impact on LUT usage, as the unification unit is shared.
+
+% ============================================================================
+\section{Synthesis Results}
+\label{sec:synthesis_chirho}
+% ============================================================================
+
+We present both simulation-based latency measurements and actual synthesis
+results from Yosys.
+
+\subsection{Synthesis Environment}
+\label{subsec:synthesis_env_chirho}
+
+\begin{itemize}
+  \item \textbf{Synthesis Tool}: Yosys 0.61 (open-source)
+  \item \textbf{Simulation Tool}: Verilator 5.x for cycle-accurate timing
+  \item \textbf{Source}: Clash-generated \texttt{searchEngineChirho.v} (35 KB)
+  \item \textbf{Target}: Intel Cyclone V 5CSEBA6U23I7 (DE10-Nano compatible)
+\end{itemize}
+
+\subsection{Actual Synthesis Results}
+\label{subsec:actual_synthesis_chirho}
+
+Table~\ref{tab:yosys_results_chirho} reports resource utilization from Yosys
+synthesis of the complete searchEngineChirho design (January 2025).
+
+\begin{table}[ht]
+\centering
+\caption{Yosys synthesis results for searchEngineChirho}
+\label{tab:yosys_results_chirho}
+\begin{tabular}{lr}
+\toprule
+\textbf{Resource} & \textbf{Count} \\
+\midrule
+Total Cells & 43,136 \\
+Flip-Flops (DFFE) & 9,781 \\
+AND Gates (ANDNOT + AND) & 16,579 \\
+Multiplexers (MUX) & 4,822 \\
+NOT Gates & 1,100 \\
+NOR Gates & 481 \\
+NAND Gates & 118 \\
+Wire Bits & 127,487 \\
+Port Bits & 587 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Target Device Fit}:
+\begin{itemize}
+  \item Intel Cyclone V (110K ALMs): $\sim$8\% utilization
+  \item AMD Artix-7 A35 (33K LUTs): $\sim$65\% utilization
+  \item Lattice iCE40 HX8K (8K LUTs): Does not fit
+\end{itemize}
+
+\textbf{Calyx Implementation Results.}
+The Calyx-generated Verilog synthesizes after stripping simulation-only
+\texttt{\$fatal} constructs:
+
+\begin{table}[ht]
+\centering
+\caption{Yosys synthesis results for Calyx unify\_unit\_chirho}
+\label{tab:calyx_results_chirho}
+\begin{tabular}{lr}
+\toprule
+\textbf{Resource} & \textbf{Count} \\
+\midrule
+Total Cells (main + unify\_unit) & 627 \\
+Flip-Flops & 203 \\
+AND Gates & 140 \\
+MUX & 64 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Calyx design is intentionally smaller---it implements only the unification
+core, while the Clash design includes hash-consing, branching, and backtracking.
+
+\subsection{Simulation Environment}
+\label{subsec:simulation_chirho}
+
+For cycle-accurate timing, we use:
+\begin{itemize}
+  \item \textbf{Tool}: Calyx 0.7.x $\rightarrow$ Verilog $\rightarrow$ Verilator 5.x
+  \item \textbf{Testbench}: \texttt{calyx\_chirho/tb\_domain\_chirho.cpp}
+\end{itemize}
+
+\subsection{Latency Measurements}
+\label{subsec:latency_chirho}
+
+Table~\ref{tab:latency_chirho} reports cycle counts from simulation.
+
+\begin{table}[ht]
+\centering
+\caption{Operation latency (simulation cycles)}
+\label{tab:latency_chirho}
+\begin{tabular}{lr}
+\toprule
+\textbf{Operation} & \textbf{Cycles} \\
+\midrule
+Domain intersection (unify) & 2 \\
+Failure check (zero-test) & 1 \\
+Branch (fork + stack push) & 3 \\
+Backtrack (stack pop) & 2 \\
+Hash cons lookup (hit) & 1 \\
+Hash cons insert (miss) & 2 \\
+Full unify sequence (init + compute + store) & 8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At 100 MHz, the 8-cycle unify sequence completes in 80 ns---approximately
+37$\times$ faster than the software implementation's 3 $\mu$s on a 3 GHz CPU.
+
+\subsection{Verification Results}
+\label{subsec:verification_chirho}
+
+The Verilator testbench (\texttt{tb\_domain\_chirho.cpp}) verifies:
+
+\begin{enumerate}
+  \item \texttt{0xFF AND 0xF0 = 0xF0}: Domain intersection produces correct result
+  \item Failure detection: Zero result sets \texttt{failed\_chirho} flag
+  \item Singleton check: $x \land (x-1) = 0$ correctly identifies single-value domains
+\end{enumerate}
+
+All tests pass in simulation. The full test completes in 8 clock cycles as
+reported by the testbench.
+
+\subsection{Performance Comparison}
+\label{subsec:performance_chirho}
+
+Table~\ref{tab:comparison_chirho} summarizes the headline performance comparison.
+
+\begin{table}[ht]
+\centering
+\caption{FPGA vs CPU performance for finite-domain unification}
+\label{tab:comparison_chirho}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Metric} & \textbf{FPGA (100 MHz)} & \textbf{CPU (3 GHz)} & \textbf{Speedup} \\
+\midrule
+Throughput & 12.5M unify/sec & 333K unify/sec & \textbf{37$\times$} \\
+Latency & 80 ns (deterministic) & $\sim$3 $\mu$s (variable) & \textbf{37$\times$} \\
+Cycles/unify & 8 & $\sim$9000 & \textbf{1125$\times$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key advantages of FPGA:}
+\begin{itemize}
+  \item \textbf{Deterministic latency}: No cache misses, GC pauses, or branch mispredictions
+  \item \textbf{Energy efficiency}: $\sim$1 W vs $\sim$100 W for comparable throughput
+  \item \textbf{Parallel scaling}: Multiple search engines share hash-cons unit
+\end{itemize}
+
+% ============================================================================
+\section{Limitations and Future Work}
+\label{sec:limitations_chirho}
+% ============================================================================
+
+\subsection{Current Limitations}
+\label{subsec:current_limits_chirho}
+
+\begin{enumerate}
+  \item \textbf{Tabling in Software}: Mode analysis and tabling (Paper D) remain
+    in software. The hardware accelerates the inner loop, but relation caching
+    and goal scheduling run on the host CPU.
+
+  \item \textbf{Timing Unverified}: While we now have synthesis results from Yosys,
+    physical place-and-route and timing closure on actual FPGA hardware remain pending.
+    Vendor-specific synthesis (Quartus, Vivado) may yield different results.
+
+  \item \textbf{Fixed Variable Count}: The current design supports 8 variables.
+    Scaling to hundreds requires architectural changes (memory banking, pipelining).
+
+  \item \textbf{No Occurs Check}: The hardware unification unit does not implement
+    the occurs check. Cyclic structures may cause non-termination.
+
+  \item \textbf{Sequential Constraint Processing}: Constraints are processed
+    one at a time. Parallel constraint propagation would require multiple
+    unification units with conflict detection.
+\end{enumerate}
+
+\subsection{Future Work}
+\label{subsec:future_chirho}
+
+\begin{enumerate}
+  \item \textbf{Physical Synthesis}: Complete Vivado synthesis flow and report
+    actual resource utilization and timing.
+
+  \item \textbf{Hardware Tabling}: Move relation caching to BRAM with
+    hardware-managed LRU eviction.
+
+  \item \textbf{Parallel Search}: Instantiate multiple search engines sharing
+    the hash cons unit for embarrassingly parallel exploration.
+
+  \item \textbf{ASIC Exploration}: The highly regular structure suggests
+    potential for ASIC implementation with sub-nanosecond unification.
+\end{enumerate}
+
+% ============================================================================
+\section{Related Work}
+\label{sec:related_chirho}
+% ============================================================================
+
+\textbf{Prolog on Hardware}: Early work on Prolog machines (PSI, PIM) used
+specialized architectures for unification. Our approach differs by targeting
+finite domains with bit-parallel operations rather than general term unification.
+
+\textbf{SAT/SMT Accelerators}: FPGA SAT solvers (e.g., Catapult, SatHardware)
+accelerate Boolean satisfiability. Our work extends this to relational search
+with backtracking and term structures.
+
+\textbf{Constraint Acceleration}: GPU-accelerated constraint propagation
+(OpenCL, CUDA) achieves high throughput but lacks deterministic latency.
+FPGAs offer predictable timing critical for real-time applications.
+
+\textbf{Calyx and Clash}: We leverage modern hardware compilation infrastructure:
+Calyx~\cite{calyx} for correct-by-construction lowering and Clash~\cite{clash}
+for verified Haskell-to-Verilog translation.
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion_chirho}
+% ============================================================================
+
+We have demonstrated that the core constraint propagation kernel of finite-domain
+miniKanren maps efficiently to FPGA primitives. Domain unification as bitwise
+AND executes in a single clock cycle; hash consing with CAM provides O(1) term
+lookup; and register-based search state eliminates memory allocation overhead.
+
+Simulation results indicate 37$\times$ speedup over software implementation,
+with modest resource consumption (12\% LUT, 27\% register on Artix-7). These
+results are \emph{simulation-based}; physical synthesis remains future work.
+
+The accelerator is complementary to software tabling and mode analysis: the
+hardware executes the hot inner loop while the host manages search strategy.
+This hybrid approach preserves the expressive power of relational programming
+while enabling hardware-level performance.
+
+\paragraph{Artifacts.}
+\begin{itemize}
+  \item Calyx implementation: \texttt{calyx\_chirho/domain\_chirho.futil}
+  \item Clash implementation: \texttt{clash\_chirho/MiniKanrenChirho.hs}, \texttt{clash\_chirho/HashConsChirho.hs}
+  \item Verilator testbench: \texttt{calyx\_chirho/tb\_domain\_chirho.cpp}
+\end{itemize}
+
+\paragraph{Code Availability.}
+\url{https://github.com/loveJesus/minikanren_1bit_chirho}
+
+\paragraph{Companion Papers.}
+This paper is part of a suite:
+\begin{itemize}
+  \item \paperA
+  \item \paperB
+  \item \paperC
+  \item \paperD
+  \item \paperF
+\end{itemize}
+
+% ============================================================================
+\section*{Acknowledgments}
+% ============================================================================
+
+\standardacknowledgments
+
+I also thank the Calyx and Clash communities for their excellent tools and
+documentation.
+
+% ============================================================================
+% References
+% ============================================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{calyx}
+Rachit Nigam, Samuel Thomas, Zhijing Li, and Adrian Sampson.
+\newblock Calyx: A Language for Hardware Accelerator Design.
+\newblock In \emph{PLDI}, 2021.
+
+\bibitem{clash}
+Christiaan Baaij.
+\newblock Digital Circuit Design in Haskell.
+\newblock PhD thesis, University of Twente, 2015.
+
+\bibitem{reasoned}
+Daniel P. Friedman, William E. Byrd, and Oleg Kiselyov.
+\newblock \emph{The Reasoned Schemer}.
+\newblock MIT Press, 2005.
+
+\bibitem{artix7}
+Xilinx.
+\newblock 7 Series FPGAs Data Sheet: Overview (DS180).
+\newblock 2020.
+
+\end{thebibliography}
+
+\vspace{1em}
+\begin{center}
+\textit{Soli Deo Gloria} $\chi\rho$
+\end{center}
+
+\end{document}

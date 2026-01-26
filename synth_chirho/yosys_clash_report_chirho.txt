@@ -1,0 +1,1192 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.61 (git sha1 5ae48ee25f298f7b3c8c0de30bd2f85a94133031, clang++ 17.0.0 -fPIC -O3)
+
+-- Executing script file `/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/synth_chirho/synth_clash_chirho.ys' --
+
+1. Executing Verilog-2005 frontend: /Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v
+Parsing Verilog input from `/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v' to AST representation.
+verilog frontend filename /Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v
+Generating RTLIL representation for module `\searchEngineChirho'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \searchEngineChirho
+
+2.2. Analyzing design hierarchy..
+Top module:  \searchEngineChirho
+Removed 0 unused modules.
+
+3. Executing SYNTH pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \searchEngineChirho
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \searchEngineChirho
+Removed 0 unused modules.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed 1 dead cases from process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$242 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$242 in module searchEngineChirho.
+Removed 1 dead cases from process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$239 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$239 in module searchEngineChirho.
+Removed 1 dead cases from process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$236 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$236 in module searchEngineChirho.
+Removed 1 dead cases from process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$233 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$233 in module searchEngineChirho.
+Removed 1 dead cases from process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$230 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$230 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:487$58 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:478$55 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:469$52 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:460$49 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:451$46 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:442$43 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:433$40 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:424$37 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:269$17 in module searchEngineChirho.
+Marked 1 switch rules as full_case in process $proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:145$7 in module searchEngineChirho.
+Removed a total of 5 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 63 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:17$293'.
+  Set init value: \c$ds_app_arg = 9797'1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:145$7'.
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~15 debug messages>
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:17$293'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$292'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$291'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$290'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$289'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$288'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$287'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$286'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$285'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$284'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$283'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$282'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$281'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$280'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$279'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$278'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$277'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$276'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$275'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$274'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$273'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$272'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$271'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$270'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$269'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$268'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$267'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$266'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$265'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$264'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$263'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$262'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$261'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$260'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$259'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$258'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$257'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$256'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$255'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$254'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$253'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$252'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$251'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$250'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$249'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$248'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$247'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$246'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$245'.
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$242'.
+     1/1: $1$mem2reg_rd$\vecArray_3$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$5_DATA[63:0]$244
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$239'.
+     1/1: $1$mem2reg_rd$\vecArray_2$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$4_DATA[63:0]$241
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$236'.
+     1/1: $1$mem2reg_rd$\vecArray_1$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$3_DATA[63:0]$238
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$233'.
+     1/1: $1$mem2reg_rd$\vecArray_0$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$2_DATA[63:0]$235
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$230'.
+     1/1: $1$mem2reg_rd$\vecArray$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$1_DATA[579:0]$232
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:487$58'.
+     1/1: $1\c$stChirho'_case_alt_8[63:0]$60
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:478$55'.
+     1/1: $1\c$stChirho'_case_alt_7[63:0]$57
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:469$52'.
+     1/1: $1\c$stChirho'_case_alt_6[63:0]$54
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:460$49'.
+     1/1: $1\c$stChirho'_case_alt_5[63:0]$51
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:451$46'.
+     1/1: $1\c$stChirho'_case_alt_4[63:0]$48
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:442$43'.
+     1/1: $1\c$stChirho'_case_alt_3[63:0]$45
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:433$40'.
+     1/1: $1\c$stChirho'_case_alt_2[63:0]$42
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:424$37'.
+     1/1: $1\c$stChirho'_case_alt_1[63:0]$39
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:269$17'.
+     1/1: $1\stChirho'[9796:0]
+Creating decoders for process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:145$7'.
+     1/1: $0\c$ds_app_arg[9796:0]$8
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[0]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$292'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[1]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$291'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[2]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$290'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[3]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$289'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[4]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$288'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[5]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$287'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[6]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$286'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_3[7]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$285'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[0]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$284'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[1]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$283'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[2]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$282'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[3]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$281'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[4]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$280'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[5]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$279'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[6]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$278'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_2[7]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$277'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[0]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$276'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[1]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$275'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[2]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$274'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[3]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$273'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[4]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$272'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[5]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$271'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[6]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$270'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_1[7]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$269'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[0]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$268'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[1]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$267'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[2]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$266'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[3]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$265'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[4]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$264'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[5]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$263'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[6]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$262'.
+No latch inferred for signal `\searchEngineChirho.\vecArray_0[7]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$261'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[0]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$260'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[1]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$259'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[2]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$258'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[3]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$257'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[4]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$256'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[5]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$255'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[6]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$254'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[7]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$253'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[8]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$252'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[9]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$251'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[10]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$250'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[11]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$249'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[12]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$248'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[13]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$247'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[14]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$246'.
+No latch inferred for signal `\searchEngineChirho.\vecArray[15]' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$245'.
+No latch inferred for signal `\searchEngineChirho.$mem2reg_rd$\vecArray_3$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$5_DATA' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$242'.
+No latch inferred for signal `\searchEngineChirho.$mem2reg_rd$\vecArray_2$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$4_DATA' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$239'.
+No latch inferred for signal `\searchEngineChirho.$mem2reg_rd$\vecArray_1$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$3_DATA' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$236'.
+No latch inferred for signal `\searchEngineChirho.$mem2reg_rd$\vecArray_0$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$2_DATA' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$233'.
+No latch inferred for signal `\searchEngineChirho.$mem2reg_rd$\vecArray$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$1_DATA' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$230'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_8' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:487$58'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_7' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:478$55'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_6' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:469$52'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_5' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:460$49'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_4' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:451$46'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_3' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:442$43'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_2' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:433$40'.
+No latch inferred for signal `\searchEngineChirho.\c$stChirho'_case_alt_1' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:424$37'.
+No latch inferred for signal `\searchEngineChirho.\stChirho'' from process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:269$17'.
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\searchEngineChirho.\c$ds_app_arg' using process `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:145$7'.
+  created $adff cell `$procdff$383' with positive edge clock and positive level reset.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:17$293'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$292'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$291'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$290'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$289'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$288'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$287'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$286'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:516$285'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$284'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$283'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$282'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$281'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$280'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$279'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$278'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:503$277'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$276'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$275'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$274'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$273'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$272'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$271'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$270'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:390$269'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$268'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$267'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$266'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$265'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$264'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$263'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$262'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:358$261'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$260'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$259'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$258'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$257'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$256'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$255'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$254'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$253'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$252'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$251'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$250'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$249'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$248'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$247'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$246'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:319$245'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$242'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:519$242'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$239'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:506$239'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$236'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:393$236'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$233'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:361$233'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$230'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:322$230'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:487$58'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:487$58'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:478$55'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:478$55'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:469$52'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:469$52'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:460$49'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:460$49'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:451$46'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:451$46'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:442$43'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:442$43'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:433$40'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:433$40'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:424$37'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:424$37'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:269$17'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:269$17'.
+Found and cleaned up 1 empty switch in `\searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:145$7'.
+Removing empty process `searchEngineChirho.$proc$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:145$7'.
+Cleaned up 15 empty switches.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~34 debug messages>
+
+3.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 1 unused cells and 175 unused wires.
+<suppressed ~2 debug messages>
+
+3.5. Executing CHECK pass (checking for obvious problems).
+Checking module searchEngineChirho...
+Found and reported 0 problems.
+
+3.6. Executing OPT pass (performing simple optimizations).
+
+3.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 273 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 218 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 203 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+<suppressed ~210 debug messages>
+Removed a total of 70 cells.
+
+3.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~72 debug messages>
+
+3.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 203 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 201 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+<suppressed ~6 debug messages>
+Removed a total of 2 cells.
+
+3.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 0 unused cells and 70 unused wires.
+<suppressed ~1 debug messages>
+
+3.6.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~68 debug messages>
+
+3.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.6.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 201 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.6.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.6.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.6.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.7. Executing FSM pass (extract and optimize FSM).
+
+3.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.8. Executing OPT pass (performing simple optimizations).
+
+3.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 201 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~68 debug messages>
+
+3.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 201 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [9796:9284], Q = \c$ds_app_arg [9796:9284]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [3:0], Q = \c$ds_app_arg [3:0]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [9283:8704], Q = \c$ds_app_arg [9283:8704]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [8703:8124], Q = \c$ds_app_arg [8703:8124]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [8123:7544], Q = \c$ds_app_arg [8123:7544]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [7543:6964], Q = \c$ds_app_arg [7543:6964]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [6963:6384], Q = \c$ds_app_arg [6963:6384]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [6383:5804], Q = \c$ds_app_arg [6383:5804]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [5803:5224], Q = \c$ds_app_arg [5803:5224]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [5223:4644], Q = \c$ds_app_arg [5223:4644]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [4643:4064], Q = \c$ds_app_arg [4643:4064]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [4063:3484], Q = \c$ds_app_arg [4063:3484]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [3483:2904], Q = \c$ds_app_arg [3483:2904]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [2903:2324], Q = \c$ds_app_arg [2903:2324]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [2323:1744], Q = \c$ds_app_arg [2323:1744]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [1743:1164], Q = \c$ds_app_arg [1743:1164]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [1163:584], Q = \c$ds_app_arg [1163:584]).
+Adding EN signal on $procdff$383 ($adff) from module searchEngineChirho (D = \stChirho' [583:4], Q = \c$ds_app_arg [583:4]).
+
+3.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 1 unused cells and 1 unused wires.
+<suppressed ~2 debug messages>
+
+3.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~67 debug messages>
+
+3.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~66 debug messages>
+
+3.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 319 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 257 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+<suppressed ~186 debug messages>
+Removed a total of 62 cells.
+
+3.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 0 unused cells and 62 unused wires.
+<suppressed ~1 debug messages>
+
+3.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.8.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~66 debug messages>
+
+3.8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.8.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 257 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.8.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.8.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.8.23. Finished fast OPT passes. (There is nothing left to do.)
+
+3.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 3 bits (of 4) from port B of cell searchEngineChirho.$add$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:283$24 ($add).
+Removed top 3 bits (of 4) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:325$33 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$63 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$68 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$73 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$78 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$83 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$88 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$93 ($sub).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$98 ($sub).
+Removed top 2 bits (of 3) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:307$104 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:307$106 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:307$108 ($eq).
+Removed top 63 bits (of 64) from port B of cell searchEngineChirho.$sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:332$119 ($sub).
+Removed top 3 bits (of 4) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$122 ($eq).
+Removed top 2 bits (of 4) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$126 ($eq).
+Removed top 2 bits (of 4) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$130 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$134 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$138 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$142 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$146 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:344$184 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:344$194 ($eq).
+Removed top 2 bits (of 3) from port B of cell searchEngineChirho.$eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:344$196 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$procmux$300_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$procmux$301_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell searchEngineChirho.$procmux$302_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$procmux$309_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$procmux$310_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell searchEngineChirho.$procmux$311_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$procmux$340_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$procmux$341_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$procmux$342_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell searchEngineChirho.$procmux$343_CMP0 ($eq).
+Removed top 2 bits (of 4) from port B of cell searchEngineChirho.$procmux$344_CMP0 ($eq).
+Removed top 2 bits (of 4) from port B of cell searchEngineChirho.$procmux$345_CMP0 ($eq).
+Removed top 3 bits (of 4) from port B of cell searchEngineChirho.$procmux$346_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$procmux$375_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell searchEngineChirho.$procmux$376_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell searchEngineChirho.$procmux$377_CMP0 ($eq).
+
+3.10. Executing PEEPOPT pass (run peephole optimizers).
+
+3.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.12. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module searchEngineChirho:
+  creating $macc model for $add$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:283$24 ($add).
+  creating $macc model for $neg$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:349$34 ($neg).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$63 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$68 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$73 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$78 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$83 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$88 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$93 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$98 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:325$33 ($sub).
+  creating $macc model for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:332$119 ($sub).
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:332$119.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:325$33.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$98.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$93.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$88.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$83.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$78.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$73.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$68.
+  creating $alu model for $macc $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$63.
+  creating $alu model for $macc $neg$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:349$34.
+  creating $alu model for $macc $add$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:283$24.
+  creating $alu model for $eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$122 ($eq): merged with $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:325$33.
+  creating $alu cell for $add$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:283$24: $auto$alumacc.cc:512:replace_alu$606
+  creating $alu cell for $neg$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:349$34: $auto$alumacc.cc:512:replace_alu$609
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$63: $auto$alumacc.cc:512:replace_alu$612
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$68: $auto$alumacc.cc:512:replace_alu$615
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$73: $auto$alumacc.cc:512:replace_alu$618
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$78: $auto$alumacc.cc:512:replace_alu$621
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$83: $auto$alumacc.cc:512:replace_alu$624
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$88: $auto$alumacc.cc:512:replace_alu$627
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$93: $auto$alumacc.cc:512:replace_alu$630
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:261$98: $auto$alumacc.cc:512:replace_alu$633
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:325$33, $eq$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:331$122: $auto$alumacc.cc:512:replace_alu$636
+  creating $alu cell for $sub$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:332$119: $auto$alumacc.cc:512:replace_alu$641
+  created 12 $alu and 0 $macc cells.
+
+3.13. Executing SHARE pass (SAT-based resource sharing).
+
+3.14. Executing OPT pass (performing simple optimizations).
+
+3.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 257 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~66 debug messages>
+
+3.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 257 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+3.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~66 debug messages>
+
+3.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 257 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.14.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.15. Executing MEMORY pass.
+
+3.15.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.17. Executing OPT pass (performing simple optimizations).
+
+3.17.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~22 debug messages>
+
+3.17.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 241 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 240 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+3.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 2 unused cells and 4 unused wires.
+<suppressed ~3 debug messages>
+
+3.17.5. Finished fast OPT passes.
+
+3.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.19. Executing OPT pass (performing simple optimizations).
+
+3.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 238 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~50 debug messages>
+
+3.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+    Consolidated identical input bits for $mux cell $ternary$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:293$32:
+      Old ports: A={ \c$ds_app_arg [9796:9285] 9285'0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx }, B={ \c$stChirho'_case_alt_0 $not$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:294$31_Y 9280'x \newSPChirho }, Y=\result
+      New ports: A={ \c$ds_app_arg [9796:9285] 5'0xxxx }, B={ \c$stChirho'_case_alt_0 $not$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:294$31_Y \newSPChirho }, Y={ \result [9796:9284] \result [3:0] }
+      New connections: \result [9283:4] = 9280'x
+  Optimizing cells in module \searchEngineChirho.
+    Consolidated identical input bits for $mux cell $ternary$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:289$29:
+      Old ports: A=\result, B={ \c$ds_app_arg [9796:9285] 9285'0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx }, Y=\c$stChirho'_case_alt
+      New ports: A={ \result [9796:9284] \result [3:0] }, B={ \c$ds_app_arg [9796:9285] 5'0xxxx }, Y={ \c$stChirho'_case_alt [9796:9284] \c$stChirho'_case_alt [3:0] }
+      New connections: \c$stChirho'_case_alt [9283:4] = 9280'x
+  Optimizing cells in module \searchEngineChirho.
+    Consolidated identical input bits for $pmux cell $procmux$373:
+      Old ports: A={ \c$ds_app_arg [9796:9284] 9284'x }, B={ 9797'1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000 \c$stChirho'_app_arg_2 $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:276$20_Y 9284'x \c$stChirho'_app_arg_1 $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:279$23_Y 9284'x \c$stChirho'_app_arg_0 $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:282$27_Y 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] $add$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:283$24_Y \c$stChirho'_case_alt }, Y=\stChirho'
+      New ports: A={ \c$ds_app_arg [9796:9284] 584'x }, B={ 1097'1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000 \c$stChirho'_app_arg_2 $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:276$20_Y 584'x \c$stChirho'_app_arg_1 $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:279$23_Y 584'x \c$stChirho'_app_arg_0 $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:282$27_Y 1'1 \cmdChirho [66:64] \c$stChirho'_app_arg [9275:9212] \c$ds_app_arg [9796:9285] $add$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:283$24_Y \c$stChirho'_case_alt [9796:9284] 580'x \c$stChirho'_case_alt [3:0] }, Y={ \stChirho' [9796:9284] \stChirho' [583:0] }
+      New connections: \stChirho' [9283:584] = { \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] \stChirho' [583:4] }
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 3 changes.
+
+3.19.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 238 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.19.6. Executing OPT_SHARE pass.
+    Found cells that share an operand and can be merged by moving the $pmux $procmux$373 in front of them:
+        $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:282$27
+        $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:279$23
+        $and$/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v:276$20
+
+3.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 0 unused cells and 3 unused wires.
+<suppressed ~1 debug messages>
+
+3.19.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~1 debug messages>
+
+3.19.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.19.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~52 debug messages>
+
+3.19.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+3.19.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 237 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.19.14. Executing OPT_SHARE pass.
+
+3.19.15. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.19.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+3.19.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+3.19.18. Finished fast OPT passes. (There is nothing left to do.)
+
+3.20. Executing TECHMAP pass (map to technology primitives).
+
+3.20.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+verilog frontend filename /opt/homebrew/bin/../share/yosys/techmap.v
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `\$connect'.
+Generating RTLIL representation for module `\$input_port'.
+Successfully finished Verilog frontend.
+
+3.20.2. Continuing TECHMAP pass.
+Using template $paramod$c5c783b17ab1d780abfad8cfe6563a0a7b47a3b0\_90_pmux for cells of type $pmux.
+Using template $paramod$fd83f0dc90bc6cfa066a0ab3a52828ecd0c3243c\_90_pmux for cells of type $pmux.
+Using template $paramod$54969db7f41ab9ffc93887c2d8e2d7f68e10b42f\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$8742280fdebca84e1c87f2a86ed84f62d558f4cc\_90_alu for cells of type $alu.
+Using template $paramod$32a7b7b86c07519b7537abc18e96f0331f97914d\_90_alu for cells of type $alu.
+Using template $paramod$0581468566a19296af32879b22f0f2dfe7e49259\_90_pmux for cells of type $pmux.
+Using template $paramod$38ea46ffd892378bfaf8febe0c8ac03b94ee7ee9\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $eq.
+Using template $paramod$a68c090063f1fb096c20dfd392bc2a7af998ab83\_90_pmux for cells of type $pmux.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000001000000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000001000000 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000100 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000100 for cells of type $lcu.
+Using extmapper simplemap for cells of type $or.
+No more expansions possible.
+<suppressed ~5754 debug messages>
+
+3.21. Executing OPT pass (performing simple optimizations).
+
+3.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~13255 debug messages>
+
+3.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 44984 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 44773 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 44694 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 44672 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 44659 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 44656 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 44655 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+<suppressed ~987 debug messages>
+Removed a total of 329 cells.
+
+3.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 182 unused cells and 8513 unused wires.
+<suppressed ~183 debug messages>
+
+3.21.5. Finished fast OPT passes.
+
+3.22. Executing ABC pass (technology mapping using ABC).
+
+3.22.1. Extracting gate netlist of module `\searchEngineChirho' to `<abc-temp-dir>/input.blif'..
+Replacing 592 occurrences of constant undef bits with constant zero bits
+
+3.22.1.1. Executed ABC.
+Extracted 34676 gates and 44546 wires to a netlist network with 9868 inputs and 1115 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library /var/folders/9j/dnrgxh0n7mq_ltr2y46yxd600000gn/T/yosys-abc-pmejY5/stdcells.genlib 
+ABC: + strash 
+ABC: + dretime 
+ABC: + map 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+3.22.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:      576
+ABC RESULTS:            ANDNOT cells:    16019
+ABC RESULTS:               MUX cells:     4823
+ABC RESULTS:              NAND cells:      118
+ABC RESULTS:               NOR cells:      618
+ABC RESULTS:               NOT cells:     1107
+ABC RESULTS:                OR cells:     9461
+ABC RESULTS:             ORNOT cells:      789
+ABC RESULTS:               XOR cells:        6
+ABC RESULTS:              ZERO cells:        1
+ABC RESULTS:        internal signals:    33563
+ABC RESULTS:           input signals:     9868
+ABC RESULTS:          output signals:     1115
+Removing temp directory.
+Removing global temp directory.
+
+3.23. Executing OPT pass (performing simple optimizations).
+
+3.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~384 debug messages>
+
+3.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 43314 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Computing hashes of 43159 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+<suppressed ~465 debug messages>
+Removed a total of 155 cells.
+
+3.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$5423 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$6018 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$6613 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$7208 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$7803 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$8398 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$8993 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$9588 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$10183 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$10778 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$11376 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$2448 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$3043 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$3638 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$4233 ($_DFFE_PP0P_) from module searchEngineChirho.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$4828 ($_DFFE_PP0P_) from module searchEngineChirho.
+
+3.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 6 unused cells and 16554 unused wires.
+<suppressed ~58 debug messages>
+
+3.23.5. Rerunning OPT passes. (Removed registers in this run.)
+
+3.23.6. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~1 debug messages>
+
+3.23.7. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 43136 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+3.23.8. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.23.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+3.23.10. Finished fast OPT passes.
+
+3.24. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `searchEngineChirho'. Setting top module to searchEngineChirho.
+
+3.24.1. Analyzing design hierarchy..
+Top module:  \searchEngineChirho
+
+3.24.2. Analyzing design hierarchy..
+Top module:  \searchEngineChirho
+Removed 0 unused modules.
+
+3.25. Printing statistics.
+
+=== searchEngineChirho ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    32352 wires
+   127487 wire bits
+       94 public wires
+    95229 public wire bits
+        5 ports
+      587 port bits
+    43136 cells
+    16005   $_ANDNOT_
+      574   $_AND_
+     9268   $_DFFE_PP0P_
+      513   $_DFFE_PP1P_
+     4823   $_MUX_
+      118   $_NAND_
+      481   $_NOR_
+     1100   $_NOT_
+      787   $_ORNOT_
+     9461   $_OR_
+        6   $_XOR_
+
+3.26. Executing CHECK pass (checking for obvious problems).
+Checking module searchEngineChirho...
+Found and reported 0 problems.
+
+4. Executing TECHMAP pass (map to technology primitives).
+
+4.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+verilog frontend filename /opt/homebrew/bin/../share/yosys/techmap.v
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `\$connect'.
+Generating RTLIL representation for module `\$input_port'.
+Successfully finished Verilog frontend.
+
+4.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~77 debug messages>
+
+5. Executing OPT pass (performing simple optimizations).
+
+5.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+<suppressed ~783 debug messages>
+
+5.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 43136 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+5.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \searchEngineChirho..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+5.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \searchEngineChirho.
+Performed a total of 0 changes.
+
+5.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\searchEngineChirho'.
+Computing hashes of 43136 cells of `\searchEngineChirho'.
+Finding duplicate cells in `\searchEngineChirho'.
+Removed a total of 0 cells.
+
+5.6. Executing OPT_SHARE pass.
+
+5.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \searchEngineChirho..
+
+5.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module searchEngineChirho.
+
+5.10. Finished fast OPT passes. (There is nothing left to do.)
+
+6. Printing statistics.
+
+=== searchEngineChirho ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    32352 wires
+   127487 wire bits
+       94 public wires
+    95229 public wire bits
+        5 ports
+      587 port bits
+    43136 cells
+    16005   $_ANDNOT_
+      574   $_AND_
+     9268   $_DFFE_PP0P_
+      513   $_DFFE_PP1P_
+     4822   $_MUX_
+      118   $_NAND_
+      481   $_NOR_
+     1100   $_NOT_
+      787   $_ORNOT_
+     9462   $_OR_
+        6   $_XOR_
+
+7. Executing Verilog backend.
+
+7.1. Executing BMUXMAP pass.
+
+7.2. Executing DEMUXMAP pass.
+Dumping module `\searchEngineChirho'.
+
+End of script. Logfile hash: a57ba54fd7, CPU: user 41.17s system 0.36s, MEM: 264.05 MB peak
+Yosys 0.61 (git sha1 5ae48ee25f298f7b3c8c0de30bd2f85a94133031, clang++ 17.0.0 -fPIC -O3)
+Time spent: 84% 16x opt_dff (35 sec), 3% 22x opt_clean (1 sec), ...

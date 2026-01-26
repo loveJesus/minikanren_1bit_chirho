@@ -1,0 +1,23 @@
+# Yosys Synthesis Script ☧
+# Target: Generic (for resource estimation)
+
+# Read Verilog
+read_verilog /Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v
+
+# Elaborate
+hierarchy -top searchEngineChirho
+
+# Synthesize
+synth -top searchEngineChirho
+
+# Map to generic gates for resource counting
+techmap
+
+# Optimize
+opt -full
+
+# Print statistics
+stat
+
+# Write output
+write_verilog /Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/friends-aleluya/has-leluya/minikanren_1bit_chirho/synth_chirho/output_clash_chirho.v

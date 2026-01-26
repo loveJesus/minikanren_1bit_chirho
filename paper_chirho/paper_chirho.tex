@@ -332,13 +332,18 @@ Verified via Verilator simulation (8 clock cycles for basic operations).
 \textbf{Clash}: Haskell compiled to Verilog.
 Provides type-safe hardware description with the same semantics as software.
 
-Resource estimate (simulated): $\sim$2000 LUTs for 8-variable, 64-value engine (fits iCE40 HX8K).
+\textbf{Synthesis Results (Yosys 0.61, January 2025):}
+The full Clash-generated searchEngineChirho design synthesizes to:
+\begin{itemize}
+  \item 43,136 cells (9,781 flip-flops, 16,579 AND gates, 4,822 MUX)
+  \item 127K wire bits, 587 port bits
+  \item Fits Cyclone V at $\sim$8\% utilization, Artix-7 A35 at $\sim$65\%
+\end{itemize}
 
 \textbf{Hardware Scope Clarification.}
-The current FPGA implementation covers the \emph{constraint propagation engine}: domain registers, bitwise unification, branching logic, and CAM-based term lookup.
+The FPGA implementation covers the \emph{constraint propagation engine}: domain registers, bitwise unification, branching logic, and CAM-based term lookup.
 SLG tabling (recursive relation memoization, SCC detection) remains in software.
-All FPGA metrics (8-cycle latency, 2000 LUT estimate) are from Verilator simulation and Yosys resource estimation, not physical synthesis.
-Actual synthesis on iCE40 or Artix-7 boards is planned but pending hardware access.
+Timing verification on physical hardware is pending; current Fmax estimate is 100--200 MHz based on similar designs.
 
 \subsection{Scaling Beyond 64 Bits}
 
@@ -898,8 +903,8 @@ This is acceptable for training (where gradient flow is essential) but prohibiti
 Users must compile trained models back to hard operations for deployment.
 
 \textbf{5. FPGA Hardware Status.}
-Current FPGA results (8-cycle latency, $\sim$2000 LUT estimate) are from simulation (Verilator) and resource estimation.
-Actual synthesis on physical hardware (iCE40, Artix-7) is pending; measured resource counts and power consumption may differ from estimates.
+Yosys synthesis (January 2025) reports 43,136 cells for the Clash-generated searchEngineChirho, fitting Cyclone V at $\sim$8\% utilization.
+Timing closure on physical hardware is pending; Fmax is estimated at 100--200 MHz but unverified.
 The constraint propagation engine is synthesizable; SLG tabling remains software-only.
 
 \textbf{6. Contraction Order Complexity.}

@@ -1,0 +1,40 @@
+# Quartus Prime Settings File ☧
+# miniKanren 1-Bit Matrix Operations
+#
+# Target: Intel Cyclone V (5CSEBA6U23I7) - DE10-Nano compatible
+# This device is supported by Quartus Prime Lite (free)
+#
+# Soli Deo Gloria
+
+# Project settings
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSEBA6U23I7
+set_global_assignment -name TOP_LEVEL_ENTITY searchEngineChirho
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 23.1
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "2025-01-25"
+set_global_assignment -name LAST_QUARTUS_VERSION "23.1.0 Lite Edition"
+
+# Source files - Clash generated
+set_global_assignment -name VERILOG_FILE ../clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v
+
+# Source files - Calyx generated (comment out if synthesizing Clash only)
+# set_global_assignment -name VERILOG_FILE ../calyx_chirho/domain_chirho.v
+
+# Timing constraints
+set_global_assignment -name SDC_FILE ../clash_chirho/verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.sdc
+
+# Optimization settings
+set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
+set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_RETIMING ON
+set_global_assignment -name ROUTER_LCELL_INSERTION_AND_LOGIC_DUPLICATION ON
+set_global_assignment -name ROUTER_TIMING_OPTIMIZATION_LEVEL MAXIMUM
+set_global_assignment -name QII_AUTO_PACKED_REGISTERS NORMAL
+set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
+
+# Power estimation
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (COVERAGE)"
+
+# Output files
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL

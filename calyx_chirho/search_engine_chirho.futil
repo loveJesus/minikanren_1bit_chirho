@@ -9,14 +9,15 @@
 
 import "primitives/core.futil";
 import "primitives/binary_operators.futil";
-import "primitives/memories/comb.futil";
+import "primitives/memories.futil";
 
 // Search state: N variables with 64-bit domains
 // Plus valid flag and branch point stack
-component search_state_chirho<N>() -> () {
+// 8-variable search state (64-bit domains)
+component search_state_chirho() -> () {
   cells {
     // Variable domains - using memory for N variables
-    @external domains_chirho = comb_mem_d1(64, 8, 3);  // 8 vars, 64 bits each
+    @external domains_chirho = seq_mem_d1(64, 8, 3);  // 8 vars, 64 bits each
 
     // Valid flag (0 = failed state)
     valid_chirho = std_reg(1);
@@ -62,7 +63,7 @@ component unify_2_chirho() -> () {
     var2_idx_chirho = std_reg(3);
 
     // Domain memory (shared)
-    @external domains_chirho = comb_mem_d1(64, 8, 3);
+    @external domains_chirho = seq_mem_d1(64, 8, 3);
 
     // Loaded domains
     domain1_chirho = std_reg(64);
@@ -120,14 +121,14 @@ component unify_2_chirho() -> () {
       domains_chirho.addr0 = var1_idx_chirho.out;
       domains_chirho.write_data = result_chirho.out;
       domains_chirho.write_en = 1'd1;
-      write_d1_chirho[done] = domains_chirho.done;
+      write_d1_chirho[done] = domains_chirho.write_done;
     }
 
     group write_d2_chirho {
       domains_chirho.addr0 = var2_idx_chirho.out;
       domains_chirho.write_data = result_chirho.out;
       domains_chirho.write_en = 1'd1;
-      write_d2_chirho[done] = domains_chirho.done;
+      write_d2_chirho[done] = domains_chirho.write_done;
     }
   }
 
@@ -155,7 +156,7 @@ component branch_chirho() -> () {
     var_idx_chirho = std_reg(3);
 
     // Current domain
-    @external domains_chirho = comb_mem_d1(64, 8, 3);
+    @external domains_chirho = seq_mem_d1(64, 8, 3);
     current_domain_chirho = std_reg(64);
 
     // Compute lowest set bit: x & (-x)
@@ -265,7 +266,7 @@ component stack_entry_chirho() -> () {
 component main() -> () {
   cells {
     // State
-    state_chirho = search_state_chirho<>();
+    state_chirho = search_state_chirho();
 
     // Unification unit
     unify_chirho = unify_2_chirho();

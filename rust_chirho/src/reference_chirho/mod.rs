@@ -21,6 +21,10 @@ pub mod types_chirho;
 pub mod unify_chirho;
 pub mod union_find_chirho;
 
+// Thread-safe term store (feature-gated)
+#[cfg(feature = "parallel_chirho")]
+pub mod terms_sync_chirho;
+
 // External library comparison (feature-gated)
 #[cfg(feature = "egg_chirho")]
 pub mod egg_chirho;
@@ -41,6 +45,10 @@ pub use types_chirho::{
 };
 pub use unify_chirho::{ground_eq_chirho, unify_chirho, SubstChirho, UnifyResultChirho};
 pub use union_find_chirho::{UnionFindChirho, UnionFindHwChirho};
+
+// Thread-safe term store re-export
+#[cfg(feature = "parallel_chirho")]
+pub use terms_sync_chirho::TermStoreSyncChirho;
 
 // External library comparison re-exports
 #[cfg(feature = "egg_chirho")]

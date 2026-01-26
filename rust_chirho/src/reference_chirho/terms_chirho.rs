@@ -4,7 +4,6 @@
 //! Each unique term gets a unique ID (u32).
 
 use std::collections::HashMap;
-use std::sync::atomic::{AtomicU32, Ordering};
 
 /// Term ID - index into term store
 pub type TermIdChirho = u32;
@@ -28,30 +27,21 @@ pub enum TermChirho {
 }
 
 /// Hash-consed term store
-#[derive(Debug, Default)]
+///
+/// Single-threaded version. For parallel search, enable `parallel_chirho`
+/// feature and use `TermStoreSyncChirho` instead.
+#[derive(Debug, Default, Clone)]
 pub struct TermStoreChirho {
     /// Term → ID mapping (hash consing)
     term_to_id_chirho: HashMap<TermChirho, TermIdChirho>,
     /// ID → Term mapping
     id_to_term_chirho: Vec<TermChirho>,
-    /// Next variable ID
-    next_var_chirho: AtomicU32,
+    /// Next variable ID (plain u32, no atomics needed for single-threaded)
+    next_var_chirho: u32,
     /// Symbol table: string → symbol ID
     sym_to_id_chirho: HashMap<String, u32>,
     /// Reverse: symbol ID → string
     id_to_sym_chirho: Vec<String>,
-}
-
-impl Clone for TermStoreChirho {
-    fn clone(&self) -> Self {
-        Self {
-            term_to_id_chirho: self.term_to_id_chirho.clone(),
-            id_to_term_chirho: self.id_to_term_chirho.clone(),
-            next_var_chirho: AtomicU32::new(self.next_var_chirho.load(Ordering::SeqCst)),
-            sym_to_id_chirho: self.sym_to_id_chirho.clone(),
-            id_to_sym_chirho: self.id_to_sym_chirho.clone(),
-        }
-    }
 }
 
 impl TermStoreChirho {
@@ -78,7 +68,8 @@ impl TermStoreChirho {
 
     /// Create fresh variable
     pub fn fresh_var_chirho(&mut self) -> (VarIdChirho, TermIdChirho) {
-        let var_id_chirho = self.next_var_chirho.fetch_add(1, Ordering::SeqCst);
+        let var_id_chirho = self.next_var_chirho;
+        self.next_var_chirho += 1;
         let term_chirho = TermChirho::VarChirho(var_id_chirho);
         let term_id_chirho = self.intern_chirho(term_chirho);
         (var_id_chirho, term_id_chirho)
