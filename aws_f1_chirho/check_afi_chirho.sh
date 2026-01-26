@@ -1,4 +1,5 @@
 #!/bin/bash
+# For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 # Check AFI Status ☧
 #
 # Monitors the AFI creation progress.
@@ -17,33 +18,33 @@ else
 fi
 
 # Check if AFI ID exists
-AFI_ID_FILE="${SCRIPT_DIR_CHIRHO}/afi_id_chirho.txt"
-if [ ! -f "${AFI_ID_FILE}" ]; then
+AFI_ID_FILE_CHIRHO="${SCRIPT_DIR_CHIRHO}/afi_id_chirho.txt"
+if [ ! -f "${AFI_ID_FILE_CHIRHO}" ]; then
     echo "ERROR: No AFI ID found. Run './create_afi_chirho.sh' first."
     exit 1
 fi
 
-AFI_ID_CHIRHO=$(cat "${AFI_ID_FILE}")
+AFI_ID_CHIRHO=$(cat "${AFI_ID_FILE_CHIRHO}")
 
 echo "=== Check AFI Status ☧ ==="
 echo "AFI ID: ${AFI_ID_CHIRHO}"
 echo ""
 
 # Get status
-RESULT=$(aws ec2 describe-fpga-images \
+RESULT_CHIRHO=$(aws ec2 describe-fpga-images \
     --fpga-image-ids "${AFI_ID_CHIRHO}" \
     --region "${AWS_REGION_CHIRHO}" \
     --output json)
 
-STATE=$(echo "${RESULT}" | grep -o '"Code": "[^"]*"' | head -1 | cut -d'"' -f4)
-STATE_MSG=$(echo "${RESULT}" | grep -o '"Message": "[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+STATE_CHIRHO=$(echo "${RESULT_CHIRHO}" | grep -o '"Code": "[^"]*"' | head -1 | cut -d'"' -f4)
+STATE_MSG_CHIRHO=$(echo "${RESULT_CHIRHO}" | grep -o '"Message": "[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
 
-echo "State: ${STATE}"
-if [ -n "${STATE_MSG}" ]; then
-    echo "Message: ${STATE_MSG}"
+echo "State: ${STATE_CHIRHO}"
+if [ -n "${STATE_MSG_CHIRHO}" ]; then
+    echo "Message: ${STATE_MSG_CHIRHO}"
 fi
 
-case "${STATE}" in
+case "${STATE_CHIRHO}" in
     "available")
         echo ""
         echo "AFI is READY for use!"
@@ -64,10 +65,10 @@ case "${STATE}" in
         ;;
     *)
         echo ""
-        echo "Unknown state: ${STATE}"
+        echo "Unknown state: ${STATE_CHIRHO}"
         ;;
 esac
 
 echo ""
 echo "Full details:"
-echo "${RESULT}" | head -50
+echo "${RESULT_CHIRHO}" | head -50

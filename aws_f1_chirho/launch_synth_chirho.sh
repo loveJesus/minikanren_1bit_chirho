@@ -33,6 +33,7 @@ fi
 # Create user data script
 USER_DATA_CHIRHO=$(cat << 'USERDATA'
 #!/bin/bash
+# For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 set -x
 
 # Log everything
@@ -42,25 +43,25 @@ echo "=== miniKanren Synthesis Starting ☧ ==="
 date
 
 # Get instance metadata
-INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
+INSTANCE_ID_CHIRHO=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+REGION_CHIRHO=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
 
 # Set up AWS SDK
-export AWS_DEFAULT_REGION=${REGION}
+export AWS_DEFAULT_REGION=${REGION_CHIRHO}
 
 # Get bucket name from tag
-BUCKET=$(aws ec2 describe-tags --filters "Name=resource-id,Values=${INSTANCE_ID}" "Name=key,Values=S3Bucket" --query "Tags[0].Value" --output text)
+BUCKET_CHIRHO=$(aws ec2 describe-tags --filters "Name=resource-id,Values=${INSTANCE_ID_CHIRHO}" "Name=key,Values=S3Bucket" --query "Tags[0].Value" --output text)
 
-echo "Bucket: ${BUCKET}"
+echo "Bucket: ${BUCKET_CHIRHO}"
 
 # Create work directory
-WORK_DIR="/home/centos/minikanren_chirho"
-mkdir -p ${WORK_DIR}
-cd ${WORK_DIR}
+WORK_DIR_CHIRHO="/home/centos/minikanren_chirho"
+mkdir -p ${WORK_DIR_CHIRHO}
+cd ${WORK_DIR_CHIRHO}
 
 # Download design files
 echo "Downloading design files..."
-aws s3 sync "s3://${BUCKET}/design/" .
+aws s3 sync "s3://${BUCKET_CHIRHO}/design/" .
 
 # Source Vivado
 source /opt/Xilinx/Vivado/2024.2/settings64.sh || source /opt/Xilinx/Vivado/*/settings64.sh
@@ -71,22 +72,22 @@ vivado -mode batch -source synth_vivado_chirho.tcl 2>&1 | tee vivado_log_chirho.
 
 # Upload results
 echo "Uploading results..."
-aws s3 cp utilization_chirho.rpt "s3://${BUCKET}/results/"
-aws s3 cp utilization_hierarchical_chirho.rpt "s3://${BUCKET}/results/" || true
-aws s3 cp timing_chirho.rpt "s3://${BUCKET}/results/"
-aws s3 cp timing_paths_chirho.rpt "s3://${BUCKET}/results/" || true
-aws s3 cp clock_utilization_chirho.rpt "s3://${BUCKET}/results/" || true
-aws s3 cp vivado_log_chirho.txt "s3://${BUCKET}/results/"
-aws s3 cp minikanren_chirho/minikanren_chirho_routed.dcp "s3://${BUCKET}/results/" || true
+aws s3 cp utilization_chirho.rpt "s3://${BUCKET_CHIRHO}/results/"
+aws s3 cp utilization_hierarchical_chirho.rpt "s3://${BUCKET_CHIRHO}/results/" || true
+aws s3 cp timing_chirho.rpt "s3://${BUCKET_CHIRHO}/results/"
+aws s3 cp timing_paths_chirho.rpt "s3://${BUCKET_CHIRHO}/results/" || true
+aws s3 cp clock_utilization_chirho.rpt "s3://${BUCKET_CHIRHO}/results/" || true
+aws s3 cp vivado_log_chirho.txt "s3://${BUCKET_CHIRHO}/results/"
+aws s3 cp minikanren_chirho/minikanren_chirho_routed.dcp "s3://${BUCKET_CHIRHO}/results/" || true
 
 echo "=== Synthesis Complete ☧ ==="
 date
 
 # Signal completion
-aws s3 cp /var/log/user-data.log "s3://${BUCKET}/results/user-data.log"
+aws s3 cp /var/log/user-data.log "s3://${BUCKET_CHIRHO}/results/user-data.log"
 
 # Optional: self-terminate after completion (uncomment to enable)
-# aws ec2 terminate-instances --instance-ids ${INSTANCE_ID}
+# aws ec2 terminate-instances --instance-ids ${INSTANCE_ID_CHIRHO}
 USERDATA
 )
 

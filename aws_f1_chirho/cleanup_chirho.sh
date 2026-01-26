@@ -1,4 +1,5 @@
 #!/bin/bash
+# For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 # Cleanup AWS Resources ☧
 #
 # Terminates any running instances to stop billing.
@@ -19,17 +20,17 @@ echo "=== Cleanup AWS Resources ☧ ==="
 
 # Terminate synthesis instance if exists
 if [ -f "${SCRIPT_DIR_CHIRHO}/synth_instance_id_chirho.txt" ]; then
-    SYNTH_ID=$(cat "${SCRIPT_DIR_CHIRHO}/synth_instance_id_chirho.txt")
-    echo "Terminating synthesis instance: ${SYNTH_ID}"
-    aws ec2 terminate-instances --instance-ids "${SYNTH_ID}" --region "${AWS_REGION_CHIRHO:-us-east-1}" 2>/dev/null || echo "  (already terminated or not found)"
+    SYNTH_ID_CHIRHO=$(cat "${SCRIPT_DIR_CHIRHO}/synth_instance_id_chirho.txt")
+    echo "Terminating synthesis instance: ${SYNTH_ID_CHIRHO}"
+    aws ec2 terminate-instances --instance-ids "${SYNTH_ID_CHIRHO}" --region "${AWS_REGION_CHIRHO:-us-east-1}" 2>/dev/null || echo "  (already terminated or not found)"
     rm "${SCRIPT_DIR_CHIRHO}/synth_instance_id_chirho.txt"
 fi
 
 # Terminate F1 instance if exists
 if [ -f "${SCRIPT_DIR_CHIRHO}/f1_instance_id_chirho.txt" ]; then
-    F1_ID=$(cat "${SCRIPT_DIR_CHIRHO}/f1_instance_id_chirho.txt")
-    echo "Terminating F1 instance: ${F1_ID}"
-    aws ec2 terminate-instances --instance-ids "${F1_ID}" --region "${AWS_REGION_CHIRHO:-us-east-1}" 2>/dev/null || echo "  (already terminated or not found)"
+    F1_ID_CHIRHO=$(cat "${SCRIPT_DIR_CHIRHO}/f1_instance_id_chirho.txt")
+    echo "Terminating F1 instance: ${F1_ID_CHIRHO}"
+    aws ec2 terminate-instances --instance-ids "${F1_ID_CHIRHO}" --region "${AWS_REGION_CHIRHO:-us-east-1}" 2>/dev/null || echo "  (already terminated or not found)"
     rm "${SCRIPT_DIR_CHIRHO}/f1_instance_id_chirho.txt"
 fi
 

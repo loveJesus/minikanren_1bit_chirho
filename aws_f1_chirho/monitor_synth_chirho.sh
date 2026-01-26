@@ -1,4 +1,5 @@
 #!/bin/bash
+# For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 # Monitor Synthesis Progress ☧
 #
 # Checks S3 for synthesis results and displays instance status.
@@ -20,30 +21,30 @@ echo "=== Monitor Synthesis Progress ☧ ==="
 echo ""
 
 # Check instance status
-INSTANCE_FILE="${SCRIPT_DIR_CHIRHO}/synth_instance_id_chirho.txt"
-if [ -f "${INSTANCE_FILE}" ]; then
-    INSTANCE_ID=$(cat "${INSTANCE_FILE}")
-    echo "Instance ID: ${INSTANCE_ID}"
+INSTANCE_FILE_CHIRHO="${SCRIPT_DIR_CHIRHO}/synth_instance_id_chirho.txt"
+if [ -f "${INSTANCE_FILE_CHIRHO}" ]; then
+    INSTANCE_ID_CHIRHO=$(cat "${INSTANCE_FILE_CHIRHO}")
+    echo "Instance ID: ${INSTANCE_ID_CHIRHO}"
 
-    STATUS=$(aws ec2 describe-instances \
-        --instance-ids "${INSTANCE_ID}" \
+    STATUS_CHIRHO=$(aws ec2 describe-instances \
+        --instance-ids "${INSTANCE_ID_CHIRHO}" \
         --region "${AWS_REGION_CHIRHO}" \
         --query "Reservations[0].Instances[0].[State.Name,LaunchTime]" \
         --output text 2>/dev/null || echo "terminated unknown")
 
-    STATE=$(echo "${STATUS}" | cut -f1)
-    LAUNCH=$(echo "${STATUS}" | cut -f2)
+    STATE_CHIRHO=$(echo "${STATUS_CHIRHO}" | cut -f1)
+    LAUNCH_CHIRHO=$(echo "${STATUS_CHIRHO}" | cut -f2)
 
-    echo "State: ${STATE}"
-    echo "Launched: ${LAUNCH}"
+    echo "State: ${STATE_CHIRHO}"
+    echo "Launched: ${LAUNCH_CHIRHO}"
 
-    if [ "${STATE}" == "running" ]; then
-        IP=$(aws ec2 describe-instances \
-            --instance-ids "${INSTANCE_ID}" \
+    if [ "${STATE_CHIRHO}" == "running" ]; then
+        IP_CHIRHO=$(aws ec2 describe-instances \
+            --instance-ids "${INSTANCE_ID_CHIRHO}" \
             --region "${AWS_REGION_CHIRHO}" \
             --query "Reservations[0].Instances[0].PublicIpAddress" \
             --output text 2>/dev/null || echo "N/A")
-        echo "IP: ${IP}"
+        echo "IP: ${IP_CHIRHO}"
     fi
 else
     echo "No instance file found"
@@ -55,16 +56,16 @@ aws s3 ls "s3://${S3_BUCKET_CHIRHO}/results/" --region "${AWS_REGION_CHIRHO}" 2>
 
 echo ""
 echo "=== Estimated Time Remaining ==="
-if [ -f "${INSTANCE_FILE}" ] && [ "${STATE}" == "running" ]; then
+if [ -f "${INSTANCE_FILE_CHIRHO}" ] && [ "${STATE_CHIRHO:-}" == "running" ]; then
     # Calculate elapsed time
-    LAUNCH_EPOCH=$(date -j -f "%Y-%m-%dT%H:%M:%S+00:00" "${LAUNCH}" "+%s" 2>/dev/null || echo "0")
-    NOW_EPOCH=$(date "+%s")
-    ELAPSED=$(( (NOW_EPOCH - LAUNCH_EPOCH) / 60 ))
-    echo "Elapsed: ${ELAPSED} minutes"
+    LAUNCH_EPOCH_CHIRHO=$(date -j -f "%Y-%m-%dT%H:%M:%S+00:00" "${LAUNCH_CHIRHO}" "+%s" 2>/dev/null || echo "0")
+    NOW_EPOCH_CHIRHO=$(date "+%s")
+    ELAPSED_CHIRHO=$(( (NOW_EPOCH_CHIRHO - LAUNCH_EPOCH_CHIRHO) / 60 ))
+    echo "Elapsed: ${ELAPSED_CHIRHO} minutes"
 
-    if [ "${ELAPSED}" -lt 120 ]; then
+    if [ "${ELAPSED_CHIRHO}" -lt 120 ]; then
         echo "Likely remaining: 2-4 hours (synthesis phase)"
-    elif [ "${ELAPSED}" -lt 240 ]; then
+    elif [ "${ELAPSED_CHIRHO}" -lt 240 ]; then
         echo "Likely remaining: 1-2 hours"
     else
         echo "Should be completing soon - check S3 results"
@@ -76,6 +77,6 @@ fi
 echo ""
 echo "=== Commands ==="
 echo "To watch: watch -n 60 './monitor_synth_chirho.sh'"
-echo "To connect: ssh -i ~/.ssh/${KEY_NAME_CHIRHO}.pem centos@\${IP}"
+echo "To connect: ssh -i ~/.ssh/${KEY_NAME_CHIRHO}.pem centos@\${IP_CHIRHO:-IP}"
 echo "To download: ./download_results_chirho.sh"
-echo "To terminate: aws ec2 terminate-instances --instance-ids ${INSTANCE_ID:-YOUR_INSTANCE_ID}"
+echo "To terminate: aws ec2 terminate-instances --instance-ids ${INSTANCE_ID_CHIRHO:-YOUR_INSTANCE_ID}"

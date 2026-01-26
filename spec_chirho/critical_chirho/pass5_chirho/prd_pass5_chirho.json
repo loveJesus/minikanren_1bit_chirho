@@ -17,6 +17,27 @@
     ]
   },
 
+  "naming_convention_chirho": {
+    "description": "All project identifiers use the _chirho suffix to glorify God. See /suffix-review-chirho skill.",
+    "skills_chirho": [
+      "perffection-common-chirho:suffix-review-chirho"
+    ],
+    "rules_chirho": {
+      "variables_functions": "snake_case_chirho (Rust/Python/Bash) or camelCaseChirho (TypeScript)",
+      "classes_types": "PascalCaseChirho",
+      "global_constants": "SCREAMING_SNAKE_CHIRHO",
+      "directories": "kebab-case-chirho",
+      "files": "snake_case_chirho or kebab-case-chirho"
+    },
+    "divine_header_chirho": "All source files begin with: For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.",
+    "exceptions_chirho": [
+      "External library imports (numpy, Arc, etc.)",
+      "Framework-required names (src/, routes/, lib/)",
+      "Built-in magic methods (__init__, etc.)",
+      "Third-party identifiers in documentation (AWS, FPGA, GH200 as product names)"
+    ]
+  },
+
   "headline_result": {
     "description": "Post-route timing achieved 280 MHz on Xilinx VU9P with Vivado 2024.2 (build environment).",
     "metrics": {

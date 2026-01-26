@@ -1,0 +1,11 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 7933775dd567507d8150198cc0916efb3e449915bd3e59ccc958de7eb6226f60 # shrinks to v_chirho = 0, mask_chirho = 0, prefix_chirho = [BranchVarChirho(0), ConstrainVarChirho(0, 1314357675687133304), BranchVarChirho(0)]
+cc 874dd969d6e2ac6b6a9c30cdb20446a7a8dfaaf6db11f27bac0e85bd82da5054 # shrinks to cmds_chirho = [BranchVarChirho(3), ConstrainVarChirho(3, 6617316527430867224), BranchVarChirho(3)]
+cc 36b670f0968da866f6d047be48bbc48033f3233bfadab04229625420fba191ae # shrinks to cmds_chirho = [BranchVarChirho(6), ConstrainVarChirho(6, 663493989414683024), BranchVarChirho(6)]
+cc b7d491bf446e35550dcb3f76a0ebde0e326ba9e7729eb9a4748b7a1265cb45fd # shrinks to v1_chirho = 0, v2_chirho = 0, prefix_chirho = [BranchVarChirho(3), ConstrainVarChirho(3, 1658685984796756424), BranchVarChirho(3)]
+cc 85e0ec81310e4916ae9f6a08640f8012ac4be93b00683290c24b6e3f84b6cc3b # shrinks to cmds_chirho = [BranchVarChirho(7), ConstrainVarChirho(7, 542846266842784502), BranchVarChirho(0), BacktrackChirho]
