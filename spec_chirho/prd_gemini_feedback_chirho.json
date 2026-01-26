@@ -110,7 +110,7 @@
       "name_chirho": "Neurosymbolic Validation",
       "description_chirho": "Demonstrate gradient stability on non-trivial benchmark",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "G6.1",
