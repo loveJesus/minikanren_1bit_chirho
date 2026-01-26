@@ -253,4 +253,168 @@ This maps to our differentiable relaxation:
 
 ---
 
-*Soli Deo Gloria*
+## AWS F1 vs Physical FPGA Purchase
+
+### AWS F1 Costs
+
+| Usage Pattern | Annual Cost | Notes |
+|--------------|-------------|-------|
+| On-demand (24/7) | $14,454 | f1.2xlarge @ $1.65/hr |
+| Reserved 3-year | $4,818/yr | ~$0.55/hr effective |
+| Spot (variable) | ~$5,000/yr | 60-70% discount, preemptible |
+| Burst (100 hr/mo) | $1,980/yr | Development/testing only |
+
+### Physical FPGA Purchase Options
+
+#### Entry-Level (~$100-300)
+
+| Board | FPGA | LUTs | Price | Best For |
+|-------|------|------|-------|----------|
+| DE10-Nano | Cyclone V SE | 40K | $150 | Learning, small demos |
+| Arty A7-35T | Artix-7 | 33K | $130 | Education, prototyping |
+| iCEBreaker | iCE40UP5K | 5K | $80 | Tiny designs, yosys flow |
+| Basys 3 | Artix-7 | 33K | $160 | Academic, digilent ecosystem |
+
+**Our design (searchEngineChirho): 21,820 LUTs + 9,839 FFs**
+- Fits comfortably on DE10-Nano or Arty A7-35T
+- No PCIe, but adequate for standalone demos
+
+#### Mid-Range (~$500-2,000)
+
+| Board | FPGA | LUTs | Price | Best For |
+|-------|------|------|-------|----------|
+| Arty A7-100T | Artix-7 | 101K | $250 | Larger designs |
+| Nexys A7-100T | Artix-7 | 101K | $350 | Academic lab |
+| DE10-Standard | Cyclone V SX | 110K | $450 | ARM + FPGA |
+| ZedBoard | Zynq-7020 | 85K | $500 | ARM SoC + FPGA |
+| Ultra96-V2 | Zynq US+ | 154K | $450 | ML at edge |
+
+**Advantages:**
+- Room for multiple search engines (2-4×)
+- ARM integration for host logic
+- Good price/performance
+
+#### High-End (~$3,000-15,000)
+
+| Board | FPGA | LUTs | Price | Best For |
+|-------|------|------|-------|----------|
+| Alveo U50 | Virtex US+ | 872K | $3,000 | Data center |
+| Alveo U200 | Virtex US+ | 1.1M | $6,000 | HPC accelerator |
+| NetFPGA-SUME | Virtex-7 | 690K | $7,500 | Networking research |
+| VCU118 | Virtex US+ | 2.5M | $9,000 | High-end prototyping |
+
+**Comparison to AWS F1 (VU9P):**
+- F1's VU9P has ~2.6M LUTs
+- Alveo U200 closest match (~$6,000)
+- Physical ownership vs metered billing
+
+### Break-Even Analysis: Purchase vs AWS
+
+#### Scenario: 24/7 Operation
+
+| Time Period | AWS F1 Reserved | Physical (U200) |
+|-------------|-----------------|-----------------|
+| Year 1 | $4,818 | $6,000 + power |
+| Year 2 | $9,636 | $6,200 total |
+| Year 3 | $14,454 | $6,400 total |
+
+**Break-even: ~15 months** for high utilization.
+
+#### Scenario: Part-Time (100 hr/mo)
+
+| Time Period | AWS F1 On-Demand | Physical (U200) |
+|-------------|------------------|-----------------|
+| Year 1 | $1,980 | $6,000 |
+| Year 3 | $5,940 | $6,400 |
+
+**Break-even: ~3 years** for part-time use.
+
+### Recommendation by Use Case
+
+| Use Case | Recommendation | Why |
+|----------|---------------|-----|
+| **Learning/prototyping** | DE10-Nano ($150) | Cheapest entry, open toolchain |
+| **Research lab** | Arty A7-100T ($250) | Cost-effective, Vivado support |
+| **Production (variable)** | AWS F1 Reserved | Scale elastically |
+| **Production (steady)** | Alveo U50/U200 | Amortize over 2+ years |
+| **Edge deployment** | Ultra96-V2 ($450) | Low power, integrated |
+| **Maximum performance** | Multiple F1 instances | Parallelism wins |
+
+### Hidden Costs of Physical Ownership
+
+| Item | AWS F1 | Physical FPGA |
+|------|--------|---------------|
+| **Power** | Included | $50-200/yr |
+| **Cooling** | Included | $0-100/yr |
+| **Maintenance** | Included | DIY |
+| **Toolchain** | Included | $0-3,000 (Vivado) |
+| **PCIe integration** | Ready | Extra dev time |
+| **Upgrades** | Transparent | Buy new board |
+
+**Total Cost Consideration:**
+- Vivado ML Standard: Free (limited devices)
+- Vivado Enterprise: $3,000/yr (all devices)
+- Alternative: Yosys + Symbiflow (free, open source)
+
+---
+
+## FPGA Alternatives to Xilinx
+
+### Intel (Altera) FPGAs
+
+| Family | Comparable To | Advantages | Disadvantages |
+|--------|--------------|------------|---------------|
+| Cyclone V | Artix-7 | DE10-Nano availability | Smaller ecosystem |
+| Arria 10 | Kintex US+ | Good HPC support | Less documentation |
+| Stratix 10 | Virtex US+ | HBM2 memory | Expensive, limited boards |
+
+**Quartus Lite:** Free, supports Cyclone/MAX devices.
+
+### Lattice FPGAs
+
+| Family | LUTs | Best For |
+|--------|------|----------|
+| iCE40 | 1-8K | Tiny, yosys-native |
+| ECP5 | 12-85K | Open toolchain, affordable |
+| CrossLink-NX | 17-40K | Low power |
+
+**Open Source Advantage:** Full yosys → nextpnr → bitstream.
+
+### Efinix FPGAs
+
+| Family | Feature | Notes |
+|--------|---------|-------|
+| Trion | Budget | Alternative to iCE40 |
+| Titanium | Performance | Competitor to Xilinx mid-range |
+
+**Emerging player** with competitive pricing.
+
+### Microchip (Microsemi) FPGAs
+
+| Family | Notes |
+|--------|-------|
+| PolarFire | Radiation-hardened, space applications |
+| SmartFusion | ARM + FPGA SoC |
+
+**Niche:** Aerospace, automotive, secure applications.
+
+---
+
+## Summary: Best Choices for miniKanren FPGA
+
+| Priority | Recommendation |
+|----------|---------------|
+| **Lowest cost entry** | iCEBreaker + yosys ($80) |
+| **Best value** | DE10-Nano ($150) or Arty A7-35T ($130) |
+| **Production ready** | AWS F1 (pay-as-you-go) |
+| **Own the hardware** | Alveo U50 (~$3,000) |
+| **Open toolchain** | Lattice ECP5 boards (~$100-300) |
+
+**Our recommendation for this project:**
+1. **Now:** Continue with AWS F1 for validation (pay ~$5-10)
+2. **Demo hardware:** Buy DE10-Nano ($150) for physical LED demos
+3. **If successful:** Evaluate Alveo U50 for dedicated deployment
+
+---
+
+*Soli Deo Gloria* ☧

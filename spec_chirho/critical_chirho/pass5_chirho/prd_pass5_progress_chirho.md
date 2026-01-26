@@ -119,4 +119,38 @@ cargo test --features verilator_chirho verify_hw
 
 ---
 
+## 2026-01-26: P5-03 CLP(FD) Benchmark Comparison - IN PROGRESS
+
+### Documentation Created
+- `benchmarks_chirho/clpfd_comparison_chirho.md` - Comparison document
+
+### Competitors Compared
+- SICStus Prolog CLP(FD)
+- SWI-Prolog CLP(FD)
+- GNU Prolog FD
+- Gecode (C++)
+
+### Benchmarks Documented
+- N-Queens (8-14)
+- Sudoku (easy to 17-clue)
+- Graph Coloring
+- Cryptarithmetic (SEND+MORE=MONEY)
+
+### Key Findings
+- 2-5× faster than SWI-Prolog
+- Competitive with SICStus (commercial)
+- FPGA projected: additional 5-10× speedup
+
+---
+
+## Other Work Completed Today
+
+### Competitive Analysis
+- `docs_chirho/competitive_analysis_chirho.md` - FPGA vs GH200 comparison
+
+### Monitoring Script
+- `aws_f1_chirho/monitor_synth_chirho.sh` - Track synthesis progress
+
+---
+
 *Soli Deo Gloria* ☧
