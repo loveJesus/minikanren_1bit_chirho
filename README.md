@@ -99,30 +99,19 @@ Single operations (hardware): **~420 picoseconds** (single CPU cycle)
 - Soft intersect: 1.26 µs (**36× slower**)
 - But soft enables gradient-based learning through logic programs
 
-### Gradients Flow Through Logic = Gradients Flow Through Tensors
+### Differentiability: A Consequence of the Tensor Representation
 
-**Key insight:** Logic constraints ARE tensors. Backprop through logic = adjoint of tensor contraction.
+Because logic constraints are tensors, standard autodiff applies directly. The addition constraint `d1 + d2 = sum` is a sparse tensor `T[d1][d2][sum] = 1` where the equation holds:
 
 ```
-Addition constraint: T[d1][d2][sum] = 1 iff d1 + d2 = sum
+Forward (tensor contraction with soft-AND):
+  P(sum=s) = Σ_{d1+d2=s} P(a=d1) × P(b=d2)
 
-Forward (tensor contraction):
-  P(sum=s) = Σ_{d1+d2=s} P(a=d1) × P(b=d2)    // soft-AND = multiply
-
-Backward (adjoint = transpose):
+Backward (adjoint of contraction):
   ∂L/∂P(a=d1) = Σ_{d2: d1+d2=target} P(b=d2) × ∂L/∂P(sum)
 ```
 
-This is demonstrated in `symbolic_addition_analytic_chirho.rs`:
-```bash
-cargo run --release --example symbolic_addition_analytic_chirho
-# Output: 100% accuracy with analytic backprop through tensor contraction
-```
-
-**Why this matters:**
-- No finite-difference approximation needed
-- Exact gradients via chain rule through tensor ops
-- Same framework for any relational constraint (not just addition)
+This follows from standard tensor calculus — the novelty is that our 1-bit tensor formulation makes it explicit. See `symbolic_addition_analytic_chirho.rs` for a complete example with analytic backprop through classifier → softmax → tensor contraction.
 
 ### Massively Parallel Hardware
 
