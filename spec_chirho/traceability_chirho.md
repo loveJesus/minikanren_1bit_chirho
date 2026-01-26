@@ -96,10 +96,11 @@ This document maps every numeric claim in the paper to reproducible commands.
 |-------------|---------|---------|-----------------|
 | Symbolic addition (finite-diff) | §10 | `cd rust_chirho && cargo run --release --example symbolic_addition_chirho` | 100% accuracy |
 | Symbolic addition (analytic) | §10 | `cd rust_chirho && cargo run --release --example symbolic_addition_analytic_chirho` | 100% accuracy |
+| Gradient method comparison | §10 | `cd rust_chirho && cargo bench --bench symbolic_addition_bench_chirho` | Analytic ~65× faster |
 
-**Note:** Two versions available:
-- `symbolic_addition_chirho.rs` - Finite-difference gradients (simpler)
-- `symbolic_addition_analytic_chirho.rs` - Analytic backprop through tensor contraction (shows gradients flow through logic)
+**Note:** Two gradient implementations:
+- `symbolic_addition_chirho.rs` - Finite-difference gradients (~8.4μs/step)
+- `symbolic_addition_analytic_chirho.rs` - Analytic backprop through tensor contraction (~129ns/step, 65× faster)
 
 ## Profile Breakdown (Interning Tax)
 
