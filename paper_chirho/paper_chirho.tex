@@ -113,7 +113,7 @@ Contraction order significantly affects computation cost (NP-hard to optimize).
 \subsection{E-Graphs}
 
 E-graphs \cite{egg_chirho} maintain equivalence classes of terms.
-Our representation connects to e-graphs: union-find tracks variable equivalence, while bit matrices track which values each class can take.
+The representation connects to e-graphs: union-find tracks variable equivalence, while bit matrices track which values each class can take.
 
 % ============================================================================
 \section{The Core Mapping}
@@ -287,7 +287,7 @@ For constraint propagation, we implement arc consistency:
 \end{algorithmic}
 \end{algorithm}
 
-In our representation, step 4 is a bitmask operation:
+In the tensor representation, step 4 is a bitmask operation:
 \[
 D_x' = D_x \land \bigvee_{w \in D_y} R[\cdot, w]
 \]
@@ -313,7 +313,7 @@ For common patterns (chains, stars), we cache optimal orders.
 
 \subsection{Rust Implementation}
 
-Our Rust implementation provides:
+The Rust implementation provides:
 \begin{itemize}
   \item Hash-consed term store (8ns intern time)
   \item Union-find with path compression ($O(\alpha(n))$ operations)
@@ -326,7 +326,7 @@ Our Rust implementation provides:
 We target FPGAs via two paths:
 
 \textbf{Calyx IR} \cite{calyx_chirho}: High-level hardware IR compiled to Verilog.
-Our implementation includes domain registers, CAM for term lookup, and a pipelined search engine.
+The implementation includes domain registers, CAM for term lookup, and a pipelined search engine.
 Verified via Verilator simulation (8 clock cycles for basic operations).
 
 \textbf{Clash}: Haskell compiled to Verilog.
@@ -518,7 +518,7 @@ Table~\ref{tab:nqueens} shows N-Queens performance across all implementations.
 
 \textbf{A note on solver comparisons.}
 Z3 and clingo are \emph{general-purpose} solvers: Z3 handles arbitrary SMT formulas with quantifiers and theories, while clingo solves answer set programs with aggregates and optimization.
-Our speedups reflect the advantage of domain-specific representation, not algorithmic superiority on general problems.
+The speedups reflect the advantage of domain-specific representation, not algorithmic superiority on general problems.
 For fair comparison with miniKanren specifically, see Table~\ref{tab:ocanren} (OCanren, faster-miniKanren)---these implement the same relational semantics and are the appropriate baseline.
 
 Table~\ref{tab:sudoku} shows Sudoku solver performance.
@@ -613,13 +613,13 @@ Conjunction (8 goals) & \textbf{288 ns} & 2.2 $\mu$s & 7.6$\times$ \\
 \section{New Results: Datalog Comparison}
 % ============================================================================
 
-We compared our tensor approach against Souffl\'{e} \cite{souffle_chirho}, a high-performance Datalog engine, on transitive closure (reachability).
+We compared the tensor approach against Souffl\'{e} \cite{souffle_chirho}, a high-performance Datalog engine, on transitive closure (reachability).
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Graph Size} & \textbf{Souffl\'{e}} & \textbf{Our BitMatrix} & \textbf{Speedup} \\
+\textbf{Graph Size} & \textbf{Souffl\'{e}} & \textbf{BitMatrix} & \textbf{Speedup} \\
 \midrule
 1K edges (100 nodes) & 463 ms & \textbf{3.9 ms} & 119$\times$ \\
 5K edges (200 nodes) & -- & \textbf{147 ms} & -- \\
@@ -631,24 +631,24 @@ We compared our tensor approach against Souffl\'{e} \cite{souffle_chirho}, a hig
 \label{tab:datalog}
 \end{table}
 
-\textbf{Key insight:} Souffl\'{e} uses semi-naive evaluation (computing only \emph{new} facts each iteration), while our approach uses batched Boolean matrix multiplication.
-For small, dense graphs (100 nodes, 1K edges), our matrix approach is 119$\times$ faster due to cache-friendly memory access and SIMD parallelism.
+\textbf{Key insight:} Souffl\'{e} uses semi-naive evaluation (computing only \emph{new} facts each iteration), while the tensor approach uses batched Boolean matrix multiplication.
+For small, dense graphs (100 nodes, 1K edges), the matrix approach is 119$\times$ faster due to cache-friendly memory access and SIMD parallelism.
 For larger, sparser graphs, Souffl\'{e}'s incremental approach becomes competitive as semi-naive avoids redundant computation.
 
-The trade-off: our approach excels at small, dense workloads (constraint solving, type inference), while Souffl\'{e} handles large-scale program analysis.
+The trade-off: the tensor approach excels at small, dense workloads (constraint solving, type inference), while Souffl\'{e} handles large-scale program analysis.
 
 % ============================================================================
 \section{New Results: SyGuS Synthesis}
 % ============================================================================
 
-We applied our domain-pruned enumeration to SyGuS (Syntax-Guided Synthesis) problems.
+We applied domain-pruned enumeration to SyGuS (Syntax-Guided Synthesis) problems.
 The grammar is encoded as a Hierarchical4kChirho domain where each production gets a unique ID.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Problem} & \textbf{Our Time} & \textbf{CVC5 Time} & \textbf{Speedup} \\
+\textbf{Problem} & \textbf{Time} & \textbf{CVC5 Time} & \textbf{Speedup} \\
 \midrule
 max2 (conditional max) & 12 $\mu$s & 145 ms & 12,000$\times$ \\
 abs (absolute value) & 8 $\mu$s & 89 ms & 11,000$\times$ \\
@@ -738,7 +738,7 @@ We demonstrate the MNIST-Addition neurosymbolic concept with simplified digit pa
 \[
 P(\text{sum} = c) = \sum_{d_1 + d_2 = c} P(a \to d_1) \cdot P(b \to d_2)
 \]
-is fully differentiable via our semiring abstraction (soft-AND = product, soft-OR = sum over valid pairs).
+is fully differentiable via the semiring abstraction (soft-AND = product, soft-OR = sum over valid pairs).
 
 \begin{table}[H]
 \centering
@@ -761,7 +761,7 @@ This demonstrates the core MNIST-Addition mechanism: gradients flow through both
 \section{New Results: Differentiable Logic}
 % ============================================================================
 
-Our \texttt{learn\_chirho} module implements differentiable miniKanren:
+The \texttt{learn\_chirho} module implements differentiable miniKanren:
 \begin{itemize}
   \item \textbf{LearnableRelationExtChirho}: Relations with learnable tuple weights
   \item \textbf{AnnealingScheduleChirho}: Temperature annealing (exponential, linear, cosine)
@@ -810,7 +810,7 @@ The soft version incurs 36$\times$ overhead vs hard Hierarchical4kChirho, but en
 The 3,000$\times$ overhead of differentiable domains applies only during \emph{training}---when learning relation weights or neural-symbolic parameters.
 Once learned, the final model compiles back to hard 1-bit operations for inference.
 This mirrors the neural network paradigm: training is expensive (soft gradients), inference is cheap (hard forward pass).
-Our system supports both phases: \texttt{DiffHierarchical4kChirho} for training, then conversion to \texttt{Hierarchical4kChirho} for deployment.
+The system supports both phases: \texttt{DiffHierarchical4kChirho} for training, then conversion to \texttt{Hierarchical4kChirho} for deployment.
 
 % ============================================================================
 \section{New Results: Type Inference Case Study}
@@ -821,7 +821,7 @@ Type inference is a natural fit: types are terms, type checking is unification.
 
 \subsection{Implementation}
 
-Our implementation (\texttt{type\_infer\_chirho.rs}) encodes:
+The implementation (\texttt{type\_infer\_chirho.rs}) encodes:
 \begin{itemize}
   \item \textbf{Base types}: \texttt{Int}, \texttt{Bool}, \texttt{String} as domain values 0, 1, 2
   \item \textbf{Function types}: Arrow types \texttt{a -> b} as term pairs
@@ -904,7 +904,7 @@ The constraint propagation engine is synthesizable; SLG tabling remains software
 
 \textbf{6. Contraction Order Complexity.}
 Optimal tensor contraction order is NP-hard (equivalent to treewidth computation).
-Our greedy/min-fill heuristics are typically within 2--10$\times$ of optimal, but pathological cases may exhibit exponential blowup.
+The greedy/min-fill heuristics are typically within 2--10$\times$ of optimal, but pathological cases may exhibit exponential blowup.
 
 % ============================================================================
 \section{Related Work}
@@ -914,42 +914,42 @@ Our greedy/min-fill heuristics are typically within 2--10$\times$ of optimal, bu
 SWI-Prolog, XSB \cite{xsb_chirho}, and $\mu$Kanren \cite{microkanren_chirho} use traditional term representation with pointer-based substitutions.
 faster-miniKanren \cite{faster_minikanren_chirho} optimizes stream handling for better performance.
 OCanren \cite{ocanren_chirho} provides typed embedding in OCaml.
-Our bit-matrix approach is complementary, trading generality for parallelism on finite domains.
+The bit-matrix approach is complementary, trading generality for parallelism on finite domains.
 
 \textbf{Constraint solvers.}
 SAT solvers (MiniSat \cite{minisat_chirho}, Z3 \cite{z3_chirho}) and ASP solvers (clingo \cite{clingo_chirho}) operate on Boolean/integer domains.
 Constraint Logic Programming over Finite Domains \cite{clpfd_chirho} uses similar constraint propagation.
-Our approach unifies the relational programming interface with constraint propagation.
+The approach unifies the relational programming interface with constraint propagation.
 
 \textbf{E-graphs.}
 egg \cite{egg_chirho} provides equality saturation via e-graphs, building on congruence closure \cite{nelson_oppen_chirho}.
-Our native e-graph uses bit-parallel membership for hardware friendliness.
+The native e-graph uses bit-parallel membership for hardware friendliness.
 
 \textbf{Differentiable logic.}
 Scallop \cite{scallop_chirho} provides differentiable Datalog with provenance semirings.
 DeepProbLog \cite{deepproblog_chirho} integrates neural networks with probabilistic logic.
 Neural theorem provers \cite{neural_theorem_provers_chirho} use differentiable unification.
 Gumbel-softmax \cite{gumbel_softmax_chirho} enables gradient flow through discrete choices.
-Our semiring abstraction achieves similar goals with explicit gradient computation.
+The semiring abstraction achieves similar goals with explicit gradient computation.
 
 \textbf{Program synthesis.}
 SyGuS \cite{sygus_chirho} defines syntax-guided synthesis problems.
 CVC5 \cite{cvc5_chirho} is a state-of-the-art SyGuS solver.
 Barliman \cite{barliman_chirho} uses miniKanren for program synthesis.
-Our domain-pruned enumeration achieves speedups on simple problems.
+Domain-pruned enumeration achieves speedups on simple problems.
 
 \textbf{Hardware logic programming.}
 Prior work on Prolog machines (Warren Abstract Machine \cite{wam_chirho}) focused on instruction-level parallelism.
-Our tensor approach targets data-level parallelism via SIMD/GPU/FPGA.
+The tensor approach targets data-level parallelism via SIMD/GPU/FPGA.
 Calyx \cite{calyx_chirho} and Clash \cite{clash_chirho} enable verified hardware generation.
 
 \textbf{Tabling and memoization.}
 SLG resolution \cite{slg_chirho} provides sound tabling for logic programs.
 XSB \cite{xsb_chirho} implements tabling for Prolog.
-Our mode-driven goal reordering builds on these techniques.
+Mode-driven goal reordering builds on these techniques.
 
 \textbf{Tensor networks.}
-Tensor network theory \cite{tensor_networks_intro_chirho} and tensor-train decomposition \cite{tensor_train_chirho} provide the mathematical foundation for our representation.
+Tensor network theory \cite{tensor_networks_intro_chirho} and tensor-train decomposition \cite{tensor_train_chirho} provide the mathematical foundation for the representation.
 
 \textbf{Categorical logic.}
 Our tensor contraction approach connects to string diagrams in monoidal categories \cite{selinger_string_diagrams_chirho}.

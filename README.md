@@ -56,7 +56,7 @@ miniKanren search = sparse Boolean tensor network contraction
 
 ### Python Prototype (vs Other Solvers)
 
-| Benchmark | Our 1-Bit Matrix | Competitor | Speedup |
+| Benchmark | 1-Bit Matrix | Competitor | Speedup |
 |-----------|-----------------|------------|---------|
 | Unification (10K ops) | 1.50ms | kanren: 38ms | **25× faster** |
 | N-Queens 8×8 (92 solutions) | 3.03ms | Z3: 260ms | **86× faster** |
@@ -154,9 +154,9 @@ The 1-bit matrix representation is ideal for parallel hardware:
 
 ### vs egg (E-Graphs)
 
-Our native e-graph (`egraph_native_chirho`) uses bit-parallel operations vs egg's pointer-based approach:
+The native e-graph (`egraph_native_chirho`) uses bit-parallel operations vs egg's pointer-based approach:
 
-| Aspect | Our Native E-Graph | egg crate |
+| Aspect | Native E-Graph | egg crate |
 |--------|-------------------|-----------|
 | E-class membership | Bitmask (N-bit vector) | Pointer chase |
 | Merge operation | Bitwise OR | Union-find + rebuild |
@@ -165,7 +165,7 @@ Our native e-graph (`egraph_native_chirho`) uses bit-parallel operations vs egg'
 | Congruence closure | Parallel hash lookup | Sequential iteration |
 
 **When to use what:**
-- **Our approach**: Finite domains, hardware targets, bulk operations
+- **Tensor approach**: Finite domains, hardware targets, bulk operations
 - **egg**: Complex rewrite rules, term rewriting, equality saturation
 
 The 1-bit matrix approach excels when domains fit in registers (≤64 values) and you need massive parallelism. egg excels at symbolic manipulation with unbounded terms.
