@@ -1,0 +1,17 @@
+# miniKanren 1-Bit FPGA AFI ☧
+# Created: 2026-01-26
+
+AFI_ID=afi-00e111cc7004d41c5
+AGFI_ID=agfi-038ca2f7a81352cb4
+
+# Build Details:
+# - Target: AWS F1 VU47P
+# - Shell: small_shell (f2 branch)
+# - Timing: WNS=+0.060ns, WHS=+0.011ns (BOTH MET)
+# - Build Time: 56 minutes
+
+# To load:
+# sudo fpga-load-local-image -S 0 -I agfi-038ca2f7a81352cb4
+
+# To check status:
+# aws ec2 describe-fpga-images --fpga-image-ids afi-00e111cc7004d41c5
