@@ -1,0 +1,277 @@
+{
+  "title_chirho": "Gemini Pass 2 - Research Depth Improvements",
+  "version_chirho": "1.0.0",
+  "description_chirho": "Address Gemini's second-pass critiques to elevate the paper from fast implementation to foundational research contribution",
+
+  "milestones_chirho": [
+    {
+      "id_chirho": "P2-1",
+      "name_chirho": "Datalog Benchmark (Soufflé Comparison)",
+      "description_chirho": "Compare tensor contraction approach against Soufflé for transitive closure/reachability",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-1.1",
+          "name_chirho": "Install and configure Soufflé",
+          "description_chirho": "Set up Soufflé (brew install souffle or build from source) for benchmarking",
+          "files_chirho": ["scripts_chirho/setup_souffle_chirho.sh"],
+          "acceptance_chirho": "Soufflé runs transitive closure on test graph"
+        },
+        {
+          "id_chirho": "P2-1.2",
+          "name_chirho": "Implement transitive closure benchmark",
+          "description_chirho": "Benchmark TC on graphs of 1K, 10K, 100K edges",
+          "files_chirho": [
+            "rust_chirho/benches/datalog_bench_chirho.rs",
+            "benchmarks_chirho/souffle_chirho/tc_chirho.dl"
+          ],
+          "acceptance_chirho": "Side-by-side timing: our approach vs Soufflé"
+        },
+        {
+          "id_chirho": "P2-1.3",
+          "name_chirho": "Add Datalog comparison to paper",
+          "description_chirho": "Add table comparing with Soufflé, discuss semi-naive evaluation",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Table shows performance comparison with analysis"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P2-2",
+      "name_chirho": "Hash Consing Wall-Clock Breakdown",
+      "description_chirho": "Prove interning doesn't become the new bottleneck",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-2.1",
+          "name_chirho": "Add profiling instrumentation",
+          "description_chirho": "Track time spent in intern_chirho vs unify_chirho vs search",
+          "files_chirho": [
+            "rust_chirho/src/profile_chirho.rs",
+            "python_chirho/profile_interning_chirho.py"
+          ],
+          "acceptance_chirho": "Can measure % time in each phase"
+        },
+        {
+          "id_chirho": "P2-2.2",
+          "name_chirho": "Run profiling on deep search",
+          "description_chirho": "Profile type inference, synthesis, or theorem proving workload",
+          "files_chirho": ["rust_chirho/examples/profile_breakdown_chirho.rs"],
+          "acceptance_chirho": "Shows intern time < 20% of total in deep workloads"
+        },
+        {
+          "id_chirho": "P2-2.3",
+          "name_chirho": "Add breakdown chart to paper",
+          "description_chirho": "Pie chart or stacked bar showing time distribution",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Visual proof that interning isn't bottleneck"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P2-3",
+      "name_chirho": "Neurosymbolic Standard Benchmark",
+      "description_chirho": "Move beyond toy problems to MNIST-Addition or Hitting Sets",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-3.1",
+          "name_chirho": "Research MNIST-Addition task",
+          "description_chirho": "Understand the task: classify MNIST digits, sum them, verify with logic",
+          "files_chirho": ["spec_chirho/mnist_addition_spec_chirho.md"],
+          "acceptance_chirho": "Clear spec of what to implement"
+        },
+        {
+          "id_chirho": "P2-3.2",
+          "name_chirho": "Implement MNIST-Addition or Hitting Sets",
+          "description_chirho": "End-to-end differentiable logic learning from raw data",
+          "files_chirho": [
+            "rust_chirho/examples/mnist_addition_chirho.rs",
+            "python_chirho/mnist_addition_chirho.py"
+          ],
+          "acceptance_chirho": "Learns relational rule from MNIST images"
+        },
+        {
+          "id_chirho": "P2-3.3",
+          "name_chirho": "Compare against Scallop/DeepProbLog",
+          "description_chirho": "Benchmark training time and accuracy vs existing systems",
+          "files_chirho": ["benchmarks_chirho/neurosymbolic_chirho/comparison_chirho.md"],
+          "acceptance_chirho": "Show we're competitive or faster"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P2-4",
+      "name_chirho": "Formal Hardware Verification",
+      "description_chirho": "Prove Clash hardware semantically matches Rust reference",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-4.1",
+          "name_chirho": "Add QuickCheck properties to Clash",
+          "description_chirho": "Property-based tests: forall terms, hw_unify == rust_unify",
+          "files_chirho": ["clash_chirho/test/QuickCheckChirho.hs"],
+          "acceptance_chirho": "100K property tests pass"
+        },
+        {
+          "id_chirho": "P2-4.2",
+          "name_chirho": "Test edge cases explicitly",
+          "description_chirho": "Test variable shadowing, cyclic terms, occurs check",
+          "files_chirho": ["clash_chirho/test/EdgeCasesChirho.hs"],
+          "acceptance_chirho": "All edge cases handled correctly"
+        },
+        {
+          "id_chirho": "P2-4.3",
+          "name_chirho": "Document verification in paper",
+          "description_chirho": "Mention property-based testing for hardware correctness",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Adds credibility for hardware claims"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P2-5",
+      "name_chirho": "Kernel Fusion / Memory Hierarchy",
+      "description_chirho": "Address PCIe bottleneck with fused accelerator design",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-5.1",
+          "name_chirho": "Design fused GPU kernel",
+          "description_chirho": "Intern + propagate in single kernel, no CPU roundtrip",
+          "files_chirho": ["rust_chirho/src/gpu_fused_chirho.rs"],
+          "acceptance_chirho": "Design doc showing data flow"
+        },
+        {
+          "id_chirho": "P2-5.2",
+          "name_chirho": "Prototype FPGA BRAM-resident engine",
+          "description_chirho": "Keep term table in BRAM, avoid external memory",
+          "files_chirho": ["calyx_chirho/bram_engine_chirho.futil"],
+          "acceptance_chirho": "Simulation shows no external memory access"
+        },
+        {
+          "id_chirho": "P2-5.3",
+          "name_chirho": "Add future work section to paper",
+          "description_chirho": "Propose Fully Fused Logic Accelerator",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Strong conclusion with clear next steps"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P2-6",
+      "name_chirho": "Categorical Logic Connection",
+      "description_chirho": "Frame tensor contraction in terms of string diagrams / monoidal categories",
+      "priority_chirho": "low",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-6.1",
+          "name_chirho": "Research string diagram connection",
+          "description_chirho": "Read Topos Institute work on wiring diagrams and logic",
+          "files_chirho": ["spec_chirho/categorical_connection_chirho.md"],
+          "acceptance_chirho": "Clear mapping from our work to categorical concepts"
+        },
+        {
+          "id_chirho": "P2-6.2",
+          "name_chirho": "Add categorical framing to paper",
+          "description_chirho": "Brief mention of tensor networks as string diagrams",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Aligns with Topos/Haskell theoretical work"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P2-7",
+      "name_chirho": "FPGA Resource Documentation",
+      "description_chirho": "Document actual LUT/BRAM usage from synthesis",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "blocked_by_chirho": ["hardware board arrival"],
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-7.1",
+          "name_chirho": "Run Calyx synthesis to Verilog",
+          "description_chirho": "Generate Verilog from Calyx IR",
+          "files_chirho": ["calyx_chirho/synth_chirho/"],
+          "acceptance_chirho": "Have .v files for all components"
+        },
+        {
+          "id_chirho": "P2-7.2",
+          "name_chirho": "Run Yosys/nextpnr for iCE40",
+          "description_chirho": "Get actual LUT/FF/BRAM counts for iCE40 HX8K",
+          "files_chirho": ["calyx_chirho/resource_report_chirho.txt"],
+          "acceptance_chirho": "Actual numbers: X LUTs, Y FFs, Z BRAM"
+        },
+        {
+          "id_chirho": "P2-7.3",
+          "name_chirho": "Document CAM implementation details",
+          "description_chirho": "Show how term IDs map to CAM entries, capacity limits",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Clear resource scaling formula"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P2-8",
+      "name_chirho": "Parallel State with Rayon",
+      "description_chirho": "Prove data-level parallelism claim at scale",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P2-8.1",
+          "name_chirho": "Implement ParallelStateChirho",
+          "description_chirho": "Use Rayon for parallel mass intersection across CPU cores",
+          "files_chirho": ["rust_chirho/src/parallel_chirho.rs"],
+          "acceptance_chirho": "par_iter over search states"
+        },
+        {
+          "id_chirho": "P2-8.2",
+          "name_chirho": "Benchmark multi-core scaling",
+          "description_chirho": "Show speedup from 1 to 8+ cores",
+          "files_chirho": ["rust_chirho/benches/parallel_bench_chirho.rs"],
+          "acceptance_chirho": "Near-linear scaling up to physical cores"
+        },
+        {
+          "id_chirho": "P2-8.3",
+          "name_chirho": "Add scaling chart to paper",
+          "description_chirho": "Show multi-core speedup graph",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Proves data-level parallelism narrative"
+        }
+      ]
+    }
+  ],
+
+  "priority_order_chirho": [
+    "P2-2: Hash consing breakdown (HIGH - validates core claim)",
+    "P2-1: Datalog/Soufflé comparison (HIGH - systems credibility)",
+    "P2-3: Neurosymbolic standard benchmark (HIGH - AI credibility)",
+    "P2-8: Parallel Rayon scaling (MEDIUM - easy win)",
+    "P2-4: Hardware verification (MEDIUM - adds rigor)",
+    "P2-7: FPGA resources (MEDIUM - blocked on hardware)",
+    "P2-5: Kernel fusion design (MEDIUM - future work)",
+    "P2-6: Categorical framing (LOW - theoretical polish)"
+  ],
+
+  "acceptance_criteria_chirho": [
+    "Paper addresses all 6 critique areas",
+    "At least one standard neurosymbolic benchmark (MNIST-Addition or equivalent)",
+    "Wall-clock breakdown chart proves interning isn't bottleneck",
+    "Soufflé comparison shows competitive or better performance",
+    "Multi-core scaling demonstrated with Rayon",
+    "All tests pass after changes"
+  ],
+
+  "dependencies_chirho": {
+    "hardware_chirho": "FPGA board (iCE40 HX8K or similar) for P2-7",
+    "software_chirho": "Soufflé installation for P2-1",
+    "data_chirho": "MNIST dataset for P2-3"
+  }
+}

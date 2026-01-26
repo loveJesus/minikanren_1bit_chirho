@@ -113,6 +113,9 @@ pub mod synthesis_chirho;
 /// Differentiable learning for miniKanren
 pub mod learn_chirho;
 
+/// Profiling infrastructure for wall-clock breakdown
+pub mod profile_chirho;
+
 /// Domain approaches for infinite/hybrid miniKanren
 /// - paged_chirho: Hierarchical bit vectors for large finite domains
 /// - symbolic_chirho: Algebraic constraints (ranges, modular arithmetic)
