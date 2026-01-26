@@ -31,7 +31,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 # Create user data script (note: BUCKET is interpolated at script creation time)
-USER_DATA_CHIRHO=$(cat << USERDATA
+USER_DATA_CHIRHO=$(cat << USERDATA_CHIRHO
 #!/bin/bash
 # For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 set -x
@@ -94,7 +94,7 @@ date
 
 # Signal completion
 aws s3 cp /var/log/user-data.log "s3://\${BUCKET_CHIRHO}/results/user-data.log"
-USERDATA
+USERDATA_CHIRHO
 )
 
 # Launch instance

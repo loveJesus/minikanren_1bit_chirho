@@ -2,22 +2,22 @@
 # Target: Xilinx VU9P (AWS F1)
 
 # Project setup
-set project_name "minikanren_chirho"
-set part_name "xcvu9p-flgb2104-2-i"
-set top_module "searchEngineChirho"
+set project_name_chirho "minikanren_chirho"
+set part_name_chirho "xcvu9p-flgb2104-2-i"
+set top_module_chirho "searchEngineChirho"
 
 # Create project
-create_project -force ${project_name} ./${project_name} -part ${part_name}
+create_project -force ${project_name_chirho} ./${project_name_chirho} -part ${part_name_chirho}
 
 # Add sources
 add_files -fileset sources_1 ./searchEngineChirho.v
 add_files -fileset constrs_1 ./timing_chirho.xdc
 
 # Set top module
-set_property top ${top_module} [current_fileset]
+set_property top ${top_module_chirho} [current_fileset]
 
 # Run synthesis
-synth_design -top ${top_module} -part ${part_name}
+synth_design -top ${top_module_chirho} -part ${part_name_chirho}
 report_utilization -file utilization_post_synth_chirho.rpt
 report_timing_summary -file timing_post_synth_chirho.rpt
 
@@ -44,8 +44,8 @@ puts "WNS (Setup): ${wns} ns"
 puts "WHS (Hold):  ${whs} ns"
 
 # Always save checkpoint (setup timing is what matters for functionality)
-write_checkpoint -force ${project_name}_routed.dcp
-puts "Checkpoint saved: ${project_name}_routed.dcp"
+write_checkpoint -force ${project_name_chirho}_routed.dcp
+puts "Checkpoint saved: ${project_name_chirho}_routed.dcp"
 
 # Calculate achieved frequency based on 20ns target period
 set period 20.0
