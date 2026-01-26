@@ -105,6 +105,67 @@
     ]
   },
 
+  "ultimate_vision_chirho": {
+    "description": "The Logic Accelerator Chip - dedicated silicon for relational AI reasoning",
+    "architecture": {
+      "search_engines": "64 parallel search engines",
+      "shared_hashcons": "Shared hash-cons term store (CAM)",
+      "tabling_unit": "Hardware tabling unit (BRAM + LRU)",
+      "interface": "PCIe/AXI to host CPU (mode analysis, I/O)"
+    },
+    "projected_performance": {
+      "throughput": "64 × 12.5M = 800M unifications/sec (projected)",
+      "latency": "Deterministic, suitable for real-time control"
+    },
+    "use_case_example": "Real-time relational reasoning for robotics: 10K queries/sec with 80ns latency per constraint check"
+  },
+
+  "resource_requirements_chirho": {
+    "hardware": [
+      {"item": "DE10-Nano (Cyclone V)", "cost": "$150", "priority": "high"},
+      {"item": "Arty A7-35T (Artix-7)", "cost": "$130", "priority": "medium"},
+      {"item": "AWS F1 (f1.2xlarge)", "cost": "$1.65/hr", "priority": "for validation"},
+      {"item": "AWS c5.4xlarge (synthesis)", "cost": "$0.68/hr", "priority": "for builds"}
+    ],
+    "software": [
+      {"item": "Yosys", "status": "installed", "license": "open source"},
+      {"item": "Verilator", "status": "installed", "license": "open source"},
+      {"item": "Clash", "status": "installed", "license": "open source"},
+      {"item": "Calyx", "status": "installed", "license": "open source"},
+      {"item": "Quartus Lite", "status": "available", "license": "free, 20GB"},
+      {"item": "Vivado ML Standard", "status": "available", "license": "free, 50GB"}
+    ],
+    "human": [
+      {"role": "Hardware engineer", "need": "part-time", "for": "physical bring-up"},
+      {"role": "Technical writer", "need": "part-time", "for": "documentation"},
+      {"role": "Community manager", "need": "part-time", "for": "outreach"}
+    ]
+  },
+
+  "paper_alignment_chirho": {
+    "description": "From recommendations_pass5_chirho.md: How papers should be positioned",
+    "papers": {
+      "paper_a": {
+        "role": "flagship",
+        "emphasis": "Precise FD-miniKanren kernel + strong benchmarks + clear scope",
+        "target": "PLDI/POPL"
+      },
+      "paper_e": {
+        "role": "hardware companion",
+        "emphasis": [
+          "Kernel/engine split (Calyx vs Clash)",
+          "Real synthesis evidence (Yosys as generic mapping, Vivado for timing)",
+          "Hybrid host/FPGA architecture as path to semantic unboundedness"
+        ],
+        "target": "FPGA/FCCM"
+      },
+      "papers_b_d_f": {
+        "role": "companion depth papers / tech reports",
+        "note": "Best as supplements unless a specific venue wants them"
+      }
+    }
+  },
+
   "phases": [
     {
       "id": "phase1",
