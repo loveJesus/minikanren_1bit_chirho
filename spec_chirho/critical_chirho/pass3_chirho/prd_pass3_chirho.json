@@ -1,0 +1,286 @@
+{
+  "title_chirho": "Pass 3 - Reproducibility, Clarity & Real-World Validation",
+  "version_chirho": "1.0.0",
+  "description_chirho": "Address Gemini Pass 3 holes, Yayel peer review concerns, and GPT-5.2 Codex reproducibility suggestions. Focus on traceability, documentation clarity, and real-world validation.",
+
+  "sources_chirho": [
+    "spec_chirho/critical_chirho/pass3_chirho/gemini_critiques_pass3_chirho.md",
+    "spec_chirho/critical_chirho/pass3_chirho/yayel_discuss_chirho.md",
+    "GPT-5.2 Codex Medium Suggestions (inline)"
+  ],
+
+  "milestones_chirho": [
+    {
+      "id_chirho": "P3-1",
+      "name_chirho": "Paper Claim → Artifact Traceability Table",
+      "description_chirho": "Make every paper claim reproducible with exact commands",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "source_chirho": "GPT-5.2 Codex #1",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-1.1",
+          "name_chirho": "Create traceability matrix",
+          "description_chirho": "Map paper section/table → benchmark script/module → command → expected output",
+          "files_chirho": ["spec_chirho/traceability_chirho.md"],
+          "acceptance_chirho": "Every numeric claim in paper has corresponding command"
+        },
+        {
+          "id_chirho": "P3-1.2",
+          "name_chirho": "Create run_all_benchmarks script",
+          "description_chirho": "Single script that reproduces all paper numbers",
+          "files_chirho": ["benchmarks_chirho/run_all_benchmarks_chirho.sh"],
+          "acceptance_chirho": "Script outputs CSV/JSON matching paper tables"
+        },
+        {
+          "id_chirho": "P3-1.3",
+          "name_chirho": "Package benchmark results",
+          "description_chirho": "Save expected outputs for comparison",
+          "files_chirho": ["benchmarks_chirho/results_chirho/"],
+          "acceptance_chirho": "Results folder with reference data"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-2",
+      "name_chirho": "Gradient Attenuation Reproducibility",
+      "description_chirho": "Script that exactly reproduces the gradient magnitude table",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "source_chirho": "GPT-5.2 Codex #5",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-2.1",
+          "name_chirho": "Create gradient benchmark script",
+          "description_chirho": "Script that outputs exact Table 'Gradient magnitude vs inference depth'",
+          "files_chirho": ["benchmarks_chirho/gradients_chirho/reproduce_table_chirho.rs"],
+          "acceptance_chirho": "Output matches paper table within 5% tolerance"
+        },
+        {
+          "id_chirho": "P3-2.2",
+          "name_chirho": "Document gradient stability claims",
+          "description_chirho": "Add methodology note explaining how gradients were computed",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Methodology clear for reproducibility"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-3",
+      "name_chirho": "Real-World Case Study",
+      "description_chirho": "Add non-synthetic benchmark (program verification, scheduling, etc.)",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "source_chirho": "Yayel #5",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-3.1",
+          "name_chirho": "Implement real-world example",
+          "description_chirho": "Choose: type checker for small language, scheduling constraint, or verification query",
+          "files_chirho": ["rust_chirho/examples/real_world_chirho.rs"],
+          "acceptance_chirho": "Non-toy problem demonstrating practical utility"
+        },
+        {
+          "id_chirho": "P3-3.2",
+          "name_chirho": "Add to paper evaluation",
+          "description_chirho": "New subsection showing real-world application",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Paper includes real-world case study"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-4",
+      "name_chirho": "Limitations Section",
+      "description_chirho": "Explicitly acknowledge what system cannot do well",
+      "priority_chirho": "high",
+      "status_chirho": "pending",
+      "source_chirho": "Yayel",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-4.1",
+          "name_chirho": "Add limitations section to paper",
+          "description_chirho": "Document: finite domain requirement, symbolic arithmetic limits, GPU transfer overhead, differentiable performance cliff",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Honest limitations section builds reviewer trust"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-5",
+      "name_chirho": "Clarify Hardware Scope",
+      "description_chirho": "Document what runs on FPGA vs simulation",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "source_chirho": "Gemini #2",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-5.1",
+          "name_chirho": "Document FPGA subset",
+          "description_chirho": "Clarify: constraint propagation engine synthesized, SLG tabling in software only",
+          "files_chirho": ["paper_chirho/paper_chirho.tex", "README.md"],
+          "acceptance_chirho": "Clear distinction between synthesized vs simulated"
+        },
+        {
+          "id_chirho": "P3-5.2",
+          "name_chirho": "Mark estimates vs measured",
+          "description_chirho": "Label LUT counts and cycle times as estimated until P2-7 synthesis",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Hardware claims properly qualified"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-6",
+      "name_chirho": "GPU Memory Limits Documentation",
+      "description_chirho": "Clarify 'unlimited domain' practical bounds",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "source_chirho": "GPT-5.2 Codex #6",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-6.1",
+          "name_chirho": "Add VRAM bound clarification",
+          "description_chirho": "Add sentence: 'Unlimited in principle, bounded by GPU memory; domains scale to billions on 8-80GB VRAM'",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Practical limits documented"
+        },
+        {
+          "id_chirho": "P3-6.2",
+          "name_chirho": "Clarify GPU TC scope",
+          "description_chirho": "Explain GPU TC is general reachability kernel, not yet wired into unification occurs-check",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "GPU scope clear"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-7",
+      "name_chirho": "Hierarchical16k Visibility",
+      "description_chirho": "Add Hierarchical16k to README domain table",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "source_chirho": "GPT-5.2 Codex #7",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-7.1",
+          "name_chirho": "Update README domain table",
+          "description_chirho": "Add Hierarchical16kChirho row to domain comparison table",
+          "files_chirho": ["README.md", "rust_chirho/README.md"],
+          "acceptance_chirho": "All paper-mentioned domain types in README"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-8",
+      "name_chirho": "Differentiable Performance Framing",
+      "description_chirho": "Frame soft-logic as training-only phase",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "source_chirho": "Gemini #3",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-8.1",
+          "name_chirho": "Add training vs inference clarification",
+          "description_chirho": "Explain: soft-logic for training, compile to hard 1-bit for inference",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Performance cliff contextualized"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-9",
+      "name_chirho": "Comparison Balance",
+      "description_chirho": "Strengthen miniKanren-specific comparisons",
+      "priority_chirho": "medium",
+      "status_chirho": "pending",
+      "source_chirho": "Yayel #1",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-9.1",
+          "name_chirho": "Emphasize OCanren/faster-mk comparisons",
+          "description_chirho": "Highlight domain-specific gains vs proper miniKanren baselines",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Apples-to-apples comparisons emphasized"
+        },
+        {
+          "id_chirho": "P3-9.2",
+          "name_chirho": "Add caveat for general solver comparisons",
+          "description_chirho": "Clarify Z3/clingo are general-purpose, our speedups are domain-specific",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Comparison context clear (already partially done)"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-10",
+      "name_chirho": "Terminology Consistency",
+      "description_chirho": "Unify units notation throughout paper",
+      "priority_chirho": "low",
+      "status_chirho": "pending",
+      "source_chirho": "Yayel #6",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-10.1",
+          "name_chirho": "Audit unit notation",
+          "description_chirho": "Ensure ps/ns/μs/ms consistent, use μs not us",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Units consistent throughout"
+        }
+      ]
+    },
+    {
+      "id_chirho": "P3-11",
+      "name_chirho": "Scalability Documentation",
+      "description_chirho": "Quantify resource usage for large domains",
+      "priority_chirho": "low",
+      "status_chirho": "pending",
+      "source_chirho": "Yayel #2",
+      "tasks_chirho": [
+        {
+          "id_chirho": "P3-11.1",
+          "name_chirho": "Add scalability analysis",
+          "description_chirho": "Document memory/time for 100K, 1M, 10M value domains",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Practical scaling limits documented"
+        }
+      ]
+    }
+  ],
+
+  "priority_order_chirho": [
+    "P3-1: Traceability table (HIGH - reproducibility foundation)",
+    "P3-2: Gradient reproducibility (HIGH - validates key claim)",
+    "P3-3: Real-world case study (HIGH - addresses synthetic-only critique)",
+    "P3-4: Limitations section (HIGH - builds reviewer trust)",
+    "P3-5: Hardware scope clarity (MEDIUM - manages expectations)",
+    "P3-6: GPU memory limits (MEDIUM - practical bounds)",
+    "P3-7: Hierarchical16k visibility (MEDIUM - documentation completeness)",
+    "P3-8: Differentiable framing (MEDIUM - contextualizes overhead)",
+    "P3-9: Comparison balance (MEDIUM - fairness)",
+    "P3-10: Terminology consistency (LOW - polish)",
+    "P3-11: Scalability documentation (LOW - completeness)"
+  ],
+
+  "acceptance_criteria_chirho": [
+    "run_all_benchmarks_chirho.sh reproduces all paper tables",
+    "Traceability matrix links every claim to code",
+    "At least one real-world (non-synthetic) case study",
+    "Limitations section explicitly added to paper",
+    "Hardware claims labeled as estimated vs measured",
+    "GPU memory bounds documented",
+    "All tests pass after changes"
+  ],
+
+  "already_addressed_chirho": [
+    "Wall-clock breakdown (P2-2) - profile_breakdown_chirho.rs shows interning is 0.04%",
+    "Neurosymbolic benchmark (P2-3) - symbolic_addition_chirho.rs demonstrates concept",
+    "Categorical framing (P2-6) - string diagram connection in Related Work",
+    "Comparison caveat (partial) - already notes Z3/clingo are general-purpose"
+  ],
+
+  "blocked_chirho": [
+    "FPGA synthesis (P2-7) - still waiting on hardware for measured LUT counts",
+    "Energy/power metrics (Gemini #4) - requires actual FPGA hardware"
+  ]
+}
