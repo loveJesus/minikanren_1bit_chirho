@@ -1,0 +1,405 @@
+{
+  "prd_chirho": {
+    "title": "Pass 4: Paper Suite Restructuring & Technical Hardening",
+    "version": "4.0",
+    "date": "2026-01-25",
+    "status": "in_progress",
+    "summary": "Address pass 4 critiques by (1) splitting the monolithic paper into focused papers, (2) hardening claims with qualifications, (3) completing missing benchmarks, and (4) fixing reproducibility issues.",
+    "critiques_addressed": [
+      "claude-paper-weaknesses-chirho.md",
+      "gemini-3-peer-chirho.md",
+      "gpt-5.2-critiques-chirho.md"
+    ]
+  },
+  "consensus_issues": {
+    "high_priority": [
+      {
+        "issue": "Scope creep - 6-8 papers worth of content in one",
+        "sources": ["GPT-5.2", "Claude"],
+        "action": "Split into paper suite with shared vocabulary"
+      },
+      {
+        "issue": "Unqualified 'unification = AND' claims",
+        "sources": ["GPT-5.2", "Claude"],
+        "action": "Add 'over finite domains' qualifier to 6 specific locations"
+      },
+      {
+        "issue": "FPGA metrics are simulation-only",
+        "sources": ["Claude", "Gemini"],
+        "action": "Prominently state in abstract; pursue actual synthesis"
+      },
+      {
+        "issue": "Missing CLP(FD) comparison",
+        "sources": ["Claude", "GPT-5.2"],
+        "action": "Add SWI-Prolog CLP(FD) benchmark comparison"
+      },
+      {
+        "issue": "3000x differentiable overhead prohibitive",
+        "sources": ["Claude", "Gemini"],
+        "action": "Document hybrid approach; explore quantization"
+      }
+    ],
+    "medium_priority": [
+      {
+        "issue": "Incomplete OCanren/faster-miniKanren table",
+        "sources": ["Claude"],
+        "action": "Complete benchmarks or remove table"
+      },
+      {
+        "issue": "Thread-safety for TermStoreChirho",
+        "sources": ["Gemini"],
+        "action": "Add RwLock or dashmap for parallel search"
+      },
+      {
+        "issue": "Contraction heuristics untested",
+        "sources": ["Claude"],
+        "action": "Add benchmark comparing greedy/min-degree/min-fill"
+      },
+      {
+        "issue": "Gradient attenuation 10^10 for 10-hop is catastrophic",
+        "sources": ["Claude"],
+        "action": "Acknowledge limitation; mention gradient clipping/residual"
+      }
+    ],
+    "low_priority": [
+      {
+        "issue": "LaTeX Unicode lambda in bibliography",
+        "sources": ["GPT-5.2"],
+        "action": "Replace λ with $\\lambda$ in CλaSH citation"
+      },
+      {
+        "issue": "Figure 5 log scale misleading",
+        "sources": ["Claude"],
+        "action": "Use proper log-scale axes"
+      }
+    ]
+  },
+  "paper_suite": {
+    "description": "Split monolithic paper into focused papers per GPT-5.2 recommendation",
+    "shared_vocabulary_file": "papers_chirho/shared_defs_chirho.tex",
+    "papers": [
+      {
+        "id": "A",
+        "title": "Bit-Parallel Finite-Domain Relational Search",
+        "subtitle": "The AND Paper",
+        "claim": "Finite-domain unification as bit-parallel domain intersection + union-find",
+        "contributions": [
+          "Data model (domains as bitmasks)",
+          "Correctness (soundness proof for finite domains)",
+          "CPU SIMD performance",
+          "Comparison to miniKanren baselines + CLP(FD)"
+        ],
+        "artifacts": ["rust_chirho/src/hardware_chirho.rs", "rust_chirho/src/union_find_chirho.rs"],
+        "priority": 1,
+        "status": "extract_from_main"
+      },
+      {
+        "id": "B",
+        "title": "Relations as Sparse Boolean Tensors",
+        "subtitle": "The Tensor Paper",
+        "claim": "Relational joins = Boolean tensor contraction; conde = tensor stacking",
+        "contributions": [
+          "Formal mapping relations → tensors",
+          "Complexity analysis",
+          "Contraction-order heuristics"
+        ],
+        "artifacts": ["python_chirho/tensor_network_chirho.py", "python_chirho/contraction_order_chirho.py"],
+        "priority": 2,
+        "status": "extract_from_main"
+      },
+      {
+        "id": "C",
+        "title": "Bridging Infinite Domains with Hash-Consed Term IDs",
+        "subtitle": "The Bridge Paper",
+        "claim": "Demand-driven hash-consing + finite-domain propagation handles lists/trees",
+        "contributions": [
+          "Precise semantics of ID-based domains",
+          "Occurs-check in path encoding",
+          "Completeness guarantees and limitations"
+        ],
+        "artifacts": ["rust_chirho/src/terms_chirho.rs", "python_chirho/hashcons_chirho.py"],
+        "priority": 3,
+        "status": "extract_from_main"
+      },
+      {
+        "id": "D",
+        "title": "Tabling and Mode-Driven Goal Scheduling",
+        "subtitle": "The Termination Paper",
+        "claim": "SLG tabling + mode analysis = termination + optimal scheduling",
+        "contributions": [
+          "Goal reordering by groundness",
+          "Tabling as incremental tensor construction",
+          "SCC detection for mutual recursion"
+        ],
+        "artifacts": ["python_chirho/tabling_complete_chirho.py", "python_chirho/mutual_recursion_chirho.py"],
+        "priority": 4,
+        "status": "extract_from_main"
+      },
+      {
+        "id": "E",
+        "title": "Fully Fused Logic Accelerator: FPGA Implementation",
+        "subtitle": "The Hardware Paper",
+        "claim": "Constraint propagation kernel maps to FPGA primitives (LUTs, CAM, regs)",
+        "contributions": [
+          "Architecture diagram",
+          "Resource model",
+          "Synthesis results (target: Artix-7)",
+          "Limitations (tabling in software)"
+        ],
+        "artifacts": ["calyx_chirho/domain_chirho.futil", "clash_chirho/MiniKanrenChirho.hs"],
+        "priority": 5,
+        "status": "pending_synthesis",
+        "hardware_tasks": [
+          "Vivado synthesis on Artix-7",
+          "Quartus synthesis on Cyclone V",
+          "Physical timing closure verification"
+        ]
+      },
+      {
+        "id": "F",
+        "title": "Differentiable Constraint Solving via Semiring Relaxation",
+        "subtitle": "The Learning Paper",
+        "claim": "Semiring generalization makes constraint propagation differentiable",
+        "contributions": [
+          "Soft AND/OR via probability semiring",
+          "Analytic gradients through tensor contraction",
+          "Temperature annealing schedule",
+          "Comparison to Scallop/DeepProbLog"
+        ],
+        "artifacts": ["rust_chirho/src/diff_semiring_chirho.rs", "python_chirho/differentiable_chirho.py"],
+        "priority": 6,
+        "status": "needs_baseline_comparison"
+      }
+    ],
+    "main_paper": {
+      "title": "miniKanren as 1-Bit Matrix Operations",
+      "file": "paper_chirho/paper_chirho.tex",
+      "role": "PRIMARY paper - comprehensive treatment. Paper suite provides focused extracts for venue-specific submissions.",
+      "status": "maintained",
+      "note": "The monolith remains the main paper. Paper suite extracts focused sections for targeted venues (PLDI, POPL, FPGA, NeurIPS) while the monolith serves as the complete reference and tech report."
+    }
+  },
+  "qualification_edits": {
+    "description": "Add 'over finite domains' qualifier per GPT-5.2 analysis",
+    "locations": [
+      {
+        "file": "paper_chirho/paper_chirho.tex",
+        "line_range": "50-57",
+        "current": "unification becomes bitwise AND",
+        "proposed": "unification over finite domains becomes bitwise AND"
+      },
+      {
+        "file": "paper_chirho/paper_chirho.tex",
+        "line_range": "72-81",
+        "current": "Unification then becomes bitwise AND",
+        "proposed": "Domain-equality constraints then become bitwise AND"
+      },
+      {
+        "file": "paper_chirho/paper_chirho.tex",
+        "line_range": "160-162",
+        "current": "unification is bitwise AND",
+        "proposed": "domain unification is bitwise AND"
+      },
+      {
+        "file": "paper_chirho/paper_chirho.tex",
+        "line_range": "212-225",
+        "current": "Hash consing preserves unification semantics",
+        "proposed": "Hash consing preserves finite-domain unification semantics"
+      },
+      {
+        "file": "paper_chirho/paper_chirho.tex",
+        "line_range": "316-322",
+        "current": "Full miniKanren semantics",
+        "proposed": "Full miniKanren semantics (reference engine) with finite-domain acceleration"
+      },
+      {
+        "file": "paper_chirho/paper_chirho.tex",
+        "line_range": "1023-1025",
+        "current": "unification = bitwise AND",
+        "proposed": "finite-domain unification = bitwise AND"
+      }
+    ],
+    "model_sentence": "Line 971: 'unification over finite domains is bitwise AND' - already correct"
+  },
+  "benchmarks_to_add": {
+    "clp_fd_comparison": {
+      "description": "Add SWI-Prolog CLP(FD) baseline comparison",
+      "benchmarks": ["N-Queens 8-12", "Sudoku easy/hard", "Send More Money"],
+      "script": "benchmarks_chirho/clpfd_bench_chirho.pl",
+      "priority": "high"
+    },
+    "contraction_heuristics": {
+      "description": "Compare greedy vs min-degree vs min-fill",
+      "benchmarks": ["Synthetic tensor networks", "Real relational queries"],
+      "script": "rust_chirho/benches/contraction_heuristics_bench_chirho.rs",
+      "priority": "medium"
+    },
+    "ocanren_completion": {
+      "description": "Fill in missing OCanren/faster-miniKanren cells",
+      "benchmarks": ["appendo", "membero", "reverseo", "type inference"],
+      "script": "benchmarks_chirho/ocanren_bench_chirho.ml",
+      "priority": "medium"
+    },
+    "scallop_deepproblog": {
+      "description": "Compare differentiable logic to established baselines",
+      "benchmarks": ["MNIST addition", "Path finding", "Knowledge graph completion"],
+      "priority": "high_for_paper_F"
+    }
+  },
+  "fully_fused_logic_accelerator": {
+    "description": "Per Gemini: correct solution to GPU transfer bottleneck",
+    "concept": "Eliminate PCIe round-trips by fusing entire logic program into single GPU kernel",
+    "components": [
+      {
+        "name": "Fused Domain Store",
+        "description": "All domain bitmasks in GPU shared memory",
+        "memory_layout": "BitVec64 × num_vars contiguous"
+      },
+      {
+        "name": "Fused Propagation Kernel",
+        "description": "All constraint propagation in single kernel launch",
+        "approach": "Compile constraint graph to CUDA/compute shader"
+      },
+      {
+        "name": "Fused Search State",
+        "description": "Choice points and backtracking on-device",
+        "structure": "Stack of (var_id, tried_values) in local memory"
+      }
+    ],
+    "expected_benefit": "Eliminate ~10μs PCIe latency per constraint check",
+    "implementation_path": [
+      "Define memory layout for domain store",
+      "Implement propagation as compute shader",
+      "Add choice point stack to SearchStateChirho",
+      "Benchmark against current discrete-transfer approach"
+    ],
+    "priority": "future_work_paper_E"
+  },
+  "reproducibility_fixes": {
+    "github_repo": {
+      "issue": "GitHub link untested in paper",
+      "action": "Verify github.com/loveJesus/minikanren_1bit_chirho exists and is public",
+      "status": "check_required"
+    },
+    "example_names": {
+      "issue": "Paper references gradient_table_chirho.rs but impl has learn_deep_chirho.rs",
+      "action": "Sync example names between paper and implementation",
+      "status": "check_required"
+    },
+    "test_count": {
+      "issue": "Paper claims 209+ tests but critique found 57",
+      "action": "Run cargo test --all-features and count; update paper",
+      "status": "check_required"
+    },
+    "ci_harness": {
+      "issue": "No continuous integration",
+      "action": "Add GitHub Actions workflow for benchmarks",
+      "file": ".github/workflows/bench_chirho.yml",
+      "status": "to_create"
+    }
+  },
+  "tasks": [
+    {
+      "id": "P4-01",
+      "title": "Create papers_chirho folder structure",
+      "description": "Set up folder for paper suite with shared definitions",
+      "status": "completed",
+      "priority": 1,
+      "completed_at": "2026-01-25"
+    },
+    {
+      "id": "P4-02",
+      "title": "Add qualification edits to paper_chirho.tex",
+      "description": "Insert 'over finite domains' at 6 locations identified by GPT-5.2",
+      "status": "completed",
+      "priority": 1,
+      "completed_at": "2026-01-25"
+    },
+    {
+      "id": "P4-03",
+      "title": "Fix LaTeX Unicode lambda",
+      "description": "Replace λ with $\\lambda$ in CλaSH bibliography entry",
+      "status": "completed",
+      "priority": 1,
+      "completed_at": "2026-01-25"
+    },
+    {
+      "id": "P4-04",
+      "title": "Verify GitHub repo and sync example names",
+      "description": "Check repo exists, sync paper references with actual file names",
+      "status": "completed",
+      "priority": 1,
+      "completed_at": "2026-01-25",
+      "notes": "Repo exists (HTTP 200). Fixed example commands in paper (sudoku/nqueens run via bench, not example)"
+    },
+    {
+      "id": "P4-05",
+      "title": "Count actual tests and update paper",
+      "description": "Run cargo test --all-features, count tests, update claim",
+      "status": "completed",
+      "priority": 1,
+      "completed_at": "2026-01-25",
+      "notes": "257 tests pass (4 GPU failures). Updated paper from 209+ to 257+"
+    },
+    {
+      "id": "P4-06",
+      "title": "Extract Paper A: Bit-Parallel Engine",
+      "description": "Create focused paper on core AND insight with CLP(FD) comparison",
+      "status": "pending",
+      "priority": 2
+    },
+    {
+      "id": "P4-07",
+      "title": "Add CLP(FD) benchmark comparison",
+      "description": "Benchmark against SWI-Prolog CLP(FD) for N-Queens, Sudoku",
+      "status": "pending",
+      "priority": 2
+    },
+    {
+      "id": "P4-08",
+      "title": "Add contraction heuristics benchmark",
+      "description": "Compare greedy/min-degree/min-fill on real queries",
+      "status": "pending",
+      "priority": 3
+    },
+    {
+      "id": "P4-09",
+      "title": "Complete OCanren comparison table",
+      "description": "Fill missing cells or remove incomplete table",
+      "status": "pending",
+      "priority": 3
+    },
+    {
+      "id": "P4-10",
+      "title": "Document fully fused logic accelerator design",
+      "description": "Per Gemini: detail memory layout for fused GPU kernel",
+      "status": "pending",
+      "priority": 4
+    },
+    {
+      "id": "P4-11",
+      "title": "Add thread-safety to TermStoreChirho",
+      "description": "Add RwLock or use dashmap for parallel search",
+      "status": "pending",
+      "priority": 4
+    },
+    {
+      "id": "P4-12",
+      "title": "Pursue actual FPGA synthesis",
+      "description": "Run Vivado/Quartus synthesis, get real resource numbers",
+      "status": "pending",
+      "priority": 5
+    }
+  ],
+  "acceptance_criteria": {
+    "pass4_complete_when": [
+      "All 6 qualification edits applied",
+      "LaTeX builds without Unicode errors",
+      "GitHub repo verified accessible",
+      "Example names synced between paper and code",
+      "Test count verified and updated",
+      "papers_chirho folder created with Paper A draft",
+      "CLP(FD) benchmark added (or justified exclusion)"
+    ]
+  }
+}

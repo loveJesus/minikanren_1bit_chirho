@@ -1,0 +1,121 @@
+# CI Workflow for miniKanren 1-Bit ☧
+#
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life.
+# John 3:16
+
+name: CI
+
+on:
+  push:
+    branches: [ main_chirho, main ]
+  pull_request:
+    branches: [ main_chirho, main ]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  test_chirho:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-action@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            rust_chirho/target/
+          key: cargo-test-v1
+
+      - name: Run tests (default features)
+        working-directory: rust_chirho
+        run: cargo test --lib
+
+      - name: Run tests (all features except GPU)
+        working-directory: rust_chirho
+        run: cargo test --lib --features "egraph_native_chirho,optics_chirho,free_goal_chirho,comonad_chirho,linear_chirho"
+
+      - name: Check formatting
+        working-directory: rust_chirho
+        run: cargo fmt --check
+
+      - name: Run clippy
+        working-directory: rust_chirho
+        run: cargo clippy -- -D warnings
+
+  bench_chirho:
+    name: Benchmark Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-action@stable
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            rust_chirho/target/
+          key: cargo-bench-v1
+
+      - name: Check benchmarks compile
+        working-directory: rust_chirho
+        run: cargo check --benches
+
+      - name: Run quick benchmark (N-Queens 8)
+        working-directory: rust_chirho
+        run: cargo bench --bench criterion_bench_chirho -- "NQueens/8" --sample-size 10
+
+  doctest_chirho:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-action@stable
+
+      - name: Run doctests
+        working-directory: rust_chirho
+        run: cargo test --doc
+
+      - name: Build documentation
+        working-directory: rust_chirho
+        run: cargo doc --no-deps
+
+  suffix_audit_chirho:
+    name: _chirho Suffix Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check public items have _chirho suffix
+        working-directory: rust_chirho
+        run: |
+          echo "Checking for public items without _chirho suffix..."
+          VIOLATIONS=$(grep -rn "^pub struct\|^pub enum\|^pub trait\|^pub fn\|^pub type\|^pub const" src/ --include="*.rs" | grep -v "_chirho\|Chirho\|_CHIRHO" | head -20 || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "ERROR: Found public items without _chirho suffix!"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "All public items have proper _chirho suffix."
+
+# Soli Deo Gloria ☧

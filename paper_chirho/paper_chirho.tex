@@ -49,7 +49,7 @@
 
 \begin{abstract}
 We observe that miniKanren's relational search can be represented as sparse Boolean tensor operations.
-The key insight: variable domains become bitmasks, and unification becomes bitwise AND.
+The key insight: variable domains become bitmasks, and unification over finite domains becomes bitwise AND.
 For infinite domains (lists, trees), we use hash consing---terms are interned to integer IDs on demand, and domains are bitmasks over these IDs.
 
 This mapping has three consequences.
@@ -71,13 +71,13 @@ This is flexible but inherently sequential.
 
 This paper explores a different representation.
 When variable domains are finite, we can represent them as bitmasks---bit $i$ is 1 if value $i$ is possible.
-Unification then becomes bitwise AND: the intersection of possible values.
+Domain-equality constraints then become bitwise AND: the intersection of possible values.
 This is a single CPU instruction, trivially parallelizable.
 
 We develop this observation into a complete system:
 \begin{itemize}
   \item \textbf{Domains as bitmasks}: A 64-bit word represents 64 possible values
-  \item \textbf{Unification as AND}: Constraint propagation via SIMD
+  \item \textbf{Domain Unification as AND}: Constraint propagation via SIMD
   \item \textbf{Relations as tensors}: An $n$-ary relation is a sparse Boolean tensor
   \item \textbf{Composition as contraction}: Joining relations contracts shared dimensions
   \item \textbf{Infinite domains via hashing}: Terms are hash-consed to integer IDs on demand
@@ -158,7 +158,7 @@ Figure~\ref{fig:architecture} shows the overall architecture.
   \node[above=0.1cm of unify] {\small 1 cycle};
 
 \end{tikzpicture}
-\caption{Architecture: Terms are hash-consed to IDs, IDs index into domain bitmasks, unification is bitwise AND.}
+\caption{Architecture: Terms are hash-consed to IDs, IDs index into domain bitmasks, domain unification is bitwise AND.}
 \label{fig:architecture}
 \end{figure}
 
@@ -221,7 +221,7 @@ This is \emph{lazy enumeration}: we only materialize terms that the search actua
 For relations like \texttt{appendo}, we generate list structures on demand rather than pre-enumerating all possible lists.
 
 \begin{proposition}[Soundness]
-Hash consing preserves unification semantics: $\text{unify}(t_1, t_2)$ succeeds iff $\text{intern}(t_1) = \text{intern}(t_2)$ or the terms can be made equal through variable binding.
+Hash consing preserves finite-domain unification semantics: $\text{unify}(t_1, t_2)$ succeeds iff $\text{intern}(t_1) = \text{intern}(t_2)$ or the terms can be made equal through variable binding.
 \end{proposition}
 
 In hardware, hash consing maps to Content-Addressable Memory (CAM): given a term's structure, CAM returns its ID in a single cycle.
@@ -318,7 +318,7 @@ The Rust implementation provides:
   \item Hash-consed term store (8ns intern time)
   \item Union-find with path compression ($O(\alpha(n))$ operations)
   \item SIMD-accelerated domain operations (AVX2/AVX-512)
-  \item Full miniKanren semantics: \texttt{==}, \texttt{conde}, \texttt{fresh}, \texttt{not}, \texttt{conda}, \texttt{condu}, \texttt{=/=}, \texttt{project}
+  \item Full miniKanren semantics (reference engine with finite-domain acceleration): \texttt{==}, \texttt{conde}, \texttt{fresh}, \texttt{not}, \texttt{conda}, \texttt{condu}, \texttt{=/=}, \texttt{project}
 \end{itemize}
 
 \subsection{Hardware Implementation}
@@ -1002,26 +1002,30 @@ This paper is designed to be reproducible by frontier language models. To reprod
 git clone https://github.com/loveJesus/minikanren_1bit_chirho
 cd minikanren_1bit_chirho/rust_chirho
 
-# Run all tests (should report 209+ passing)
+# Run all tests (should report 257+ passing)
 cargo test
 
 # Run benchmarks
 cargo bench --bench criterion_bench_chirho
 
 # Run examples
-cargo run --example sudoku_chirho
-cargo run --example nqueens_chirho
-cargo run --example type_infer_chirho
-cargo run --example synthesis_chirho
-cargo run --example profile_breakdown_chirho
-cargo run --example learn_deep_chirho
+cargo run --release --example type_infer_chirho
+cargo run --release --example synthesis_chirho
+cargo run --release --example profile_breakdown_chirho
+cargo run --release --example learn_deep_chirho
+cargo run --release --example gradient_table_chirho
+cargo run --release --example zebra_chirho
+
+# Run solver benchmarks (N-Queens, Sudoku)
+cargo bench --bench criterion_bench_chirho -- "NQueens"
+cargo bench --bench criterion_bench_chirho -- "Sudoku"
 
 # Parallel scaling (requires parallel feature)
 cargo bench --features parallel_chirho --bench parallel_bench_chirho
 \end{verbatim}
 
 \textbf{LLM Reproduction Prompt:} ``Read AGENTS.md and paper\_chirho.tex from the minikanren\_1bit\_chirho repository.
-Implement the core mapping (unification = bitwise AND, conde = row duplication) in your preferred language.
+Implement the core mapping (finite-domain unification = bitwise AND, conde = row duplication) in your preferred language.
 Verify by solving 8-Queens and comparing performance against a stream-based miniKanren.''
 
 % ============================================================================

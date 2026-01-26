@@ -67,6 +67,108 @@
 //! | Latency per step | 10μs + compute | compute only | 10x for small batches |
 //! | Memory bandwidth | CPU↔GPU limited | VRAM bandwidth | 10x+ |
 
+/// Memory layout for fused GPU kernel (per PRD P4-10)
+///
+/// # Architecture (from Gemini critique)
+/// ```text
+/// ┌─────────────────────────────────────────────────────────────────┐
+/// │                    GPU VRAM (Unified Memory)                     │
+/// ├─────────────────────────────────────────────────────────────────┤
+/// │  ┌─────────────────┐  ┌──────────────────┐  ┌───────────────┐  │
+/// │  │  Domain Store   │  │  Term Store      │  │  Search State │  │
+/// │  │  BitVec64 × N   │  │  Hash-consed IDs │  │  Choice Stack │  │
+/// │  └─────────────────┘  └──────────────────┘  └───────────────┘  │
+/// │           │                    │                    │          │
+/// │           └────────────────────┼────────────────────┘          │
+/// │                                │                                │
+/// │  ┌─────────────────────────────▼──────────────────────────────┐│
+/// │  │            Fused Propagation Kernel                        ││
+/// │  │  • Domain intersection (AND)                               ││
+/// │  │  • Constraint propagation (AC-3)                           ││
+/// │  │  • Backtracking (choice point management)                  ││
+/// │  └────────────────────────────────────────────────────────────┘│
+/// │                                │                                │
+/// │                                ▼                                │
+/// │                       Solutions (on-device)                     │
+/// └─────────────────────────────────────────────────────────────────┘
+/// ```
+pub mod memory_layout_chirho {
+    /// Fused domain store layout
+    #[derive(Clone, Debug)]
+    pub struct FusedDomainStoreChirho {
+        pub num_vars_chirho: usize,
+        pub domain_size_chirho: usize,
+        pub memory_bytes_chirho: usize,
+    }
+
+    impl FusedDomainStoreChirho {
+        /// BitVec64 domains: 8 bytes per var
+        pub fn bitvec64_chirho(num_vars_chirho: usize) -> Self {
+            Self {
+                num_vars_chirho,
+                domain_size_chirho: 64,
+                memory_bytes_chirho: num_vars_chirho * 8,
+            }
+        }
+
+        /// Hierarchical4k domains: 520 bytes per var (root + 64 leaves)
+        pub fn hierarchical4k_chirho(num_vars_chirho: usize) -> Self {
+            Self {
+                num_vars_chirho,
+                domain_size_chirho: 4096,
+                memory_bytes_chirho: num_vars_chirho * 520,
+            }
+        }
+    }
+
+    /// Choice frame for backtracking
+    #[derive(Clone, Debug)]
+    pub struct ChoiceFrameChirho {
+        pub var_id_chirho: u32,
+        pub tried_mask_chirho: u64,
+        pub saved_domains_offset_chirho: usize,
+    }
+
+    /// Total memory layout
+    #[derive(Clone, Debug)]
+    pub struct FusedMemoryLayoutChirho {
+        pub domain_bytes_chirho: usize,
+        pub stack_bytes_chirho: usize,
+        pub constraint_bytes_chirho: usize,
+        pub total_bytes_chirho: usize,
+    }
+
+    impl FusedMemoryLayoutChirho {
+        pub fn compute_chirho(
+            num_vars_chirho: usize,
+            domain_size_chirho: usize,
+            max_depth_chirho: usize,
+            num_constraints_chirho: usize,
+        ) -> Self {
+            let domain_bytes_chirho = if domain_size_chirho <= 64 {
+                num_vars_chirho * 8
+            } else {
+                num_vars_chirho * 520
+            };
+
+            let state_size_chirho = domain_bytes_chirho + 16;
+            let stack_bytes_chirho = max_depth_chirho * state_size_chirho;
+            let constraint_bytes_chirho = num_constraints_chirho * 32;
+
+            Self {
+                domain_bytes_chirho,
+                stack_bytes_chirho,
+                constraint_bytes_chirho,
+                total_bytes_chirho: domain_bytes_chirho + stack_bytes_chirho + constraint_bytes_chirho,
+            }
+        }
+
+        pub fn fits_in_vram_chirho(&self, vram_bytes_chirho: usize) -> bool {
+            self.total_bytes_chirho <= vram_bytes_chirho
+        }
+    }
+}
+
 /// Marker module for GPU fused design
 /// Real implementation would require wgpu feature
 #[cfg(feature = "gpu_chirho")]
