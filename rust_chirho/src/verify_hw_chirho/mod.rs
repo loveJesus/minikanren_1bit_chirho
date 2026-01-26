@@ -11,6 +11,9 @@ mod cmd_chirho;
 pub use engine_chirho::*;
 pub use cmd_chirho::*;
 
+#[cfg(test)]
+mod proptest_chirho;
+
 #[cfg(feature = "verilator_chirho")]
 mod verilator_chirho;
 #[cfg(feature = "verilator_chirho")]

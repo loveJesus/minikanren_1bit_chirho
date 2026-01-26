@@ -60,7 +60,7 @@ impl EngineStateChirho {
     /// Check if domain is singleton (exactly one value)
     #[inline]
     fn is_singleton_chirho(domain_chirho: u64) -> bool {
-        domain_chirho != 0 && (domain_chirho & (domain_chirho - 1)) == 0
+        domain_chirho != 0 && (domain_chirho & domain_chirho.wrapping_sub(1)) == 0
     }
 
     /// Get lowest set bit (isolate one possible value)
@@ -72,7 +72,7 @@ impl EngineStateChirho {
     /// Clear lowest set bit (remaining possibilities)
     #[inline]
     fn clear_lowest_chirho(domain_chirho: u64) -> u64 {
-        domain_chirho & (domain_chirho - 1)
+        domain_chirho & domain_chirho.wrapping_sub(1)
     }
 
     /// Fork: split domain into (lowest single value, remaining values)
