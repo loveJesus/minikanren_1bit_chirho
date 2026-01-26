@@ -197,8 +197,8 @@ assign intersected_chirho = domain_a_chirho & domain_b_chirho;
 
 ```cuda
 // GPU: Must emulate or use int64 tricks
-__device__ uint64_t intersect(uint64_t a, uint64_t b) {
-    return a & b;  // Single op, but memory-bound
+__device__ uint64_t intersect_chirho(uint64_t a_chirho, uint64_t b_chirho) {
+    return a_chirho & b_chirho;  // Single op, but memory-bound
 }
 ```
 

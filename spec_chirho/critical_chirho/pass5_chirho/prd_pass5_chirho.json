@@ -34,7 +34,10 @@
       "External library imports (numpy, Arc, etc.)",
       "Framework-required names (src/, routes/, lib/)",
       "Built-in magic methods (__init__, etc.)",
-      "Third-party identifiers in documentation (AWS, FPGA, GH200 as product names)"
+      "Third-party product names in prose (AWS, FPGA, GH200, SICStus, Gecode)",
+      "Standard benchmark names in prose (N-Queens, Sudoku, Graph Coloring)",
+      "Table headers describing external concepts",
+      "Code examples in docs MUST use _chirho for our identifiers"
     ]
   },
 
