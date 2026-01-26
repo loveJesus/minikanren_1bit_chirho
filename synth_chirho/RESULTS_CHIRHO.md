@@ -1,29 +1,40 @@
 # FPGA Synthesis Results ☧
 
-## Headline Result (Validated on AWS F1)
+## Headline Result (Post-Route Timing on AWS F1 Build Environment)
 
-> **FPGA achieves 280 MHz on Xilinx VU9P, executing 35M constraint-propagation
-> steps/sec with 28.6 ns deterministic latency, achieving 104× speedup over CPU.**
+> **Clash design meets timing at 280 MHz on Xilinx VU9P after Vivado place-and-route.
+> The 8-cycle unify kernel implies 35M unify ops/sec throughput (projected).**
 
 | Metric | FPGA (Clash @ 280 MHz) | CPU (Rust @ 3 GHz) | Speedup |
 |--------|------------------------|--------------------|---------|
-| Throughput | 35M unify/sec | 333K unify/sec | **104×** |
-| Latency | 28.6 ns (deterministic) | ~3 μs (variable) | **105×** |
+| Throughput | 35M unify/sec† | 333K unify/sec | **104×** |
+| Latency | 28.6 ns (deterministic)† | ~3 μs (variable) | **105×** |
 | Cycles/unify | 8 | ~9000 | **1125×** |
 
-## Vivado Synthesis (2026-01-26)
+†Projected from timing report; actual throughput requires on-FPGA measurement.
 
-Synthesized and routed with Vivado 2024.2 on AWS F1 c5.4xlarge:
+**What "unify" means:** One invocation of the hardware kernel's unify micro-sequence
+(constrain two 64-bit domains via AND, check for empty → fail or continue).
+
+## Vivado Post-Route Timing (2026-01-26)
+
+Synthesized and routed with Vivado 2024.2 on AWS F1 c5.4xlarge (dev instance, not F1 FPGA):
 
 | Metric | Value |
 |--------|-------|
 | **Achieved Fmax** | **280.19 MHz** |
 | WNS (Worst Negative Slack) | +0.431 ns |
+| TNS (Total Negative Slack) | 0.000 ns |
+| WHS (Worst Hold Slack) | +0.042 ns |
+| THS (Total Hold Slack) | 0.000 ns |
 | Target Clock | 250 MHz (4 ns period) |
-| LUTs | 21,820 (1.85% of VU9P) |
-| Registers | 9,839 (0.42% of VU9P) |
+| LUTs | 21,820 (~1.8% of VU9P)‡ |
+| Registers | 9,839 (~0.4% of VU9P)‡ |
 | Target Device | xcvu9p-flgb2104-2-i |
 | Timing Met | ✅ All constraints met |
+
+‡Utilization percentages are approximate. VU9P has ~1.18M LUTs; precise
+hierarchical utilization requires `report_utilization -hierarchical`.
 
 ---
 
@@ -100,10 +111,10 @@ This is a Calyx idiom issue, not a fundamental limitation.
 
 ## Notes
 
-- All synthesis used Yosys generic techmap (technology-independent)
-- For accurate Fmax, use Quartus (Intel) or Vivado (AMD)
-- Estimated Fmax: 100-200 MHz based on similar designs
-- Timing closure on physical hardware is pending
+- Yosys synthesis above used generic techmap (technology-independent)
+- Vivado 2024.2 post-route timing achieved **280 MHz** on VU9P (see above)
+- On-FPGA validation (actual F1 bitstream execution) is pending
+- Next step: Create AFI and run on physical F1 instance
 
 ---
 

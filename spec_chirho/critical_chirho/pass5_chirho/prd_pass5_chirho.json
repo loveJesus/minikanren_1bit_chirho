@@ -7,16 +7,79 @@
   "description": "Validate on physical FPGA, publish papers, build community around miniKanren 1-bit hardware acceleration",
 
   "headline_result": {
-    "description": "FPGA synthesized on Xilinx VU9P at 280 MHz with Vivado 2024.2",
+    "description": "Post-route timing achieved 280 MHz on Xilinx VU9P with Vivado 2024.2",
     "metrics": {
       "fmax_mhz": 280.19,
       "wns_ns": 0.431,
+      "tns_ns": 0.0,
+      "whs_ns": 0.042,
+      "ths_ns": 0.0,
       "luts": 21820,
       "registers": 9839,
       "target_device": "xcvu9p-flgb2104-2-i",
       "tool": "Vivado 2024.2",
-      "validated_on": "AWS F1 c5.4xlarge dev instance"
-    }
+      "validated_on": "AWS F1 c5.4xlarge dev instance (post-route, not on-FPGA)"
+    },
+    "caveats": [
+      "Throughput 35M unify/sec is projected from timing, not measured on physical FPGA",
+      "Utilization percentages are approximate (back-of-envelope)",
+      "On-FPGA validation with AFI bitstream is pending"
+    ]
+  },
+
+  "verification_gap": {
+    "description": "From review_chirho.md: The 'Truth' (Rust reference) and 'Power' (Clash FPGA) are not yet verified bit-identical",
+    "current_state": {
+      "truth": "rust_chirho (SearchStateHwChirho)",
+      "power": "clash_chirho (Mealy machine Verilog)"
+    },
+    "missing_link": "Verilator integration to run both side-by-side with proptest fuzzing",
+    "action_required": "Add Verilator dev-dependency, fuzz test: assert_eq!(rust_resp, hw_resp)"
+  },
+
+  "milestone_path": {
+    "description": "From recommendations_pass5_chirho.md: The wisest path to unbounded accelerator",
+    "milestones": [
+      {
+        "id": "M1",
+        "name": "Golden FPGA Demo",
+        "description": "Pick N-Queens or Sudoku, run on FPGA, verify bit-identical to Rust",
+        "status": "next"
+      },
+      {
+        "id": "M2",
+        "name": "Unbounded Search (State Spilling)",
+        "description": "External work queue in DRAM, FPGA processes batches of states",
+        "status": "future"
+      },
+      {
+        "id": "M3",
+        "name": "Unbounded Terms (External Hash-Consing)",
+        "description": "Small on-chip cache, backing store in DRAM/host",
+        "status": "future"
+      },
+      {
+        "id": "M4",
+        "name": "Scale Variables/Domains (Paged Representations)",
+        "description": "Substitution in DRAM, FPGA caches hot slices; paged bitsets for domains >64",
+        "status": "future"
+      },
+      {
+        "id": "M5",
+        "name": "Host-Managed Tabling",
+        "description": "Host does SLG completion/scheduling, FPGA does propagation inner loop",
+        "status": "future"
+      }
+    ]
+  },
+
+  "cautions": {
+    "description": "From recommendations_pass5_chirho.md: What NOT to claim",
+    "items": [
+      "Don't claim 'fully unbounded in pure hardware' - not possible with finite BRAM/FF/LUT",
+      "Don't claim vendor utilization percentages without vendor mapping (Vivado/Quartus)",
+      "Don't conflate 'kernel unification as AND' with 'full structural unification' without finite-domain qualifier"
+    ]
   },
 
   "phases": [
@@ -25,6 +88,14 @@
       "name": "Validate",
       "duration": "Weeks 1-2",
       "tasks": [
+        {
+          "id": "P5-00",
+          "title": "Verilator verification bridge",
+          "description": "Integrate Verilator as dev-dependency, fuzz test Clash Verilog against Rust SearchStateHwChirho to prove bit-identical behavior",
+          "status": "pending",
+          "priority": "critical",
+          "source": "review_chirho.md: Phase 1 Sanctification"
+        },
         {
           "id": "P5-01",
           "title": "Physical FPGA bring-up",
