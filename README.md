@@ -99,6 +99,31 @@ Single operations (hardware): **~420 picoseconds** (single CPU cycle)
 - Soft intersect: 1.26 µs (**36× slower**)
 - But soft enables gradient-based learning through logic programs
 
+### Gradients Flow Through Logic = Gradients Flow Through Tensors
+
+**Key insight:** Logic constraints ARE tensors. Backprop through logic = adjoint of tensor contraction.
+
+```
+Addition constraint: T[d1][d2][sum] = 1 iff d1 + d2 = sum
+
+Forward (tensor contraction):
+  P(sum=s) = Σ_{d1+d2=s} P(a=d1) × P(b=d2)    // soft-AND = multiply
+
+Backward (adjoint = transpose):
+  ∂L/∂P(a=d1) = Σ_{d2: d1+d2=target} P(b=d2) × ∂L/∂P(sum)
+```
+
+This is demonstrated in `symbolic_addition_analytic_chirho.rs`:
+```bash
+cargo run --release --example symbolic_addition_analytic_chirho
+# Output: 100% accuracy with analytic backprop through tensor contraction
+```
+
+**Why this matters:**
+- No finite-difference approximation needed
+- Exact gradients via chain rule through tensor ops
+- Same framework for any relational constraint (not just addition)
+
 ### Massively Parallel Hardware
 
 The 1-bit matrix representation is ideal for parallel hardware:

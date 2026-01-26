@@ -461,6 +461,30 @@ Key findings: (1) No exploding gradients at any depth. (2) Gradients attenuate $
 
 Unlike RNNs with saturating activations, logic composition via soft-AND maintains predictable gradient structure. The attenuation is \emph{gradual} (10$\times$/hop), not \emph{catastrophic} (exponential collapse).
 
+\subsubsection{Gradients Through Tensors: The Adjoint Mechanism}
+
+The key insight: \textbf{backpropagation through logic = adjoint of tensor contraction}.
+
+Consider an addition constraint as a sparse Boolean tensor $T[d_1, d_2, s] = 1$ iff $d_1 + d_2 = s$. The forward pass (soft tensor contraction) computes:
+\[
+P(\text{sum}=s) = \sum_{d_1 + d_2 = s} P(a = d_1) \cdot P(b = d_2)
+\]
+
+The backward pass is the \emph{adjoint} (transpose) of this contraction:
+\begin{align}
+\frac{\partial L}{\partial P(a = d_1)} &= \sum_{d_2 : d_1 + d_2 = s^*} P(b = d_2) \cdot \frac{\partial L}{\partial P(\text{sum})} \\
+\frac{\partial L}{\partial P(b = d_2)} &= \sum_{d_1 : d_1 + d_2 = s^*} P(a = d_1) \cdot \frac{\partial L}{\partial P(\text{sum})}
+\end{align}
+
+This generalizes to \emph{any} relational constraint represented as a sparse tensor. The example \texttt{symbolic\_addition\_analytic\_chirho.rs} demonstrates end-to-end analytic backpropagation:
+\begin{itemize}
+  \item Forward: pattern $\to$ classifier $\to$ softmax $\to$ tensor contraction $\to$ $P(\text{constraint})$
+  \item Backward: chain rule through each stage, including the tensor adjoint
+  \item Result: 100\% accuracy learning digit classification from addition supervision alone
+\end{itemize}
+
+This proves the central claim: gradients flow through logic because \emph{logic constraints are tensors}, and tensor operations have well-defined adjoints.
+
 % ============================================================================
 \section{Evaluation}
 % ============================================================================
