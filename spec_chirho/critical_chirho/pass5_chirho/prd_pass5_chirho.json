@@ -184,10 +184,16 @@
         {
           "id": "P5-01",
           "title": "Physical FPGA Incarnation",
-          "description": "Synthesize and run on real silicon (AWS F1 or local board). Move beyond simulation to physical reality.",
+          "description": "Synthesize and run on real silicon (AWS F1). Move beyond simulation to physical reality.",
           "status": "pending",
           "priority": "high",
-          "tangible_deliverable_chirho": "A photo/screenshot of the board/AFI running the golden demo with observable output (LED/UART/log)."
+          "tangible_deliverable_chirho": "AFI created and loaded on F1, with terminal log showing successful FPGA load + golden demo output (N-Queens solutions or Sudoku solve).",
+          "artifacts_to_download_chirho": [
+            "searchEngineChirho.dcp (routed checkpoint)",
+            "timing_chirho.rpt",
+            "utilization_chirho.rpt",
+            "fpga_run_log_chirho.txt (terminal output from F1 run)"
+          ]
         },
         {
           "id": "P5-02",
