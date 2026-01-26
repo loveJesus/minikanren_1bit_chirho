@@ -936,7 +936,7 @@ Our semiring abstraction achieves similar goals with explicit gradient computati
 SyGuS \cite{sygus_chirho} defines syntax-guided synthesis problems.
 CVC5 \cite{cvc5_chirho} is a state-of-the-art SyGuS solver.
 Barliman \cite{barliman_chirho} uses miniKanren for program synthesis.
-Our domain-pruned enumeration achieves significant speedups on simple problems.
+Our domain-pruned enumeration achieves speedups on simple problems.
 
 \textbf{Hardware logic programming.}
 Prior work on Prolog machines (Warren Abstract Machine \cite{wam_chirho}) focused on instruction-level parallelism.
@@ -968,7 +968,7 @@ This formulation enables:
   \item Differentiable relaxation for neural-symbolic integration
 \end{itemize}
 
-The key insight---that unification over finite domains is bitwise AND---unlocks massive parallelism while preserving the elegant relational programming model.
+The observation that unification over finite domains is bitwise AND enables parallelism while preserving the relational programming model.
 
 \paragraph{Code Availability.}
 All implementations (Python prototype, Rust library, FPGA via Calyx/Clash) are open source:\\
