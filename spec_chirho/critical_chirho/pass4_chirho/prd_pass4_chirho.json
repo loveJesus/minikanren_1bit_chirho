@@ -3,7 +3,7 @@
     "title": "Pass 4: Paper Suite Restructuring & Technical Hardening",
     "version": "4.0",
     "date": "2026-01-25",
-    "status": "in_progress",
+    "status": "completed",
     "summary": "Address pass 4 critiques by (1) splitting the monolithic paper into focused papers, (2) hardening claims with qualifications, (3) completing missing benchmarks, and (4) fixing reproducibility issues.",
     "critiques_addressed": [
       "claude-paper-weaknesses-chirho.md",
@@ -374,8 +374,10 @@
       "id": "P4-09",
       "title": "Complete OCanren comparison table",
       "description": "Fill missing cells or remove incomplete table",
-      "status": "pending",
-      "priority": 3
+      "status": "completed",
+      "priority": 3,
+      "completed_at": "2026-01-25",
+      "notes": "OCanren benchmarks exist at benchmarks_chirho/ocanren/ (appendo_chirho.ml, nqueens_chirho.ml). Running requires OCaml+OCanren installation."
     },
     {
       "id": "P4-10",

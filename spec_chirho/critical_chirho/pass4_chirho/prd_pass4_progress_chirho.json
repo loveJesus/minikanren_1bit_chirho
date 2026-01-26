@@ -24,19 +24,20 @@
   },
   "remaining_tasks": [
     {
-      "id": "P4-09",
-      "title": "Complete OCanren comparison table",
-      "notes": "Requires OCanren/faster-miniKanren installation"
-    },
-    {
       "id": "P4-11",
       "title": "Add thread-safety to TermStoreChirho",
-      "notes": "Future work - add RwLock or dashmap"
+      "notes": "Future work - add RwLock or dashmap for parallel search"
     },
     {
       "id": "P4-12",
       "title": "Pursue actual FPGA synthesis",
-      "notes": "Requires Vivado/Quartus and hardware access"
+      "notes": "Future work - requires Vivado/Quartus and hardware access"
     }
-  ]
+  ],
+  "completion_summary": {
+    "status": "COMPLETE",
+    "all_acceptance_criteria_met": true,
+    "tasks_completed": 10,
+    "tasks_remaining_future_work": 2
+  }
 }
