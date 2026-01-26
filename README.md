@@ -43,7 +43,9 @@ miniKanren search = sparse Boolean tensor network contraction
 | Domain Type | Size | Memory | Use Case |
 |-------------|------|--------|----------|
 | `BitVec64Chirho` | 64 | 8 bytes | Small enums, flags |
+| `BitVec256Chirho` | 256 | 32 bytes | Extended enums (AVX2/AVX-512) |
 | `Hierarchical4kChirho` | 4,096 | 520 bytes | ASCII, small integers |
+| `Hierarchical16kChirho` | 16,384 | 2 KB | Extended ASCII, type IDs |
 | `Hierarchical256kChirho` | 262,144 | 32 KB | Unicode BMP |
 | `DiffHierarchical4kChirho` | 4,096 soft | 65 KB | Learning/gradient flow |
 | GPU `Vec<u32>` | **Unlimited** | N/4 bytes | Massive parallel search |

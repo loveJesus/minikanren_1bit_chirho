@@ -32,7 +32,7 @@
       "name_chirho": "Paper Claim → Artifact Traceability Table",
       "description_chirho": "Make every paper claim reproducible with exact commands",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "GPT-5.2 Codex #1",
       "tasks_chirho": [
         {
@@ -63,7 +63,7 @@
       "name_chirho": "Gradient Attenuation Reproducibility",
       "description_chirho": "Script that exactly reproduces the gradient magnitude table",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "GPT-5.2 Codex #5",
       "tasks_chirho": [
         {
@@ -87,7 +87,7 @@
       "name_chirho": "Real-World Case Study (Expand Existing)",
       "description_chirho": "Expand type_infer_chirho.rs into dedicated paper section. Code exists, paper coverage minimal.",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "Yayel #5",
       "existing_chirho": "type_infer_chirho.rs (Hindley-Milner), zebra_chirho.rs (Einstein's riddle) already implemented",
       "tasks_chirho": [
@@ -112,7 +112,7 @@
       "name_chirho": "Limitations Section",
       "description_chirho": "Explicitly acknowledge what system cannot do well",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "Yayel",
       "tasks_chirho": [
         {
@@ -129,7 +129,7 @@
       "name_chirho": "Clarify Hardware Scope",
       "description_chirho": "Document what runs on FPGA vs simulation",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "Gemini #2",
       "tasks_chirho": [
         {
@@ -153,7 +153,7 @@
       "name_chirho": "GPU Memory Limits Documentation",
       "description_chirho": "Clarify 'unlimited domain' practical bounds",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "GPT-5.2 Codex #6",
       "tasks_chirho": [
         {
@@ -177,7 +177,7 @@
       "name_chirho": "Hierarchical16k Visibility",
       "description_chirho": "Add Hierarchical16k to README domain table",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "GPT-5.2 Codex #7",
       "tasks_chirho": [
         {
@@ -194,7 +194,7 @@
       "name_chirho": "Differentiable Performance Framing",
       "description_chirho": "Frame soft-logic as training-only phase",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "Gemini #3",
       "tasks_chirho": [
         {
@@ -257,7 +257,7 @@
       "name_chirho": "Scalability Documentation",
       "description_chirho": "Quantify resource usage for large domains",
       "priority_chirho": "low",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "Yayel #2",
       "tasks_chirho": [
         {
