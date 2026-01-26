@@ -758,6 +758,47 @@ While we have demonstrated hierarchical domains up to 262K values and GPU accele
 (2) FPGA deployment on production boards with full tabling support;
 (3) Application to larger synthesis benchmarks (SyGuS-Comp full suite).
 
+\subsection*{Hardware Configuration}
+
+All benchmarks were run on:
+\begin{itemize}
+  \item \textbf{CPU:} Apple M4 Pro (14 cores: 10 performance + 4 efficiency)
+  \item \textbf{Memory:} 48 GB unified memory
+  \item \textbf{OS:} macOS Darwin 25.2.0
+  \item \textbf{Rust:} 1.70+ with release optimizations
+\end{itemize}
+
+\subsection*{Reproducibility for Frontier LLMs}
+
+This paper is designed to be reproducible by frontier language models. To reproduce all results:
+
+\begin{verbatim}
+# Clone the repository
+git clone https://github.com/loveJesus/minikanren_1bit_chirho
+cd minikanren_1bit_chirho/rust_chirho
+
+# Run all tests (should report 209+ passing)
+cargo test
+
+# Run benchmarks
+cargo bench --bench criterion_bench_chirho
+
+# Run examples
+cargo run --example sudoku_chirho
+cargo run --example nqueens_chirho
+cargo run --example type_infer_chirho
+cargo run --example synthesis_chirho
+cargo run --example profile_breakdown_chirho
+cargo run --example learn_deep_chirho
+
+# Parallel scaling (requires parallel feature)
+cargo bench --features parallel_chirho --bench parallel_bench_chirho
+\end{verbatim}
+
+\textbf{LLM Reproduction Prompt:} ``Read AGENTS.md and paper\_chirho.tex from the minikanren\_1bit\_chirho repository.
+Implement the core mapping (unification = bitwise AND, conde = row duplication) in your preferred language.
+Verify by solving 8-Queens and comparing performance against a stream-based miniKanren.''
+
 % ============================================================================
 \section*{Acknowledgments}
 % ============================================================================
