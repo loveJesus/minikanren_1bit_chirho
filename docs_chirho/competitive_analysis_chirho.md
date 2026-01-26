@@ -312,13 +312,18 @@ This maps to our differentiable relaxation:
 
 #### Scenario: 24/7 Operation
 
-| Time Period | AWS F1 Reserved | Physical (U200) |
-|-------------|-----------------|-----------------|
-| Year 1 | $4,818 | $6,000 + power |
-| Year 2 | $9,636 | $6,200 total |
-| Year 3 | $14,454 | $6,400 total |
+| Pricing | Daily Cost | U200 Break-Even |
+|---------|------------|-----------------|
+| **On-Demand** ($1.65/hr) | $39.60/day | **~5 months** |
+| **Reserved 3-yr** (~$0.55/hr) | $13.20/day | **~15 months** |
 
-**Break-even: ~15 months** for high utilization.
+| Time Period | AWS On-Demand | AWS Reserved | Physical (U200) |
+|-------------|---------------|--------------|-----------------|
+| Month 5 | $5,940 | $1,980 | $6,000 + power |
+| Year 1 | $14,454 | $4,818 | $6,200 total |
+| Year 3 | $43,362 | $14,454 | $6,600 total |
+
+**Key insight:** On-demand breaks even in **5 months**. Only reserved pricing takes 15 months.
 
 #### Scenario: Part-Time (100 hr/mo)
 
@@ -327,7 +332,7 @@ This maps to our differentiable relaxation:
 | Year 1 | $1,980 | $6,000 |
 | Year 3 | $5,940 | $6,400 |
 
-**Break-even: ~3 years** for part-time use.
+**Break-even: ~3 years** for part-time use (AWS wins here).
 
 ### Recommendation by Use Case
 
