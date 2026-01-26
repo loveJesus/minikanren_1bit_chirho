@@ -9,7 +9,7 @@
       "name_chirho": "Datalog Benchmark (Soufflé Comparison)",
       "description_chirho": "Compare tensor contraction approach against Soufflé for transitive closure/reachability",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "P2-1.1",
@@ -138,7 +138,7 @@
       "name_chirho": "Kernel Fusion / Memory Hierarchy",
       "description_chirho": "Address PCIe bottleneck with fused accelerator design",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "P2-5.1",

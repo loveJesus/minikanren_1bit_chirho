@@ -119,6 +119,9 @@ pub mod profile_chirho;
 /// Parallel search state processing (multi-core with Rayon)
 pub mod parallel_chirho;
 
+/// Fused GPU/FPGA kernel design (eliminates PCIe bottleneck)
+pub mod gpu_fused_chirho;
+
 /// Domain approaches for infinite/hybrid miniKanren
 /// - paged_chirho: Hierarchical bit vectors for large finite domains
 /// - symbolic_chirho: Algebraic constraints (ranges, modular arithmetic)

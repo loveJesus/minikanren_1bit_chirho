@@ -1,0 +1,23 @@
+// Transitive Closure Benchmark for Soufflé ☧
+// Computes reachability in a directed graph
+//
+// Usage: souffle tc_chirho.dl -F . -D .
+//
+// "As far as the east is from the west, so far hath he removed
+//  our transgressions from us." — Psalm 103:12
+
+// Input relation: directed edges
+.decl edge_chirho(x: number, y: number)
+.input edge_chirho
+
+// Output relation: transitive closure (reachability)
+.decl path_chirho(x: number, y: number)
+.output path_chirho
+
+// Base case: direct edges
+path_chirho(x, y) :- edge_chirho(x, y).
+
+// Recursive case: transitive step
+path_chirho(x, z) :- path_chirho(x, y), edge_chirho(y, z).
+
+// Note: Soufflé uses semi-naive evaluation, computing only new facts each iteration
