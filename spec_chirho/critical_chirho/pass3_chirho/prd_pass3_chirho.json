@@ -1,13 +1,30 @@
 {
   "title_chirho": "Pass 3 - Reproducibility, Clarity & Real-World Validation",
-  "version_chirho": "1.0.0",
-  "description_chirho": "Address Gemini Pass 3 holes, Yayel peer review concerns, and GPT-5.2 Codex reproducibility suggestions. Focus on traceability, documentation clarity, and real-world validation.",
+  "version_chirho": "1.1.0",
+  "description_chirho": "Address Gemini Pass 3 holes, Yayel peer review concerns, and GPT-5.2 Codex reproducibility suggestions. Focus on traceability, documentation clarity, and real-world validation. Updated after audit of existing implementation.",
 
   "sources_chirho": [
     "spec_chirho/critical_chirho/pass3_chirho/gemini_critiques_pass3_chirho.md",
     "spec_chirho/critical_chirho/pass3_chirho/yayel_discuss_chirho.md",
     "GPT-5.2 Codex Medium Suggestions (inline)"
   ],
+
+  "pre_audit_findings_chirho": {
+    "already_implemented_chirho": [
+      "Comparison caveat (lines 464-466): Z3/clingo labeled general-purpose, points to OCanren table",
+      "OCanren/faster-mk comparison table (lines 607-621)",
+      "Unit notation consistent (ps, ns, μs, ms throughout)",
+      "Type inference example exists (type_infer_chirho.rs, mentioned line 621)",
+      "Zebra puzzle exists (zebra_chirho.rs, not in paper)",
+      "Profile breakdown shows interning 0.04% (P2-2 complete)",
+      "Categorical connection added (P2-6 complete)"
+    ],
+    "partially_addressed_chirho": [
+      "Type inference in paper but only one line in table - needs dedicated section",
+      "GPU 'unlimited' claim lacks VRAM bound clarification",
+      "Differentiable overhead not framed as training-only phase"
+    ]
+  },
 
   "milestones_chirho": [
     {
@@ -67,25 +84,26 @@
     },
     {
       "id_chirho": "P3-3",
-      "name_chirho": "Real-World Case Study",
-      "description_chirho": "Add non-synthetic benchmark (program verification, scheduling, etc.)",
+      "name_chirho": "Real-World Case Study (Expand Existing)",
+      "description_chirho": "Expand type_infer_chirho.rs into dedicated paper section. Code exists, paper coverage minimal.",
       "priority_chirho": "high",
       "status_chirho": "pending",
       "source_chirho": "Yayel #5",
+      "existing_chirho": "type_infer_chirho.rs (Hindley-Milner), zebra_chirho.rs (Einstein's riddle) already implemented",
       "tasks_chirho": [
         {
           "id_chirho": "P3-3.1",
-          "name_chirho": "Implement real-world example",
-          "description_chirho": "Choose: type checker for small language, scheduling constraint, or verification query",
-          "files_chirho": ["rust_chirho/examples/real_world_chirho.rs"],
-          "acceptance_chirho": "Non-toy problem demonstrating practical utility"
+          "name_chirho": "Add Type Inference section to paper",
+          "description_chirho": "Dedicated subsection showing HM type inference as real-world application (code already exists)",
+          "files_chirho": ["paper_chirho/paper_chirho.tex"],
+          "acceptance_chirho": "Paper has 'New Results: Type Inference' section with timing and explanation"
         },
         {
           "id_chirho": "P3-3.2",
-          "name_chirho": "Add to paper evaluation",
-          "description_chirho": "New subsection showing real-world application",
-          "files_chirho": ["paper_chirho/paper_chirho.tex"],
-          "acceptance_chirho": "Paper includes real-world case study"
+          "name_chirho": "Benchmark type inference at scale",
+          "description_chirho": "Run type_infer_chirho on larger programs, report scaling",
+          "files_chirho": ["rust_chirho/examples/type_infer_chirho.rs"],
+          "acceptance_chirho": "Benchmarks for 10, 50, 100 term programs"
         }
       ]
     },
@@ -193,22 +211,25 @@
       "name_chirho": "Comparison Balance",
       "description_chirho": "Strengthen miniKanren-specific comparisons",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "Yayel #1",
+      "resolution_chirho": "Already implemented at lines 464-466 (general-purpose caveat) and lines 607-621 (OCanren comparison table)",
       "tasks_chirho": [
         {
           "id_chirho": "P3-9.1",
           "name_chirho": "Emphasize OCanren/faster-mk comparisons",
           "description_chirho": "Highlight domain-specific gains vs proper miniKanren baselines",
           "files_chirho": ["paper_chirho/paper_chirho.tex"],
-          "acceptance_chirho": "Apples-to-apples comparisons emphasized"
+          "acceptance_chirho": "Apples-to-apples comparisons emphasized",
+          "status_chirho": "DONE"
         },
         {
           "id_chirho": "P3-9.2",
           "name_chirho": "Add caveat for general solver comparisons",
           "description_chirho": "Clarify Z3/clingo are general-purpose, our speedups are domain-specific",
           "files_chirho": ["paper_chirho/paper_chirho.tex"],
-          "acceptance_chirho": "Comparison context clear (already partially done)"
+          "acceptance_chirho": "Comparison context clear",
+          "status_chirho": "DONE"
         }
       ]
     },
@@ -217,15 +238,17 @@
       "name_chirho": "Terminology Consistency",
       "description_chirho": "Unify units notation throughout paper",
       "priority_chirho": "low",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "source_chirho": "Yayel #6",
+      "resolution_chirho": "Audited: ps, ns, μs ($\\mu$s), ms used consistently throughout paper",
       "tasks_chirho": [
         {
           "id_chirho": "P3-10.1",
           "name_chirho": "Audit unit notation",
           "description_chirho": "Ensure ps/ns/μs/ms consistent, use μs not us",
           "files_chirho": ["paper_chirho/paper_chirho.tex"],
-          "acceptance_chirho": "Units consistent throughout"
+          "acceptance_chirho": "Units consistent throughout",
+          "status_chirho": "DONE"
         }
       ]
     },
@@ -251,21 +274,21 @@
   "priority_order_chirho": [
     "P3-1: Traceability table (HIGH - reproducibility foundation)",
     "P3-2: Gradient reproducibility (HIGH - validates key claim)",
-    "P3-3: Real-world case study (HIGH - addresses synthetic-only critique)",
+    "P3-3: Type inference paper section (HIGH - real-world case study, code exists)",
     "P3-4: Limitations section (HIGH - builds reviewer trust)",
     "P3-5: Hardware scope clarity (MEDIUM - manages expectations)",
     "P3-6: GPU memory limits (MEDIUM - practical bounds)",
     "P3-7: Hierarchical16k visibility (MEDIUM - documentation completeness)",
     "P3-8: Differentiable framing (MEDIUM - contextualizes overhead)",
-    "P3-9: Comparison balance (MEDIUM - fairness)",
-    "P3-10: Terminology consistency (LOW - polish)",
+    "P3-9: Comparison balance (DONE - already implemented)",
+    "P3-10: Terminology consistency (DONE - audited, consistent)",
     "P3-11: Scalability documentation (LOW - completeness)"
   ],
 
   "acceptance_criteria_chirho": [
     "run_all_benchmarks_chirho.sh reproduces all paper tables",
     "Traceability matrix links every claim to code",
-    "At least one real-world (non-synthetic) case study",
+    "Type inference section in paper (code already exists)",
     "Limitations section explicitly added to paper",
     "Hardware claims labeled as estimated vs measured",
     "GPU memory bounds documented",
@@ -276,7 +299,10 @@
     "Wall-clock breakdown (P2-2) - profile_breakdown_chirho.rs shows interning is 0.04%",
     "Neurosymbolic benchmark (P2-3) - symbolic_addition_chirho.rs demonstrates concept",
     "Categorical framing (P2-6) - string diagram connection in Related Work",
-    "Comparison caveat (partial) - already notes Z3/clingo are general-purpose"
+    "Comparison balance (P3-9) - lines 464-466 caveat + OCanren table at lines 607-621",
+    "Terminology consistency (P3-10) - ps/ns/μs/ms used correctly throughout",
+    "Type inference code - type_infer_chirho.rs exists (needs paper section)",
+    "Zebra puzzle code - zebra_chirho.rs exists (optional for paper)"
   ],
 
   "blocked_chirho": [
