@@ -42,7 +42,7 @@
       "name_chirho": "Hash Consing Wall-Clock Breakdown",
       "description_chirho": "Prove interning doesn't become the new bottleneck",
       "priority_chirho": "high",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "P2-2.1",
@@ -168,7 +168,7 @@
       "name_chirho": "Categorical Logic Connection",
       "description_chirho": "Frame tensor contraction in terms of string diagrams / monoidal categories",
       "priority_chirho": "low",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "P2-6.1",
@@ -222,7 +222,7 @@
       "name_chirho": "Parallel State with Rayon",
       "description_chirho": "Prove data-level parallelism claim at scale",
       "priority_chirho": "medium",
-      "status_chirho": "pending",
+      "status_chirho": "DONE",
       "tasks_chirho": [
         {
           "id_chirho": "P2-8.1",
