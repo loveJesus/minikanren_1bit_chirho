@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 --------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version      : Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
-| Date              : Mon Jan 26 14:31:18 2026
-| Host              : ip-172-30-0-109 running 64-bit Ubuntu 24.04.1 LTS
+| Date              : Mon Jan 26 16:17:25 2026
+| Host              : ip-172-30-0-159 running 64-bit Ubuntu 24.04.1 LTS
 | Command           : report_timing_summary -file timing_chirho.rpt
 | Design            : searchEngineChirho
 | Device            : xcvu9p-flgb2104
