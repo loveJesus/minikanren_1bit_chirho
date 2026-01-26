@@ -22,7 +22,7 @@ echo "=== Launch Vivado Synthesis ☧ ==="
 echo "Instance: ${SYNTH_INSTANCE_CHIRHO}"
 echo "AMI: ${FPGA_DEV_AMI_CHIRHO}"
 echo ""
-echo "COST WARNING: This will launch a ${SYNTH_INSTANCE_CHIRHO} instance (~\$0.68/hour)"
+echo "COST WARNING: This will launch a ${SYNTH_INSTANCE_CHIRHO} instance"
 read -p "Continue? (y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -30,8 +30,8 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-# Create user data script
-USER_DATA_CHIRHO=$(cat << 'USERDATA'
+# Create user data script (note: BUCKET is interpolated at script creation time)
+USER_DATA_CHIRHO=$(cat << USERDATA
 #!/bin/bash
 # For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 set -x
@@ -42,52 +42,58 @@ exec > >(tee /var/log/user-data.log) 2>&1
 echo "=== miniKanren Synthesis Starting ☧ ==="
 date
 
-# Get instance metadata
-INSTANCE_ID_CHIRHO=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-REGION_CHIRHO=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
+# CRITICAL: Set HOME for Vivado
+export HOME=/root
 
-# Set up AWS SDK
-export AWS_DEFAULT_REGION=${REGION_CHIRHO}
+# Hardcode bucket (interpolated from local config)
+BUCKET_CHIRHO="${S3_BUCKET_CHIRHO}"
+REGION_CHIRHO="${AWS_REGION_CHIRHO}"
 
-# Get bucket name from tag
-BUCKET_CHIRHO=$(aws ec2 describe-tags --filters "Name=resource-id,Values=${INSTANCE_ID_CHIRHO}" "Name=key,Values=S3Bucket" --query "Tags[0].Value" --output text)
+export AWS_DEFAULT_REGION=\${REGION_CHIRHO}
 
-echo "Bucket: ${BUCKET_CHIRHO}"
+echo "Bucket: \${BUCKET_CHIRHO}"
+echo "Region: \${REGION_CHIRHO}"
 
 # Create work directory
-WORK_DIR_CHIRHO="/home/centos/minikanren_chirho"
-mkdir -p ${WORK_DIR_CHIRHO}
-cd ${WORK_DIR_CHIRHO}
+WORK_DIR_CHIRHO="/root/minikanren_chirho"
+mkdir -p \${WORK_DIR_CHIRHO}
+cd \${WORK_DIR_CHIRHO}
 
 # Download design files
 echo "Downloading design files..."
-aws s3 sync "s3://${BUCKET_CHIRHO}/design/" .
+aws s3 sync "s3://\${BUCKET_CHIRHO}/design/" .
+
+ls -la
 
 # Source Vivado
+echo "Sourcing Vivado..."
 source /opt/Xilinx/Vivado/2024.2/settings64.sh || source /opt/Xilinx/Vivado/*/settings64.sh
 
 # Run synthesis
 echo "Running Vivado synthesis..."
 vivado -mode batch -source synth_vivado_chirho.tcl 2>&1 | tee vivado_log_chirho.txt
 
+SYNTH_EXIT_CHIRHO=\$?
+echo "Vivado exit code: \${SYNTH_EXIT_CHIRHO}"
+
 # Upload results
 echo "Uploading results..."
-aws s3 cp utilization_chirho.rpt "s3://${BUCKET_CHIRHO}/results/"
-aws s3 cp utilization_hierarchical_chirho.rpt "s3://${BUCKET_CHIRHO}/results/" || true
-aws s3 cp timing_chirho.rpt "s3://${BUCKET_CHIRHO}/results/"
-aws s3 cp timing_paths_chirho.rpt "s3://${BUCKET_CHIRHO}/results/" || true
-aws s3 cp clock_utilization_chirho.rpt "s3://${BUCKET_CHIRHO}/results/" || true
-aws s3 cp vivado_log_chirho.txt "s3://${BUCKET_CHIRHO}/results/"
-aws s3 cp minikanren_chirho/minikanren_chirho_routed.dcp "s3://${BUCKET_CHIRHO}/results/" || true
+aws s3 cp utilization_chirho.rpt "s3://\${BUCKET_CHIRHO}/results/" || true
+aws s3 cp utilization_hierarchical_chirho.rpt "s3://\${BUCKET_CHIRHO}/results/" || true
+aws s3 cp timing_chirho.rpt "s3://\${BUCKET_CHIRHO}/results/" || true
+aws s3 cp timing_paths_chirho.rpt "s3://\${BUCKET_CHIRHO}/results/" || true
+aws s3 cp clock_utilization_chirho.rpt "s3://\${BUCKET_CHIRHO}/results/" || true
+aws s3 cp vivado_log_chirho.txt "s3://\${BUCKET_CHIRHO}/results/"
+aws s3 cp minikanren_chirho/minikanren_chirho_routed.dcp "s3://\${BUCKET_CHIRHO}/results/" || true
+
+# Also upload any .rpt files we find
+find . -name "*.rpt" -exec aws s3 cp {} "s3://\${BUCKET_CHIRHO}/results/" \; || true
 
 echo "=== Synthesis Complete ☧ ==="
 date
 
 # Signal completion
-aws s3 cp /var/log/user-data.log "s3://${BUCKET_CHIRHO}/results/user-data.log"
-
-# Optional: self-terminate after completion (uncomment to enable)
-# aws ec2 terminate-instances --instance-ids ${INSTANCE_ID_CHIRHO}
+aws s3 cp /var/log/user-data.log "s3://\${BUCKET_CHIRHO}/results/user-data.log"
 USERDATA
 )
 

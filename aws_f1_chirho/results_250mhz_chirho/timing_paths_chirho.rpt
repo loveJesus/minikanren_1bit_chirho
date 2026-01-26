@@ -1,0 +1,1521 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
+| Date              : Mon Jan 26 11:07:10 2026
+| Host              : ip-172-30-0-204 running 64-bit Ubuntu 24.04.1 LTS
+| Command           : report_timing -max_paths 20 -file timing_paths_chirho.rpt
+| Design            : searchEngineChirho
+| Device            : xcvu9p-flgb2104
+| Speed File        : -2  PRODUCTION 1.28 03-30-2022
+| Design State      : Routed
+| Temperature Grade : I
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -15.216ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[512]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        17.180ns  (logic 2.687ns (15.638%)  route 14.494ns (84.362%))
+  Logic Levels:           18  (CARRY8=6 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=6 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_O[2])
+                                                      0.132     7.161 r  respChirho_OBUF[487]_inst_i_9/O[2]
+                         net (fo=9, routed)           0.627     7.787    ds40[34]
+    SLICE_X92Y567        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.125     7.912 r  respChirho_OBUF[482]_inst_i_5/O
+                         net (fo=1, routed)           0.011     7.923    respChirho_OBUF[482]_inst_i_5_n_0
+    SLICE_X92Y567        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065     7.988 r  respChirho_OBUF[482]_inst_i_2/O
+                         net (fo=2, routed)           0.953     8.941    respChirho_OBUF[482]_inst_i_2_n_0
+    SLICE_X91Y565        LUT6 (Prop_E6LUT_SLICEL_I2_O)
+                                                      0.035     8.976 r  respChirho_OBUF[482]_inst_i_1/O
+                         net (fo=5, routed)           0.974     9.950    respChirho_OBUF[482]
+    SLICE_X87Y560        CARRY8 (Prop_CARRY8_SLICEM_DI[1]_CO[7])
+                                                      0.120    10.070 r  respChirho_OBUF[512]_inst_i_629/CO[7]
+                         net (fo=1, routed)           0.026    10.096    respChirho_OBUF[512]_inst_i_629_n_0
+    SLICE_X87Y561        CARRY8 (Prop_CARRY8_SLICEM_CI_CO[7])
+                                                      0.015    10.111 r  respChirho_OBUF[512]_inst_i_333/CO[7]
+                         net (fo=1, routed)           0.026    10.137    respChirho_OBUF[512]_inst_i_333_n_0
+    SLICE_X87Y562        CARRY8 (Prop_CARRY8_SLICEM_CI_CO[7])
+                                                      0.015    10.152 r  respChirho_OBUF[512]_inst_i_332/CO[7]
+                         net (fo=1, routed)           0.026    10.178    respChirho_OBUF[512]_inst_i_332_n_0
+    SLICE_X87Y563        CARRY8 (Prop_CARRY8_SLICEM_CI_O[2])
+                                                      0.067    10.245 f  respChirho_OBUF[512]_inst_i_331/O[2]
+                         net (fo=1, routed)           0.710    10.955    map[7].map_out2[59]
+    SLICE_X86Y559        LUT6 (Prop_D6LUT_SLICEL_I0_O)
+                                                      0.122    11.077 r  respChirho_OBUF[512]_inst_i_143/O
+                         net (fo=1, routed)           0.009    11.086    respChirho_OBUF[512]_inst_i_143_n_0
+    SLICE_X86Y559        CARRY8 (Prop_CARRY8_SLICEL_S[3]_CO[5])
+                                                      0.142    11.228 r  respChirho_OBUF[512]_inst_i_33/CO[5]
+                         net (fo=1, routed)           0.808    12.036    map[7].map_out0
+    SLICE_X61Y529        LUT6 (Prop_D6LUT_SLICEL_I4_O)
+                                                      0.036    12.072 r  respChirho_OBUF[512]_inst_i_6/O
+                         net (fo=1, routed)           1.813    13.885    respChirho_OBUF[512]_inst_i_6_n_0
+    SLICE_X61Y305        LUT6 (Prop_B6LUT_SLICEL_I5_O)
+                                                      0.090    13.975 r  respChirho_OBUF[512]_inst_i_1/O
+                         net (fo=1, routed)           3.303    17.278    respChirho_OBUF[512]
+    SLR Crossing[1->0]   
+    BC33                 OBUF (Prop_OUTBUF_HPIOB_SNGL_I_O)
+                                                      0.903    18.180 r  respChirho_OBUF[512]_inst/O
+                         net (fo=0)                   0.000    18.180    respChirho[512]
+    BC33                                                              r  respChirho[512] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -18.180    
+  -------------------------------------------------------------------
+                         slack                                -15.216    
+
+Slack (VIOLATED) :        -13.488ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[513]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        15.452ns  (logic 2.543ns (16.454%)  route 12.910ns (83.546%))
+  Logic Levels:           14  (CARRY8=5 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=4 MUXF7=1 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.301 r  respChirho_OBUF[503]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.327    respChirho_OBUF[503]_inst_i_9_n_0
+    SLICE_X94Y567        CARRY8 (Prop_CARRY8_SLICEL_CI_O[5])
+                                                      0.116     7.443 f  respChirho_OBUF[511]_inst_i_14/O[5]
+                         net (fo=9, routed)           0.604     8.047    ds40[61]
+    SLICE_X96Y565        LUT6 (Prop_E6LUT_SLICEL_I3_O)
+                                                      0.147     8.194 r  respChirho_OBUF[513]_inst_i_13/O
+                         net (fo=1, routed)           0.007     8.201    respChirho_OBUF[513]_inst_i_13_n_0
+    SLICE_X96Y565        CARRY8 (Prop_CARRY8_SLICEL_S[4]_CO[5])
+                                                      0.099     8.300 r  respChirho_OBUF[513]_inst_i_5/CO[5]
+                         net (fo=1, routed)           0.671     8.971    stChirho'1
+    SLICE_X96Y546        LUT6 (Prop_E6LUT_SLICEL_I0_O)
+                                                      0.090     9.061 r  respChirho_OBUF[513]_inst_i_2/O
+                         net (fo=1, routed)           0.580     9.641    respChirho_OBUF[513]_inst_i_2_n_0
+    SLICE_X92Y546        LUT6 (Prop_G6LUT_SLICEM_I2_O)
+                                                      0.123     9.764 r  respChirho_OBUF[513]_inst_i_1/O
+                         net (fo=3, routed)           5.761    15.525    respChirho_OBUF[513]
+    SLR Crossing[1->0]   
+    BF34                 OBUF (Prop_OUTBUF_HPIOB_SNGL_I_O)
+                                                      0.927    16.452 r  respChirho_OBUF[513]_inst/O
+                         net (fo=0)                   0.000    16.452    respChirho[513]
+    BF34                                                              r  respChirho[513] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -16.452    
+  -------------------------------------------------------------------
+                         slack                                -13.488    
+
+Slack (VIOLATED) :        -12.700ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[497]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.664ns  (logic 2.273ns (15.502%)  route 12.391ns (84.498%))
+  Logic Levels:           12  (CARRY8=3 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_O[1])
+                                                      0.076     7.362 r  respChirho_OBUF[503]_inst_i_9/O[1]
+                         net (fo=9, routed)           0.581     7.943    ds40[49]
+    SLICE_X86Y568        LUT6 (Prop_C6LUT_SLICEL_I0_O)
+                                                      0.088     8.031 r  respChirho_OBUF[497]_inst_i_5/O
+                         net (fo=1, routed)           0.010     8.041    respChirho_OBUF[497]_inst_i_5_n_0
+    SLICE_X86Y568        MUXF7 (Prop_F7MUX_CD_SLICEL_I1_O)
+                                                      0.064     8.105 r  respChirho_OBUF[497]_inst_i_2/O
+                         net (fo=2, routed)           0.174     8.279    respChirho_OBUF[497]_inst_i_2_n_0
+    SLICE_X86Y568        LUT6 (Prop_F6LUT_SLICEL_I2_O)
+                                                      0.123     8.402 r  respChirho_OBUF[497]_inst_i_1/O
+                         net (fo=5, routed)           6.366    14.767    respChirho_OBUF[497]
+    SLR Crossing[1->0]   
+    BC32                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.897    15.664 r  respChirho_OBUF[497]_inst/O
+                         net (fo=0)                   0.000    15.664    respChirho[497]
+    BC32                                                              r  respChirho[497] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.664    
+  -------------------------------------------------------------------
+                         slack                                -12.700    
+
+Slack (VIOLATED) :        -12.661ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[506]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.625ns  (logic 2.355ns (16.104%)  route 12.270ns (83.896%))
+  Logic Levels:           13  (CARRY8=4 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.301 r  respChirho_OBUF[503]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.327    respChirho_OBUF[503]_inst_i_9_n_0
+    SLICE_X94Y567        CARRY8 (Prop_CARRY8_SLICEL_CI_O[2])
+                                                      0.067     7.394 r  respChirho_OBUF[511]_inst_i_14/O[2]
+                         net (fo=9, routed)           0.700     8.093    ds40[58]
+    SLICE_X88Y571        LUT6 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.123     8.216 r  respChirho_OBUF[506]_inst_i_5/O
+                         net (fo=1, routed)           0.021     8.237    respChirho_OBUF[506]_inst_i_5_n_0
+    SLICE_X88Y571        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068     8.305 r  respChirho_OBUF[506]_inst_i_2/O
+                         net (fo=2, routed)           0.430     8.735    respChirho_OBUF[506]_inst_i_2_n_0
+    SLICE_X88Y570        LUT6 (Prop_F6LUT_SLICEM_I2_O)
+                                                      0.148     8.883 r  respChirho_OBUF[506]_inst_i_1/O
+                         net (fo=5, routed)           5.833    14.716    respChirho_OBUF[506]
+    SLR Crossing[1->0]   
+    BE31                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.909    15.625 r  respChirho_OBUF[506]_inst/O
+                         net (fo=0)                   0.000    15.625    respChirho[506]
+    BE31                                                              r  respChirho[506] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.625    
+  -------------------------------------------------------------------
+                         slack                                -12.661    
+
+Slack (VIOLATED) :        -12.623ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[504]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.588ns  (logic 2.252ns (15.440%)  route 12.336ns (84.560%))
+  Logic Levels:           13  (CARRY8=4 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.301 r  respChirho_OBUF[503]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.327    respChirho_OBUF[503]_inst_i_9_n_0
+    SLICE_X94Y567        CARRY8 (Prop_CARRY8_SLICEL_CI_O[0])
+                                                      0.056     7.383 r  respChirho_OBUF[511]_inst_i_14/O[0]
+                         net (fo=9, routed)           0.787     8.170    ds40[56]
+    SLICE_X88Y573        LUT6 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.098     8.268 r  respChirho_OBUF[504]_inst_i_5/O
+                         net (fo=1, routed)           0.021     8.289    respChirho_OBUF[504]_inst_i_5_n_0
+    SLICE_X88Y573        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068     8.357 r  respChirho_OBUF[504]_inst_i_2/O
+                         net (fo=2, routed)           0.332     8.689    respChirho_OBUF[504]_inst_i_2_n_0
+    SLICE_X87Y569        LUT6 (Prop_B6LUT_SLICEM_I2_O)
+                                                      0.089     8.778 r  respChirho_OBUF[504]_inst_i_1/O
+                         net (fo=5, routed)           5.909    14.687    respChirho_OBUF[504]
+    SLR Crossing[1->0]   
+    BE30                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.901    15.588 r  respChirho_OBUF[504]_inst/O
+                         net (fo=0)                   0.000    15.588    respChirho[504]
+    BE30                                                              r  respChirho[504] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.588    
+  -------------------------------------------------------------------
+                         slack                                -12.623    
+
+Slack (VIOLATED) :        -12.549ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[489]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.514ns  (logic 2.262ns (15.588%)  route 12.252ns (84.412%))
+  Logic Levels:           11  (CARRY8=2 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_O[1])
+                                                      0.076     7.321 r  respChirho_OBUF[495]_inst_i_9/O[1]
+                         net (fo=9, routed)           0.647     7.967    ds40[41]
+    SLICE_X88Y567        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.125     8.092 r  respChirho_OBUF[489]_inst_i_5/O
+                         net (fo=1, routed)           0.011     8.103    respChirho_OBUF[489]_inst_i_5_n_0
+    SLICE_X88Y567        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065     8.168 r  respChirho_OBUF[489]_inst_i_2/O
+                         net (fo=2, routed)           0.468     8.636    respChirho_OBUF[489]_inst_i_2_n_0
+    SLICE_X88Y567        LUT6 (Prop_E6LUT_SLICEM_I2_O)
+                                                      0.100     8.736 r  respChirho_OBUF[489]_inst_i_1/O
+                         net (fo=5, routed)           5.891    14.628    respChirho_OBUF[489]
+    SLR Crossing[1->0]   
+    BA30                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.886    15.514 r  respChirho_OBUF[489]_inst/O
+                         net (fo=0)                   0.000    15.514    respChirho[489]
+    BA30                                                              r  respChirho[489] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.514    
+  -------------------------------------------------------------------
+                         slack                                -12.549    
+
+Slack (VIOLATED) :        -12.548ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[505]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.513ns  (logic 2.292ns (15.790%)  route 12.221ns (84.210%))
+  Logic Levels:           13  (CARRY8=4 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.301 r  respChirho_OBUF[503]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.327    respChirho_OBUF[503]_inst_i_9_n_0
+    SLICE_X94Y567        CARRY8 (Prop_CARRY8_SLICEL_CI_O[1])
+                                                      0.076     7.403 r  respChirho_OBUF[511]_inst_i_14/O[1]
+                         net (fo=9, routed)           0.507     7.910    ds40[57]
+    SLICE_X88Y572        LUT6 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.051     7.961 r  respChirho_OBUF[505]_inst_i_5/O
+                         net (fo=1, routed)           0.021     7.982    respChirho_OBUF[505]_inst_i_5_n_0
+    SLICE_X88Y572        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068     8.050 r  respChirho_OBUF[505]_inst_i_2/O
+                         net (fo=2, routed)           0.698     8.748    respChirho_OBUF[505]_inst_i_2_n_0
+    SLICE_X87Y570        LUT6 (Prop_A6LUT_SLICEM_I2_O)
+                                                      0.150     8.898 r  respChirho_OBUF[505]_inst_i_1/O
+                         net (fo=5, routed)           5.709    14.606    respChirho_OBUF[505]
+    SLR Crossing[1->0]   
+    BF30                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.906    15.513 r  respChirho_OBUF[505]_inst/O
+                         net (fo=0)                   0.000    15.513    respChirho[505]
+    BF30                                                              r  respChirho[505] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.513    
+  -------------------------------------------------------------------
+                         slack                                -12.548    
+
+Slack (VIOLATED) :        -12.481ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[496]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.446ns  (logic 2.318ns (16.043%)  route 12.128ns (83.957%))
+  Logic Levels:           12  (CARRY8=3 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_O[0])
+                                                      0.056     7.342 r  respChirho_OBUF[503]_inst_i_9/O[0]
+                         net (fo=9, routed)           0.904     8.245    ds40[48]
+    SLICE_X87Y566        LUT6 (Prop_G6LUT_SLICEM_I0_O)
+                                                      0.123     8.368 r  respChirho_OBUF[496]_inst_i_5/O
+                         net (fo=1, routed)           0.017     8.385    respChirho_OBUF[496]_inst_i_5_n_0
+    SLICE_X87Y566        MUXF7 (Prop_F7MUX_GH_SLICEM_I1_O)
+                                                      0.067     8.452 r  respChirho_OBUF[496]_inst_i_2/O
+                         net (fo=2, routed)           0.467     8.919    respChirho_OBUF[496]_inst_i_2_n_0
+    SLICE_X87Y566        LUT6 (Prop_E6LUT_SLICEM_I2_O)
+                                                      0.148     9.067 r  respChirho_OBUF[496]_inst_i_1/O
+                         net (fo=5, routed)           5.480    14.547    respChirho_OBUF[496]
+    SLR Crossing[1->0]   
+    BC31                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.898    15.446 r  respChirho_OBUF[496]_inst/O
+                         net (fo=0)                   0.000    15.446    respChirho[496]
+    BC31                                                              r  respChirho[496] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.446    
+  -------------------------------------------------------------------
+                         slack                                -12.481    
+
+Slack (VIOLATED) :        -12.433ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[482]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.397ns  (logic 2.052ns (14.250%)  route 12.346ns (85.750%))
+  Logic Levels:           10  (CARRY8=1 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_O[2])
+                                                      0.132     7.161 r  respChirho_OBUF[487]_inst_i_9/O[2]
+                         net (fo=9, routed)           0.627     7.787    ds40[34]
+    SLICE_X92Y567        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.125     7.912 r  respChirho_OBUF[482]_inst_i_5/O
+                         net (fo=1, routed)           0.011     7.923    respChirho_OBUF[482]_inst_i_5_n_0
+    SLICE_X92Y567        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065     7.988 r  respChirho_OBUF[482]_inst_i_2/O
+                         net (fo=2, routed)           0.953     8.941    respChirho_OBUF[482]_inst_i_2_n_0
+    SLICE_X91Y565        LUT6 (Prop_E6LUT_SLICEL_I2_O)
+                                                      0.035     8.976 r  respChirho_OBUF[482]_inst_i_1/O
+                         net (fo=5, routed)           5.547    14.523    respChirho_OBUF[482]
+    SLR Crossing[1->0]   
+    AV31                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.874    15.397 r  respChirho_OBUF[482]_inst/O
+                         net (fo=0)                   0.000    15.397    respChirho[482]
+    AV31                                                              r  respChirho[482] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.397    
+  -------------------------------------------------------------------
+                         slack                                -12.433    
+
+Slack (VIOLATED) :        -12.419ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[498]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.384ns  (logic 2.260ns (15.711%)  route 12.124ns (84.289%))
+  Logic Levels:           12  (CARRY8=3 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_O[2])
+                                                      0.067     7.353 r  respChirho_OBUF[503]_inst_i_9/O[2]
+                         net (fo=9, routed)           0.665     8.017    ds40[50]
+    SLICE_X87Y569        LUT6 (Prop_G6LUT_SLICEM_I0_O)
+                                                      0.052     8.069 r  respChirho_OBUF[498]_inst_i_5/O
+                         net (fo=1, routed)           0.017     8.086    respChirho_OBUF[498]_inst_i_5_n_0
+    SLICE_X87Y569        MUXF7 (Prop_F7MUX_GH_SLICEM_I1_O)
+                                                      0.067     8.153 r  respChirho_OBUF[498]_inst_i_2/O
+                         net (fo=2, routed)           0.502     8.655    respChirho_OBUF[498]_inst_i_2_n_0
+    SLICE_X86Y569        LUT6 (Prop_A6LUT_SLICEL_I2_O)
+                                                      0.149     8.804 r  respChirho_OBUF[498]_inst_i_1/O
+                         net (fo=5, routed)           5.680    14.484    respChirho_OBUF[498]
+    SLR Crossing[1->0]   
+    BC29                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.900    15.384 r  respChirho_OBUF[498]_inst/O
+                         net (fo=0)                   0.000    15.384    respChirho[498]
+    BC29                                                              r  respChirho[498] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.384    
+  -------------------------------------------------------------------
+                         slack                                -12.419    
+
+Slack (VIOLATED) :        -12.366ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[492]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.330ns  (logic 2.204ns (15.378%)  route 12.127ns (84.622%))
+  Logic Levels:           11  (CARRY8=2 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_O[4])
+                                                      0.086     7.331 r  respChirho_OBUF[495]_inst_i_9/O[4]
+                         net (fo=9, routed)           0.441     7.771    ds40[44]
+    SLICE_X89Y570        LUT6 (Prop_C6LUT_SLICEL_I0_O)
+                                                      0.123     7.894 r  respChirho_OBUF[492]_inst_i_5/O
+                         net (fo=1, routed)           0.010     7.904    respChirho_OBUF[492]_inst_i_5_n_0
+    SLICE_X89Y570        MUXF7 (Prop_F7MUX_CD_SLICEL_I1_O)
+                                                      0.064     7.968 r  respChirho_OBUF[492]_inst_i_2/O
+                         net (fo=2, routed)           0.745     8.714    respChirho_OBUF[492]_inst_i_2_n_0
+    SLICE_X88Y570        LUT6 (Prop_G6LUT_SLICEM_I2_O)
+                                                      0.037     8.751 r  respChirho_OBUF[492]_inst_i_1/O
+                         net (fo=5, routed)           5.696    14.447    respChirho_OBUF[492]
+    SLR Crossing[1->0]   
+    BA29                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.883    15.330 r  respChirho_OBUF[492]_inst/O
+                         net (fo=0)                   0.000    15.330    respChirho[492]
+    BA29                                                              r  respChirho[492] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.330    
+  -------------------------------------------------------------------
+                         slack                                -12.366    
+
+Slack (VIOLATED) :        -12.328ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[507]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.293ns  (logic 2.297ns (16.073%)  route 11.996ns (83.927%))
+  Logic Levels:           13  (CARRY8=4 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.301 r  respChirho_OBUF[503]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.327    respChirho_OBUF[503]_inst_i_9_n_0
+    SLICE_X94Y567        CARRY8 (Prop_CARRY8_SLICEL_CI_O[3])
+                                                      0.082     7.409 r  respChirho_OBUF[511]_inst_i_14/O[3]
+                         net (fo=9, routed)           0.597     8.006    ds40[59]
+    SLICE_X89Y572        LUT6 (Prop_G6LUT_SLICEL_I0_O)
+                                                      0.149     8.155 r  respChirho_OBUF[507]_inst_i_5/O
+                         net (fo=1, routed)           0.008     8.163    respChirho_OBUF[507]_inst_i_5_n_0
+    SLICE_X89Y572        MUXF7 (Prop_F7MUX_GH_SLICEL_I1_O)
+                                                      0.063     8.226 r  respChirho_OBUF[507]_inst_i_2/O
+                         net (fo=2, routed)           0.206     8.432    respChirho_OBUF[507]_inst_i_2_n_0
+    SLICE_X88Y572        LUT6 (Prop_A6LUT_SLICEM_I2_O)
+                                                      0.053     8.485 r  respChirho_OBUF[507]_inst_i_1/O
+                         net (fo=5, routed)           5.898    14.383    respChirho_OBUF[507]
+    SLR Crossing[1->0]   
+    BE32                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.910    15.293 r  respChirho_OBUF[507]_inst/O
+                         net (fo=0)                   0.000    15.293    respChirho[507]
+    BE32                                                              r  respChirho[507] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.293    
+  -------------------------------------------------------------------
+                         slack                                -12.328    
+
+Slack (VIOLATED) :        -12.317ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[491]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.281ns  (logic 2.296ns (16.077%)  route 11.985ns (83.923%))
+  Logic Levels:           11  (CARRY8=2 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_O[3])
+                                                      0.082     7.327 r  respChirho_OBUF[495]_inst_i_9/O[3]
+                         net (fo=9, routed)           0.607     7.934    ds40[43]
+    SLICE_X88Y569        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.150     8.084 r  respChirho_OBUF[491]_inst_i_5/O
+                         net (fo=1, routed)           0.011     8.095    respChirho_OBUF[491]_inst_i_5_n_0
+    SLICE_X88Y569        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065     8.160 r  respChirho_OBUF[491]_inst_i_2/O
+                         net (fo=2, routed)           0.134     8.294    respChirho_OBUF[491]_inst_i_2_n_0
+    SLICE_X88Y568        LUT6 (Prop_F6LUT_SLICEM_I2_O)
+                                                      0.098     8.392 r  respChirho_OBUF[491]_inst_i_1/O
+                         net (fo=5, routed)           5.999    14.390    respChirho_OBUF[491]
+    SLR Crossing[1->0]   
+    BB32                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.891    15.281 r  respChirho_OBUF[491]_inst/O
+                         net (fo=0)                   0.000    15.281    respChirho[491]
+    BB32                                                              r  respChirho[491] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.281    
+  -------------------------------------------------------------------
+                         slack                                -12.317    
+
+Slack (VIOLATED) :        -12.277ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[500]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.242ns  (logic 2.269ns (15.932%)  route 11.973ns (84.068%))
+  Logic Levels:           12  (CARRY8=3 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_O[4])
+                                                      0.086     7.372 r  respChirho_OBUF[503]_inst_i_9/O[4]
+                         net (fo=9, routed)           0.471     7.843    ds40[52]
+    SLICE_X91Y570        LUT6 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.050     7.893 r  respChirho_OBUF[500]_inst_i_5/O
+                         net (fo=1, routed)           0.009     7.902    respChirho_OBUF[500]_inst_i_5_n_0
+    SLICE_X91Y570        MUXF7 (Prop_F7MUX_AB_SLICEL_I1_O)
+                                                      0.064     7.966 r  respChirho_OBUF[500]_inst_i_2/O
+                         net (fo=2, routed)           0.389     8.355    respChirho_OBUF[500]_inst_i_2_n_0
+    SLICE_X89Y570        LUT6 (Prop_B6LUT_SLICEL_I2_O)
+                                                      0.124     8.479 r  respChirho_OBUF[500]_inst_i_1/O
+                         net (fo=5, routed)           5.843    14.322    respChirho_OBUF[500]
+    SLR Crossing[1->0]   
+    BD33                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.920    15.242 r  respChirho_OBUF[500]_inst/O
+                         net (fo=0)                   0.000    15.242    respChirho[500]
+    BD33                                                              r  respChirho[500] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.242    
+  -------------------------------------------------------------------
+                         slack                                -12.277    
+
+Slack (VIOLATED) :        -12.268ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[509]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.232ns  (logic 2.326ns (16.346%)  route 11.906ns (83.654%))
+  Logic Levels:           13  (CARRY8=4 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.301 r  respChirho_OBUF[503]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.327    respChirho_OBUF[503]_inst_i_9_n_0
+    SLICE_X94Y567        CARRY8 (Prop_CARRY8_SLICEL_CI_O[5])
+                                                      0.116     7.443 r  respChirho_OBUF[511]_inst_i_14/O[5]
+                         net (fo=9, routed)           0.449     7.892    ds40[61]
+    SLICE_X88Y571        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.038     7.930 r  respChirho_OBUF[509]_inst_i_5/O
+                         net (fo=1, routed)           0.011     7.941    respChirho_OBUF[509]_inst_i_5_n_0
+    SLICE_X88Y571        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065     8.006 r  respChirho_OBUF[509]_inst_i_2/O
+                         net (fo=2, routed)           0.317     8.323    respChirho_OBUF[509]_inst_i_2_n_0
+    SLICE_X88Y570        LUT6 (Prop_E6LUT_SLICEM_I2_O)
+                                                      0.148     8.471 r  respChirho_OBUF[509]_inst_i_1/O
+                         net (fo=5, routed)           5.843    14.313    respChirho_OBUF[509]
+    SLR Crossing[1->0]   
+    BF33                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.919    15.232 r  respChirho_OBUF[509]_inst/O
+                         net (fo=0)                   0.000    15.232    respChirho[509]
+    BF33                                                              r  respChirho[509] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.232    
+  -------------------------------------------------------------------
+                         slack                                -12.268    
+
+Slack (VIOLATED) :        -12.178ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[480]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.143ns  (logic 2.122ns (15.006%)  route 12.021ns (84.994%))
+  Logic Levels:           10  (CARRY8=1 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_O[0])
+                                                      0.063     7.092 r  respChirho_OBUF[487]_inst_i_9/O[0]
+                         net (fo=9, routed)           0.638     7.729    ds40[32]
+    SLICE_X87Y564        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.125     7.854 r  respChirho_OBUF[480]_inst_i_5/O
+                         net (fo=1, routed)           0.011     7.865    respChirho_OBUF[480]_inst_i_5_n_0
+    SLICE_X87Y564        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065     7.930 r  respChirho_OBUF[480]_inst_i_2/O
+                         net (fo=2, routed)           0.370     8.301    respChirho_OBUF[480]_inst_i_2_n_0
+    SLICE_X87Y565        LUT6 (Prop_E6LUT_SLICEM_I2_O)
+                                                      0.148     8.449 r  respChirho_OBUF[480]_inst_i_1/O
+                         net (fo=5, routed)           5.793    14.242    respChirho_OBUF[480]
+    SLR Crossing[1->0]   
+    AU32                 OBUF (Prop_OUTBUF_HPIOB_M_I_O)
+                                                      0.901    15.143 r  respChirho_OBUF[480]_inst/O
+                         net (fo=0)                   0.000    15.143    respChirho[480]
+    AU32                                                              r  respChirho[480] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.143    
+  -------------------------------------------------------------------
+                         slack                                -12.178    
+
+Slack (VIOLATED) :        -12.161ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[481]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.126ns  (logic 2.048ns (14.497%)  route 12.078ns (85.503%))
+  Logic Levels:           10  (CARRY8=1 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_O[1])
+                                                      0.094     7.123 r  respChirho_OBUF[487]_inst_i_9/O[1]
+                         net (fo=9, routed)           0.734     7.856    ds40[33]
+    SLICE_X92Y568        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.125     7.981 r  respChirho_OBUF[481]_inst_i_5/O
+                         net (fo=1, routed)           0.011     7.992    respChirho_OBUF[481]_inst_i_5_n_0
+    SLICE_X92Y568        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065     8.057 r  respChirho_OBUF[481]_inst_i_2/O
+                         net (fo=2, routed)           0.656     8.713    respChirho_OBUF[481]_inst_i_2_n_0
+    SLICE_X92Y564        LUT6 (Prop_E6LUT_SLICEM_I2_O)
+                                                      0.052     8.765 r  respChirho_OBUF[481]_inst_i_1/O
+                         net (fo=5, routed)           5.469    14.234    respChirho_OBUF[481]
+    SLR Crossing[1->0]   
+    AV32                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.892    15.126 r  respChirho_OBUF[481]_inst/O
+                         net (fo=0)                   0.000    15.126    respChirho[481]
+    AV32                                                              r  respChirho[481] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.126    
+  -------------------------------------------------------------------
+                         slack                                -12.161    
+
+Slack (VIOLATED) :        -12.141ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[495]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.106ns  (logic 2.201ns (15.604%)  route 11.904ns (84.396%))
+  Logic Levels:           11  (CARRY8=2 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_O[7])
+                                                      0.116     7.361 r  respChirho_OBUF[495]_inst_i_9/O[7]
+                         net (fo=9, routed)           0.747     8.108    ds40[47]
+    SLICE_X87Y569        LUT6 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.088     8.196 r  respChirho_OBUF[495]_inst_i_5/O
+                         net (fo=1, routed)           0.021     8.217    respChirho_OBUF[495]_inst_i_5_n_0
+    SLICE_X87Y569        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068     8.285 r  respChirho_OBUF[495]_inst_i_2/O
+                         net (fo=2, routed)           0.202     8.487    respChirho_OBUF[495]_inst_i_2_n_0
+    SLICE_X87Y569        LUT6 (Prop_A6LUT_SLICEM_I2_O)
+                                                      0.038     8.525 r  respChirho_OBUF[495]_inst_i_1/O
+                         net (fo=5, routed)           5.700    14.225    respChirho_OBUF[495]
+    SLR Crossing[1->0]   
+    BB31                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.881    15.106 r  respChirho_OBUF[495]_inst/O
+                         net (fo=0)                   0.000    15.106    respChirho[495]
+    BB31                                                              r  respChirho[495] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.106    
+  -------------------------------------------------------------------
+                         slack                                -12.141    
+
+Slack (VIOLATED) :        -12.131ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[291]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.095ns  (logic 2.255ns (15.998%)  route 11.840ns (84.002%))
+  Logic Levels:           10  (CARRY8=1 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_O[3])
+                                                      0.138     7.167 r  respChirho_OBUF[487]_inst_i_9/O[3]
+                         net (fo=9, routed)           0.488     7.654    ds40[35]
+    SLICE_X89Y566        LUT6 (Prop_G6LUT_SLICEL_I0_O)
+                                                      0.149     7.803 r  respChirho_OBUF[291]_inst_i_5/O
+                         net (fo=1, routed)           0.008     7.811    respChirho_OBUF[291]_inst_i_5_n_0
+    SLICE_X89Y566        MUXF7 (Prop_F7MUX_GH_SLICEL_I1_O)
+                                                      0.063     7.874 r  respChirho_OBUF[291]_inst_i_2/O
+                         net (fo=2, routed)           0.853     8.727    respChirho_OBUF[291]_inst_i_2_n_0
+    SLICE_X89Y566        LUT6 (Prop_E6LUT_SLICEL_I2_O)
+                                                      0.123     8.850 r  respChirho_OBUF[291]_inst_i_1/O
+                         net (fo=5, routed)           5.283    14.133    respChirho_OBUF[291]
+    SLR Crossing[1->0]   
+    BC38                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.962    15.095 r  respChirho_OBUF[291]_inst/O
+                         net (fo=0)                   0.000    15.095    respChirho[291]
+    BC38                                                              r  respChirho[291] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.095    
+  -------------------------------------------------------------------
+                         slack                                -12.131    
+
+Slack (VIOLATED) :        -12.118ns  (required time - arrival time)
+  Source:                 cmdChirho[65]
+                            (input port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            respChirho[499]
+                            (output port clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             clk
+  Path Type:              Max at Slow Process Corner
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        14.083ns  (logic 2.214ns (15.723%)  route 11.868ns (84.277%))
+  Logic Levels:           12  (CARRY8=3 IBUFCTRL=1 INBUF=1 LUT1=1 LUT6=3 MUXF7=2 OBUF=1)
+  Input Delay:            1.000ns
+  Output Delay:           1.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         input delay                  1.000     1.000    
+    D16                                               0.000     1.000 r  cmdChirho[65] (IN)
+                         net (fo=0)                   0.000     1.000    cmdChirho_IBUF[65]_inst/I
+    D16                  INBUF (Prop_INBUF_HPIOB_S_PAD_O)
+                                                      0.565     1.565 r  cmdChirho_IBUF[65]_inst/INBUF_INST/O
+                         net (fo=1, routed)           0.000     1.565    cmdChirho_IBUF[65]_inst/OUT
+    D16                  IBUFCTRL (Prop_IBUFCTRL_HPIOB_S_I_O)
+                                                      0.000     1.565 r  cmdChirho_IBUF[65]_inst/IBUFCTRL_INST/O
+                         net (fo=154, routed)         4.094     5.659    cmdChirho_IBUF[65]
+    SLR Crossing[2->1]   
+    SLICE_X93Y570        LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.037     5.696 f  c$ds_app_arg[3448]_i_5/O
+                         net (fo=4, routed)           0.025     5.721    c$ds_app_arg[3448]_i_5_n_0
+    SLICE_X93Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069     5.790 f  c$ds_app_arg_reg[3448]_i_3/O
+                         net (fo=36, routed)          1.081     6.871    vecArray_0__0[32]
+    SLICE_X94Y564        LUT1 (Prop_A6LUT_SLICEL_I0_O)
+                                                      0.149     7.020 r  respChirho_OBUF[487]_inst_i_23/O
+                         net (fo=1, routed)           0.009     7.029    respChirho_OBUF[487]_inst_i_23_n_0
+    SLICE_X94Y564        CARRY8 (Prop_CARRY8_SLICEL_S[0]_CO[7])
+                                                      0.190     7.219 r  respChirho_OBUF[487]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.245    respChirho_OBUF[487]_inst_i_9_n_0
+    SLICE_X94Y565        CARRY8 (Prop_CARRY8_SLICEL_CI_CO[7])
+                                                      0.015     7.260 r  respChirho_OBUF[495]_inst_i_9/CO[7]
+                         net (fo=1, routed)           0.026     7.286    respChirho_OBUF[495]_inst_i_9_n_0
+    SLICE_X94Y566        CARRY8 (Prop_CARRY8_SLICEL_CI_O[3])
+                                                      0.082     7.368 r  respChirho_OBUF[503]_inst_i_9/O[3]
+                         net (fo=9, routed)           0.475     7.843    ds40[51]
+    SLICE_X87Y570        LUT6 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.037     7.880 r  respChirho_OBUF[499]_inst_i_5/O
+                         net (fo=1, routed)           0.021     7.901    respChirho_OBUF[499]_inst_i_5_n_0
+    SLICE_X87Y570        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068     7.969 r  respChirho_OBUF[499]_inst_i_2/O
+                         net (fo=2, routed)           0.528     8.497    respChirho_OBUF[499]_inst_i_2_n_0
+    SLICE_X87Y570        LUT6 (Prop_B6LUT_SLICEM_I2_O)
+                                                      0.100     8.597 r  respChirho_OBUF[499]_inst_i_1/O
+                         net (fo=5, routed)           5.584    14.181    respChirho_OBUF[499]
+    SLR Crossing[1->0]   
+    BD29                 OBUF (Prop_OUTBUF_HPIOB_S_I_O)
+                                                      0.902    15.083 r  respChirho_OBUF[499]_inst/O
+                         net (fo=0)                   0.000    15.083    respChirho[499]
+    BD29                                                              r  respChirho[499] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        4.000     4.000 r  
+                         clock pessimism              0.000     4.000    
+                         clock uncertainty           -0.035     3.965    
+                         output delay                -1.000     2.965    
+  -------------------------------------------------------------------
+                         required time                          2.965    
+                         arrival time                         -15.083    
+  -------------------------------------------------------------------
+                         slack                                -12.118    
+
+
+
+

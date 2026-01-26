@@ -13,5 +13,5 @@ export SUBNET_ID_CHIRHO="subnet-c5104ea0"  # us-east-1a, public subnet
 export FPGA_DEV_AMI_CHIRHO="ami-01198b89d80ebfdd2"  # FPGA Developer AMI 1.17.0 Ubuntu
 
 # Instance types
-export SYNTH_INSTANCE_CHIRHO="c5.4xlarge"  # For Vivado synthesis (~$0.68/hr)
+export SYNTH_INSTANCE_CHIRHO="c5.18xlarge"  # For Vivado synthesis (~$3.06/hr) - 72 vCPUs, 144GB RAM
 export F1_INSTANCE_CHIRHO="f1.2xlarge"     # For FPGA execution (~$1.65/hr)
