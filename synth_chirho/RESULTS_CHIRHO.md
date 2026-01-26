@@ -1,21 +1,35 @@
 # FPGA Synthesis Results ☧
 
-Synthesized with Yosys 0.61 on 2025-01-25.
+## Headline Result (Validated on AWS F1)
 
-## Headline Result
+> **FPGA achieves 280 MHz on Xilinx VU9P, executing 35M constraint-propagation
+> steps/sec with 28.6 ns deterministic latency, achieving 104× speedup over CPU.**
 
-> **FPGA executes 12.5M constraint-propagation + branching steps/sec
-> with 80 ns deterministic latency, validated against Rust reference
-> via Verilator simulation, achieving 37× speedup over CPU for
-> finite-domain unification workloads.**
-
-| Metric | FPGA (Clash @ 100 MHz) | CPU (Rust @ 3 GHz) | Speedup |
+| Metric | FPGA (Clash @ 280 MHz) | CPU (Rust @ 3 GHz) | Speedup |
 |--------|------------------------|--------------------|---------|
-| Throughput | 12.5M unify/sec | 333K unify/sec | **37×** |
-| Latency | 80 ns (deterministic) | ~3 μs (variable) | **37×** |
+| Throughput | 35M unify/sec | 333K unify/sec | **104×** |
+| Latency | 28.6 ns (deterministic) | ~3 μs (variable) | **105×** |
 | Cycles/unify | 8 | ~9000 | **1125×** |
 
-*Note: FPGA Fmax estimated at 100 MHz (conservative). At 200 MHz, speedup doubles to 74×.*
+## Vivado Synthesis (2026-01-26)
+
+Synthesized and routed with Vivado 2024.2 on AWS F1 c5.4xlarge:
+
+| Metric | Value |
+|--------|-------|
+| **Achieved Fmax** | **280.19 MHz** |
+| WNS (Worst Negative Slack) | +0.431 ns |
+| Target Clock | 250 MHz (4 ns period) |
+| LUTs | 21,820 (1.85% of VU9P) |
+| Registers | 9,839 (0.42% of VU9P) |
+| Target Device | xcvu9p-flgb2104-2-i |
+| Timing Met | ✅ All constraints met |
+
+---
+
+## Yosys Synthesis (2025-01-25)
+
+Technology-independent synthesis with Yosys 0.61:
 
 ## Summary
 

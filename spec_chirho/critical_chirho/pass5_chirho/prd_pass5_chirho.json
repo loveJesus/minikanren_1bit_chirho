@@ -1,0 +1,242 @@
+{
+  "id": "pass5_chirho",
+  "title": "Pass 5: Validate, Publish, Build Community",
+  "version": "5.0",
+  "date": "2026-01-26",
+  "status": "in_progress",
+  "description": "Validate on physical FPGA, publish papers, build community around miniKanren 1-bit hardware acceleration",
+
+  "headline_result": {
+    "description": "FPGA synthesized on Xilinx VU9P at 280 MHz with Vivado 2024.2",
+    "metrics": {
+      "fmax_mhz": 280.19,
+      "wns_ns": 0.431,
+      "luts": 21820,
+      "registers": 9839,
+      "target_device": "xcvu9p-flgb2104-2-i",
+      "tool": "Vivado 2024.2",
+      "validated_on": "AWS F1 c5.4xlarge dev instance"
+    }
+  },
+
+  "phases": [
+    {
+      "id": "phase1",
+      "name": "Validate",
+      "duration": "Weeks 1-2",
+      "tasks": [
+        {
+          "id": "P5-01",
+          "title": "Physical FPGA bring-up",
+          "description": "Run on DE10-Nano or similar development board",
+          "status": "pending",
+          "priority": "high"
+        },
+        {
+          "id": "P5-02",
+          "title": "Vivado timing closure",
+          "description": "Run timing closure, measure real Fmax and power",
+          "status": "completed",
+          "priority": "high",
+          "result": "280 MHz achieved on VU9P (WNS +0.431ns)"
+        },
+        {
+          "id": "P5-03",
+          "title": "CLP(FD) benchmark comparison",
+          "description": "Compare with SICStus, SWI-Prolog CLP(FD)",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "id": "P5-04",
+          "title": "Differentiable comparison",
+          "description": "Compare with Scallop, DeepProbLog, OCanren",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "id": "P5-05",
+          "title": "Killer demo",
+          "description": "Real-time type inference visualization OR hardware Sudoku with LED",
+          "status": "pending",
+          "priority": "high"
+        }
+      ]
+    },
+    {
+      "id": "phase2",
+      "name": "Publish",
+      "duration": "Weeks 2-8",
+      "tasks": [
+        {
+          "id": "P5-06",
+          "title": "Submit Paper A to PLDI/POPL",
+          "description": "Core bit-parallel engine paper",
+          "status": "pending",
+          "priority": "very_high"
+        },
+        {
+          "id": "P5-07",
+          "title": "Submit Paper E to FPGA/FCCM",
+          "description": "FPGA hardware paper with 280 MHz result",
+          "status": "pending",
+          "priority": "very_high"
+        },
+        {
+          "id": "P5-08",
+          "title": "ArXiv monolith",
+          "description": "Upload comprehensive reference paper",
+          "status": "pending",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "id": "phase3",
+      "name": "Build Community",
+      "duration": "Months 2-6",
+      "tasks": [
+        {
+          "id": "P5-10",
+          "title": "Python package",
+          "description": "PyO3 bindings, publish to PyPI",
+          "status": "pending",
+          "priority": "high"
+        },
+        {
+          "id": "P5-11",
+          "title": "WebAssembly build",
+          "description": "Browser demos with wasm-pack",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "id": "P5-12",
+          "title": "Interactive playground",
+          "description": "Web UI for trying miniKanren queries",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "id": "P5-13",
+          "title": "Tutorial series",
+          "description": "YouTube videos, blog posts",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "id": "P5-14",
+          "title": "Community setup",
+          "description": "Discord or Matrix server",
+          "status": "pending",
+          "priority": "low"
+        }
+      ]
+    },
+    {
+      "id": "phase4",
+      "name": "Scale",
+      "duration": "Months 6-12",
+      "tasks": [
+        {
+          "id": "P5-15",
+          "title": "Cloud service",
+          "description": "API for heavy workloads",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "id": "P5-16",
+          "title": "Hardware kit",
+          "description": "FPGA board + bitstream for researchers",
+          "status": "pending",
+          "priority": "low"
+        },
+        {
+          "id": "P5-17",
+          "title": "Integration",
+          "description": "Integrate with egg, Z3, Datalog ecosystems",
+          "status": "pending",
+          "priority": "medium"
+        }
+      ]
+    }
+  ],
+
+  "technical_debt": {
+    "must_fix": [
+      {
+        "id": "P5-D01",
+        "title": "Calyx search_engine architecture",
+        "description": "Refactor for Calyx @external memory constraints",
+        "status": "pending",
+        "effort": "1 day"
+      },
+      {
+        "id": "P5-D02",
+        "title": "_chirho suffix audit",
+        "description": "Ensure all public Rust identifiers have suffix",
+        "status": "completed",
+        "effort": "2 hours"
+      }
+    ],
+    "should_fix": [
+      {
+        "id": "P5-D03",
+        "title": "Property-based tests",
+        "description": "Add proptest for edge cases",
+        "status": "pending",
+        "effort": "1 week"
+      },
+      {
+        "id": "P5-D04",
+        "title": "Fuzzing harness",
+        "description": "cargo-fuzz for unification",
+        "status": "pending",
+        "effort": "1 week"
+      }
+    ],
+    "nice_to_have": [
+      {
+        "id": "P5-D05",
+        "title": "Formal specification",
+        "description": "TLA+ or Lean4 proof",
+        "status": "pending",
+        "effort": "2 weeks"
+      }
+    ]
+  },
+
+  "completed_from_pass4": [
+    "Thread-safety tests (terms_sync_chirho.rs)",
+    "GPU memory layout docs",
+    "Contraction heuristics bench",
+    "CI workflow (.github/workflows/ci_chirho.yml)",
+    "Paper suite (6 papers drafted)",
+    "Yosys synthesis (43K cells Clash, 627 cells Calyx)",
+    "Full miniKanren semantics (not, conda, condu, diseq, project)",
+    "Differentiable learning (gumbel, anneal, learnable relations)",
+    "232 tests passing"
+  ],
+
+  "acceptance_criteria": {
+    "short_term_3mo": [
+      "Physical FPGA runs at >100 MHz",
+      "Paper A submitted",
+      "1,000 GitHub stars",
+      "100 Discord members"
+    ],
+    "medium_term_12mo": [
+      "Paper published at top venue",
+      "10,000 PyPI downloads",
+      "3 external contributors",
+      "Production use case"
+    ],
+    "long_term_3yr": [
+      "ASIC tape-out",
+      "Startup or acquisition",
+      "Industry standard for hardware logic",
+      "50+ citations"
+    ]
+  }
+}
