@@ -31,7 +31,9 @@ Synthesized and routed with Vivado 2024.2 on AWS F1 c5.4xlarge (dev instance, no
 | LUTs | 21,820 (~1.8% of VU9P)‡ |
 | Registers | 9,839 (~0.4% of VU9P)‡ |
 | Target Device | xcvu9p-flgb2104-2-i |
-| Timing Met | ✅ All constraints met |
+| Timing Met | ✅ Constraints met for constrained paths |
+
+**Constraints note:** `check_timing` reported many ports without I/O delay constraints (e.g. missing input/output delays). The positive WNS/TNS/WHS/THS above is strong evidence of internal timing closure under the current constraints, but the I/O boundary must be explicitly constrained (or scoped with false paths) for the final AFI/on-FPGA integration.
 
 ‡Utilization percentages are approximate. VU9P has ~1.18M LUTs; precise
 hierarchical utilization requires `report_utilization -hierarchical`.

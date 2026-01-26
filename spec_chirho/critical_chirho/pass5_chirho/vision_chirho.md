@@ -2,20 +2,20 @@
 
 *In Jesus' name, for the glory of God*
 
-## Current State (January 2025)
+## Current State (January 2026)
 
 We have built something real:
 
 | Layer | Status | Metrics |
 |-------|--------|---------|
 | **Rust Engine** | ✅ Production | 218+ tests, 14μs N-Queens, 22μs Sudoku |
-| **FPGA (Clash)** | ✅ Synthesized | 43K cells, 37× speedup, 80ns latency |
+| **FPGA (Clash)** | ✅ Routed (build env) | 280 MHz post-route timing on VU9P (see `synth_chirho/RESULTS_CHIRHO.md`) |
 | **FPGA (Calyx)** | ✅ Minimal | 627 cells, proof of concept |
 | **Papers** | ✅ Drafted | 6-paper suite, 3,222 lines |
 | **Differentiable** | ✅ Working | Semiring abstraction, gradients flow |
 
 **Headline result achieved:**
-> FPGA executes 12.5M constraint-propagation steps/sec with 80ns deterministic latency, 37× faster than CPU.
+> Post-route timing shows **280 MHz** on VU9P (build environment). Projected kernel throughput/latency depends on the micro-sequence and must be measured on real FPGA hardware for final claims.
 
 ---
 
@@ -51,7 +51,7 @@ We have built something real:
 ```
 
 **Why this matters:**
-- 64 parallel search engines = 64 × 12.5M = 800M unifications/sec
+- 64 parallel search engines = parallelism that scales toward hundreds of millions of kernel ops/sec (projected), subject to memory/interface limits
 - Shared hash-cons = memory efficiency
 - Hardware tabling = no CPU round-trips
 - Deterministic latency = real-time applications
@@ -235,7 +235,7 @@ Why FPGA matters:
 
 ### Short-term (3 months)
 
-- [ ] Physical FPGA runs at >100 MHz
+- [ ] Physical FPGA run completed (or AWS F1 AFI run completed)
 - [ ] Paper A submitted
 - [ ] 1,000 GitHub stars
 - [ ] 100 Discord members

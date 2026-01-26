@@ -1,3 +1,5 @@
+# For God so loved the world, that He gave His only begotten Son, that all who believe in Him should not perish but have everlasting life.
+recoded_from_doc_chirho
 __pycache__/
 .idea/
 *.zip
@@ -18,3 +20,18 @@ clash_chirho/verilog/
 rust_chirho/target/
 rust_chirho/pkg/
 rust_chirho/web_chirho/pkg_chirho/
+
+# LaTeX build artifacts (papers)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+texput.log
+

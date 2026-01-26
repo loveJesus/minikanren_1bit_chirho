@@ -6,8 +6,19 @@
   "status": "in_progress",
   "description": "Validate on physical FPGA, publish papers, build community around miniKanren 1-bit hardware acceleration",
 
+  "principles_chirho": {
+    "description": "Truth-first engineering priorities (spotless + honest + reproducible).",
+    "ordering_chirho": [
+      "Truth before speed: verify before proclaiming performance",
+      "Measured > estimated: prefer post-route/on-FPGA evidence over generic synthesis",
+      "Scope clarity: FD-miniKanren kernel vs full miniKanren semantics (reference engine)",
+      "Reproducibility: every headline metric has an evidence pointer and a command to reproduce",
+      "Stewardship: community/outreach grows from demonstrated truth, not hype"
+    ]
+  },
+
   "headline_result": {
-    "description": "Post-route timing achieved 280 MHz on Xilinx VU9P with Vivado 2024.2",
+    "description": "Post-route timing achieved 280 MHz on Xilinx VU9P with Vivado 2024.2 (build environment).",
     "metrics": {
       "fmax_mhz": 280.19,
       "wns_ns": 0.431,
@@ -20,21 +31,33 @@
       "tool": "Vivado 2024.2",
       "validated_on": "AWS F1 c5.4xlarge dev instance (post-route, not on-FPGA)"
     },
+    "evidence_chirho": {
+      "local_repo_chirho": [
+        "synth_chirho/RESULTS_CHIRHO.md",
+        "synth_chirho/yosys_clash_report_chirho.txt",
+        "synth_chirho/yosys_calyx_report_chirho.txt"
+      ],
+      "aws_build_environment_chirho": [
+        "f1_synth_chirho/utilization_chirho.rpt",
+        "f1_synth_chirho/timing_chirho.rpt"
+      ]
+    },
     "caveats": [
       "Throughput 35M unify/sec is projected from timing, not measured on physical FPGA",
-      "Utilization percentages are approximate (back-of-envelope)",
-      "On-FPGA validation with AFI bitstream is pending"
+      "Vivado `check_timing` flagged missing I/O delays for many ports; internal timing closure is meaningful under the current constraints, but I/O constraints must be defined for the real integration boundary",
+      "Utilization percentages are approximate without hierarchical utilization context",
+      "On-FPGA validation with AFI bitstream is pending (this is the main remaining proof)"
     ]
   },
 
   "verification_gap": {
-    "description": "From review_chirho.md: The 'Truth' (Rust reference) and 'Power' (Clash FPGA) are not yet verified bit-identical",
+    "description": "The 'Truth' (Rust reference) and 'Power' (Clash/Calyx hardware) must be verified bit-identical for the FD-miniKanren kernel command/response semantics.",
     "current_state": {
       "truth": "rust_chirho (SearchStateHwChirho)",
-      "power": "clash_chirho (Mealy machine Verilog)"
+      "power": "clash_chirho (Mealy machine Verilog) + calyx_chirho (kernel demo)"
     },
-    "missing_link": "Verilator integration to run both side-by-side with proptest fuzzing",
-    "action_required": "Add Verilator dev-dependency, fuzz test: assert_eq!(rust_resp, hw_resp)"
+    "missing_link": "Co-simulation harness to drive the same command stream into (a) Rust model and (b) Verilog simulation (Verilator), then assert identical responses and state transitions.",
+    "action_required": "Build a Verilator-driven test harness; fuzz the kernel subset (proptest or equivalent) and assert exact agreement: assert_eq!(rust_resp_chirho, hw_resp_chirho)."
   },
 
   "milestone_path": {
@@ -43,7 +66,7 @@
       {
         "id": "M1",
         "name": "Golden FPGA Demo",
-        "description": "Pick N-Queens or Sudoku, run on FPGA, verify bit-identical to Rust",
+        "description": "Pick N-Queens or Sudoku, run end-to-end, verify bit-identical to Rust for the bounded kernel semantics, and record measured on-FPGA throughput/latency.",
         "status": "next"
       },
       {
@@ -85,49 +108,59 @@
   "phases": [
     {
       "id": "phase1",
-      "name": "Validate",
+      "name": "Validate (Sanctification)",
       "duration": "Weeks 1-2",
       "tasks": [
         {
           "id": "P5-00",
-          "title": "Verilator verification bridge",
-          "description": "Integrate Verilator as dev-dependency, fuzz test Clash Verilog against Rust SearchStateHwChirho to prove bit-identical behavior",
+          "title": "Verilator Verification Bridge",
+          "description": "Build the 'Bridge of Truth': Integrate Verilator harness to drive identical SearchCmd streams into (a) Rust SearchStateHwChirho and (b) Clash Verilog simulation. Use proptest to fuzz 1M+ cycles and prove bit-identical behavior.",
           "status": "pending",
           "priority": "critical",
-          "source": "review_chirho.md: Phase 1 Sanctification"
+          "source": "spec_chirho/critical_chirho/pass5_chirho/review_chirho.md",
+          "tangible_deliverable_chirho": "A passing `cargo test --features verify_hw_chirho` that runs the fuzzing loop."
         },
         {
           "id": "P5-01",
-          "title": "Physical FPGA bring-up",
-          "description": "Run on DE10-Nano or similar development board",
+          "title": "Physical FPGA Incarnation",
+          "description": "Synthesize and run on real silicon (AWS F1 or local board). Move beyond simulation to physical reality.",
           "status": "pending",
-          "priority": "high"
+          "priority": "high",
+          "tangible_deliverable_chirho": "A photo/screenshot of the board/AFI running the golden demo with observable output (LED/UART/log)."
         },
         {
           "id": "P5-02",
-          "title": "Vivado timing closure",
-          "description": "Run timing closure, measure real Fmax and power",
+          "title": "Vivado Timing Closure",
+          "description": "Ensure post-route timing closure is reproducible with defined I/O constraints.",
           "status": "completed",
           "priority": "high",
           "result": "280 MHz achieved on VU9P (WNS +0.431ns)"
         },
         {
+          "id": "P5-02b",
+          "title": "Latency Measurement",
+          "description": "Measure strict end-to-end latency (Host -> PCIe -> FPGA -> PCIe -> Host) and sustained throughput for the golden demo workload. Do not claim specific numbers until measured.",
+          "status": "pending",
+          "priority": "critical",
+          "tangible_deliverable_chirho": "Measured latency/throughput recorded in `synth_chirho/performance_chirho.md` (with measurement method + environment)."
+        },
+        {
           "id": "P5-03",
-          "title": "CLP(FD) benchmark comparison",
+          "title": "CLP(FD) Benchmark Comparison",
           "description": "Compare with SICStus, SWI-Prolog CLP(FD)",
           "status": "pending",
           "priority": "medium"
         },
         {
           "id": "P5-04",
-          "title": "Differentiable comparison",
-          "description": "Compare with Scallop, DeepProbLog, OCanren",
+          "title": "Differentiable / Relational Baseline Comparison",
+          "description": "Run and document comparison baselines for the differentiable and relational story (Scallop, DeepProbLog, OCanren) on a small, bounded benchmark.",
           "status": "pending",
           "priority": "medium"
         },
         {
           "id": "P5-05",
-          "title": "Killer demo",
+          "title": "Killer Demo",
           "description": "Real-time type inference visualization OR hardware Sudoku with LED",
           "status": "pending",
           "priority": "high"
@@ -155,7 +188,7 @@
         },
         {
           "id": "P5-08",
-          "title": "ArXiv monolith",
+          "title": "ArXiv Monolith",
           "description": "Upload comprehensive reference paper",
           "status": "pending",
           "priority": "medium"
@@ -169,35 +202,35 @@
       "tasks": [
         {
           "id": "P5-10",
-          "title": "Python package",
+          "title": "Python Package",
           "description": "PyO3 bindings, publish to PyPI",
           "status": "pending",
           "priority": "high"
         },
         {
           "id": "P5-11",
-          "title": "WebAssembly build",
+          "title": "WebAssembly Build",
           "description": "Browser demos with wasm-pack",
           "status": "pending",
           "priority": "medium"
         },
         {
           "id": "P5-12",
-          "title": "Interactive playground",
+          "title": "Interactive Playground",
           "description": "Web UI for trying miniKanren queries",
           "status": "pending",
           "priority": "medium"
         },
         {
           "id": "P5-13",
-          "title": "Tutorial series",
+          "title": "Tutorial Series",
           "description": "YouTube videos, blog posts",
           "status": "pending",
           "priority": "medium"
         },
         {
           "id": "P5-14",
-          "title": "Community setup",
+          "title": "Community Setup",
           "description": "Discord or Matrix server",
           "status": "pending",
           "priority": "low"
@@ -211,14 +244,14 @@
       "tasks": [
         {
           "id": "P5-15",
-          "title": "Cloud service",
+          "title": "Cloud Service",
           "description": "API for heavy workloads",
           "status": "pending",
           "priority": "medium"
         },
         {
           "id": "P5-16",
-          "title": "Hardware kit",
+          "title": "Hardware Kit",
           "description": "FPGA board + bitstream for researchers",
           "status": "pending",
           "priority": "low"
@@ -292,8 +325,9 @@
 
   "acceptance_criteria": {
     "short_term_3mo": [
-      "Physical FPGA runs at >100 MHz",
-      "Paper A submitted",
+      "Bridge of Truth built: `cargo test --features verify_hw_chirho` passes with 1M+ fuzz cycles (Rust vs Verilator)",
+      "Physical Reality: AFI / on-FPGA run completed (or equivalent physical FPGA run) with measured latency/throughput recorded (no projections)",
+      "Paper A submitted with 'Artifact Evaluated' badge eligibility",
       "1,000 GitHub stars",
       "100 Discord members"
     ],
