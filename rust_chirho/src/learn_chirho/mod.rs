@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Differentiable Learning for miniKanren ☧
 //!
 //! Enables gradient-based learning through logic programs using soft relaxation.

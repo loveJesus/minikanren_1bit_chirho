@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Boolean relations as 1-bit matrices ☧
 //!
 //! Two implementations for comparison:

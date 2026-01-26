@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Sudoku Solver using 1-Bit Domain Propagation ☧
 //!
 //! Demonstrates miniKanren-style constraint propagation with bit-parallel ops.

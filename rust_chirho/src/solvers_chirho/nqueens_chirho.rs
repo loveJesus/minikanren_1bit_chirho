@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! N-Queens Solver using 1-Bit Domain Propagation ☧
 //!
 //! Place N queens on an N×N board such that no two attack each other.

@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Hardware Optics ☧
 //!
 //! Optics over 1-bit domains using BitVec64/256.

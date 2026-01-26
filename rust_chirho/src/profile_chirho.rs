@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Profiling Infrastructure for Wall-Clock Breakdown ☧
 //!
 //! Tracks time spent in different phases to prove interning isn't a bottleneck.

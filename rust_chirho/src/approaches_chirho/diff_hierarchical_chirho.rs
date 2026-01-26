@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Differentiable Hierarchical Domains ☧
 //!
 //! Soft relaxation of Hierarchical4kChirho where each bit position

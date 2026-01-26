@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Program Synthesis via Domain-Pruned Enumeration ☧
 //!
 //! This module implements SyGuS-style program synthesis using our 1-bit

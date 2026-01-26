@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! GPU acceleration for bit matrix operations ☧
 //!
 //! Uses WebGPU compute shaders to accelerate:

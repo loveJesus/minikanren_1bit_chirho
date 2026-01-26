@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Training Diagnostics ☧
 //!
 //! Gradient norm tracking and stability analysis for neurosymbolic validation.

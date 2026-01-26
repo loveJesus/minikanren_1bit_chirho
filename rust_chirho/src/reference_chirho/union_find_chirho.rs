@@ -1,3 +1,4 @@
+// For God so loved the world that He gave His only begotten Son that all who believe in Him should not perish but have everlasting life.
 //! Union-Find for variable equivalence classes ☧
 //!
 //! O(α(n)) ≈ O(1) amortized operations.
