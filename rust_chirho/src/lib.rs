@@ -134,6 +134,10 @@ pub mod approaches_chirho;
 #[cfg(feature = "wasm_chirho")]
 pub mod wasm_chirho;
 
+/// Hardware verification bridge: Rust ↔ Verilator co-simulation
+/// Part of P5-00: Bridge of Truth
+pub mod verify_hw_chirho;
+
 // ============================================================================
 // Backward-compatible re-exports (crate root)
 // ============================================================================
