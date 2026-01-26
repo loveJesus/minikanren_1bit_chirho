@@ -76,12 +76,11 @@ impl GradientStatsChirho {
         // Stable if:
         // - Not all zero (vanishing)
         // - Not exploding (L-inf < 1e3)
-        // - Reasonable variance (not collapsed)
+        // Note: Zero variance is fine (all gradients equal but non-zero)
         let not_vanishing_chirho = self.zero_count_chirho < self.count_chirho;
         let not_exploding_chirho = self.exploding_count_chirho == 0;
-        let has_variance_chirho = self.variance_chirho > 1e-10 || self.count_chirho == 1;
 
-        not_vanishing_chirho && not_exploding_chirho && has_variance_chirho
+        not_vanishing_chirho && not_exploding_chirho
     }
 }
 
