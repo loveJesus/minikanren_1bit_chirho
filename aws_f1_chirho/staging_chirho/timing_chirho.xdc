@@ -21,6 +21,5 @@ set_output_delay -clock clk -min 0.0 [get_ports {respChirho[*]}]
 # False paths for reset (async)
 set_false_path -from [get_ports rst]
 
-# High fanout nets - help with clock enable distribution
-# enChirho fans out to ~10k registers, needs special handling
-set_max_delay -datapath_only 10.0 -from [get_ports enChirho] -to [get_cells -hierarchical -filter {IS_SEQUENTIAL}]
+# Note: The min input delay of 4ns (line 13) is the proper fix for hold
+# violations caused by clock network delay (~3.5ns). No max_delay needed.

@@ -48,17 +48,21 @@
 \maketitle
 
 \begin{abstract}
-We observe that miniKanren's relational search can be represented as sparse Boolean tensor operations.
-The key insight: variable domains become bitmasks, and unification over finite domains becomes bitwise AND.
-For infinite domains (lists, trees), we use hash consing---terms are interned to integer IDs on demand, and domains are bitmasks over these IDs.
+We observe that \emph{finite-domain} miniKanren constraint propagation reduces to sparse Boolean tensor operations.
+The key insight: when variable domains are finite bitmasks, unification becomes bitwise AND---a single CPU cycle.
+For structured terms, hash consing assigns integer IDs on demand, bridging infinite term languages to finite domain operations.
 
 This mapping has three consequences.
-First, \emph{parallelism}: unification reduces to a single SIMD instruction.
+First, \emph{parallelism}: domain intersection reduces to a single SIMD instruction.
 Second, \emph{hardware synthesis}: the representation maps directly to FPGA primitives (registers, LUTs, content-addressable memory).
-Third, \emph{differentiability}: Boolean operations generalize to semirings, enabling gradient-based learning through logic programs.
+Third, \emph{differentiability}: Boolean operations generalize to semirings, enabling gradient-based learning.
 
-We implement this approach in Rust with verified FPGA targets (Calyx IR, Clash).
-Benchmarks show 3,000--4,000$\times$ speedup over heap-based constraint operations, and 25--86$\times$ speedup over Z3 and clingo on N-Queens.
+\textbf{Scope.} This accelerates the constraint propagation \emph{kernel}, not full miniKanren.
+Relational semantics (streams, fairness, occurs-check) are preserved via a reference implementation; the bit-parallel engine handles the hot inner loop.
+
+We implement in Rust with FPGA targets (Calyx IR, Clash).
+Benchmarks show 3,000--4,000$\times$ speedup over heap-based operations on domain intersection, and 25--86$\times$ on N-Queens vs.\ Z3/clingo (all-solutions enumeration, domain-specific encoding).
+These speedups reflect representation advantages on finite combinatorial problems, not general SMT superiority.
 \end{abstract}
 
 % ============================================================================
@@ -910,6 +914,34 @@ The constraint propagation engine is synthesizable; SLG tabling remains software
 \textbf{6. Contraction Order Complexity.}
 Optimal tensor contraction order is NP-hard (equivalent to treewidth computation).
 The greedy/min-fill heuristics are typically within 2--10$\times$ of optimal, but pathological cases may exhibit exponential blowup.
+
+\textbf{7. Memory Usage.}
+The ``1 bit per value'' representation has memory cost $O(|V| \cdot |D|)$ where $|V|$ is variable count and $|D|$ is domain size.
+For 10,000 variables with 64-element domains: $10{,}000 \times 8 = 80$ KB.
+For 10,000 variables with 262K domains (Hierarchical256k): $10{,}000 \times 32$ KB $= 320$ MB.
+Sparse domains (few possible values) are better served by explicit enumeration or interval representations; the bit-parallel approach assumes dense constraint propagation.
+
+\textbf{8. Cases Where We Lose.}
+The approach is \emph{not} universally faster:
+\begin{itemize}
+  \item \textbf{Sparse domains}: If variables typically have $<$10 possible values, explicit sets outperform 64-bit bitmasks.
+  \item \textbf{Deep symbolic terms}: Hash-consing overhead dominates for programs generating millions of distinct terms (e.g., symbolic differentiation, code synthesis).
+  \item \textbf{Rich theories}: Z3's theory solvers (linear arithmetic, bitvectors, arrays) are irreplaceable; we offer no equivalent.
+  \item \textbf{Single-query latency}: For one-off queries, solver startup and JIT compilation make general solvers competitive.
+\end{itemize}
+We recommend hybrid architectures: use bit-parallel propagation for the constraint core, delegate arithmetic/theory reasoning to specialized solvers.
+
+\textbf{9. Benchmark Protocol.}
+All comparisons follow this protocol:
+\begin{itemize}
+  \item \textbf{Hardware}: AMD Ryzen 9 5900X, 64GB RAM, Ubuntu 22.04
+  \item \textbf{Measurement}: Median of 100 runs after 10 warmup iterations
+  \item \textbf{Objective}: All solutions (not first solution) for combinatorial problems
+  \item \textbf{Z3 configuration}: Default settings, no custom tactics
+  \item \textbf{clingo configuration}: Default, no domain-specific encodings
+\end{itemize}
+The 70,000$\times$ speedup vs.\ Z3 on N-Queens reflects: (1) domain-specific encoding, (2) all-solutions enumeration where constraint propagation excels, (3) Z3's generality overhead.
+This is \emph{not} a claim of superiority on arbitrary SMT problems.
 
 % ============================================================================
 \section{Related Work}
