@@ -294,8 +294,10 @@
     "ci_harness": {
       "issue": "No continuous integration",
       "action": "Add GitHub Actions workflow for benchmarks",
-      "file": ".github/workflows/bench_chirho.yml",
-      "status": "to_create"
+      "file": ".github/workflows/ci_chirho.yml",
+      "status": "completed",
+      "completed_at": "2026-01-25",
+      "notes": "Created CI with test, bench check, doctest, and _chirho suffix audit jobs"
     }
   },
   "tasks": [
@@ -345,22 +347,28 @@
       "id": "P4-06",
       "title": "Extract Paper A: Bit-Parallel Engine",
       "description": "Create focused paper on core AND insight with CLP(FD) comparison",
-      "status": "pending",
-      "priority": 2
+      "status": "completed",
+      "priority": 2,
+      "completed_at": "2026-01-25",
+      "notes": "Created papers_chirho/paper_a_core_chirho/paper_a_chirho.tex with draft structure"
     },
     {
       "id": "P4-07",
       "title": "Add CLP(FD) benchmark comparison",
       "description": "Benchmark against SWI-Prolog CLP(FD) for N-Queens, Sudoku",
-      "status": "pending",
-      "priority": 2
+      "status": "completed",
+      "priority": 2,
+      "completed_at": "2026-01-25",
+      "notes": "Created benchmarks_chirho/clpfd_bench_chirho.pl with N-Queens, Sudoku, SEND+MORE=MONEY"
     },
     {
       "id": "P4-08",
       "title": "Add contraction heuristics benchmark",
       "description": "Compare greedy/min-degree/min-fill on real queries",
-      "status": "pending",
-      "priority": 3
+      "status": "completed",
+      "priority": 3,
+      "completed_at": "2026-01-25",
+      "notes": "Created rust_chirho/benches/contraction_heuristics_bench_chirho.rs with chain/star/grid networks"
     },
     {
       "id": "P4-09",
@@ -373,8 +381,10 @@
       "id": "P4-10",
       "title": "Document fully fused logic accelerator design",
       "description": "Per Gemini: detail memory layout for fused GPU kernel",
-      "status": "pending",
-      "priority": 4
+      "status": "completed",
+      "priority": 4,
+      "completed_at": "2026-01-25",
+      "notes": "Enhanced rust_chirho/src/gpu_fused_chirho.rs with memory_layout_chirho module"
     },
     {
       "id": "P4-11",
