@@ -94,9 +94,12 @@ This document maps every numeric claim in the paper to reproducible commands.
 
 | Paper Claim | Section | Command | Expected Output |
 |-------------|---------|---------|-----------------|
-| Symbolic addition | §10 | `cd rust_chirho && cargo run --release --example symbolic_addition_chirho` | 100% accuracy |
+| Symbolic addition (finite-diff) | §10 | `cd rust_chirho && cargo run --release --example symbolic_addition_chirho` | 100% accuracy |
+| Symbolic addition (analytic) | §10 | `cd rust_chirho && cargo run --release --example symbolic_addition_analytic_chirho` | 100% accuracy |
 
-**Note:** Uses finite-difference gradients for simplicity; analytic backprop is future work.
+**Note:** Two versions available:
+- `symbolic_addition_chirho.rs` - Finite-difference gradients (simpler)
+- `symbolic_addition_analytic_chirho.rs` - Analytic backprop through tensor contraction (shows gradients flow through logic)
 
 ## Profile Breakdown (Interning Tax)
 
@@ -142,6 +145,7 @@ cargo run --release --example learn_deep_chirho 2>/dev/null >> results_chirho.tx
 cargo run --release --example gradient_table_chirho 2>/dev/null >> results_chirho.txt
 cargo run --release --example synthesis_chirho 2>/dev/null >> results_chirho.txt
 cargo run --release --example symbolic_addition_chirho 2>/dev/null >> results_chirho.txt
+cargo run --release --example symbolic_addition_analytic_chirho 2>/dev/null >> results_chirho.txt
 cargo run --release --example zebra_chirho 2>/dev/null >> results_chirho.txt
 
 echo "Results saved to results_chirho.txt"
