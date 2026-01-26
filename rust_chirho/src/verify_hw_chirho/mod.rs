@@ -8,10 +8,12 @@
 mod engine_chirho;
 mod cmd_chirho;
 mod verilator_chirho;
+mod cosim_chirho;
 
 pub use engine_chirho::*;
 pub use cmd_chirho::*;
 pub use verilator_chirho::*;
+pub use cosim_chirho::*;
 
 #[cfg(test)]
 mod proptest_chirho;
