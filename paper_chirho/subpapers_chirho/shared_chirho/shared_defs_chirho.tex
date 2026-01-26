@@ -108,16 +108,18 @@ propagation core, not full structural unification.
 % Hierarchical Domain Scaling
 % ============================================================================
 
-% Domain type naming (for consistency across papers)
-\newcommand{\bitvecchirho}{BitVec64Chirho}
-\newcommand{\hierchirho}{Hierarchical4kChirho}
-\newcommand{\hierlargechirho}{Hierarchical256kChirho}
+% Domain type naming (semantic macros for consistency across papers)
+% Using semantic names to avoid confusion with Rust type identifiers
+\newcommand{\domainSmallChirho}{\texttt{BitVec64Chirho}}
+\newcommand{\domainMediumChirho}{\texttt{Hierarchical4kChirho}}
+\newcommand{\domainLargeChirho}{\texttt{Hierarchical256kChirho}}
+\newcommand{\domainDiffChirho}{\texttt{DiffHierarchical4kChirho}}
 
-% Measured performance values (from rust benchmarks, Jan 2026)
-\newcommand{\bitvectimechirho}{420 ps}
-\newcommand{\hiertimechirho}{39 ns}
-\newcommand{\hierlargetimechirho}{2.5 $\mu$s}
-\newcommand{\hierlargeopsechirho}{400K ops/sec}
+% Measured performance values (from Rust benchmarks, Jan 2026)
+\newcommand{\domainSmallTimeChirho}{420 ps}
+\newcommand{\domainMediumTimeChirho}{39 ns}
+\newcommand{\domainLargeTimeChirho}{2.5 $\mu$s}
+\newcommand{\domainLargeOpsChirho}{400K ops/sec}
 
 % ============================================================================
 % Paper Suite Reference
