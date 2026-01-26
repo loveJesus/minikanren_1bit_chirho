@@ -10,6 +10,9 @@ This document maps every numeric claim in the paper to reproducible commands.
 |-------------|---------|---------|-----------------|
 | Domain AND: 420 ps | §5.1 | `cd rust_chirho && cargo bench -- "BitOps/BitVec64_AND"` | ~420ps per op |
 | BitVec256 AND | §5.1 | `cd rust_chirho && cargo bench -- "BitOps/BitVec256_AND"` | ~1.8ns |
+| Mass intersect n=10: 1.2 ns | §5.1 | `cd rust_chirho && cargo bench --bench optics_bench_chirho -- "mass_intersect/hw/10"` | ~1.2ns |
+| Mass intersect n=1000: 56 ns | §5.1 | `cd rust_chirho && cargo bench --bench optics_bench_chirho -- "mass_intersect/hw/1000"` | ~56ns |
+| Heap HashSet n=1000: 223 μs | §5.1 | `cd rust_chirho && cargo bench --bench optics_bench_chirho -- "mass_intersect/heap_hashset/1000"` | ~223μs |
 | Speedup: 2,500-4,000× | §5.1 | `cd rust_chirho && cargo run --release --example profile_breakdown_chirho` | Shows speedup ratio |
 
 ## Table: N-Queens (Table 3)
@@ -18,6 +21,8 @@ This document maps every numeric claim in the paper to reproducible commands.
 |-------------|---------|---------|-----------------|
 | N-Queens 8 (Rust): 3.7 μs | §5.2 | `cd rust_chirho && cargo bench -- "NQueens/8_count"` | ~3.7μs |
 | N-Queens 12 (Rust): 3.9 ms | §5.2 | `cd rust_chirho && cargo bench -- "NQueens/12_count"` | ~3.9ms |
+| N-Queens 20 (first): 923 μs | §5.2 | `cd rust_chirho && cargo bench -- "NQueens/20_one"` | ~0.9ms |
+| N-Queens 32 (first): large | §5.2 | `cd rust_chirho && cargo bench -- "NQueens/32_one"` | First solution only |
 
 ## Table: Sudoku (Table 4)
 
@@ -39,7 +44,9 @@ This document maps every numeric claim in the paper to reproducible commands.
 
 | Paper Claim | Section | Command | Expected Output |
 |-------------|---------|---------|-----------------|
-| conde branches | §5.2 | `cd rust_chirho && cargo bench -- "Goals/conde"` | ~78-288ns |
+| Conjunction 2 goals: 78 ns | §5.2 | `cd rust_chirho && cargo bench --bench goal_bench_chirho -- "ConjChain/hardware_1bit/2"` | ~78ns |
+| Conjunction 4 goals: 144 ns | §5.2 | `cd rust_chirho && cargo bench --bench goal_bench_chirho -- "ConjChain/hardware_1bit/4"` | ~144ns |
+| Conjunction 8 goals: 288 ns | §5.2 | `cd rust_chirho && cargo bench --bench goal_bench_chirho -- "ConjChain/hardware_1bit/8"` | ~288ns |
 
 ## Table: Datalog Comparison (Table 7)
 
