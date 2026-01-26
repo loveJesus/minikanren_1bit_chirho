@@ -76,19 +76,46 @@ cargo test --features verilator_chirho verify_hw
 
 ---
 
-## Next Steps
+## 2026-01-26: P5-01 Physical FPGA Incarnation - IN PROGRESS
 
-### P5-01: Physical FPGA Incarnation
-- [ ] Spin up AWS F1 c5.4xlarge
-- [ ] Run Vivado synthesis with searchEngineChirho.v
-- [ ] Create AFI bitstream
+### AWS Infrastructure ✓
+- **S3 bucket created:** `minikanren-fpga-chirho-686672719245`
+- **Security group:** `sg-0b29ce11e8f0878cd` (SSH + FPGA ports)
+- **SSH key pair:** `minikanren-fpga-key-chirho`
+- **IAM role:** `minikanren-fpga-role-chirho` (S3 access for instances)
+
+### Design Files Uploaded ✓
+- `s3://minikanren-fpga-chirho-686672719245/design/searchEngineChirho.v` (35,656 bytes)
+- `s3://minikanren-fpga-chirho-686672719245/design/synth_vivado_chirho.tcl`
+- `s3://minikanren-fpga-chirho-686672719245/design/timing_chirho.xdc`
+
+### Synthesis Instance - RUNNING
+- **Instance ID:** `i-03faf7cb8ccb7ea39`
+- **Public IP:** `35.170.198.7`
+- **Type:** c5.4xlarge (~$0.68/hr)
+- **AMI:** ami-01198b89d80ebfdd2 (FPGA Developer AMI 1.17.0 Ubuntu)
+- **Started:** 2026-01-26T07:41:18Z
+- **Expected completion:** ~2-4 hours
+
+### Scripts Created ✓
+| Script | Purpose |
+|--------|---------|
+| `aws_f1_chirho/setup_chirho.sh` | Create AWS infrastructure |
+| `aws_f1_chirho/upload_design_chirho.sh` | Upload Verilog to S3 |
+| `aws_f1_chirho/launch_synth_chirho.sh` | Launch Vivado synthesis |
+| `aws_f1_chirho/download_results_chirho.sh` | Download synthesis artifacts |
+| `aws_f1_chirho/create_afi_chirho.sh` | Create Amazon FPGA Image |
+| `aws_f1_chirho/check_afi_chirho.sh` | Check AFI creation status |
+| `aws_f1_chirho/run_f1_chirho.sh` | Run on F1 FPGA |
+| `aws_f1_chirho/cleanup_chirho.sh` | Terminate instances and cleanup |
+| `aws_f1_chirho/config_chirho.sh` | AWS configuration variables |
+
+### Pending Steps
+- [ ] Wait for synthesis to complete (~2-4 hours)
+- [ ] Download results: timing, utilization, DCP
+- [ ] Create AFI from DCP (~1-2 hours)
 - [ ] Load on F1 and run golden demo
-- [ ] Record terminal log + artifacts
-
-### P5-02b: Latency Measurement
-- [ ] Measure Host -> PCIe -> FPGA -> PCIe -> Host latency
-- [ ] Record sustained throughput
-- [ ] Document in `synth_chirho/performance_chirho.md`
+- [ ] Measure P5-02b latency
 
 ---
 

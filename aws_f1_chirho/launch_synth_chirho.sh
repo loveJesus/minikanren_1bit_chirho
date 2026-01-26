@@ -97,6 +97,8 @@ INSTANCE_ID_CHIRHO=$(aws ec2 run-instances \
     --instance-type "${SYNTH_INSTANCE_CHIRHO}" \
     --key-name "${KEY_NAME_CHIRHO}" \
     --security-group-ids "${SECURITY_GROUP_CHIRHO}" \
+    --subnet-id "${SUBNET_ID_CHIRHO}" \
+    --associate-public-ip-address \
     --region "${AWS_REGION_CHIRHO}" \
     --iam-instance-profile Name=minikanren-fpga-role-chirho \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=minikanren-synth-chirho},{Key=S3Bucket,Value=${S3_BUCKET_CHIRHO}}]" \
@@ -109,6 +111,8 @@ INSTANCE_ID_CHIRHO=$(aws ec2 run-instances \
         --instance-type "${SYNTH_INSTANCE_CHIRHO}" \
         --key-name "${KEY_NAME_CHIRHO}" \
         --security-group-ids "${SECURITY_GROUP_CHIRHO}" \
+        --subnet-id "${SUBNET_ID_CHIRHO}" \
+        --associate-public-ip-address \
         --region "${AWS_REGION_CHIRHO}" \
         --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=minikanren-synth-chirho},{Key=S3Bucket,Value=${S3_BUCKET_CHIRHO}}]" \
         --query 'Instances[0].InstanceId' \
