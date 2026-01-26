@@ -176,11 +176,13 @@
           "id": "P5-00",
           "title": "Verilator Verification Bridge",
           "description": "Build the 'Bridge of Truth': Integrate Verilator harness to drive identical SearchCmd streams into (a) Rust SearchStateHwChirho and (b) Clash Verilog simulation. Use proptest to fuzz 1M+ cycles and prove bit-identical behavior.",
-          "status": "in_progress",
-          "progress": "Part 1-2 done: Rust reference engine + proptest fuzzing (13 tests). Remaining: Verilator FFI + co-simulation.",
+          "status": "completed",
+          "progress": "All 5 parts complete: Rust reference engine, proptest fuzzing, Verilator FFI, build.rs, co-simulation harness. 22 tests in verify_hw_chirho, 240 total passing.",
           "priority": "critical",
           "source": "spec_chirho/critical_chirho/pass5_chirho/review_chirho.md",
-          "tangible_deliverable_chirho": "A passing `cargo test --features verify_hw_chirho` that runs the fuzzing loop."
+          "tangible_deliverable_chirho": "A passing `cargo test --features verify_hw_chirho` that runs the fuzzing loop.",
+          "completed_date": "2026-01-26",
+          "commits": ["2e7165f", "8a66495", "0caef6e", "57ad408"]
         },
         {
           "id": "P5-01",
