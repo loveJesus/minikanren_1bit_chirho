@@ -25,10 +25,12 @@ set -e
 # Configuration
 S3_BUCKET_CHIRHO="minikanren-fpga-chirho-686672719245"
 S3_PREFIX_CHIRHO="cl_minikanren_chirho"
-AMI_ID_CHIRHO="ami-0cb1b6ae2ff99f8bf"  # FPGA Developer AMI 1.18.0 (Rocky Linux, Vivado 2025.1)
+AMI_ID_CHIRHO="ami-01198b89d80ebfdd2"  # FPGA Developer AMI 1.17.0 (Ubuntu, Vivado 2024.2)
 INSTANCE_TYPE_CHIRHO="z1d.xlarge"
 KEY_NAME_CHIRHO="minikanren-fpga-key-chirho"
 REGION_CHIRHO="us-east-1"
+SUBNET_ID_CHIRHO="subnet-c5104ea0"  # us-east-1a
+SECURITY_GROUP_CHIRHO="sg-0b29ce11e8f0878cd"  # minikanren-fpga-sg-chirho
 
 # Script directory
 SCRIPT_DIR_CHIRHO="$(cd "$(dirname "$0")" && pwd)"
@@ -69,14 +71,14 @@ cat > /tmp/f1_build_userdata_chirho.sh << 'USERDATA_EOF'
 set -ex
 exec > >(tee /var/log/user-data.log) 2>&1
 
-echo "=== miniKanren F1 CL Build (AMI 1.18.0 - Vivado 2025.1) ☧ ==="
+echo "=== miniKanren F1 CL Build (AMI 1.17.0 - Vivado 2024.2) ☧ ==="
 date
 
 export HOME=/root
 export AWS_DEFAULT_REGION=us-east-1
 
-# Rocky Linux uses /home/rocky
-cd /home/rocky
+# Ubuntu AMI uses /home/ubuntu
+cd /home/ubuntu
 
 # Clone HDK if needed
 if [ ! -d "aws-fpga" ]; then
@@ -215,7 +217,7 @@ MANIFEST_EOF
     echo "=== Creating AFI ☧ ==="
     aws ec2 create-fpga-image \
         --name "minikanren-logic-engine-v1-chirho" \
-        --description "miniKanren 1-bit Logic Engine - Vivado 2025.1" \
+        --description "miniKanren 1-bit Logic Engine - Vivado 2024.2" \
         --input-storage-location Bucket=minikanren-fpga-chirho-686672719245,Key=afi_build/cl_minikanren_afi_chirho.tar \
         --logs-storage-location Bucket=minikanren-fpga-chirho-686672719245,Key=afi_logs/ \
         | tee /tmp/afi_result_chirho.json
@@ -249,6 +251,9 @@ INSTANCE_ID_CHIRHO=$(aws ec2 run-instances \
     --instance-type $INSTANCE_TYPE_CHIRHO \
     --key-name $KEY_NAME_CHIRHO \
     --region $REGION_CHIRHO \
+    --subnet-id $SUBNET_ID_CHIRHO \
+    --security-group-ids $SECURITY_GROUP_CHIRHO \
+    --associate-public-ip-address \
     --iam-instance-profile Name=minikanren-fpga-role-chirho \
     --user-data file:///tmp/f1_build_userdata_chirho.sh \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=minikanren-f1-build-chirho},{Key=Project,Value=minikanren-chirho}]" \
@@ -266,6 +271,6 @@ echo "Check AFI status (after build completes):"
 echo "  aws ec2 describe-fpga-images --owners self"
 echo ""
 echo "SSH to instance:"
-echo "  ssh -i ~/.ssh/$KEY_NAME_CHIRHO.pem rocky@\$(aws ec2 describe-instances --instance-ids $INSTANCE_ID_CHIRHO --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)"
+echo "  ssh -i ~/.ssh/$KEY_NAME_CHIRHO.pem ubuntu@\$(aws ec2 describe-instances --instance-ids $INSTANCE_ID_CHIRHO --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)"
 echo ""
 echo "=== Launch Complete ☧ ==="
