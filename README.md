@@ -111,7 +111,7 @@ Backward (adjoint of contraction):
   ∂L/∂P(a=d1) = Σ_{d2: d1+d2=target} P(b=d2) × ∂L/∂P(sum)
 ```
 
-This follows from standard tensor calculus — the novelty is that our 1-bit tensor formulation makes it explicit. See `symbolic_addition_analytic_chirho.rs` for a complete example with analytic backprop through classifier → softmax → tensor contraction.
+This follows from standard tensor calculus — the 1-bit tensor formulation helpfully makes it explicit. See `symbolic_addition_analytic_chirho.rs` for a complete example with analytic backprop through classifier → softmax → tensor contraction.
 
 ### Massively Parallel Hardware
 
