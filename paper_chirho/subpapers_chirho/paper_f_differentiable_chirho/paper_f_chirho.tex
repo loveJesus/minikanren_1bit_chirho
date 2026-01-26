@@ -565,6 +565,7 @@ Convergence: 50 iterations at learning rate 0.01.
 \midrule
 BitVec64Chirho (hard) & 64 & 420 ps & 1$\times$ \\
 Hierarchical4kChirho (hard) & 4,096 & 39 ns & 93$\times$ \\
+Hierarchical256kChirho (hard) & 262,144 & 2.5 $\mu$s & 5,952$\times$ \\
 \textbf{DiffHierarchical4kChirho (soft)} & \textbf{4,096} & \textbf{1.26 $\mu$s} & \textbf{3,000$\times$} \\
 \bottomrule
 \end{tabular}
@@ -583,6 +584,9 @@ This mirrors neural networks:
 \end{itemize}
 
 The system supports both phases: \texttt{DiffHierarchical4kChirho} for training, conversion to \texttt{Hierarchical4kChirho} for deployment.
+
+\paragraph{Scaling to 262K Values.}
+For LLM vocabularies (30K--100K tokens) and large constraint problems, \texttt{Hierarchical256kChirho} provides 262,144-value domains with 2.5 $\mu$s intersection---400K operations/second, sufficient for structured generation (100 tokens/sec requires only 100 ops/sec).
 
 % ============================================================================
 \section{Limitations}

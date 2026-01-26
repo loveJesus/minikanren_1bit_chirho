@@ -309,8 +309,15 @@ XC7A35T Available & 20,800 & 41,600 & 50 \\
 \end{tabular}
 \end{table}
 
-\textbf{Scaling}: Doubling to 16 variables approximately doubles register
+\textbf{Variable Scaling}: Doubling to 16 variables approximately doubles register
 count but has minimal impact on LUT usage, as the unification unit is shared.
+
+\textbf{Domain Scaling}: Beyond 64-bit domains, hierarchical bit structures enable scaling to 262K values:
+\begin{itemize}
+  \item \textbf{Hierarchical4kChirho} (4,096 values): 64$\times$64 bit tree, 39 ns intersect
+  \item \textbf{Hierarchical256kChirho} (262,144 values): 64$\times$64$\times$64 tree, 2.5 $\mu$s intersect
+\end{itemize}
+The root-level sparse check eliminates subtrees early, maintaining sub-linear scaling for typical constraint patterns.
 
 % ============================================================================
 \section{Synthesis Results}
