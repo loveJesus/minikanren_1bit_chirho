@@ -12,13 +12,13 @@
 
 set -e
 
-AGFI_ID="agfi-038ca2f7a81352cb4"
-AFI_ID="afi-00e111cc7004d41c5"
-SLOT=0
+AGFI_ID_CHIRHO="agfi-038ca2f7a81352cb4"
+AFI_ID_CHIRHO="afi-00e111cc7004d41c5"
+SLOT_CHIRHO=0
 
 echo "=== miniKanren F1 FPGA Test ☧ ==="
-echo "AFI: $AFI_ID"
-echo "AGFI: $AGFI_ID"
+echo "AFI: $AFI_ID_CHIRHO"
+echo "AGFI: $AGFI_ID_CHIRHO"
 echo ""
 
 # Check if we're on an F1 instance
@@ -30,16 +30,16 @@ fi
 
 # Check AFI status
 echo "=== Checking AFI Status ==="
-aws ec2 describe-fpga-images --fpga-image-ids $AFI_ID --region us-east-1 \
+aws ec2 describe-fpga-images --fpga-image-ids $AFI_ID_CHIRHO --region us-east-1 \
     --query 'FpgaImages[0].State.Code' --output text
 
 # Clear any existing FPGA image
-echo "=== Clearing FPGA Slot $SLOT ==="
-sudo fpga-clear-local-image -S $SLOT
+echo "=== Clearing FPGA Slot $SLOT_CHIRHO ==="
+sudo fpga-clear-local-image -S $SLOT_CHIRHO
 
 # Load the AFI
 echo "=== Loading AFI ==="
-sudo fpga-load-local-image -S $SLOT -I $AGFI_ID
+sudo fpga-load-local-image -S $SLOT_CHIRHO -I $AGFI_ID_CHIRHO
 
 # Wait for load to complete
 echo "=== Waiting for FPGA Load ==="
@@ -47,12 +47,12 @@ sleep 5
 
 # Check load status
 echo "=== FPGA Slot Status ==="
-sudo fpga-describe-local-image -S $SLOT -R -H
+sudo fpga-describe-local-image -S $SLOT_CHIRHO -R -H
 
 # Verify the image is loaded
-STATUS=$(sudo fpga-describe-local-image -S $SLOT -R -H 2>/dev/null | grep "FPGA Image Slot" -A 5 | grep "Status" | awk '{print $NF}')
-if [ "$STATUS" != "loaded" ]; then
-    echo "ERROR: FPGA image not loaded correctly. Status: $STATUS"
+STATUS_CHIRHO=$(sudo fpga-describe-local-image -S $SLOT_CHIRHO -R -H 2>/dev/null | grep "FPGA Image Slot" -A 5 | grep "Status" | awk '{print $NF}')
+if [ "$STATUS_CHIRHO" != "loaded" ]; then
+    echo "ERROR: FPGA image not loaded correctly. Status: $STATUS_CHIRHO"
     exit 1
 fi
 
@@ -64,8 +64,8 @@ echo ""
 echo "=== Testing OCL Interface ==="
 
 # The OCL BAR should be accessible via /sys/bus/pci
-OCL_BAR=$(lspci -v -d 1d0f:f001 | grep "Memory at" | head -1 | awk '{print $3}')
-echo "OCL BAR: $OCL_BAR"
+OCL_BAR_CHIRHO=$(lspci -v -d 1d0f:f001 | grep "Memory at" | head -1 | awk '{print $3}')
+echo "OCL BAR: $OCL_BAR_CHIRHO"
 
 # If fpga-sdk-tools are available, use fpga-read-register
 if command -v fpga-read-register &> /dev/null; then
@@ -75,15 +75,15 @@ if command -v fpga-read-register &> /dev/null; then
     # Read the hello register (offset 0x500)
     # Should return 0xDEADBEEF or similar magic value
     echo "Hello Register (0x500):"
-    sudo fpga-read-register -S $SLOT -o 0x500
+    sudo fpga-read-register -S $SLOT_CHIRHO -o 0x500
 
     # Read status (offset 0x504)
     echo "Status Register (0x504):"
-    sudo fpga-read-register -S $SLOT -o 0x504
+    sudo fpga-read-register -S $SLOT_CHIRHO -o 0x504
 
     # Read response count (offset 0x508)
     echo "Response Count (0x508):"
-    sudo fpga-read-register -S $SLOT -o 0x508
+    sudo fpga-read-register -S $SLOT_CHIRHO -o 0x508
 
     echo ""
     echo "=== Writing Test Command ==="
@@ -93,13 +93,13 @@ if command -v fpga-read-register &> /dev/null; then
     # For now, write a simple test pattern
 
     # Write command low (offset 0x00)
-    sudo fpga-write-register -S $SLOT -o 0x00 -v 0x12345678
+    sudo fpga-write-register -S $SLOT_CHIRHO -o 0x00 -v 0x12345678
 
     # Write command high (offset 0x04)
-    sudo fpga-write-register -S $SLOT -o 0x04 -v 0x9ABCDEF0
+    sudo fpga-write-register -S $SLOT_CHIRHO -o 0x04 -v 0x9ABCDEF0
 
     # Trigger command (write to control register at 0x10)
-    sudo fpga-write-register -S $SLOT -o 0x10 -v 0x1
+    sudo fpga-write-register -S $SLOT_CHIRHO -o 0x10 -v 0x1
 
     # Wait for processing
     sleep 1
@@ -109,11 +109,11 @@ if command -v fpga-read-register &> /dev/null; then
 
     # Read response low (offset 0x100)
     echo "Response[31:0]:"
-    sudo fpga-read-register -S $SLOT -o 0x100
+    sudo fpga-read-register -S $SLOT_CHIRHO -o 0x100
 
     # Read response high (offset 0x104)
     echo "Response[63:32]:"
-    sudo fpga-read-register -S $SLOT -o 0x104
+    sudo fpga-read-register -S $SLOT_CHIRHO -o 0x104
 
 else
     echo "fpga-read-register not found. Install AWS FPGA SDK tools."
