@@ -62,16 +62,16 @@ impl F1DriverChirho {
         ];
 
         let mut ocl_fd_chirho = None;
-        for path in &paths_chirho {
-            if Path::new(path).exists() {
-                match OpenOptions::new().read(true).write(true).open(path) {
-                    Ok(fd) => {
-                        ocl_fd_chirho = Some(fd);
-                        println!("Opened FPGA at: {}", path);
+        for path_chirho in &paths_chirho {
+            if Path::new(path_chirho).exists() {
+                match OpenOptions::new().read(true).write(true).open(path_chirho) {
+                    Ok(fd_chirho) => {
+                        ocl_fd_chirho = Some(fd_chirho);
+                        println!("Opened FPGA at: {}", path_chirho);
                         break;
                     }
-                    Err(e) => {
-                        eprintln!("Failed to open {}: {}", path, e);
+                    Err(e_chirho) => {
+                        eprintln!("Failed to open {}: {}", path_chirho, e_chirho);
                     }
                 }
             }
@@ -134,11 +134,11 @@ impl F1DriverChirho {
     pub fn read_response_chirho(&mut self) -> std::io::Result<[u8; 64]> {
         let mut response_chirho = [0u8; 64];
 
-        for i in 0..16 {
-            let offset_chirho = registers_chirho::RESP_0_CHIRHO + (i as u64 * 4);
+        for i_chirho in 0..16 {
+            let offset_chirho = registers_chirho::RESP_0_CHIRHO + (i_chirho as u64 * 4);
             let word_chirho = self.read_reg_chirho(offset_chirho)?;
             let bytes_chirho = word_chirho.to_le_bytes();
-            response_chirho[i * 4..i * 4 + 4].copy_from_slice(&bytes_chirho);
+            response_chirho[i_chirho * 4..i_chirho * 4 + 4].copy_from_slice(&bytes_chirho);
         }
 
         Ok(response_chirho)
@@ -161,9 +161,9 @@ fn main() {
 
     // Try to open the FPGA
     let mut driver_chirho = match F1DriverChirho::new_chirho(0) {
-        Ok(d) => d,
-        Err(e) => {
-            eprintln!("Failed to open FPGA: {}", e);
+        Ok(d_chirho) => d_chirho,
+        Err(e_chirho) => {
+            eprintln!("Failed to open FPGA: {}", e_chirho);
             eprintln!("\nMake sure:");
             eprintln!("  1. You're running on an F1 instance");
             eprintln!("  2. AFI is loaded: sudo fpga-load-local-image -S 0 -I agfi-038ca2f7a81352cb4");
@@ -180,24 +180,24 @@ fn main() {
             eprintln!("✗ FPGA not responding correctly");
             return;
         }
-        Err(e) => {
-            eprintln!("✗ Error reading FPGA: {}", e);
+        Err(e_chirho) => {
+            eprintln!("✗ Error reading FPGA: {}", e_chirho);
             return;
         }
     }
 
     // Get status
     match driver_chirho.get_status_chirho() {
-        Ok(status) => println!("Status: 0x{:08X}", status),
-        Err(e) => eprintln!("Error reading status: {}", e),
+        Ok(status_chirho) => println!("Status: 0x{:08X}", status_chirho),
+        Err(e_chirho) => eprintln!("Error reading status: {}", e_chirho),
     }
 
     // Send a test command
     // This is a placeholder - real commands would encode miniKanren goals
     println!("\nSending test command...");
     let test_cmd_chirho = [0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x3F];
-    if let Err(e) = driver_chirho.send_command_chirho(&test_cmd_chirho) {
-        eprintln!("Error sending command: {}", e);
+    if let Err(e_chirho) = driver_chirho.send_command_chirho(&test_cmd_chirho) {
+        eprintln!("Error sending command: {}", e_chirho);
         return;
     }
     println!("✓ Command sent");
@@ -208,23 +208,23 @@ fn main() {
     // Read response
     println!("\nReading response...");
     match driver_chirho.read_response_chirho() {
-        Ok(response) => {
+        Ok(response_chirho) => {
             println!("Response (first 32 bytes):");
-            for (i, chunk) in response[..32].chunks(8).enumerate() {
-                print!("  [{:02}]: ", i * 8);
-                for byte in chunk {
-                    print!("{:02X} ", byte);
+            for (i_chirho, chunk_chirho) in response_chirho[..32].chunks(8).enumerate() {
+                print!("  [{:02}]: ", i_chirho * 8);
+                for byte_chirho in chunk_chirho {
+                    print!("{:02X} ", byte_chirho);
                 }
                 println!();
             }
         }
-        Err(e) => eprintln!("Error reading response: {}", e),
+        Err(e_chirho) => eprintln!("Error reading response: {}", e_chirho),
     }
 
     // Get response count
     match driver_chirho.get_response_count_chirho() {
-        Ok(count) => println!("\nResponses ready: {}", count),
-        Err(e) => eprintln!("Error reading response count: {}", e),
+        Ok(count_chirho) => println!("\nResponses ready: {}", count_chirho),
+        Err(e_chirho) => eprintln!("Error reading response count: {}", e_chirho),
     }
 
     println!("\n=== Test Complete ☧ ===");
