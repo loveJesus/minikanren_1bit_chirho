@@ -607,8 +607,8 @@ if (EN_HBM) begin : HBM_ENGINE
 
     // HBM address calculation: var_id * 64 bytes (for hierarchical domain)
     function automatic [33:0] var_to_hbm_addr_chirho(input [15:0] var_id_chirho);
-        // Base address for variable domains: 0x2000_0000 (512 MB offset)
-        return 34'h0_2000_0000 + ({18'b0, var_id_chirho} << 6);
+        // Base address for variable domains (from cl_minikanren_chirho_defines.vh)
+        return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} << 6);
     endfunction
 
     // HBM FSM

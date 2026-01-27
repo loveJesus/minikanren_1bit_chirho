@@ -31,12 +31,12 @@
   `define DEF_AXQOS     4'd0   // Regular Identifier
   `define DEF_AXREGION  4'd0   // Single region
 
-  // HBM Memory Layout
-  `define HBM_VAR_HEADERS_BASE  34'h0_0000_0000  // 0-512MB: Variable headers
-  `define HBM_VAR_DOMAINS_BASE  34'h0_2000_0000  // 512MB-8.5GB: Variable domains
-  `define HBM_TERM_STORE_BASE   34'h1_0000_0000  // 4GB-8GB: Term store
-  `define HBM_HASH_TABLE_BASE   34'h2_0000_0000  // 8GB-8.25GB: Hash table
-  `define HBM_TABLING_CACHE     34'h2_1000_0000  // 8.25GB-10.25GB: Tabling cache
+  // HBM Memory Layout (custom addresses for miniKanren)
+  `define HBM_VAR_HEADERS_BASE_CHIRHO  34'h0_0000_0000  // 0-512MB: Variable headers
+  `define HBM_VAR_DOMAINS_BASE_CHIRHO  34'h0_2000_0000  // 512MB-8.5GB: Variable domains
+  `define HBM_TERM_STORE_BASE_CHIRHO   34'h1_0000_0000  // 4GB-8GB: Term store
+  `define HBM_HASH_TABLE_BASE_CHIRHO   34'h2_0000_0000  // 8GB-8.25GB: Hash table
+  `define HBM_TABLING_CACHE_CHIRHO     34'h2_1000_0000  // 8.25GB-10.25GB: Tabling cache
 
   // Domain operation codes
   `define OP_INTERSECT_CHIRHO   4'h0  // Unification (AND)
