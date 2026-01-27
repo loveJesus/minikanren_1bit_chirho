@@ -434,6 +434,24 @@ Phase 3: Hardware (Clash/Calyx)
 | `clash_chirho/MiniKanrenChirho.hs` | ✅ Compiles to Verilog via Clash |
 | `calyx_chirho/tb_domain_chirho.cpp` | Verilator testbench |
 
+### AWS FPGA (`aws_f1_chirho/`, `aws_f2_chirho/`)
+
+| Instance | FPGA | $/hr | AFI Compatible | Capacity |
+|----------|------|------|----------------|----------|
+| f1.2xlarge | Xilinx UltraScale+ | $1.65 | F1 only | Scarce |
+| f2.6xlarge | AMD Virtex UltraScale+ HBM | $1.98 | F2 only | Available |
+
+**Key insight:** F1 and F2 AFIs are **NOT compatible**. Different FPGA vendors require full rebuild.
+
+| Component | Portable? | Notes |
+|-----------|-----------|-------|
+| Core RTL (`searchEngineChirho.v`) | ✅ Yes | Pure Verilog, works on both |
+| Shell wrapper (`cl_*.sv`) | ❌ No | Different port names, clock configs |
+| Build flow | ❌ No | Different HDK branches, Vivado versions |
+
+**F2 advantages:** 60% better price-performance, HBM memory, better availability.
+**F2 migration:** Clone `--branch f2` of aws-fpga, adapt shell wrapper ports.
+
 ### Web (`rust_chirho/web_chirho/`)
 
 | File | Description |
