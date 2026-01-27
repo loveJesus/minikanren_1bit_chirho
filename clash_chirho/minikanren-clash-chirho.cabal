@@ -9,6 +9,7 @@ build-type:    Simple
 library
   exposed-modules:
     AdaptiveHbmChirho
+    DiffFixedChirho
     HashConsChirho
     HbmEngineChirho
     HierarchicalChirho
