@@ -4,6 +4,18 @@
 // These are placeholders for Xilinx/AWS IP that's only available during
 // full AWS HDK builds.
 // ============================================================================
+//
+// NAMING CONVENTION:
+// ------------------
+// - File names use '_chirho' suffix: stubs_chirho.sv, cl_minikanren_chirho.sv
+// - Custom modules we create use '_chirho' suffix: cl_minikanren_chirho
+// - AWS HDK module STUBS preserve original AWS names for compatibility:
+//   cl_hbm_wrapper, sh_ddr, cl_axi4_to_axi3_conv, axi_register_slice, etc.
+//   This ensures our code can integrate with real AWS HDK without renaming.
+// - Xilinx primitive stubs preserve original names: xpm_cdc_async_rst
+// - SearchEngineChirho uses PascalCase per Verilog module convention
+//
+// ============================================================================
 
 // AXI Bus Interface (for internal connections)
 interface axi_bus_t #(
