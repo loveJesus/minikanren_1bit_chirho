@@ -243,7 +243,7 @@ def test_project_basic_chirho():
         eq_goal_chirho(x_chirho, 3),
         project_goal_chirho(
             [x_chirho],
-            lambda vals: eq_goal_chirho(y_chirho, vals[0])
+            lambda vals_chirho: eq_goal_chirho(y_chirho, vals_chirho[0])
         )
     )
 

@@ -106,8 +106,8 @@ def test_temperature_annealing_monotonic_chirho():
         for i in range(101)
     ]
 
-    for i in range(len(temps_chirho) - 1):
-        assert temps_chirho[i] >= temps_chirho[i + 1]
+    for i_chirho in range(len(temps_chirho) - 1):
+        assert temps_chirho[i_chirho] >= temps_chirho[i_chirho + 1]
 
     print("PASS: test_temperature_annealing_monotonic_chirho")
 
@@ -311,7 +311,7 @@ def test_learnable_relation_loss_decreases_chirho():
 def test_differentiable_conde_chirho():
     """Differentiable conde returns weighted probability."""
     branches_chirho = [
-        lambda: 0.3,
+        lambda: 0.3,  # Branch probability functions (no parameters)
         lambda: 0.8,
         lambda: 0.5,
     ]
@@ -326,7 +326,7 @@ def test_differentiable_conde_chirho():
 def test_differentiable_conj_chirho():
     """Differentiable conj multiplies probabilities."""
     goals_chirho = [
-        lambda: 0.8,
+        lambda: 0.8,  # Goal probability functions (no parameters)
         lambda: 0.9,
     ]
 
