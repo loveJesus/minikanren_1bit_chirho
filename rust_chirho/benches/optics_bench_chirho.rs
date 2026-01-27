@@ -95,7 +95,7 @@ fn bench_partitioned_domain_chirho(c: &mut Criterion) {
 // ============================================================================
 
 fn bench_mass_intersect_chirho(c: &mut Criterion) {
-    let mut group = c.benchmark_group("mass_intersect");
+    let mut group = c.benchmark_group("mass_intersect_chirho");
 
     for n in [10, 100, 1000, 10000].iter() {
         // Hardware: intersect n domains

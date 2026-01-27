@@ -15,7 +15,7 @@ fn create_batch_chirho(num_states_chirho: usize, num_vars_chirho: usize) -> Para
 }
 
 fn bench_sequential_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Sequential");
+    let mut group_chirho = c_chirho.benchmark_group("SequentialChirho");
 
     for num_states_chirho in [1000, 10000, 100000] {
         group_chirho.throughput(Throughput::Elements(num_states_chirho as u64));
@@ -38,7 +38,7 @@ fn bench_sequential_chirho(c_chirho: &mut Criterion) {
 }
 
 fn bench_parallel_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Parallel");
+    let mut group_chirho = c_chirho.benchmark_group("ParallelChirho");
 
     for num_states_chirho in [1000, 10000, 100000] {
         group_chirho.throughput(Throughput::Elements(num_states_chirho as u64));
@@ -61,7 +61,7 @@ fn bench_parallel_chirho(c_chirho: &mut Criterion) {
 }
 
 fn bench_comparison_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SeqVsPar");
+    let mut group_chirho = c_chirho.benchmark_group("SeqVsParChirho");
 
     let num_states_chirho = 50000;
     let num_vars_chirho = 16;
@@ -87,7 +87,7 @@ fn bench_comparison_chirho(c_chirho: &mut Criterion) {
 }
 
 fn bench_prune_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Prune");
+    let mut group_chirho = c_chirho.benchmark_group("PruneChirho");
 
     let num_states_chirho = 100000;
     let num_vars_chirho = 8;

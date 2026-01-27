@@ -267,7 +267,7 @@ fn hashset_to_paged_chirho(set_chirho: &HashSet<u32>) -> PagedDomainChirho {
 // ============================================================================
 
 fn bench_ancestor_query_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("FamilyTree/Ancestor");
+    let mut group_chirho = c_chirho.benchmark_group("FamilyTreeChirho/Ancestor");
 
     for num_people_chirho in [100, 500, 1000, 2000, 4000] {
         let tree_chirho = FamilyTreeChirho::generate_chirho(num_people_chirho, 10, 12345);
@@ -314,7 +314,7 @@ fn bench_ancestor_query_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_common_ancestor_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("FamilyTree/CommonAncestor");
+    let mut group_chirho = c_chirho.benchmark_group("FamilyTreeChirho/CommonAncestor");
 
     for num_people_chirho in [100, 500, 1000, 2000, 4000] {
         let tree_chirho = FamilyTreeChirho::generate_chirho(num_people_chirho, 10, 12345);
@@ -383,7 +383,7 @@ fn bench_common_ancestor_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_descendant_enum_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("FamilyTree/Descendants");
+    let mut group_chirho = c_chirho.benchmark_group("FamilyTreeChirho/Descendants");
 
     for num_people_chirho in [100, 500, 1000, 2000] {
         let tree_chirho = FamilyTreeChirho::generate_chirho(num_people_chirho, 10, 12345);
@@ -428,7 +428,7 @@ fn bench_descendant_enum_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_cousin_query_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("FamilyTree/Cousins");
+    let mut group_chirho = c_chirho.benchmark_group("FamilyTreeChirho/Cousins");
 
     for num_people_chirho in [100, 500, 1000] {
         let tree_chirho = FamilyTreeChirho::generate_chirho(num_people_chirho, 8, 12345);
@@ -495,7 +495,7 @@ fn bench_cousin_query_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_related_within_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("FamilyTree/RelatedWithin");
+    let mut group_chirho = c_chirho.benchmark_group("FamilyTreeChirho/RelatedWithin");
 
     for num_people_chirho in [500, 1000, 2000] {
         let tree_chirho = FamilyTreeChirho::generate_chirho(num_people_chirho, 10, 12345);

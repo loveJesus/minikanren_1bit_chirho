@@ -173,7 +173,7 @@ fn analytic_gradient_chirho(
 // ============================================================================
 
 fn bench_gradient_methods_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SymbolicAddition");
+    let mut group_chirho = c_chirho.benchmark_group("SymbolicAdditionChirho");
 
     // Test pattern (digit 3)
     let mut pattern_a_chirho = [0.01; 10];

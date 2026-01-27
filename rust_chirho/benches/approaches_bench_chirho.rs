@@ -25,7 +25,7 @@ use minikanren_1bit_chirho::approaches_chirho::{
 // ============================================================================
 
 fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Intersection");
+    let mut group_chirho = c_chirho.benchmark_group("IntersectionChirho");
 
     // Raw BitVec64 N-way intersections
     group_chirho.bench_function("BitVec64_3way", |bench_chirho| {
@@ -149,7 +149,7 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_symbolic_ops_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SymbolicOps");
+    let mut group_chirho = c_chirho.benchmark_group("SymbolicOpsChirho");
 
     // Chinese Remainder Theorem intersection
     for (m1, m2) in [(3, 5), (7, 11), (13, 17), (97, 101)] {
@@ -182,7 +182,7 @@ fn bench_symbolic_ops_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_hw_symbolic_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("HwSymbolic");
+    let mut group_chirho = c_chirho.benchmark_group("HwSymbolicChirho");
 
     // Range materialization
     for (lo, hi) in [(0, 10), (0, 32), (0, 63), (10, 50)] {
@@ -242,7 +242,7 @@ fn bench_hw_symbolic_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_hybrid_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Hybrid");
+    let mut group_chirho = c_chirho.benchmark_group("HybridChirho");
 
     // Small + Small intersection
     group_chirho.bench_function("Small_Small", |bench_chirho| {
@@ -310,7 +310,7 @@ fn bench_hybrid_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_enumeration_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Enumeration");
+    let mut group_chirho = c_chirho.benchmark_group("EnumerationChirho");
 
     // BitVec64 iteration (baseline)
     group_chirho.bench_function("BitVec64_iter", |bench_chirho| {
@@ -367,7 +367,7 @@ fn bench_enumeration_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_problem_simulation_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("ProblemSim");
+    let mut group_chirho = c_chirho.benchmark_group("ProblemSimChirho");
 
     // Simulate Sudoku-like constraint: 9 values, many intersections
     group_chirho.bench_function("Sudoku_like", |bench_chirho| {

@@ -319,7 +319,7 @@ fn create_grid_network_chirho(rows_chirho: usize, cols_chirho: usize, dim_chirho
 }
 
 fn bench_contraction_heuristics_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("ContractionHeuristics");
+    let mut group_chirho = c_chirho.benchmark_group("ContractionHeuristicsChirho");
 
     // Chain networks
     for n_chirho in [5, 10, 20] {

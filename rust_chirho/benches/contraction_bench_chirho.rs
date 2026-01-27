@@ -107,7 +107,7 @@ fn grid_network_chirho(n_chirho: usize) -> TensorNetworkChirho {
 
 /// Benchmark heuristic planning time (not execution)
 fn bench_heuristic_time_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("ContractionHeuristic");
+    let mut group_chirho = c_chirho.benchmark_group("ContractionChirhoHeuristic");
 
     // Chain networks
     for n_chirho in [5, 10, 20].iter() {
@@ -154,7 +154,7 @@ fn bench_heuristic_time_chirho(c_chirho: &mut Criterion) {
 /// Benchmark showing breakdown: heuristic_time + "execution cost"
 /// Note: We measure cost estimate, not actual tensor contraction
 fn bench_ablation_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("ContractionAblation");
+    let mut group_chirho = c_chirho.benchmark_group("ContractionChirhoAblation");
 
     // Measure both heuristic time and resulting cost for various networks
     // Use smaller networks to avoid cost overflow (star networks explode)

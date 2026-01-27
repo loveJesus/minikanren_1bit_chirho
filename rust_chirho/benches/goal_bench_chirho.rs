@@ -30,7 +30,7 @@ use minikanren_1bit_chirho::experimental_chirho::goal_ast_chirho::{
 
 /// Benchmark simple unification: x == 42
 fn bench_simple_unify_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SimpleUnify");
+    let mut group_chirho = c_chirho.benchmark_group("SimpleUnifyChirho");
 
     // Hardware (1-bit): x ∈ {42}
     group_chirho.bench_function("hardware_1bit", |bench_chirho| {
@@ -71,7 +71,7 @@ fn bench_simple_unify_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark conjunction chain: x == 1, y == 2, z == 3, ...
 fn bench_conj_chain_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("ConjChain");
+    let mut group_chirho = c_chirho.benchmark_group("ConjChainChirho");
 
     for chain_len_chirho in [2, 4, 8, 16] {
         // Hardware (1-bit): chain of domain constraints
@@ -157,7 +157,7 @@ fn bench_conj_chain_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark disjunction (conde): x == 0 | x == 1 | x == 2 | ...
 fn bench_conde_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Conde");
+    let mut group_chirho = c_chirho.benchmark_group("CondeChirho");
 
     for num_branches_chirho in [2, 4, 8, 16] {
         // Hardware (1-bit): each branch sets domain to single value
@@ -231,7 +231,7 @@ fn bench_conde_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark domain intersection (the core 1-bit operation)
 fn bench_domain_intersection_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("DomainIntersection");
+    let mut group_chirho = c_chirho.benchmark_group("DomainIntersectionChirho");
 
     // Hardware: multiple domain constraints on same variable
     // x ∈ {0..31} AND x ∈ {16..47} → x ∈ {16..31}

@@ -8,7 +8,7 @@ use minikanren_1bit_chirho::*;
 
 /// Benchmark core bit operations (these map to single CPU instructions)
 fn bench_bit_ops_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("BitOps");
+    let mut group_chirho = c_chirho.benchmark_group("BitOpsChirho");
 
     group_chirho.bench_function("BitVec64_AND", |b| {
         let a_chirho = BitVec64Chirho(0xFFFF_0000_FFFF_0000);
@@ -32,7 +32,7 @@ fn bench_bit_ops_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark union-find operations
 fn bench_union_find_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("UnionFind");
+    let mut group_chirho = c_chirho.benchmark_group("UnionFindChirho");
 
     for size_chirho in [10, 100, 1000].iter() {
         group_chirho.bench_with_input(
@@ -58,7 +58,7 @@ fn bench_union_find_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark unification
 fn bench_unify_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Unify");
+    let mut group_chirho = c_chirho.benchmark_group("UnifyChirho");
 
     group_chirho.bench_function("equal_ints", |b| {
         let mut store_chirho = TermStoreChirho::new();
@@ -102,7 +102,7 @@ fn bench_unify_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark goal execution
 fn bench_goals_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Goals");
+    let mut group_chirho = c_chirho.benchmark_group("GoalsChirho");
 
     for branches_chirho in [3, 10, 30].iter() {
         group_chirho.bench_with_input(
@@ -126,7 +126,7 @@ fn bench_goals_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark constraint propagation (AC-3)
 fn bench_constraint_prop_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("ConstraintProp");
+    let mut group_chirho = c_chirho.benchmark_group("ConstraintPropChirho");
 
     for vars_chirho in [4, 8, 16].iter() {
         group_chirho.bench_with_input(
@@ -159,7 +159,7 @@ fn bench_constraint_prop_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark hardware-oriented state operations
 fn bench_hw_state_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("HardwareState");
+    let mut group_chirho = c_chirho.benchmark_group("HardwareStateChirho");
 
     group_chirho.bench_function("SearchStateHw8_unify", |b| {
         b.iter(|| {
@@ -194,7 +194,7 @@ fn bench_hw_state_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark semiring matrix operations
 fn bench_semiring_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Semiring");
+    let mut group_chirho = c_chirho.benchmark_group("SemiringChirho");
 
     for size_chirho in [5, 10, 20].iter() {
         group_chirho.bench_with_input(
@@ -223,7 +223,7 @@ fn bench_semiring_chirho(c_chirho: &mut Criterion) {
 
 /// Benchmark neural/soft domain operations
 fn bench_neural_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Neural");
+    let mut group_chirho = c_chirho.benchmark_group("NeuralChirho");
 
     group_chirho.bench_function("SoftDomain_unify_10", |b| {
         let a_chirho = SoftDomainChirho::uniform_chirho(10);
@@ -244,7 +244,7 @@ fn bench_neural_chirho(c_chirho: &mut Criterion) {
 fn bench_sudoku_chirho(c_chirho: &mut Criterion) {
     use minikanren_1bit_chirho::sudoku_chirho::{SudokuSolverChirho, puzzles_chirho};
 
-    let mut group_chirho = c_chirho.benchmark_group("Sudoku");
+    let mut group_chirho = c_chirho.benchmark_group("SudokuChirho");
 
     // Fast solver (basic propagation only)
     group_chirho.bench_function("fast/easy", |b_chirho| {
@@ -312,7 +312,7 @@ fn bench_sudoku_chirho(c_chirho: &mut Criterion) {
 fn bench_nqueens_chirho(c_chirho: &mut Criterion) {
     use minikanren_1bit_chirho::nqueens_chirho::NQueensSolverChirho;
 
-    let mut group_chirho = c_chirho.benchmark_group("NQueens");
+    let mut group_chirho = c_chirho.benchmark_group("NQueensChirho");
 
     group_chirho.bench_function("8_count", |b_chirho| {
         b_chirho.iter(|| {
@@ -399,7 +399,7 @@ fn build_dense_tree_chirho(gen_chirho: usize) -> (relation_chirho::DenseRelation
 
 /// Benchmark family tree / relational operations - COMPARING Sparse vs Dense
 fn bench_family_tree_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("FamilyTree");
+    let mut group_chirho = c_chirho.benchmark_group("FamilyTreeChirho");
 
     // === SPARSE (HashSet) implementation ===
     for gen_chirho in [4, 5, 6].iter() {

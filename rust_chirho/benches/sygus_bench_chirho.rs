@@ -45,7 +45,7 @@ fn abs_problem_chirho() -> SygusProblemChirho {
 // ============================================================================
 
 fn bench_grammar_encoding_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SyGuS/GrammarEncode");
+    let mut group_chirho = c_chirho.benchmark_group("SyGuSChirho/GrammarEncode");
 
     let problem_chirho = max2_problem_chirho();
 
@@ -80,7 +80,7 @@ fn bench_grammar_encoding_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_enumeration_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SyGuS/Enumerate");
+    let mut group_chirho = c_chirho.benchmark_group("SyGuSChirho/Enumerate");
 
     let problem_chirho = max2_problem_chirho();
 
@@ -105,7 +105,7 @@ fn bench_enumeration_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_domain_pruning_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SyGuS/DomainPrune");
+    let mut group_chirho = c_chirho.benchmark_group("SyGuSChirho/DomainPrune");
 
     // Simulate constraint propagation with domain intersection
     group_chirho.bench_function("intersect_large", |bench_chirho| {
@@ -146,7 +146,7 @@ fn bench_domain_pruning_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_synthesis_e2e_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SyGuS/E2E");
+    let mut group_chirho = c_chirho.benchmark_group("SyGuSChirho/E2E");
 
     group_chirho.bench_function("max2_synth", |bench_chirho| {
         let problem_chirho = max2_problem_chirho();
@@ -175,7 +175,7 @@ fn bench_synthesis_e2e_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_state_propagation_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SyGuS/StateProp");
+    let mut group_chirho = c_chirho.benchmark_group("SyGuSChirho/StateProp");
 
     let problem_chirho = max2_problem_chirho();
     let examples_chirho = problem_chirho.io_examples_chirho();
@@ -204,7 +204,7 @@ fn bench_state_propagation_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_comparison_notes_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("SyGuS/ComparisonNotes");
+    let mut group_chirho = c_chirho.benchmark_group("SyGuSChirho/ComparisonNotes");
 
     // This benchmark prints comparison methodology
     group_chirho.bench_function("methodology", |bench_chirho| {

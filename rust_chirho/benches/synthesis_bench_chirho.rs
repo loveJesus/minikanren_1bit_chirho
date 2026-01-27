@@ -233,7 +233,7 @@ impl SynthesisProblemChirho {
 // ============================================================================
 
 fn bench_type_unification_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("TypeInference/Unification");
+    let mut group_chirho = c_chirho.benchmark_group("TypeInferenceChirho/Unification");
     group_chirho.sample_size(50); // Fewer samples for faster benchmarks
 
     for num_types_chirho in [64, 128, 256, 512, 1000] {
@@ -318,7 +318,7 @@ fn bench_type_unification_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_occurs_check_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("TypeInference/OccursCheck");
+    let mut group_chirho = c_chirho.benchmark_group("TypeInferenceChirho/OccursCheck");
     group_chirho.sample_size(50);
 
     // Occurs check: does type variable X appear in type T?
@@ -374,7 +374,7 @@ fn bench_occurs_check_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_synthesis_enumeration_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Synthesis/Enumeration");
+    let mut group_chirho = c_chirho.benchmark_group("SynthesisChirho/Enumeration");
     group_chirho.sample_size(50);
 
     // Synthesis: enumerate valid AST nodes at each position
@@ -460,7 +460,7 @@ fn bench_synthesis_enumeration_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_state_reachability_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Verification/Reachability");
+    let mut group_chirho = c_chirho.benchmark_group("VerificationChirho/Reachability");
     group_chirho.sample_size(50);
 
     // Verification: which program states are reachable?
@@ -550,7 +550,7 @@ fn bench_state_reachability_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_constraint_propagation_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Synthesis/ConstraintProp");
+    let mut group_chirho = c_chirho.benchmark_group("SynthesisChirho/ConstraintProp");
     group_chirho.sample_size(50);
 
     // Constraint propagation: multiple variables with interconnected constraints
@@ -615,7 +615,7 @@ fn bench_constraint_propagation_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_typeclass_resolution_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("TypeInference/Typeclass");
+    let mut group_chirho = c_chirho.benchmark_group("TypeInferenceChirho/Typeclass");
     group_chirho.sample_size(50);
 
     // Typeclass resolution: find types that satisfy multiple class constraints
@@ -711,7 +711,7 @@ fn bench_typeclass_resolution_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_large_domain_scaling_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("LargeDomain/Scaling");
+    let mut group_chirho = c_chirho.benchmark_group("LargeDomainChirho/Scaling");
     group_chirho.sample_size(30); // Fewer samples for expensive operations
 
     // Test scaling from 4k to 100k+ values
@@ -775,7 +775,7 @@ fn bench_large_domain_scaling_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_sparsity_scaling_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("LargeDomain/Sparsity");
+    let mut group_chirho = c_chirho.benchmark_group("LargeDomainChirho/Sparsity");
     group_chirho.sample_size(30);
 
     let domain_size_chirho = 50000u32;

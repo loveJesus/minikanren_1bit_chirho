@@ -36,7 +36,7 @@ fn appendo_chirho(
 
 /// Forward appendo: appendo([1,2,3], [4,5,6], q)
 fn bench_appendo_forward_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Comparison/appendo");
+    let mut group_chirho = c_chirho.benchmark_group("ComparisonChirho/appendo");
 
     group_chirho.bench_function("forward", |bench_chirho| {
         bench_chirho.iter(|| {
@@ -76,7 +76,7 @@ fn bench_appendo_forward_chirho(c_chirho: &mut Criterion) {
 
 /// N-Queens using our bit-parallel solver
 fn bench_nqueens_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Comparison/nqueens");
+    let mut group_chirho = c_chirho.benchmark_group("ComparisonChirho/nqueens");
 
     group_chirho.bench_function("8_bitparallel", |bench_chirho| {
         bench_chirho.iter(|| {
@@ -141,7 +141,7 @@ fn bench_nqueens_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_type_inference_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Comparison/type_inference");
+    let mut group_chirho = c_chirho.benchmark_group("ComparisonChirho/type_inference");
 
     group_chirho.bench_function("unify_domains", |bench_chirho| {
         use minikanren_1bit_chirho::approaches_chirho::Hierarchical4kChirho;
@@ -164,7 +164,7 @@ fn bench_type_inference_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_sudoku_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Comparison/sudoku");
+    let mut group_chirho = c_chirho.benchmark_group("ComparisonChirho/sudoku");
 
     let easy_puzzle_chirho = "530070000600195000098000060800060003400803001700020006060000280000419005000080079";
     let hard_puzzle_chirho = "800000000003600000070090200050007000000045700000100030001000068008500010090000400";

@@ -17,7 +17,7 @@ use minikanren_1bit_chirho::semiring_chirho::diff_semiring_chirho::DiffProbChirh
 // ============================================================================
 
 fn bench_learnable_relation_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("LearnableRelation");
+    let mut group_chirho = c_chirho.benchmark_group("LearnableRelationChirho");
 
     for size_chirho in [10, 100, 1000].iter() {
         // Create relation with n tuples
@@ -75,7 +75,7 @@ fn bench_learnable_relation_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_annealing_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Annealing");
+    let mut group_chirho = c_chirho.benchmark_group("AnnealingChirho");
 
     // Exponential annealing
     group_chirho.bench_function("exponential_temp", |bench_chirho| {
@@ -109,7 +109,7 @@ fn bench_annealing_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_gumbel_softmax_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("GumbelSoftmax");
+    let mut group_chirho = c_chirho.benchmark_group("GumbelSoftmaxChirho");
 
     // Sample with different number of branches
     for n_branches_chirho in [2, 4, 8, 16].iter() {
@@ -148,7 +148,7 @@ fn bench_gumbel_softmax_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_straight_through_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("StraightThrough");
+    let mut group_chirho = c_chirho.benchmark_group("StraightThroughChirho");
 
     for n_chirho in [4, 8, 16].iter() {
         let probs_chirho: Vec<f64> = (0..*n_chirho)
@@ -184,7 +184,7 @@ fn bench_straight_through_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_differentiable_branch_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("DifferentiableBranch");
+    let mut group_chirho = c_chirho.benchmark_group("DifferentiableBranchChirho");
 
     for n_branches_chirho in [2, 4, 8].iter() {
         let log_weights_chirho: Vec<f64> = vec![0.0; *n_branches_chirho];
@@ -229,7 +229,7 @@ fn bench_differentiable_branch_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_diff_prob_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("DiffProb");
+    let mut group_chirho = c_chirho.benchmark_group("DiffProbChirho");
 
     group_chirho.bench_function("and", |bench_chirho| {
         let a_chirho = DiffProbChirho::new_chirho(0.7);
@@ -276,7 +276,7 @@ fn bench_diff_prob_chirho(c_chirho: &mut Criterion) {
 // ============================================================================
 
 fn bench_training_epoch_chirho(c_chirho: &mut Criterion) {
-    let mut group_chirho = c_chirho.benchmark_group("Training");
+    let mut group_chirho = c_chirho.benchmark_group("TrainingChirho");
 
     // Simulate a small training epoch
     group_chirho.bench_function("epoch_10_tuples_8_examples", |bench_chirho| {
