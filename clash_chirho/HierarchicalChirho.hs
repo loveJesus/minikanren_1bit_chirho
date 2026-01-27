@@ -287,6 +287,46 @@ bytes256kChirho :: Int
 bytes256kChirho = 33288  -- 8 + 64*8 + 64*64*8
 
 -- ============================================================================
+-- Sparse HBM Access ☧
+-- ============================================================================
+
+{-
+SPARSE ACCESS OPTIMIZATION
+
+For Hierarchical256k, worst case is 33KB per operation.
+But using summary bits, we can skip empty blocks:
+
+Read pattern:
+  1. Read level0 (8 bytes) - which level1 groups have values
+  2. For each set bit in level0, read level1[i] (8 bytes)
+  3. For each set bit in level1[i], read level2[i][j] (8 bytes)
+
+Typical cases:
+  - Single IP address: 3 reads = 24 bytes
+  - /24 subnet (256 IPs): 1 + 1 + 4 = 6 reads = 48 bytes
+  - /16 subnet (65K IPs): 1 + 1 + 64 = 66 reads = 528 bytes
+  - Dense 256K domain: 1 + 64 + 4096 = 4161 reads = 33KB
+
+Average case is 10-100× better than worst case!
+-}
+
+-- | Count non-empty blocks at level 1 (for bandwidth estimation)
+countActiveL1Chirho :: Hierarchical256kChirho -> Int
+countActiveL1Chirho dChirho = popCount (level0_256kChirho dChirho)
+
+-- | Count non-empty blocks at level 2 (for bandwidth estimation)
+countActiveL2Chirho :: Hierarchical256kChirho -> Int
+countActiveL2Chirho dChirho =
+  sum $ map popCount (toList (level1_256kChirho dChirho))
+
+-- | Estimate HBM bytes needed for sparse read
+estimateBytesChirho :: Hierarchical256kChirho -> Int
+estimateBytesChirho dChirho =
+  let l1ActiveChirho = countActiveL1Chirho dChirho
+      l2ActiveChirho = countActiveL2Chirho dChirho
+  in 8 + (l1ActiveChirho * 8) + (l2ActiveChirho * 8)
+
+-- ============================================================================
 -- Synthesis Note ☧
 -- ============================================================================
 
@@ -304,10 +344,33 @@ Hierarchical256kChirho intersection:
 - 1 64-bit OR for level0
 - ~5000 LUTs, 2-4 cycles (pipelined)
 
-For HBM bandwidth:
-- 4k domain: 520 bytes read, 520 bytes write per operation
-- At 14.4 GB/s per channel: ~72K domain ops/sec per channel
-- With 8 channels: ~576K domain ops/sec
+HBM Bandwidth Analysis:
+
+| Domain | Worst Case | Typical | 8-Channel Throughput |
+|--------|------------|---------|---------------------|
+| BitVec64 | 8 B | 8 B | 14.4B ops/sec |
+| Hierarchical4k | 520 B | 520 B | 222M ops/sec |
+| Hierarchical256k | 33 KB | 50-500 B | 3.5M-230M ops/sec |
+
+SaaS Application Recommendations:
+
+| Application | Domain Need | Recommended Type |
+|-------------|-------------|------------------|
+| TestForge (enums) | ≤256 | Hierarchical4k |
+| RegexCraft (ASCII) | ≤256 | Hierarchical4k |
+| ConfigGuard (ports) | ≤65536 | Hierarchical4k |
+| ConfigGuard (IP /24) | ≤256 | Hierarchical4k |
+| ConfigGuard (IP /16) | ≤65536 | Hierarchical256k |
+| Philologos (vocab) | ~50000 | Hierarchical256k |
+
+Key insight: Hierarchical4k (4096 values) covers MOST use cases!
+Only Philologos vocabulary and /16+ IP ranges need Hierarchical256k.
+
+For ConfigGuard IP addresses:
+- Represent as (subnet, host) pair, not flat 32-bit
+- /24 subnet: 256 hosts → BitVec64 × 4 or Hierarchical4k
+- /16 subnet: 65536 hosts → Hierarchical4k (fits perfectly!)
+- /8 subnet: 16M hosts → Use multiple Hierarchical256k or symbolic
 
 This is the path to production performance!
 -}

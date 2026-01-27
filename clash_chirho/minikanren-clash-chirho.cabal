@@ -9,6 +9,8 @@ build-type:    Simple
 library
   exposed-modules:
     HashConsChirho
+    HbmEngineChirho
+    HierarchicalChirho
     MiniKanrenChirho
   build-depends:
     base >= 4.14 && < 5,

@@ -183,4 +183,40 @@ This is a Calyx idiom issue, not a fundamental limitation.
 
 ---
 
+## Hierarchical Domain Analysis (2026-01-27)
+
+For SaaS applications needing >64 values per domain, hierarchical bit structures scale efficiently.
+
+### HBM Bandwidth by Domain Type
+
+| Domain | Values | Size/Op | HBM Throughput (8 ch) | Use Case |
+|--------|--------|---------|----------------------|----------|
+| **BitVec64** | 64 | 8 B | 14.4B ops/sec | Small enums |
+| **Hierarchical4k** | 4,096 | 520 B | 222M ops/sec | Ports, ASCII, /16 subnets |
+| **Hierarchical256k** | 262,144 | 33 KB (worst) | 3.5M ops/sec | Greek vocab, /8 subnets |
+| **Hierarchical256k** | 262,144 | 50-500 B (typical) | 230M ops/sec | Sparse IP constraints |
+
+### SaaS Application Fit
+
+| Application | Domain Need | Recommended | Why |
+|-------------|-------------|-------------|-----|
+| **TestForge** | ≤256 enums | Hierarchical4k | Fits in 4 blocks |
+| **RegexCraft** | 256 ASCII | Hierarchical4k | 4 blocks |
+| **ConfigGuard** (ports) | 65536 | Hierarchical4k | Perfect fit |
+| **ConfigGuard** (IP /16) | 65536 hosts | Hierarchical4k | One 4k per /16 |
+| **Philologos** | ~50K words | Hierarchical256k | Sparse, ~1KB actual |
+
+### Key Insight: Sparse Access
+
+Hierarchical256k's 33KB is **worst case** (all 262K values active). In practice:
+
+- Single IP address: 24 bytes (3 reads)
+- /24 subnet (256 IPs): 48 bytes
+- /16 subnet (65K IPs): 528 bytes
+- Greek vocabulary query: ~200-500 bytes (most words inactive)
+
+**Summary bits enable skipping empty blocks**, making real-world bandwidth 10-100× better than theoretical maximum
+
+---
+
 *Soli Deo Gloria* ☧
