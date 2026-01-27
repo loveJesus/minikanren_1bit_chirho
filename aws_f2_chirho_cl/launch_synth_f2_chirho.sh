@@ -12,14 +12,14 @@ PROJECT_ROOT_CHIRHO="$(dirname "$SCRIPT_DIR_CHIRHO")"
 # Configuration
 AWS_REGION_CHIRHO="${AWS_REGION:-us-east-1}"
 S3_BUCKET_CHIRHO="${S3_BUCKET:-minikanren-fpga-chirho}"
-KEY_NAME_CHIRHO="${KEY_NAME:-minikanren-fpga-key}"
+KEY_NAME_CHIRHO="${KEY_NAME:-minikanren-fpga-key-chirho}"
 
 # c5.9xlarge: 36 vCPUs, 72 GB RAM - needed for HBM synthesis
 SYNTH_INSTANCE_CHIRHO="c5.9xlarge"
 
-# FPGA Developer AMI (Ubuntu 24.04 with Vivado 2024.2)
-# Find latest: aws ec2 describe-images --owners amazon --filters "Name=name,Values=*FPGA*Developer*" --query 'Images[*].[ImageId,Name]'
-FPGA_DEV_AMI_CHIRHO="${FPGA_DEV_AMI:-ami-0123456789abcdef0}"  # Update with actual AMI
+# FPGA Developer AMI (Ubuntu) 1.17.0 with Vivado 2024.2
+# From AWS Marketplace: https://aws.amazon.com/marketplace/pp/prodview-rhng4b6alkhdq
+FPGA_DEV_AMI_CHIRHO="${FPGA_DEV_AMI:-ami-01198b89d80ebfdd2}"
 
 echo "============================================================"
 echo "  F2 HBM Synthesis Launch ☧"
