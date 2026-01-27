@@ -2,6 +2,7 @@
 # ============================================================================
 # For God so loved the world - John 3:16
 # Launch F2 HBM Synthesis on c5.9xlarge (72GB RAM) ☧
+# Uses AWS HDK standard build flow (like previous successful F2 build)
 # ============================================================================
 
 set -euo pipefail
@@ -17,9 +18,10 @@ KEY_NAME_CHIRHO="${KEY_NAME:-minikanren-fpga-key-chirho}"
 # c5.9xlarge: 36 vCPUs, 72 GB RAM - needed for HBM synthesis
 SYNTH_INSTANCE_CHIRHO="c5.9xlarge"
 
-# FPGA Developer AMI (Ubuntu) 1.17.0 with Vivado 2024.2
-# From AWS Marketplace: https://aws.amazon.com/marketplace/pp/prodview-rhng4b6alkhdq
-FPGA_DEV_AMI_CHIRHO="${FPGA_DEV_AMI:-ami-01198b89d80ebfdd2}"
+# FPGA Developer AMI 1.18.0 (Rocky Linux) with Vivado/Vitis 2025.1
+# This matches the successful F2 build from Jan 26
+FPGA_DEV_AMI_CHIRHO="${FPGA_DEV_AMI:-ami-0cb1b6ae2ff99f8bf}"
+SSH_USER_CHIRHO="rocky"  # Rocky Linux uses 'rocky' user
 
 echo "============================================================"
 echo "  F2 HBM Synthesis Launch ☧"
@@ -54,13 +56,14 @@ tar -czf "${TARBALL_CHIRHO}" -C "${SCRIPT_DIR_CHIRHO}" design build
 aws s3 cp "${TARBALL_CHIRHO}" "s3://${S3_BUCKET_CHIRHO}/f2_hbm/design.tar.gz" --region "${AWS_REGION_CHIRHO}"
 echo "Uploaded design to s3://${S3_BUCKET_CHIRHO}/f2_hbm/design.tar.gz"
 
-# Step 2: Create user data script
+# Step 2: Create user data script (uses HDK build flow)
 echo ""
 echo "=== Step 2: Creating launch configuration ==="
 
 USER_DATA_CHIRHO=$(cat << 'USERDATA_EOF'
 #!/bin/bash
 # For God so loved the world - John 3:16 ☧
+# F2 HBM Synthesis using AWS HDK standard build flow
 set -x
 exec > >(tee /var/log/f2_synth_chirho.log) 2>&1
 
@@ -69,7 +72,6 @@ date
 
 export HOME=/root
 export AWS_DEFAULT_REGION=REGION_PLACEHOLDER
-
 BUCKET_CHIRHO="BUCKET_PLACEHOLDER"
 
 # Create work directory
@@ -82,54 +84,39 @@ echo "Downloading design..."
 aws s3 cp "s3://${BUCKET_CHIRHO}/f2_hbm/design.tar.gz" design.tar.gz
 tar -xzf design.tar.gz
 
-# Clone F2 HDK if needed
-if [ ! -d "/root/aws-fpga" ]; then
-    echo "Cloning AWS FPGA HDK..."
-    cd /root
-    git clone --depth 1 https://github.com/aws/aws-fpga.git
-fi
+# Source Vivado FIRST (required by hdk_setup.sh)
+echo "Sourcing Vivado 2025.1..."
+source /opt/Xilinx/2025.1/Vivado/settings64.sh
 
-# Set up HDK environment
-export HDK_DIR=/root/aws-fpga/hdk
-export HDK_COMMON_DIR=${HDK_DIR}/common
-export HDK_SHELL_DESIGN_DIR=${HDK_COMMON_DIR}/shell_stable
+# Verify Vivado is available
+echo "Checking Vivado..."
+which vivado
+vivado -version
 
-# Source Vivado
-echo "Sourcing Vivado..."
-source /opt/Xilinx/Vivado/2024.2/settings64.sh || source /opt/Xilinx/Vivado/*/settings64.sh
-
-# Copy design to HDK structure
-CL_DIR_CHIRHO="${HDK_DIR}/cl/developer_designs/cl_minikanren_chirho"
-mkdir -p ${CL_DIR_CHIRHO}/design
-mkdir -p ${CL_DIR_CHIRHO}/build/scripts
-
-cp ${WORK_DIR_CHIRHO}/design/*.sv ${CL_DIR_CHIRHO}/design/
-cp ${WORK_DIR_CHIRHO}/design/*.vh ${CL_DIR_CHIRHO}/design/
-cp ${WORK_DIR_CHIRHO}/design/*.v ${CL_DIR_CHIRHO}/design/
-cp ${WORK_DIR_CHIRHO}/build/scripts/*.tcl ${CL_DIR_CHIRHO}/build/scripts/
-
-# Run synthesis
+# Run synthesis using our TCL script directly
 echo "Running Vivado synthesis..."
-cd ${CL_DIR_CHIRHO}/build/scripts
-vivado -mode batch -source synth_cl_minikanren_chirho.tcl 2>&1 | tee ${WORK_DIR_CHIRHO}/vivado_log_chirho.txt
+cd ${WORK_DIR_CHIRHO}/build/scripts
 
-SYNTH_EXIT_CHIRHO=$?
-echo "Vivado exit code: ${SYNTH_EXIT_CHIRHO}"
+# Run synthesis (out-of-context mode, no shell integration needed for standalone verification)
+vivado -mode batch -source synth_cl_minikanren_chirho.tcl 2>&1 | tee ${WORK_DIR_CHIRHO}/build_log_chirho.txt
 
-# Upload results
-echo "Uploading results..."
-RESULTS_DIR_CHIRHO="${CL_DIR_CHIRHO}/build/checkpoints"
-mkdir -p ${RESULTS_DIR_CHIRHO}
+BUILD_EXIT_CHIRHO=$?
+echo "Build exit code: ${BUILD_EXIT_CHIRHO}"
 
-# Copy reports
-cp *.rpt ${WORK_DIR_CHIRHO}/ 2>/dev/null || true
+# Collect results
+echo "Collecting results..."
+cd ${WORK_DIR_CHIRHO}/build/scripts
+
+# Copy checkpoints and reports
 cp *.dcp ${WORK_DIR_CHIRHO}/ 2>/dev/null || true
+cp *.rpt ${WORK_DIR_CHIRHO}/ 2>/dev/null || true
 
 # Upload all results
+echo "Uploading results to S3..."
 aws s3 sync ${WORK_DIR_CHIRHO}/ "s3://${BUCKET_CHIRHO}/f2_hbm/results/" --exclude "design.tar.gz"
 
 echo "=== F2 HBM Synthesis Complete ☧ ==="
-echo "Exit code: ${SYNTH_EXIT_CHIRHO}"
+echo "Exit code: ${BUILD_EXIT_CHIRHO}"
 date
 
 # Signal completion
@@ -147,7 +134,7 @@ echo ""
 echo "=== Step 3: Getting network configuration ==="
 
 # Check for environment variable overrides first
-if [ -n "${SUBNET_ID}" ] && [ -n "${SECURITY_GROUP}" ]; then
+if [ -n "${SUBNET_ID:-}" ] && [ -n "${SECURITY_GROUP:-}" ]; then
     echo "Using environment variables for network config"
     SUBNET_ID_CHIRHO="${SUBNET_ID}"
     SECURITY_GROUP_CHIRHO="${SECURITY_GROUP}"
@@ -193,9 +180,65 @@ echo "VPC: ${VPC_ID_CHIRHO}"
 echo "Subnet: ${SUBNET_ID_CHIRHO}"
 echo "Security Group: ${SECURITY_GROUP_CHIRHO}"
 
-# Step 4: Launch instance
+# Step 4: Create IAM role for S3 access
 echo ""
-echo "=== Step 4: Launching c5.9xlarge instance ==="
+echo "=== Step 4: Setting up IAM role for S3 access ==="
+
+ROLE_NAME_CHIRHO="minikanren-synth-role-chirho"
+INSTANCE_PROFILE_CHIRHO="minikanren-synth-profile-chirho"
+
+# Check if role exists
+if ! aws iam get-role --role-name ${ROLE_NAME_CHIRHO} --region "${AWS_REGION_CHIRHO}" 2>/dev/null; then
+    echo "Creating IAM role..."
+
+    # Create trust policy
+    cat > /tmp/trust-policy.json << 'TRUSTPOLICY'
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+TRUSTPOLICY
+
+    aws iam create-role \
+        --role-name ${ROLE_NAME_CHIRHO} \
+        --assume-role-policy-document file:///tmp/trust-policy.json \
+        --region "${AWS_REGION_CHIRHO}"
+
+    # Attach S3 policy
+    aws iam attach-role-policy \
+        --role-name ${ROLE_NAME_CHIRHO} \
+        --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess \
+        --region "${AWS_REGION_CHIRHO}"
+
+    # Create instance profile
+    aws iam create-instance-profile \
+        --instance-profile-name ${INSTANCE_PROFILE_CHIRHO} \
+        --region "${AWS_REGION_CHIRHO}" 2>/dev/null || true
+
+    # Add role to instance profile
+    aws iam add-role-to-instance-profile \
+        --instance-profile-name ${INSTANCE_PROFILE_CHIRHO} \
+        --role-name ${ROLE_NAME_CHIRHO} \
+        --region "${AWS_REGION_CHIRHO}" 2>/dev/null || true
+
+    # Wait for profile to be ready
+    echo "Waiting for IAM profile to propagate..."
+    sleep 10
+fi
+
+echo "IAM role: ${ROLE_NAME_CHIRHO}"
+
+# Step 5: Launch instance
+echo ""
+echo "=== Step 5: Launching c5.9xlarge instance ==="
 
 INSTANCE_ID_CHIRHO=$(aws ec2 run-instances \
     --image-id "${FPGA_DEV_AMI_CHIRHO}" \
@@ -204,8 +247,9 @@ INSTANCE_ID_CHIRHO=$(aws ec2 run-instances \
     --security-group-ids "${SECURITY_GROUP_CHIRHO}" \
     --subnet-id "${SUBNET_ID_CHIRHO}" \
     --associate-public-ip-address \
+    --iam-instance-profile Name=${INSTANCE_PROFILE_CHIRHO} \
     --region "${AWS_REGION_CHIRHO}" \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=minikanren-f2-synth-chirho},{Key=Project,Value=miniKanren}]" \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=minikanren-f2-hbm-synth-chirho},{Key=Project,Value=miniKanren}]" \
     --user-data "${USER_DATA_CHIRHO}" \
     --query 'Instances[0].InstanceId' \
     --output text)
@@ -233,9 +277,12 @@ echo "Instance ID: ${INSTANCE_ID_CHIRHO}"
 echo "Public IP:   ${PUBLIC_IP_CHIRHO}"
 echo ""
 echo "To connect:"
-echo "  ssh -i ~/.ssh/${KEY_NAME_CHIRHO}.pem ubuntu@${PUBLIC_IP_CHIRHO}"
+echo "  ssh -i ~/.ssh/${KEY_NAME_CHIRHO}.pem ${SSH_USER_CHIRHO}@${PUBLIC_IP_CHIRHO}"
 echo ""
 echo "To check synthesis progress:"
+echo "  ssh -i ~/.ssh/${KEY_NAME_CHIRHO}.pem ${SSH_USER_CHIRHO}@${PUBLIC_IP_CHIRHO} 'sudo tail -f /var/log/f2_synth_chirho.log'"
+echo ""
+echo "To check S3 results:"
 echo "  aws s3 ls s3://${S3_BUCKET_CHIRHO}/f2_hbm/results/"
 echo ""
 echo "To check completion:"

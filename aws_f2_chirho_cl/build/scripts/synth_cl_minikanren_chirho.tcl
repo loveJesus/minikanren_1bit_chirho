@@ -1,58 +1,69 @@
 # ============================================================================
 # For God so loved the world - John 3:16
-# miniKanren F2 Synthesis Script with HBM Support
+# miniKanren F2 Synthesis Script - Standalone Mode
 # ============================================================================
 
 set CL_MODULE cl_minikanren_chirho
-set HDK_DIR $::env(HDK_DIR)
-set CL_DIR $HDK_DIR/cl/examples/cl_minikanren_chirho
+set CL_DIR [pwd]/../..
 
-# Set include directories
-set_property include_dirs [list \
-    $CL_DIR/design \
-    $HDK_DIR/common/shell_stable/design/interfaces \
-    $HDK_DIR/common/lib \
-] [current_fileset]
+puts "============================================"
+puts "miniKanren HBM Synthesis Starting"
+puts "CL_DIR: $CL_DIR"
+puts "============================================"
 
-# Clock constraints
-create_clock -period 4.0 -name clk_main_a0 [get_ports clk_main_a0]
-create_clock -period 10.0 -name clk_hbm_ref [get_ports clk_hbm_ref]
+# Create in-memory project
+create_project -in_memory -part xcvu47p-fsvh2892-2-e
 
-# Set design hierarchy
+# Set include directories for defines BEFORE reading files
+set_property include_dirs [list $CL_DIR/design] [current_fileset]
+
+# Read all design files (stubs and interfaces first)
+puts "Reading design files..."
+read_verilog -sv $CL_DIR/design/stubs_chirho.sv
+read_verilog -sv $CL_DIR/design/cl_minikanren_chirho_defines.vh
+read_verilog -sv $CL_DIR/design/cl_dram_dma_defines.vh
+read_verilog -sv $CL_DIR/design/cl_id_defines.vh
+read_verilog -sv $CL_DIR/design/cl_ports.vh
+read_verilog -sv $CL_DIR/design/cl_hbm_axi4.sv
+# cl_hbm_wrapper.sv excluded - using stub version for out-of-context synthesis
+# read_verilog -sv $CL_DIR/design/cl_hbm_wrapper.sv
+read_verilog -sv $CL_DIR/design/cl_minikanren_chirho.sv
+read_verilog $CL_DIR/design/searchEngineChirho.v
+
+# Set top module
 set_property top $CL_MODULE [current_fileset]
 
-# Read common library files
-read_verilog -sv [glob $HDK_DIR/common/lib/*.sv]
+puts "Starting synthesis (this may take 2-4 hours)..."
+synth_design -top $CL_MODULE -part xcvu47p-fsvh2892-2-e -mode out_of_context -flatten_hierarchy rebuilt -generic EN_DDR=0 -generic EN_HBM=1
 
-# Read design files (includes HBM wrappers)
-read_verilog -sv [glob $CL_DIR/design/*.sv]
-read_verilog [glob $CL_DIR/design/*.v]
+# Post-synthesis reports
+puts "Generating post-synthesis reports..."
+report_timing_summary -file timing_post_synth_chirho.rpt
+report_utilization -file utilization_post_synth_chirho.rpt
 
-# Read interface definitions
-read_verilog -sv $HDK_DIR/common/shell_stable/design/interfaces/cl_ports.vh
+# Write synthesis checkpoint
+write_checkpoint -force post_synth_chirho.dcp
 
-# Parameters for HBM-enabled build
-set_property generic {EN_DDR=0 EN_HBM=1} [current_fileset]
-
-# Synthesis
-synth_design -top $CL_MODULE -part xcvu47p-fsvh2892-2-e -mode out_of_context
-
-# Optimize
+puts "Optimizing design..."
 opt_design
+
+puts "Placing design..."
 place_design
+
+puts "Physical optimization..."
 phys_opt_design
+
+puts "Routing design..."
 route_design
 
-# Reports
-report_timing_summary -file timing_summary.rpt
-report_utilization -file utilization.rpt
-report_power -file power.rpt
+# Final reports
+puts "Generating final reports..."
+report_timing_summary -file timing_summary_chirho.rpt
+report_utilization -file utilization_chirho.rpt
+report_power -file power_chirho.rpt
 
-# Write checkpoint
-write_checkpoint -force post_route.dcp
-
-# Write bitstream (for standalone testing)
-# write_bitstream -force $CL_MODULE.bit
+# Write final checkpoint
+write_checkpoint -force post_route_chirho.dcp
 
 puts "============================================"
 puts "miniKanren HBM Synthesis Complete"

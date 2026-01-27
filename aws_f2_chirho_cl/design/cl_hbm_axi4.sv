@@ -23,6 +23,8 @@
 // - Instantiate HBM Wrapper
 // ============================================================================
 
+`include "cl_dram_dma_defines.vh"
+
 module cl_hbm_axi4
 #(
   parameter             HBM_PRESENT = 1
