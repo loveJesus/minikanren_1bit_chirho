@@ -236,7 +236,7 @@ For batched workloads:
 | File | Change |
 |------|--------|
 | `clash_chirho/MiniKanrenChirho.hs` | Add HBM interface, batch FSM |
-| `aws_f2_chirho/hdk/.../cl_minikanren_chirho.sv` | Connect HBM AXI4 ports |
+| `synth_chirho/aws_f2_chirho/hdk/.../cl_minikanren_chirho.sv` | Connect HBM AXI4 ports |
 | `spec_chirho/.../benchmark_nqueens_chirho.py` | Add DMA-based batch mode |
 | `synth_chirho/RESULTS_CHIRHO.md` | Update with HBM benchmarks |
 

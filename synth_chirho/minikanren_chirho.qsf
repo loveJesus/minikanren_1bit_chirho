@@ -11,7 +11,7 @@ set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEBA6U23I7
 set_global_assignment -name TOP_LEVEL_ENTITY searchEngineChirho
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 23.1
-set_global_assignment -name PROJECT_CREATION_TIME_DATE "2025-01-25"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "2026-01-25"
 set_global_assignment -name LAST_QUARTUS_VERSION "23.1.0 Lite Edition"
 
 # Source files - Clash generated

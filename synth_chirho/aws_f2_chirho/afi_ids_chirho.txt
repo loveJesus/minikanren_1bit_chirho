@@ -1,0 +1,9 @@
+# miniKanren F2 AFI - Created 2026-01-27 ☧
+# 250 MHz, timing MET (+0.159ns slack)
+
+AFI_ID=afi-0710e3d924fa21ff4
+AGFI_ID=agfi-04abde24231f6775c
+
+# To load on F2 instance:
+# sudo fpga-clear-local-image -S 0
+# sudo fpga-load-local-image -S 0 -I agfi-04abde24231f6775c

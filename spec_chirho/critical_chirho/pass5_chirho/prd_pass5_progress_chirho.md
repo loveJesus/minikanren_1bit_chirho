@@ -100,15 +100,15 @@ cargo test --features verilator_chirho verify_hw
 ### Scripts Created ✓
 | Script | Purpose |
 |--------|---------|
-| `aws_f1_chirho/setup_chirho.sh` | Create AWS infrastructure |
-| `aws_f1_chirho/upload_design_chirho.sh` | Upload Verilog to S3 |
-| `aws_f1_chirho/launch_synth_chirho.sh` | Launch Vivado synthesis |
-| `aws_f1_chirho/download_results_chirho.sh` | Download synthesis artifacts |
-| `aws_f1_chirho/create_afi_chirho.sh` | Create Amazon FPGA Image |
-| `aws_f1_chirho/check_afi_chirho.sh` | Check AFI creation status |
-| `aws_f1_chirho/run_f1_chirho.sh` | Run on F1 FPGA |
-| `aws_f1_chirho/cleanup_chirho.sh` | Terminate instances and cleanup |
-| `aws_f1_chirho/config_chirho.sh` | AWS configuration variables |
+| `synth_chirho/aws_f1_chirho/setup_chirho.sh` | Create AWS infrastructure |
+| `synth_chirho/aws_f1_chirho/upload_design_chirho.sh` | Upload Verilog to S3 |
+| `synth_chirho/aws_f1_chirho/launch_synth_chirho.sh` | Launch Vivado synthesis |
+| `synth_chirho/aws_f1_chirho/download_results_chirho.sh` | Download synthesis artifacts |
+| `synth_chirho/aws_f1_chirho/create_afi_chirho.sh` | Create Amazon FPGA Image |
+| `synth_chirho/aws_f1_chirho/check_afi_chirho.sh` | Check AFI creation status |
+| `synth_chirho/aws_f1_chirho/run_f1_chirho.sh` | Run on F1 FPGA |
+| `synth_chirho/aws_f1_chirho/cleanup_chirho.sh` | Terminate instances and cleanup |
+| `synth_chirho/aws_f1_chirho/config_chirho.sh` | AWS configuration variables |
 
 ### Pending Steps
 - [ ] Wait for synthesis to complete (~2-4 hours)
@@ -149,7 +149,7 @@ cargo test --features verilator_chirho verify_hw
 - `docs_chirho/competitive_analysis_chirho.md` - FPGA vs GH200 comparison
 
 ### Monitoring Script
-- `aws_f1_chirho/monitor_synth_chirho.sh` - Track synthesis progress
+- `synth_chirho/aws_f1_chirho/monitor_synth_chirho.sh` - Track synthesis progress
 
 ---
 

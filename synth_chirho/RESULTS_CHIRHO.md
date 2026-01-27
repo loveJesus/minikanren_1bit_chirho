@@ -102,7 +102,7 @@ hierarchical utilization requires `report_utilization -hierarchical`.
 
 ---
 
-## Yosys Synthesis (2025-01-25)
+## Yosys Synthesis (2026-01-25)
 
 Technology-independent synthesis with Yosys 0.61:
 

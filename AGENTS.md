@@ -434,7 +434,7 @@ Phase 3: Hardware (Clash/Calyx)
 | `clash_chirho/MiniKanrenChirho.hs` | ✅ Compiles to Verilog via Clash |
 | `calyx_chirho/tb_domain_chirho.cpp` | Verilator testbench |
 
-### AWS FPGA (`aws_f1_chirho/`, `aws_f2_chirho/`)
+### AWS FPGA (`synth_chirho/aws_f1_chirho/`, `synth_chirho/aws_f2_chirho/`)
 
 | Instance | FPGA | $/hr | AFI Compatible | Capacity |
 |----------|------|------|----------------|----------|
