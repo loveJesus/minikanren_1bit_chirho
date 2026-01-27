@@ -146,34 +146,47 @@ USER_DATA_CHIRHO="${USER_DATA_CHIRHO//BUCKET_PLACEHOLDER/${S3_BUCKET_CHIRHO}}"
 echo ""
 echo "=== Step 3: Getting network configuration ==="
 
-# Get default VPC
-VPC_ID_CHIRHO=$(aws ec2 describe-vpcs --filters "Name=is-default,Values=true" --query 'Vpcs[0].VpcId' --output text --region "${AWS_REGION_CHIRHO}" 2>/dev/null || echo "")
+# Check for environment variable overrides first
+if [ -n "${SUBNET_ID}" ] && [ -n "${SECURITY_GROUP}" ]; then
+    echo "Using environment variables for network config"
+    SUBNET_ID_CHIRHO="${SUBNET_ID}"
+    SECURITY_GROUP_CHIRHO="${SECURITY_GROUP}"
+    VPC_ID_CHIRHO="(from env)"
+else
+    # Get default VPC
+    VPC_ID_CHIRHO=$(aws ec2 describe-vpcs --filters "Name=is-default,Values=true" --query 'Vpcs[0].VpcId' --output text --region "${AWS_REGION_CHIRHO}" 2>/dev/null || echo "")
 
-if [ -z "${VPC_ID_CHIRHO}" ] || [ "${VPC_ID_CHIRHO}" == "None" ]; then
-    echo "No default VPC found. Please specify SUBNET_ID and SECURITY_GROUP environment variables."
-    exit 1
-fi
+    if [ -z "${VPC_ID_CHIRHO}" ] || [ "${VPC_ID_CHIRHO}" == "None" ]; then
+        # Try to find any VPC
+        VPC_ID_CHIRHO=$(aws ec2 describe-vpcs --query 'Vpcs[0].VpcId' --output text --region "${AWS_REGION_CHIRHO}" 2>/dev/null || echo "")
+    fi
 
-# Get default subnet
-SUBNET_ID_CHIRHO=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=${VPC_ID_CHIRHO}" --query 'Subnets[0].SubnetId' --output text --region "${AWS_REGION_CHIRHO}")
+    if [ -z "${VPC_ID_CHIRHO}" ] || [ "${VPC_ID_CHIRHO}" == "None" ]; then
+        echo "No VPC found. Please specify SUBNET_ID and SECURITY_GROUP environment variables."
+        exit 1
+    fi
 
-# Get or create security group
-SECURITY_GROUP_CHIRHO=$(aws ec2 describe-security-groups --filters "Name=group-name,Values=minikanren-synth-sg-chirho" --query 'SecurityGroups[0].GroupId' --output text --region "${AWS_REGION_CHIRHO}" 2>/dev/null || echo "")
+    # Get subnet
+    SUBNET_ID_CHIRHO=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=${VPC_ID_CHIRHO}" --query 'Subnets[0].SubnetId' --output text --region "${AWS_REGION_CHIRHO}")
 
-if [ -z "${SECURITY_GROUP_CHIRHO}" ] || [ "${SECURITY_GROUP_CHIRHO}" == "None" ]; then
-    echo "Creating security group..."
-    SECURITY_GROUP_CHIRHO=$(aws ec2 create-security-group \
-        --group-name minikanren-synth-sg-chirho \
-        --description "Security group for miniKanren FPGA synthesis" \
-        --vpc-id "${VPC_ID_CHIRHO}" \
-        --region "${AWS_REGION_CHIRHO}" \
-        --query 'GroupId' --output text)
+    # Get or create security group
+    SECURITY_GROUP_CHIRHO=$(aws ec2 describe-security-groups --filters "Name=group-name,Values=minikanren-synth-sg-chirho" --query 'SecurityGroups[0].GroupId' --output text --region "${AWS_REGION_CHIRHO}" 2>/dev/null || echo "")
 
-    # Allow SSH
-    aws ec2 authorize-security-group-ingress \
-        --group-id "${SECURITY_GROUP_CHIRHO}" \
-        --protocol tcp --port 22 --cidr 0.0.0.0/0 \
-        --region "${AWS_REGION_CHIRHO}"
+    if [ -z "${SECURITY_GROUP_CHIRHO}" ] || [ "${SECURITY_GROUP_CHIRHO}" == "None" ]; then
+        echo "Creating security group..."
+        SECURITY_GROUP_CHIRHO=$(aws ec2 create-security-group \
+            --group-name minikanren-synth-sg-chirho \
+            --description "Security group for miniKanren FPGA synthesis" \
+            --vpc-id "${VPC_ID_CHIRHO}" \
+            --region "${AWS_REGION_CHIRHO}" \
+            --query 'GroupId' --output text)
+
+        # Allow SSH
+        aws ec2 authorize-security-group-ingress \
+            --group-id "${SECURITY_GROUP_CHIRHO}" \
+            --protocol tcp --port 22 --cidr 0.0.0.0/0 \
+            --region "${AWS_REGION_CHIRHO}"
+    fi
 fi
 
 echo "VPC: ${VPC_ID_CHIRHO}"
