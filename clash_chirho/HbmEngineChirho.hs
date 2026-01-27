@@ -287,18 +287,199 @@ generateResponseChirho cmdChirho stateChirho =
     }
 
 -- ============================================================================
+-- HBM FSM State ☧
+-- ============================================================================
+
+-- | HBM access state machine phases
+data HbmFsmPhaseChirho
+  = HbmIdleChirho           -- Waiting for command
+  | HbmLoadVar1Chirho       -- Loading first variable domain
+  | HbmLoadVar2Chirho       -- Loading second variable domain (for unify)
+  | HbmComputeChirho        -- Performing operation
+  | HbmStoreResultChirho    -- Storing result to HBM
+  | HbmBatchNextChirho      -- Moving to next in batch
+  deriving (Generic, NFDataX, Eq, Show)
+
+-- | Full FSM state
+data HbmFsmStateChirho = HbmFsmStateChirho
+  { fsmPhaseChirho      :: HbmFsmPhaseChirho
+  , fsmVarIdx1Chirho    :: VarIdChirho         -- First variable being processed
+  , fsmVarIdx2Chirho    :: VarIdChirho         -- Second variable (for unify)
+  , fsmDomain1Chirho    :: DomainChirho        -- Loaded domain 1
+  , fsmDomain2Chirho    :: DomainChirho        -- Loaded domain 2
+  , fsmResultChirho     :: DomainChirho        -- Computed result
+  , fsmBatchCountChirho :: BitVector 16        -- Remaining batch operations
+  , fsmBatchAddrChirho  :: HbmAddrChirho       -- Current batch address
+  , fsmEngineChirho     :: EngineStateChirho   -- Core engine state
+  } deriving (Generic, NFDataX)
+
+-- | Initial FSM state
+initFsmChirho :: HbmFsmStateChirho
+initFsmChirho = HbmFsmStateChirho
+  { fsmPhaseChirho      = HbmIdleChirho
+  , fsmVarIdx1Chirho    = 0
+  , fsmVarIdx2Chirho    = 0
+  , fsmDomain1Chirho    = maxBound
+  , fsmDomain2Chirho    = maxBound
+  , fsmResultChirho     = maxBound
+  , fsmBatchCountChirho = 0
+  , fsmBatchAddrChirho  = 0
+  , fsmEngineChirho     = initEngineChirho
+  }
+
+-- ============================================================================
+-- HBM Address Calculation ☧
+-- ============================================================================
+
+-- | Calculate HBM address for a variable's domain
+--   Layout: Each variable gets 64 bytes (512 bits for future expansion)
+--   Address = base + (var_id * 64)
+varToHbmAddrChirho :: VarIdChirho -> HbmAddrChirho
+varToHbmAddrChirho varIdChirho =
+  let baseAddrChirho = 0 :: HbmAddrChirho  -- Variables start at offset 0
+      varOffsetChirho = resize varIdChirho `shiftL` 6  -- * 64 bytes
+  in baseAddrChirho + varOffsetChirho
+
+-- ============================================================================
+-- HBM FSM Transitions ☧
+-- ============================================================================
+
+-- | FSM transition function
+fsmTransitionChirho
+  :: CommandChirho           -- Current command
+  -> Bool                    -- HBM read valid
+  -> BitVector 256           -- HBM read data
+  -> HbmFsmStateChirho       -- Current state
+  -> HbmFsmStateChirho       -- Next state
+fsmTransitionChirho cmdChirho hbmValidChirho hbmDataChirho stChirho =
+  case fsmPhaseChirho stChirho of
+
+    -- IDLE: Wait for command, start processing
+    HbmIdleChirho -> case cmdOpcodeChirho cmdChirho of
+      OpNopChirho -> stChirho
+
+      OpConstrainChirho -> stChirho
+        { fsmPhaseChirho   = HbmLoadVar1Chirho
+        , fsmVarIdx1Chirho = cmdVar1Chirho cmdChirho
+        }
+
+      OpUnifyVarsChirho -> stChirho
+        { fsmPhaseChirho   = HbmLoadVar1Chirho
+        , fsmVarIdx1Chirho = cmdVar1Chirho cmdChirho
+        , fsmVarIdx2Chirho = cmdVar2Chirho cmdChirho
+        }
+
+      OpBatchConstrainChirho -> stChirho
+        { fsmPhaseChirho      = HbmLoadVar1Chirho
+        , fsmBatchCountChirho = cmdCountChirho cmdChirho
+        , fsmBatchAddrChirho  = cmdAddrChirho cmdChirho
+        }
+
+      _ -> stChirho  -- Other ops handled differently
+
+    -- LOAD VAR 1: Wait for HBM read, then load var 2 or compute
+    HbmLoadVar1Chirho ->
+      if hbmValidChirho
+      then
+        let domain1Chirho = resize hbmDataChirho  -- Take lower 64 bits
+        in case cmdOpcodeChirho cmdChirho of
+          OpUnifyVarsChirho -> stChirho
+            { fsmPhaseChirho   = HbmLoadVar2Chirho
+            , fsmDomain1Chirho = domain1Chirho
+            }
+          _ -> stChirho
+            { fsmPhaseChirho   = HbmComputeChirho
+            , fsmDomain1Chirho = domain1Chirho
+            }
+      else stChirho  -- Wait for valid
+
+    -- LOAD VAR 2: Wait for HBM read, then compute
+    HbmLoadVar2Chirho ->
+      if hbmValidChirho
+      then stChirho
+        { fsmPhaseChirho   = HbmComputeChirho
+        , fsmDomain2Chirho = resize hbmDataChirho
+        }
+      else stChirho
+
+    -- COMPUTE: Perform the operation, then store
+    HbmComputeChirho ->
+      let resultChirho = case cmdOpcodeChirho cmdChirho of
+            OpConstrainChirho ->
+              intersectChirho (fsmDomain1Chirho stChirho) (cmdMaskChirho cmdChirho)
+            OpUnifyVarsChirho ->
+              intersectChirho (fsmDomain1Chirho stChirho) (fsmDomain2Chirho stChirho)
+            _ -> fsmDomain1Chirho stChirho
+      in stChirho
+        { fsmPhaseChirho  = HbmStoreResultChirho
+        , fsmResultChirho = resultChirho
+        }
+
+    -- STORE RESULT: Write to HBM, then idle or next batch
+    HbmStoreResultChirho ->
+      -- Assume write always succeeds in 1 cycle (simplified)
+      if fsmBatchCountChirho stChirho > 0
+      then stChirho
+        { fsmPhaseChirho      = HbmBatchNextChirho
+        , fsmBatchCountChirho = fsmBatchCountChirho stChirho - 1
+        }
+      else stChirho
+        { fsmPhaseChirho = HbmIdleChirho
+        }
+
+    -- BATCH NEXT: Advance to next batch item
+    HbmBatchNextChirho -> stChirho
+      { fsmPhaseChirho     = HbmLoadVar1Chirho
+      , fsmBatchAddrChirho = fsmBatchAddrChirho stChirho + 64
+      }
+
+-- ============================================================================
+-- HBM Output Generation ☧
+-- ============================================================================
+
+-- | Generate HBM control signals from FSM state
+fsmHbmOutputsChirho
+  :: HbmFsmStateChirho
+  -> (HbmAddrChirho, Bool, Bool, BitVector 256)  -- (addr, ren, wen, wdata)
+fsmHbmOutputsChirho stChirho =
+  case fsmPhaseChirho stChirho of
+    HbmIdleChirho ->
+      (0, False, False, 0)
+
+    HbmLoadVar1Chirho ->
+      (varToHbmAddrChirho (fsmVarIdx1Chirho stChirho), True, False, 0)
+
+    HbmLoadVar2Chirho ->
+      (varToHbmAddrChirho (fsmVarIdx2Chirho stChirho), True, False, 0)
+
+    HbmComputeChirho ->
+      (0, False, False, 0)
+
+    HbmStoreResultChirho ->
+      let addrChirho = varToHbmAddrChirho (fsmVarIdx1Chirho stChirho)
+          wdataChirho = resize (fsmResultChirho stChirho)  -- Pad to 256 bits
+      in (addrChirho, False, True, wdataChirho)
+
+    HbmBatchNextChirho ->
+      (0, False, False, 0)
+
+-- ============================================================================
 -- Top-Level Engine ☧
 -- ============================================================================
 
--- | HBM-backed constraint engine
+-- | HBM-backed constraint engine with real FSM
 --
 -- Inputs:
 --   - Command from CPU (what operation to perform)
 --   - HBM read data (when loading state)
+--   - HBM read valid
 --
 -- Outputs:
 --   - Response to CPU (status, results)
---   - HBM port (for reading/writing state)
+--   - HBM address
+--   - HBM read enable
+--   - HBM write enable
+--   - HBM write data
 --
 hbmEngineChirho
   :: Clock XilinxSystem
@@ -314,20 +495,47 @@ hbmEngineChirho
      )
 hbmEngineChirho clkChirho rstChirho cmdChirho hbmRdataChirho hbmRvalidChirho =
   ( respChirho
-  , pure 0        -- HBM address (TODO: implement load/store)
-  , pure False    -- HBM read enable
-  , pure False    -- HBM write enable
-  , pure 0        -- HBM write data
+  , hbmAddrChirho
+  , hbmRenChirho
+  , hbmWenChirho
+  , hbmWdataChirho
   )
   where
-    -- State register
-    stateChirho = register clkChirho rstChirho enableGen initEngineChirho nextStateChirho
+    -- FSM state register
+    fsmStateChirho = register clkChirho rstChirho enableGen initFsmChirho nextFsmStateChirho
 
-    -- Next state logic
-    nextStateChirho = applyCommandChirho <$> cmdChirho <*> stateChirho
+    -- FSM next state
+    nextFsmStateChirho = fsmTransitionChirho <$> cmdChirho <*> hbmRvalidChirho <*> hbmRdataChirho <*> fsmStateChirho
 
-    -- Response generation
-    respChirho = generateResponseChirho <$> cmdChirho <*> stateChirho
+    -- HBM outputs from FSM
+    hbmOutputsChirho = fsmHbmOutputsChirho <$> fsmStateChirho
+    hbmAddrChirho  = fmap (\(aChirho, _, _, _) -> aChirho) hbmOutputsChirho
+    hbmRenChirho   = fmap (\(_, rChirho, _, _) -> rChirho) hbmOutputsChirho
+    hbmWenChirho   = fmap (\(_, _, wChirho, _) -> wChirho) hbmOutputsChirho
+    hbmWdataChirho = fmap (\(_, _, _, dChirho) -> dChirho) hbmOutputsChirho
+
+    -- Response: ready when idle
+    respChirho = mkResponseChirho <$> fsmStateChirho <*> cmdChirho
+
+-- | Generate response from FSM state
+mkResponseChirho :: HbmFsmStateChirho -> CommandChirho -> ResponseChirho
+mkResponseChirho fsmChirho cmdChirho =
+  let engineChirho = fsmEngineChirho fsmChirho
+      domainsChirho = engDomainsChirho engineChirho
+      (branchIdxChirho, branchSizeChirho) = findBranchVarChirho domainsChirho
+      isReadyChirho = fsmPhaseChirho fsmChirho == HbmIdleChirho
+  in ResponseChirho
+    { respStatusChirho = StatusChirho
+      { statReadyChirho     = isReadyChirho
+      , statValidChirho     = engValidChirho engineChirho
+      , statSolutionChirho  = allSingletonsChirho domainsChirho
+      , statFailedChirho    = anyEmptyChirho domainsChirho
+      , statBranchVarChirho = pack (resize (pack branchIdxChirho))
+      , statBranchSizeChirho = branchSizeChirho
+      }
+    , respDomainChirho  = fsmResultChirho fsmChirho
+    , respDomain2Chirho = clearLowestChirho (fsmResultChirho fsmChirho)
+    }
 
 -- ============================================================================
 -- Synthesis Wrapper ☧
