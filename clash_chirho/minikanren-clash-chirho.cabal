@@ -12,6 +12,7 @@ library
     DiffFixedChirho
     HashConsChirho
     HbmEngineChirho
+    Hierarchical512Chirho
     HierarchicalChirho
     MiniKanrenChirho
     TermStoreHbmChirho
