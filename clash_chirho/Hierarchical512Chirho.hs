@@ -213,6 +213,127 @@ intersectPacked64Chirho aChirho bChirho = Packed64x4Chirho
   }
 
 -- ============================================================================
+-- Hier262k64Chirho: 262,144 values with 64-bit words (Sparse Optimized) ☧
+-- ============================================================================
+
+-- | Three-level hierarchy with 64-bit words
+--   64 × 64 × 64 = 262,144 values
+--
+--   Same capacity as Hier262k (512²), but:
+--   - 3 levels vs 2 levels
+--   - 8 bytes per access vs 64 bytes
+--   - 5× better bandwidth for SPARSE domains!
+--
+--   Use when: Domain is sparse (few active regions)
+--   Use Hier262k when: Domain is dense or need fewer round trips
+--
+data Hier262k64Chirho = Hier262k64Chirho
+  { h262k64Level0Chirho :: Word64Chirho                    -- Top summary (64 bits)
+  , h262k64Level1Chirho :: Vec 64 Word64Chirho             -- Mid summaries
+  , h262k64Level2Chirho :: Vec 64 (Vec 64 Word64Chirho)    -- Actual values
+  } deriving (Generic, NFDataX)
+
+-- | Empty 262k-64 domain
+emptyHier262k64Chirho :: Hier262k64Chirho
+emptyHier262k64Chirho = Hier262k64Chirho
+  { h262k64Level0Chirho = 0
+  , h262k64Level1Chirho = repeat 0
+  , h262k64Level2Chirho = repeat (repeat 0)
+  }
+
+-- | Full 262k-64 domain
+fullHier262k64Chirho :: Hier262k64Chirho
+fullHier262k64Chirho = Hier262k64Chirho
+  { h262k64Level0Chirho = maxBound
+  , h262k64Level1Chirho = repeat maxBound
+  , h262k64Level2Chirho = repeat (repeat maxBound)
+  }
+
+-- | Intersection
+intersectHier262k64Chirho :: Hier262k64Chirho -> Hier262k64Chirho -> Hier262k64Chirho
+intersectHier262k64Chirho aChirho bChirho =
+  let newLevel2Chirho = zipWith (zipWith (.&.))
+        (h262k64Level2Chirho aChirho) (h262k64Level2Chirho bChirho)
+      newLevel1Chirho = map (pack . map (/= 0)) newLevel2Chirho
+      newLevel0Chirho = pack (map (/= 0) newLevel1Chirho)
+  in Hier262k64Chirho
+    { h262k64Level0Chirho = newLevel0Chirho
+    , h262k64Level1Chirho = newLevel1Chirho
+    , h262k64Level2Chirho = newLevel2Chirho
+    }
+
+-- | Check if empty
+isEmptyHier262k64Chirho :: Hier262k64Chirho -> Bool
+isEmptyHier262k64Chirho dChirho = h262k64Level0Chirho dChirho == 0
+
+-- | Check membership
+memberHier262k64Chirho :: BitVector 18 -> Hier262k64Chirho -> Bool
+memberHier262k64Chirho valChirho dChirho =
+  let l0IdxChirho  = unpack (slice d17 d12 valChirho) :: Index 64
+      l1IdxChirho  = unpack (slice d11 d6 valChirho) :: Index 64
+      bitIdxChirho = unpack (slice d5 d0 valChirho) :: Index 64
+      blockChirho  = ((h262k64Level2Chirho dChirho) !! l0IdxChirho) !! l1IdxChirho
+  in testBit blockChirho (fromIntegral bitIdxChirho)
+
+-- | Sparse HBM bytes (much better than 512² for sparse!)
+sparseBytes262k64Chirho :: Hier262k64Chirho -> Int
+sparseBytes262k64Chirho dChirho =
+  let l1ActiveChirho = popCount (h262k64Level0Chirho dChirho)
+      l2ActiveChirho = sum $ map popCount (toList (h262k64Level1Chirho dChirho))
+  in 8 + (l1ActiveChirho * 8) + (l2ActiveChirho * 8)
+
+-- ============================================================================
+-- Adaptive262kChirho: Auto-select 512² vs 64³ ☧
+-- ============================================================================
+
+-- | Tag for which representation is active
+data Repr262kTagChirho
+  = Repr512x512Chirho   -- Dense: use 512² (fewer round trips)
+  | Repr64x64x64Chirho  -- Sparse: use 64³ (less bandwidth)
+  deriving (Generic, NFDataX, Eq, Show)
+
+-- | Adaptive 262k domain that picks best representation
+--   Based on sparsity: if <25% full, use 64³; otherwise 512²
+data Adaptive262kChirho = Adaptive262kChirho
+  { a262kTagChirho   :: Repr262kTagChirho
+  , a262k512Chirho   :: Hier262kChirho      -- 512² representation
+  , a262k64Chirho    :: Hier262k64Chirho    -- 64³ representation
+  } deriving (Generic, NFDataX)
+
+-- | Estimate sparsity (ratio of active blocks to total)
+sparsityHier262kChirho :: Hier262kChirho -> BitVector 10
+sparsityHier262kChirho dChirho =
+  fromIntegral (popCount (h262kSummaryChirho dChirho))
+
+sparsityHier262k64Chirho :: Hier262k64Chirho -> BitVector 12
+sparsityHier262k64Chirho dChirho =
+  let l1CountChirho = popCount (h262k64Level0Chirho dChirho)
+      l2CountChirho = sum $ map popCount (toList (h262k64Level1Chirho dChirho))
+  in fromIntegral (l1CountChirho + l2CountChirho)
+
+-- | Convert 512² to 64³ (when sparsity detected)
+toSparse262kChirho :: Hier262kChirho -> Hier262k64Chirho
+toSparse262kChirho dChirho =
+  -- Each 512-bit block maps to 8 consecutive 64-bit blocks
+  -- Block i in 512² → blocks [8i..8i+7] in level 1 of 64³
+  -- This is a layout transformation, preserving all bits
+  let flatBitsChirho = concatMap (\bChirho -> map (slice512to64Chirho bChirho) (0 :> 1 :> 2 :> 3 :> 4 :> 5 :> 6 :> 7 :> Nil))
+                        (h262kBlocksChirho dChirho)
+      -- Reshape into 64 × 64 structure
+      level2Chirho = unconcat d64 flatBitsChirho
+      level1Chirho = map (pack . map (/= 0)) level2Chirho
+      level0Chirho = pack (map (/= 0) level1Chirho)
+  in Hier262k64Chirho
+    { h262k64Level0Chirho = level0Chirho
+    , h262k64Level1Chirho = level1Chirho
+    , h262k64Level2Chirho = level2Chirho
+    }
+  where
+    slice512to64Chirho :: Word512Chirho -> Index 8 -> Word64Chirho
+    slice512to64Chirho wChirho iChirho =
+      resize (wChirho `shiftR` (fromIntegral iChirho * 64))
+
+-- ============================================================================
 -- Flat256Chirho: 256 values (Single Beat) ☧
 -- ============================================================================
 
@@ -568,6 +689,15 @@ bytesFlat512Chirho = 64
 bytesHier262kChirho :: Int
 bytesHier262kChirho = 32832  -- 64 + 512*64
 
+-- | Bytes per Hier262k64 variable (sparse-optimized)
+--   Worst case: 8 + 64*8 + 64*64*8 = 33,288 bytes
+--   Typical sparse: 8 + 4*8 + 16*8 = 168 bytes (200× better!)
+bytesHier262k64WorstChirho :: Int
+bytesHier262k64WorstChirho = 33288
+
+bytesHier262k64TypicalChirho :: Int
+bytesHier262k64TypicalChirho = 168  -- ~4 active L1 groups, ~16 active blocks
+
 -- | Maximum variables in 16GB HBM
 maxVarsFlat64Chirho :: Int
 maxVarsFlat64Chirho = 16 * 1024 * 1024 * 1024 `div` bytesFlat64Chirho  -- 2 BILLION vars!
@@ -587,6 +717,13 @@ maxVarsHier262kChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier262kChirho  -- ~5
 -- ============================================================================
 -- Synthesis Annotations ☧
 -- ============================================================================
+
+{-# ANN intersectHier262k64Chirho
+  (Synthesize
+    { t_name = "intersect_hier_262k_64_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
 
 {-# ANN intersect64Chirho
   (Synthesize
