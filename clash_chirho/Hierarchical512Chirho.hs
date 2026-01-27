@@ -161,67 +161,24 @@ sparseBytes262kChirho dChirho =
   in 64 + (activeBlocksChirho * 64)  -- 64 bytes per 512-bit word
 
 -- ============================================================================
--- Hier134MChirho: 134 million values in 3 levels ☧
+-- Hier134MChirho: DEFERRED ☧
 -- ============================================================================
 
--- | Three-level hierarchy with 512-bit words
---   512 × 512 × 512 = 134,217,728 values (134 million!)
---
---   This covers:
---   - Full Unicode (1.1M codepoints) with room to spare
---   - All IPv4 /8 subnets (16M addresses)
---   - Large vocabularies (any human language)
---
-data Hier134MChirho = Hier134MChirho
-  { h134mLevel0Chirho :: Word512Chirho                      -- Top summary
-  , h134mLevel1Chirho :: Vec 512 Word512Chirho              -- Mid summaries
-  , h134mLevel2Chirho :: Vec 512 (Vec 512 Word512Chirho)    -- Actual values
-  } deriving (Generic, NFDataX)
+{-
+Hier134M (512³ = 134 million values) is deferred for now.
 
--- | Empty 134M domain
-emptyHier134MChirho :: Hier134MChirho
-emptyHier134MChirho = Hier134MChirho
-  { h134mLevel0Chirho = 0
-  , h134mLevel1Chirho = repeat 0
-  , h134mLevel2Chirho = repeat (repeat 0)
-  }
+Rationale:
+- 262k values covers all current SaaS needs
+- 134M would use 16MB per variable (only 1000 vars in 16GB HBM)
+- Can add later if needed for full Unicode or IPv4
 
--- | Check if empty
-isEmptyHier134MChirho :: Hier134MChirho -> Bool
-isEmptyHier134MChirho dChirho = h134mLevel0Chirho dChirho == 0
-
--- | Intersection of two 134M domains
-intersectHier134MChirho :: Hier134MChirho -> Hier134MChirho -> Hier134MChirho
-intersectHier134MChirho aChirho bChirho =
-  let newLevel2Chirho = zipWith
-        (zipWith (.&.))
-        (h134mLevel2Chirho aChirho)
-        (h134mLevel2Chirho bChirho)
-      newLevel1Chirho = map
-        (pack . map (/= 0))
-        newLevel2Chirho
-      newLevel0Chirho = pack (map (/= 0) newLevel1Chirho)
-  in Hier134MChirho
-    { h134mLevel0Chirho = newLevel0Chirho
-    , h134mLevel1Chirho = newLevel1Chirho
-    , h134mLevel2Chirho = newLevel2Chirho
+If needed in future, design would be:
+  data Hier134MChirho = Hier134MChirho
+    { h134mLevel0Chirho :: Word512Chirho
+    , h134mLevel1Chirho :: Vec 512 Word512Chirho
+    , h134mLevel2Chirho :: Vec 512 (Vec 512 Word512Chirho)
     }
-
--- | Check membership in 134M domain
-memberHier134MChirho :: BitVector 27 -> Hier134MChirho -> Bool
-memberHier134MChirho valChirho dChirho =
-  let l0IdxChirho  = unpack (slice d26 d18 valChirho) :: Index 512
-      l1IdxChirho  = unpack (slice d17 d9 valChirho) :: Index 512
-      bitIdxChirho = unpack (slice d8 d0 valChirho) :: Index 512
-      blockChirho  = ((h134mLevel2Chirho dChirho) !! l0IdxChirho) !! l1IdxChirho
-  in testBit blockChirho (fromIntegral bitIdxChirho)
-
--- | Sparse HBM bytes for 134M domain
-sparseBytes134MChirho :: Hier134MChirho -> Int
-sparseBytes134MChirho dChirho =
-  let l1ActiveChirho = popCount (h134mLevel0Chirho dChirho)
-      l2ActiveChirho = sum $ map popCount (toList (h134mLevel1Chirho dChirho))
-  in 64 + (l1ActiveChirho * 64) + (l2ActiveChirho * 64)
+-}
 
 -- ============================================================================
 -- Comparison: 64-bit vs 512-bit ☧
@@ -234,7 +191,6 @@ WHY 512-BIT IS BETTER:
 |--------|--------------|---------------|-------------|
 | 262k values levels | 3 | 2 | 33% fewer |
 | 262k HBM reads | 3 round trips | 2 round trips | 33% faster |
-| 134M values levels | 4 | 3 | 25% fewer |
 | Summary bits | 64 | 512 | 8× more selective |
 
 HBM ALIGNMENT:
@@ -281,22 +237,15 @@ Hier262k:
   Offset 0x8040: block 511 (64 bytes)
   Total: 64 + 512×64 = 32,832 bytes per variable
 
-Hier134M:
-  Offset 0x000000: level0 (64 bytes)
-  Offset 0x000040: level1[0] (64 bytes)
-  ...
-  Offset 0x008040: level1[511] (64 bytes)
-  Offset 0x008080: level2[0][0] (64 bytes)
-  ...
-  Total: 64 + 512×64 + 512×512×64 = 16,810,048 bytes ≈ 16 MB per variable
-
 For 16 GB HBM:
   - Flat512: 268 million variables
   - Hier262k: 512K variables
-  - Hier134M: 1,000 variables (huge domains!)
 
-Recommendation: Use Hier262k for most SaaS applications.
-Hier134M only for truly massive domains (full Unicode, etc.)
+Recommendation: Hier262k covers ALL current SaaS needs:
+  - ConfigGuard ports: 65,536 ✓
+  - ConfigGuard IP /16: 65,536 ✓
+  - Philologos vocabulary: ~50,000 ✓
+  - RegexCraft Unicode subset: ~150,000 ✓
 -}
 
 -- | Bytes per Flat512 variable
@@ -307,9 +256,9 @@ bytesFlat512Chirho = 64
 bytesHier262kChirho :: Int
 bytesHier262kChirho = 32832  -- 64 + 512*64
 
--- | Bytes per Hier134M variable
-bytesHier134MChirho :: Int
-bytesHier134MChirho = 16810048  -- 64 + 512*64 + 512*512*64
+-- | Maximum Hier262k variables in 16GB HBM
+maxVarsHier262kChirho :: Int
+maxVarsHier262kChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier262kChirho  -- ~512K
 
 -- ============================================================================
 -- Synthesis Annotations ☧
@@ -340,22 +289,23 @@ LUT ESTIMATES:
 |-----------|------|-------|
 | Flat512 AND | ~150 | 512-bit AND |
 | Hier262k intersect | ~80,000 | 512 × 512-bit ANDs |
-| Hier134M intersect | ~40M | Too big for single cycle! |
-
-For Hier134M: must pipeline or stream blocks.
-For Hier262k: fits easily, ~6% of VU47P.
 
 RECOMMENDATION:
 
 | Domain | LUTs | Cycles | Use Case |
 |--------|------|--------|----------|
-| Flat512 | 150 | 1 | Small enums |
-| Hier262k | 80K | 2-4 | Most SaaS |
-| Hier134M | stream | many | Unicode/IPv4 |
+| Flat512 | 150 | 1 | Small enums, ASCII |
+| Hier262k | 80K | 2-4 | Everything else |
 
 Hier262k is the sweet spot:
-  - 262K values covers all SaaS needs
-  - 80K LUTs = 6% of chip
+  - 262K values covers ALL SaaS needs
+  - 80K LUTs = 6% of VU47P chip
   - 2 HBM reads per operation
-  - Parallelism: 16 engines fit easily
+  - Parallelism: 16 engines fit easily (1.28M LUTs total)
+  - 512K variables in 16GB HBM
+
+FINAL DESIGN:
+  - Flat512 for domains ≤512 values (fast path)
+  - Hier262k for domains ≤262,144 values (everything else)
+  - No 512³ needed currently
 -}
