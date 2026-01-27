@@ -6,21 +6,31 @@
 
 {- |
 Module      : Hierarchical512Chirho
-Description : 512-bit word hierarchies for efficient HBM access ☧
+Description : Multi-width hierarchies (64/256/512-bit) for HBM ☧
 Copyright   : (c) 2026
 License     : MIT
 
-Using 512-bit words instead of 64-bit dramatically reduces tree depth:
+Three word sizes optimized for different bandwidth/capacity tradeoffs:
 
-| Domain Size | 64-bit words | 512-bit words |
-|-------------|--------------|---------------|
-| 512         | 8 words      | 1 word        |
-| 4,096       | 2 levels     | 1 level + 8   |
-| 262,144     | 3 levels     | 2 levels      |
-| 134 million | 4 levels     | 3 levels      |
+| Word Size | HBM Beats | Pack Factor | 2-Level Values |
+|-----------|-----------|-------------|----------------|
+| 64-bit    | 1/4 beat  | 4 per beat  | 4,096          |
+| 256-bit   | 1 beat    | 1 per beat  | 65,536         |
+| 512-bit   | 2 beats   | 1/2 beat    | 262,144        |
 
-Key insight: HBM bus is 256-bit, so 512-bit = 2 beats (natural alignment).
-Fewer levels = fewer HBM round trips = faster!
+Domain types provided:
+  - Flat64Chirho: 64 values (8 bytes, pack 4 per beat!)
+  - Hier4kChirho: 4,096 values (520 bytes)
+  - Packed64x4Chirho: 4 Flat64 domains in 1 HBM beat
+  - Flat256Chirho: 256 values (32 bytes, 1 beat)
+  - Hier65kChirho: 65,536 values (8KB, 1 beat each)
+  - Flat512Chirho: 512 values (64 bytes, 2 beats)
+  - Hier262kChirho: 262,144 values (33KB, 2 beats each)
+
+Key insight: Use smallest type that fits your domain!
+  - 64-bit: Best bandwidth (4× throughput for small domains)
+  - 256-bit: Best balance (1 beat, 65k values)
+  - 512-bit: Most values (262k per domain)
 
 "For God so loved the world..." - John 3:16
 -}
@@ -29,14 +39,300 @@ module Hierarchical512Chirho where
 import Clash.Prelude
 
 -- ============================================================================
--- 512-bit Base Types ☧
+-- 64-bit Types (Quarter HBM Beat - Packable) ☧
 -- ============================================================================
 
--- | 512-bit word (8 × 64-bit for internal representation)
+-- | 64-bit word = 1/4 HBM beat
+--   Advantage: Pack 4 domains per HBM access for batch ops!
+type Word64Chirho = BitVector 64
+
+-- | Index into 64-bit word
+type Index64Chirho = Index 64
+
+-- ============================================================================
+-- 256-bit Types (Single HBM Beat) ☧
+-- ============================================================================
+
+-- | 256-bit word = 1 HBM beat (fastest access)
+type Word256Chirho = BitVector 256
+
+-- | Index into 256-bit word
+type Index256Chirho = Index 256
+
+-- ============================================================================
+-- 512-bit Types (Two HBM Beats) ☧
+-- ============================================================================
+
+-- | 512-bit word = 2 HBM beats
 type Word512Chirho = BitVector 512
 
 -- | Index into 512-bit word
 type Index512Chirho = Index 512
+
+-- ============================================================================
+-- Flat64Chirho: 64 values (Quarter Beat - Packable) ☧
+-- ============================================================================
+
+-- | Simple 64-value domain
+--   Advantage: Pack 4 per HBM beat for batch processing!
+--   Perfect for: Small enums, digit sets, chess pieces
+newtype Flat64Chirho = Flat64Chirho
+  { flat64BitsChirho :: Word64Chirho
+  } deriving (Generic, NFDataX, Eq, Show)
+
+-- | Empty 64 domain
+empty64Chirho :: Flat64Chirho
+empty64Chirho = Flat64Chirho 0
+
+-- | Full 64 domain
+full64Chirho :: Flat64Chirho
+full64Chirho = Flat64Chirho maxBound
+
+-- | Intersection
+intersect64Chirho :: Flat64Chirho -> Flat64Chirho -> Flat64Chirho
+intersect64Chirho aChirho bChirho =
+  Flat64Chirho (flat64BitsChirho aChirho .&. flat64BitsChirho bChirho)
+
+-- | Union
+union64Chirho :: Flat64Chirho -> Flat64Chirho -> Flat64Chirho
+union64Chirho aChirho bChirho =
+  Flat64Chirho (flat64BitsChirho aChirho .|. flat64BitsChirho bChirho)
+
+-- | Check if empty
+isEmpty64Chirho :: Flat64Chirho -> Bool
+isEmpty64Chirho dChirho = flat64BitsChirho dChirho == 0
+
+-- | Population count
+popCount64Chirho :: Flat64Chirho -> BitVector 7
+popCount64Chirho dChirho = fromIntegral (popCount (flat64BitsChirho dChirho))
+
+-- ============================================================================
+-- Hier4kChirho: 4,096 values (Efficient for Medium Domains) ☧
+-- ============================================================================
+
+-- | Two-level hierarchy with 64-bit words
+--   64 × 64 = 4,096 values
+--
+--   HBM: 8 bytes (summary) + 64 × 8 bytes = 520 bytes (~2 beats)
+--   Good for: Character classes, small vocabularies, N-Queens board
+--
+data Hier4kChirho = Hier4kChirho
+  { h4kSummaryChirho :: Word64Chirho         -- Which blocks active
+  , h4kBlocksChirho  :: Vec 64 Word64Chirho  -- 64 blocks
+  } deriving (Generic, NFDataX)
+
+-- | Empty 4k domain
+emptyHier4kChirho :: Hier4kChirho
+emptyHier4kChirho = Hier4kChirho
+  { h4kSummaryChirho = 0
+  , h4kBlocksChirho  = repeat 0
+  }
+
+-- | Full 4k domain
+fullHier4kChirho :: Hier4kChirho
+fullHier4kChirho = Hier4kChirho
+  { h4kSummaryChirho = maxBound
+  , h4kBlocksChirho  = repeat maxBound
+  }
+
+-- | Intersection of two 4k domains
+intersectHier4kChirho :: Hier4kChirho -> Hier4kChirho -> Hier4kChirho
+intersectHier4kChirho aChirho bChirho =
+  let newBlocksChirho = zipWith (.&.) (h4kBlocksChirho aChirho) (h4kBlocksChirho bChirho)
+      newSummaryChirho = pack (map (/= 0) newBlocksChirho)
+  in Hier4kChirho
+    { h4kSummaryChirho = newSummaryChirho
+    , h4kBlocksChirho  = newBlocksChirho
+    }
+
+-- | Union
+unionHier4kChirho :: Hier4kChirho -> Hier4kChirho -> Hier4kChirho
+unionHier4kChirho aChirho bChirho =
+  let newBlocksChirho = zipWith (.|.) (h4kBlocksChirho aChirho) (h4kBlocksChirho bChirho)
+      newSummaryChirho = h4kSummaryChirho aChirho .|. h4kSummaryChirho bChirho
+  in Hier4kChirho
+    { h4kSummaryChirho = newSummaryChirho
+    , h4kBlocksChirho  = newBlocksChirho
+    }
+
+-- | Check if empty
+isEmptyHier4kChirho :: Hier4kChirho -> Bool
+isEmptyHier4kChirho dChirho = h4kSummaryChirho dChirho == 0
+
+-- | Check membership
+memberHier4kChirho :: BitVector 12 -> Hier4kChirho -> Bool
+memberHier4kChirho valChirho dChirho =
+  let blockIdxChirho = unpack (slice d11 d6 valChirho) :: Index 64
+      bitIdxChirho   = unpack (slice d5 d0 valChirho) :: Index 64
+      blockChirho    = (h4kBlocksChirho dChirho) !! blockIdxChirho
+  in testBit blockChirho (fromIntegral bitIdxChirho)
+
+-- | Sparse HBM bytes
+sparseBytes4kChirho :: Hier4kChirho -> Int
+sparseBytes4kChirho dChirho =
+  let activeBlocksChirho = popCount (h4kSummaryChirho dChirho)
+  in 8 + (activeBlocksChirho * 8)  -- 8 bytes per 64-bit word
+
+-- ============================================================================
+-- Packed64Chirho: 4 domains per HBM beat ☧
+-- ============================================================================
+
+-- | Four 64-bit domains packed for batch HBM access
+--   Read/write 4 variable domains in 1 HBM beat!
+data Packed64x4Chirho = Packed64x4Chirho
+  { p64d0Chirho :: Flat64Chirho
+  , p64d1Chirho :: Flat64Chirho
+  , p64d2Chirho :: Flat64Chirho
+  , p64d3Chirho :: Flat64Chirho
+  } deriving (Generic, NFDataX, Eq, Show)
+
+-- | Pack 4 domains into 256 bits (1 HBM beat)
+packDomains64Chirho :: Packed64x4Chirho -> BitVector 256
+packDomains64Chirho pChirho =
+  (resize (flat64BitsChirho (p64d0Chirho pChirho)) `shiftL` 192) .|.
+  (resize (flat64BitsChirho (p64d1Chirho pChirho)) `shiftL` 128) .|.
+  (resize (flat64BitsChirho (p64d2Chirho pChirho)) `shiftL` 64) .|.
+  resize (flat64BitsChirho (p64d3Chirho pChirho))
+
+-- | Unpack 256 bits into 4 domains
+unpackDomains64Chirho :: BitVector 256 -> Packed64x4Chirho
+unpackDomains64Chirho bitsChirho = Packed64x4Chirho
+  { p64d0Chirho = Flat64Chirho (resize (bitsChirho `shiftR` 192))
+  , p64d1Chirho = Flat64Chirho (resize (bitsChirho `shiftR` 128))
+  , p64d2Chirho = Flat64Chirho (resize (bitsChirho `shiftR` 64))
+  , p64d3Chirho = Flat64Chirho (resize bitsChirho)
+  }
+
+-- | Batch intersect 4 domains at once
+intersectPacked64Chirho :: Packed64x4Chirho -> Packed64x4Chirho -> Packed64x4Chirho
+intersectPacked64Chirho aChirho bChirho = Packed64x4Chirho
+  { p64d0Chirho = intersect64Chirho (p64d0Chirho aChirho) (p64d0Chirho bChirho)
+  , p64d1Chirho = intersect64Chirho (p64d1Chirho aChirho) (p64d1Chirho bChirho)
+  , p64d2Chirho = intersect64Chirho (p64d2Chirho aChirho) (p64d2Chirho bChirho)
+  , p64d3Chirho = intersect64Chirho (p64d3Chirho aChirho) (p64d3Chirho bChirho)
+  }
+
+-- ============================================================================
+-- Flat256Chirho: 256 values (Single Beat) ☧
+-- ============================================================================
+
+-- | Simple 256-value domain (single HBM beat)
+--   Perfect for: ASCII, byte values, small enums
+newtype Flat256Chirho = Flat256Chirho
+  { flat256BitsChirho :: Word256Chirho
+  } deriving (Generic, NFDataX, Eq, Show)
+
+-- | Empty 256 domain
+empty256Chirho :: Flat256Chirho
+empty256Chirho = Flat256Chirho 0
+
+-- | Full 256 domain
+full256Chirho :: Flat256Chirho
+full256Chirho = Flat256Chirho maxBound
+
+-- | Intersection
+intersect256Chirho :: Flat256Chirho -> Flat256Chirho -> Flat256Chirho
+intersect256Chirho aChirho bChirho =
+  Flat256Chirho (flat256BitsChirho aChirho .&. flat256BitsChirho bChirho)
+
+-- | Union
+union256Chirho :: Flat256Chirho -> Flat256Chirho -> Flat256Chirho
+union256Chirho aChirho bChirho =
+  Flat256Chirho (flat256BitsChirho aChirho .|. flat256BitsChirho bChirho)
+
+-- | Check if empty
+isEmpty256Chirho :: Flat256Chirho -> Bool
+isEmpty256Chirho dChirho = flat256BitsChirho dChirho == 0
+
+-- | Population count
+popCount256Chirho :: Flat256Chirho -> BitVector 9
+popCount256Chirho dChirho = fromIntegral (popCount (flat256BitsChirho dChirho))
+
+-- ============================================================================
+-- Hier65kChirho: 65,536 values (Single Beat Access) ☧
+-- ============================================================================
+
+-- | Two-level hierarchy with 256-bit words
+--   256 × 256 = 65,536 values
+--
+--   Perfect for:
+--   - TCP/UDP ports (exactly 65,536!)
+--   - Unicode BMP (most common chars)
+--   - Extended ASCII with room
+--
+--   HBM: 32 bytes (summary) + 256 × 32 bytes = 8,224 bytes
+--   Each access is 1 HBM beat (fastest!)
+--
+data Hier65kChirho = Hier65kChirho
+  { h65kSummaryChirho :: Word256Chirho           -- Which blocks active
+  , h65kBlocksChirho  :: Vec 256 Word256Chirho   -- 256 blocks
+  } deriving (Generic, NFDataX)
+
+-- | Empty 65k domain
+emptyHier65kChirho :: Hier65kChirho
+emptyHier65kChirho = Hier65kChirho
+  { h65kSummaryChirho = 0
+  , h65kBlocksChirho  = repeat 0
+  }
+
+-- | Full 65k domain
+fullHier65kChirho :: Hier65kChirho
+fullHier65kChirho = Hier65kChirho
+  { h65kSummaryChirho = maxBound
+  , h65kBlocksChirho  = repeat maxBound
+  }
+
+-- | Intersection of two 65k domains
+intersectHier65kChirho :: Hier65kChirho -> Hier65kChirho -> Hier65kChirho
+intersectHier65kChirho aChirho bChirho =
+  let newBlocksChirho = zipWith (.&.) (h65kBlocksChirho aChirho) (h65kBlocksChirho bChirho)
+      newSummaryChirho = pack (map (/= 0) newBlocksChirho)
+  in Hier65kChirho
+    { h65kSummaryChirho = newSummaryChirho
+    , h65kBlocksChirho  = newBlocksChirho
+    }
+
+-- | Union of two 65k domains
+unionHier65kChirho :: Hier65kChirho -> Hier65kChirho -> Hier65kChirho
+unionHier65kChirho aChirho bChirho =
+  let newBlocksChirho = zipWith (.|.) (h65kBlocksChirho aChirho) (h65kBlocksChirho bChirho)
+      newSummaryChirho = h65kSummaryChirho aChirho .|. h65kSummaryChirho bChirho
+  in Hier65kChirho
+    { h65kSummaryChirho = newSummaryChirho
+    , h65kBlocksChirho  = newBlocksChirho
+    }
+
+-- | Check if empty
+isEmptyHier65kChirho :: Hier65kChirho -> Bool
+isEmptyHier65kChirho dChirho = h65kSummaryChirho dChirho == 0
+
+-- | Check membership
+memberHier65kChirho :: BitVector 16 -> Hier65kChirho -> Bool
+memberHier65kChirho valChirho dChirho =
+  let blockIdxChirho = unpack (slice d15 d8 valChirho) :: Index 256
+      bitIdxChirho   = unpack (slice d7 d0 valChirho) :: Index 256
+      blockChirho    = (h65kBlocksChirho dChirho) !! blockIdxChirho
+  in testBit blockChirho (fromIntegral bitIdxChirho)
+
+-- | Insert value
+insertHier65kChirho :: BitVector 16 -> Hier65kChirho -> Hier65kChirho
+insertHier65kChirho valChirho dChirho =
+  let blockIdxChirho = unpack (slice d15 d8 valChirho) :: Index 256
+      bitIdxChirho   = fromIntegral (slice d7 d0 valChirho) :: Int
+      oldBlockChirho = (h65kBlocksChirho dChirho) !! blockIdxChirho
+      newBlockChirho = setBit oldBlockChirho bitIdxChirho
+      newBlocksChirho = replace blockIdxChirho newBlockChirho (h65kBlocksChirho dChirho)
+      newSummaryChirho = setBit (h65kSummaryChirho dChirho) (fromIntegral blockIdxChirho)
+  in Hier65kChirho
+    { h65kSummaryChirho = newSummaryChirho
+    , h65kBlocksChirho  = newBlocksChirho
+    }
+
+-- | Sparse HBM bytes
+sparseBytes65kChirho :: Hier65kChirho -> Int
+sparseBytes65kChirho dChirho =
+  let activeBlocksChirho = popCount (h65kSummaryChirho dChirho)
+  in 32 + (activeBlocksChirho * 32)  -- 32 bytes per 256-bit word
 
 -- ============================================================================
 -- Flat512Chirho: 512 values ☧
@@ -248,21 +544,84 @@ Recommendation: Hier262k covers ALL current SaaS needs:
   - RegexCraft Unicode subset: ~150,000 ✓
 -}
 
--- | Bytes per Flat512 variable
+-- | Bytes per Flat64 variable (1/4 beat - packable!)
+bytesFlat64Chirho :: Int
+bytesFlat64Chirho = 8
+
+-- | Bytes per Hier4k variable
+bytesHier4kChirho :: Int
+bytesHier4kChirho = 520  -- 8 + 64*8
+
+-- | Bytes per Flat256 variable (1 beat)
+bytesFlat256Chirho :: Int
+bytesFlat256Chirho = 32
+
+-- | Bytes per Hier65k variable (1 beat per access)
+bytesHier65kChirho :: Int
+bytesHier65kChirho = 8224  -- 32 + 256*32
+
+-- | Bytes per Flat512 variable (2 beats)
 bytesFlat512Chirho :: Int
 bytesFlat512Chirho = 64
 
--- | Bytes per Hier262k variable
+-- | Bytes per Hier262k variable (2 beats per access)
 bytesHier262kChirho :: Int
 bytesHier262kChirho = 32832  -- 64 + 512*64
 
--- | Maximum Hier262k variables in 16GB HBM
+-- | Maximum variables in 16GB HBM
+maxVarsFlat64Chirho :: Int
+maxVarsFlat64Chirho = 16 * 1024 * 1024 * 1024 `div` bytesFlat64Chirho  -- 2 BILLION vars!
+
+maxVarsHier4kChirho :: Int
+maxVarsHier4kChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier4kChirho  -- ~33M vars
+
+maxVarsFlat256Chirho :: Int
+maxVarsFlat256Chirho = 16 * 1024 * 1024 * 1024 `div` bytesFlat256Chirho  -- 536M vars
+
+maxVarsHier65kChirho :: Int
+maxVarsHier65kChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier65kChirho  -- ~2M vars
+
 maxVarsHier262kChirho :: Int
-maxVarsHier262kChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier262kChirho  -- ~512K
+maxVarsHier262kChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier262kChirho  -- ~512K vars
 
 -- ============================================================================
 -- Synthesis Annotations ☧
 -- ============================================================================
+
+{-# ANN intersect64Chirho
+  (Synthesize
+    { t_name = "intersect_64_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
+
+{-# ANN intersectHier4kChirho
+  (Synthesize
+    { t_name = "intersect_hier_4k_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
+
+{-# ANN intersectPacked64Chirho
+  (Synthesize
+    { t_name = "intersect_packed_64_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
+
+{-# ANN intersect256Chirho
+  (Synthesize
+    { t_name = "intersect_256_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
+
+{-# ANN intersectHier65kChirho
+  (Synthesize
+    { t_name = "intersect_hier_65k_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
 
 {-# ANN intersect512Chirho
   (Synthesize
@@ -285,27 +644,46 @@ maxVarsHier262kChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier262kChirho  -- ~5
 {-
 LUT ESTIMATES:
 
-| Operation | LUTs | Notes |
-|-----------|------|-------|
-| Flat512 AND | ~150 | 512-bit AND |
-| Hier262k intersect | ~80,000 | 512 × 512-bit ANDs |
+| Operation | LUTs | HBM Beats | Bandwidth |
+|-----------|------|-----------|-----------|
+| Flat64 AND | ~20 | 1/4 | 4× throughput |
+| Hier4k intersect | ~1,500 | ~2 | Good for medium |
+| Packed64x4 intersect | ~80 | 1 | 4 domains/beat! |
+| Flat256 AND | ~80 | 1 | Standard |
+| Hier65k intersect | ~20,000 | 1 each | |
+| Flat512 AND | ~150 | 2 | |
+| Hier262k intersect | ~80,000 | 2 each | |
 
-RECOMMENDATION:
+DOMAIN SELECTION GUIDE:
 
-| Domain | LUTs | Cycles | Use Case |
-|--------|------|--------|----------|
-| Flat512 | 150 | 1 | Small enums, ASCII |
-| Hier262k | 80K | 2-4 | Everything else |
+| Values Needed | Best Choice | HBM Size | Max Vars | Bandwidth |
+|---------------|-------------|----------|----------|-----------|
+| ≤64 | Flat64/Packed | 8 B | 2B | 4× (packed) |
+| ≤4,096 | Hier4k | 520 B | 33M | Good |
+| ≤256 | Flat256 | 32 B | 536M | 1× |
+| ≤65,536 | Hier65k | 8 KB | 2M | 1× |
+| ≤262,144 | Hier262k | 33 KB | 512K | 1/2× |
 
-Hier262k is the sweet spot:
-  - 262K values covers ALL SaaS needs
-  - 80K LUTs = 6% of VU47P chip
-  - 2 HBM reads per operation
-  - Parallelism: 16 engines fit easily (1.28M LUTs total)
-  - 512K variables in 16GB HBM
+SaaS APPLICATION FIT:
 
-FINAL DESIGN:
-  - Flat512 for domains ≤512 values (fast path)
-  - Hier262k for domains ≤262,144 values (everything else)
-  - No 512³ needed currently
+| Application | Domain | Best Choice | Why |
+|-------------|--------|-------------|-----|
+| N-Queens | 64 | Flat64/Packed | 4× throughput! |
+| TestForge (enums) | ≤64 | Flat64/Packed | Batch process |
+| RegexCraft (ASCII) | 256 | Flat256 | Exact fit |
+| ConfigGuard (ports) | 65,536 | Hier65k | Exact fit! |
+| Philologos (vocab) | ~50,000 | Hier65k | Fits well |
+| RegexCraft (Unicode) | ~150,000 | Hier262k | Large domain |
+
+BANDWIDTH COMPARISON (at 14.4 GB/s per HBM channel):
+
+| Type | Throughput | Notes |
+|------|------------|-------|
+| Packed64x4 | 1.8B ops/sec | 4 domains per beat |
+| Flat256 | 450M ops/sec | 1 domain per beat |
+| Hier65k | 1.75M ops/sec | 8KB per domain |
+| Hier262k | 438K ops/sec | 33KB per domain |
+
+KEY INSIGHT: For small domains (≤64 values), use Packed64x4
+for 4× bandwidth efficiency!
 -}
