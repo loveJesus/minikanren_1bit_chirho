@@ -25,12 +25,16 @@
 
 ## Sprint Goals
 
-### Goal 1: Deploy Hierarchical512Chirho (512² = 262K domains)
+### Goal 1: Deploy Hierarchical Domains (262K to 134M values)
 - [x] Compile `Hierarchical512Chirho.hs` to Verilog with Clash ✅
+  - `intersect_hier_262k_chirho.v` - 512² = 262K values, 512K vars
+  - `intersect_hier_65k_chirho.v` - 256² = 65K values, 2M vars
+  - **`intersect_hier_16m_chirho.v`** - **256³ = 16.7M values, ~8K vars** ← SWEET SPOT
+  - `intersect_hier_134m_chirho.v` - 512³ = 134M values, ~950 vars
 - [ ] Integrate into `cl_minikanren_chirho.sv`
 - [ ] Add register interface for hierarchical ops
 - [ ] Synthesize and create new AFI
-- [ ] Benchmark: 512² vs 64³ on FPGA (expect 1.5× speedup)
+- [ ] Benchmark hierarchies on FPGA
 
 ### Goal 2: Deploy Full HBM Batch Engine
 - [ ] Compile `HbmEngineChirho.hs` to Verilog

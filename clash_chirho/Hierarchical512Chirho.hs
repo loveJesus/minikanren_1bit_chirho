@@ -578,24 +578,189 @@ sparseBytes262kChirho dChirho =
   in 64 + (activeBlocksChirho * 64)  -- 64 bytes per 512-bit word
 
 -- ============================================================================
--- Hier134MChirho: DEFERRED ☧
+-- Hier16MChirho: 256³ = 16.7 Million Values ☧
 -- ============================================================================
 
-{-
-Hier134M (512³ = 134 million values) is deferred for now.
+-- | Three-level hierarchy with 256-bit words
+--   256 × 256 × 256 = 16,777,216 values
+--
+--   SWEET SPOT for Edward Kmett's use cases:
+--   - Full Unicode: 1,114,112 code points ✓ (with room to spare)
+--   - Large term stores: up to 16.7M unique terms ✓
+--   - Enough variables: ~8,000 in 16GB HBM ✓
+--
+--   Storage: 32 bytes (L0) + 8KB (L1) + 2MB (L2) = ~2MB per variable
+--   With 16GB HBM: ~8,000 variables
+--
+data Hier16MChirho = Hier16MChirho
+  { h16mLevel0Chirho :: Word256Chirho                    -- Top summary (256 bits)
+  , h16mLevel1Chirho :: Vec 256 Word256Chirho            -- Mid summaries
+  , h16mLevel2Chirho :: Vec 256 (Vec 256 Word256Chirho)  -- Actual values
+  } deriving (Generic, NFDataX)
 
-Rationale:
-- 262k values covers all current SaaS needs
-- 134M would use 16MB per variable (only 1000 vars in 16GB HBM)
-- Can add later if needed for full Unicode or IPv4
+-- | Empty 16M domain
+emptyHier16MChirho :: Hier16MChirho
+emptyHier16MChirho = Hier16MChirho
+  { h16mLevel0Chirho = 0
+  , h16mLevel1Chirho = repeat 0
+  , h16mLevel2Chirho = repeat (repeat 0)
+  }
 
-If needed in future, design would be:
-  data Hier134MChirho = Hier134MChirho
-    { h134mLevel0Chirho :: Word512Chirho
-    , h134mLevel1Chirho :: Vec 512 Word512Chirho
-    , h134mLevel2Chirho :: Vec 512 (Vec 512 Word512Chirho)
+-- | Full 16M domain
+fullHier16MChirho :: Hier16MChirho
+fullHier16MChirho = Hier16MChirho
+  { h16mLevel0Chirho = maxBound
+  , h16mLevel1Chirho = repeat maxBound
+  , h16mLevel2Chirho = repeat (repeat maxBound)
+  }
+
+-- | Intersection of two 16M domains (unification)
+--   256 × 256 = 65,536 parallel 256-bit ANDs
+intersectHier16MChirho :: Hier16MChirho -> Hier16MChirho -> Hier16MChirho
+intersectHier16MChirho aChirho bChirho =
+  let newLevel2Chirho = zipWith (zipWith (.&.))
+        (h16mLevel2Chirho aChirho) (h16mLevel2Chirho bChirho)
+      newLevel1Chirho = fmap (pack . fmap (/= 0)) newLevel2Chirho
+      newLevel0Chirho = pack (fmap (/= 0) newLevel1Chirho)
+  in Hier16MChirho
+    { h16mLevel0Chirho = newLevel0Chirho
+    , h16mLevel1Chirho = newLevel1Chirho
+    , h16mLevel2Chirho = newLevel2Chirho
     }
--}
+
+-- | Check if empty
+isEmptyHier16MChirho :: Hier16MChirho -> Bool
+isEmptyHier16MChirho dChirho = h16mLevel0Chirho dChirho == 0
+
+-- | Check membership
+memberHier16MChirho :: BitVector 24 -> Hier16MChirho -> Bool
+memberHier16MChirho valChirho dChirho =
+  let l0IdxChirho   = unpack (slice d23 d16 valChirho) :: Index 256
+      l1IdxChirho   = unpack (slice d15 d8 valChirho) :: Index 256
+      bitIdxChirho  = unpack (slice d7 d0 valChirho) :: Index 256
+      blockChirho   = ((h16mLevel2Chirho dChirho) !! l0IdxChirho) !! l1IdxChirho
+  in testBit blockChirho (fromIntegral bitIdxChirho)
+
+-- | Bytes per 16M variable
+bytesHier16MChirho :: Int
+bytesHier16MChirho = 32 + (256 * 32) + (256 * 256 * 32)  -- ~2.1 MB
+
+-- | Maximum variables in 16GB HBM with 16M domains
+maxVarsHier16MChirho :: Int
+maxVarsHier16MChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier16MChirho  -- ~8,000 vars
+
+-- | Synthesis annotation for 16M intersection
+{-# ANN intersectHier16MChirho
+  (Synthesize
+    { t_name = "intersect_hier_16m_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
+
+-- ============================================================================
+-- Hier134MChirho: 512³ = 134 Million Values ☧
+-- ============================================================================
+
+-- | Three-level hierarchy with 512-bit words
+--   512 × 512 × 512 = 134,217,728 values
+--
+--   For Edward Kmett's "millions of terms" use case:
+--   - Full Unicode: 1,114,112 code points ✓
+--   - IPv4 addresses: 4,294,967,296 (need 512⁴, impractical)
+--   - Large term stores: up to 134M unique terms ✓
+--
+--   Storage: 64 bytes (L0) + 32KB (L1) + 16MB (L2) = 16.8MB per variable
+--   With 16GB HBM: ~950 variables (enough for many logic programs)
+--
+data Hier134MChirho = Hier134MChirho
+  { h134mLevel0Chirho :: Word512Chirho                    -- Top summary (512 bits)
+  , h134mLevel1Chirho :: Vec 512 Word512Chirho            -- Mid summaries (512 × 512 bits)
+  , h134mLevel2Chirho :: Vec 512 (Vec 512 Word512Chirho)  -- Actual values (512 × 512 × 512 bits)
+  } deriving (Generic, NFDataX)
+
+-- | Empty 134M domain
+emptyHier134MChirho :: Hier134MChirho
+emptyHier134MChirho = Hier134MChirho
+  { h134mLevel0Chirho = 0
+  , h134mLevel1Chirho = repeat 0
+  , h134mLevel2Chirho = repeat (repeat 0)
+  }
+
+-- | Full 134M domain
+fullHier134MChirho :: Hier134MChirho
+fullHier134MChirho = Hier134MChirho
+  { h134mLevel0Chirho = maxBound
+  , h134mLevel1Chirho = repeat maxBound
+  , h134mLevel2Chirho = repeat (repeat maxBound)
+  }
+
+-- | Intersection of two 134M domains (unification)
+--   This is massively parallel: 512 × 512 = 262K parallel 512-bit ANDs
+intersectHier134MChirho :: Hier134MChirho -> Hier134MChirho -> Hier134MChirho
+intersectHier134MChirho aChirho bChirho =
+  let -- Level 2: AND all 512×512 blocks
+      newLevel2Chirho = zipWith (zipWith (.&.))
+        (h134mLevel2Chirho aChirho) (h134mLevel2Chirho bChirho)
+      -- Level 1: Recompute summaries (non-zero check per block row)
+      newLevel1Chirho = fmap (pack . fmap (/= 0)) newLevel2Chirho
+      -- Level 0: Recompute top summary
+      newLevel0Chirho = pack (fmap (/= 0) newLevel1Chirho)
+  in Hier134MChirho
+    { h134mLevel0Chirho = newLevel0Chirho
+    , h134mLevel1Chirho = newLevel1Chirho
+    , h134mLevel2Chirho = newLevel2Chirho
+    }
+
+-- | Check if empty
+isEmptyHier134MChirho :: Hier134MChirho -> Bool
+isEmptyHier134MChirho dChirho = h134mLevel0Chirho dChirho == 0
+
+-- | Check membership: is value V in domain?
+memberHier134MChirho :: BitVector 27 -> Hier134MChirho -> Bool
+memberHier134MChirho valChirho dChirho =
+  let l0IdxChirho   = unpack (slice d26 d18 valChirho) :: Index 512
+      l1IdxChirho   = unpack (slice d17 d9 valChirho) :: Index 512
+      bitIdxChirho  = unpack (slice d8 d0 valChirho) :: Index 512
+      blockChirho   = ((h134mLevel2Chirho dChirho) !! l0IdxChirho) !! l1IdxChirho
+  in testBit blockChirho (fromIntegral bitIdxChirho)
+
+-- | Insert value into domain
+insertHier134MChirho :: BitVector 27 -> Hier134MChirho -> Hier134MChirho
+insertHier134MChirho valChirho dChirho =
+  let l0IdxChirho   = unpack (slice d26 d18 valChirho) :: Index 512
+      l1IdxChirho   = unpack (slice d17 d9 valChirho) :: Index 512
+      bitIdxChirho  = fromIntegral (slice d8 d0 valChirho) :: Int
+      oldRowChirho  = (h134mLevel2Chirho dChirho) !! l0IdxChirho
+      oldBlockChirho = oldRowChirho !! l1IdxChirho
+      newBlockChirho = setBit oldBlockChirho bitIdxChirho
+      newRowChirho   = replace l1IdxChirho newBlockChirho oldRowChirho
+      newLevel2Chirho = replace l0IdxChirho newRowChirho (h134mLevel2Chirho dChirho)
+      newLevel1Chirho = replace l0IdxChirho
+                          (setBit ((h134mLevel1Chirho dChirho) !! l0IdxChirho)
+                                  (fromIntegral l1IdxChirho))
+                          (h134mLevel1Chirho dChirho)
+      newLevel0Chirho = setBit (h134mLevel0Chirho dChirho) (fromIntegral l0IdxChirho)
+  in Hier134MChirho
+    { h134mLevel0Chirho = newLevel0Chirho
+    , h134mLevel1Chirho = newLevel1Chirho
+    , h134mLevel2Chirho = newLevel2Chirho
+    }
+
+-- | Bytes per 134M variable (dense)
+bytesHier134MChirho :: Int
+bytesHier134MChirho = 64 + (512 * 64) + (512 * 512 * 64)  -- ~16.8 MB
+
+-- | Maximum variables in 16GB HBM with 134M domains
+maxVarsHier134MChirho :: Int
+maxVarsHier134MChirho = 16 * 1024 * 1024 * 1024 `div` bytesHier134MChirho  -- ~950 vars
+
+-- | Synthesis annotation for 134M intersection
+{-# ANN intersectHier134MChirho
+  (Synthesize
+    { t_name = "intersect_hier_134m_chirho"
+    , t_inputs = [PortName "a_chirho", PortName "b_chirho"]
+    , t_output = PortName "result_chirho"
+    }) #-}
 
 -- ============================================================================
 -- Comparison: 64-bit vs 512-bit ☧
