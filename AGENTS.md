@@ -452,6 +452,45 @@ Phase 3: Hardware (Clash/Calyx)
 **F2 advantages:** 60% better price-performance, HBM memory, better availability.
 **F2 migration:** Clone `--branch f2` of aws-fpga, adapt shell wrapper ports.
 
+#### AWS Build Instance Management Rules
+
+**On build failure - FIX IN PLACE, don't restart:**
+1. SSH in (username: `rocky` for Rocky Linux AMI) and diagnose the failure
+2. Fix the issue directly on the running instance
+3. Continue/restart the build from where it failed
+4. Update the local script with the fix for future builds
+
+**NEVER terminate a build instance unless ALL of these are true:**
+
+For failed builds:
+1. User explicitly requests termination
+
+For successful builds - complete this checklist BEFORE terminating:
+1. [ ] Generated files are pristine (no warnings that need addressing)
+2. [ ] All artifacts downloaded locally to the project
+3. [ ] All artifacts uploaded to S3
+4. [ ] BUILD_LOG updated with:
+   - What succeeded and how
+   - Local script is accurate and can reproduce the success from scratch
+   - Instructions on how to continue from intermediate artifacts (checkpoints, DCPs)
+5. [ ] Confirmed with user we won't need instance for further tests/generation
+6. [ ] User has been inactive for a while (cost saving) OR explicitly approved shutdown
+
+**When in doubt: ASK the user before terminating.**
+
+**Why fix in place:**
+- Instance is already running and configured
+- HDK already cloned and set up (saves 5-10 min)
+- Can iterate on fixes without full restart
+- HDK builds take 3-5 hours - don't waste progress
+- S3 logs may be stale (from previous builds) - don't assume failure based on old timestamps
+
+**Monitoring best practices:**
+- Use bootstrap pattern: small userdata downloads full script from S3
+- Add checkpoint functions that upload progress to S3 periodically
+- SSH username for Rocky Linux AMI: `rocky` (NOT `ec2-user`)
+- Progress file: `s3://minikanren-fpga-chirho/f2_hbm_hdk/progress_v{N}_chirho.txt`
+
 ### Web (`rust_chirho/web_chirho/`)
 
 | File | Description |

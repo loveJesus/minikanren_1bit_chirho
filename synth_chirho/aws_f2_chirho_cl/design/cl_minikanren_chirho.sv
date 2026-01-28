@@ -29,6 +29,14 @@
 //   0x014: CMD_MID   - cmdChirho[63:32]
 //   0x018: CMD_HI    - cmdChirho[69:64]
 //   0x020-0x060: RESP[0-8] - respChirho[513:0] (9 x 64-bit)
+//
+// Naming Conventions (per AGENTS.md):
+//   - Internal signals:    snake_chirho      (e.g., clk_engine_chirho)
+//   - Constants/enums:     UPPER_CHIRHO      (e.g., FSM_IDLE_CHIRHO)
+//   - Types:               snake_chirho_t    (e.g., wr_state_t_chirho)
+//   - Module instances:    snake_chirho      (e.g., u_engine_chirho)
+//   - Clash-generated:     camelChirho       (e.g., enChirho, cmdChirho)
+//   - AWS HDK primitives:  original names    (e.g., clk_main_a0, rst_main_n)
 // ============================================================================
 
 `include "cl_minikanren_chirho_defines.vh"
@@ -464,6 +472,7 @@ end : HBM_DISABLED
 
     typedef enum logic [1:0] {
         RD_IDLE_CHIRHO,
+        RD_DECODE_CHIRHO,  // Pipeline stage for timing closure
         RD_DATA_CHIRHO
     } rd_state_t_chirho;
 
@@ -472,6 +481,7 @@ end : HBM_DISABLED
     logic ocl_rvalid_chirho;
     logic [31:0] ocl_rdata_chirho;
     logic [1:0] ocl_rresp_chirho;
+    logic [5:0] rd_addr_chirho;  // Registered address for pipeline
 
     always_ff @(posedge clk_main_a0) begin
         if (!rst_main_n_sync_chirho) begin
@@ -480,6 +490,7 @@ end : HBM_DISABLED
             ocl_rvalid_chirho  <= 1'b0;
             ocl_rdata_chirho   <= 32'b0;
             ocl_rresp_chirho   <= 2'b00;
+            rd_addr_chirho     <= 6'b0;
         end else begin
             case (rd_state_chirho)
                 RD_IDLE_CHIRHO: begin
@@ -487,37 +498,43 @@ end : HBM_DISABLED
                     ocl_rvalid_chirho  <= 1'b0;
                     if (ocl_cl_arvalid && ocl_arready_chirho) begin
                         ocl_arready_chirho <= 1'b0;
-                        case (ocl_cl_araddr[7:2])
-                            6'h00: ocl_rdata_chirho <= `MINIKANREN_VERSION_CHIRHO;
-                            6'h01: ocl_rdata_chirho <= {29'b0, ctrl_hbm_mode_chirho, ctrl_reset_chirho, ctrl_enable_chirho};
-                            6'h02: ocl_rdata_chirho <= {29'b0, hbm_ready_chirho, 1'b1, 1'b1}; // STATUS with HBM ready
-                            6'h04: ocl_rdata_chirho <= cmd_reg_chirho[31:0];
-                            6'h05: ocl_rdata_chirho <= cmd_reg_chirho[63:32];
-                            6'h06: ocl_rdata_chirho <= {26'b0, cmd_reg_chirho[69:64]};
-                            // Response registers
-                            6'h08: ocl_rdata_chirho <= resp_wire_chirho[31:0];
-                            6'h09: ocl_rdata_chirho <= resp_wire_chirho[63:32];
-                            6'h0A: ocl_rdata_chirho <= resp_wire_chirho[95:64];
-                            6'h0B: ocl_rdata_chirho <= resp_wire_chirho[127:96];
-                            6'h0C: ocl_rdata_chirho <= resp_wire_chirho[159:128];
-                            6'h0D: ocl_rdata_chirho <= resp_wire_chirho[191:160];
-                            6'h0E: ocl_rdata_chirho <= resp_wire_chirho[223:192];
-                            6'h0F: ocl_rdata_chirho <= resp_wire_chirho[255:224];
-                            6'h10: ocl_rdata_chirho <= resp_wire_chirho[287:256];
-                            6'h11: ocl_rdata_chirho <= resp_wire_chirho[319:288];
-                            6'h12: ocl_rdata_chirho <= resp_wire_chirho[351:320];
-                            6'h13: ocl_rdata_chirho <= resp_wire_chirho[383:352];
-                            6'h14: ocl_rdata_chirho <= resp_wire_chirho[415:384];
-                            6'h15: ocl_rdata_chirho <= resp_wire_chirho[447:416];
-                            6'h16: ocl_rdata_chirho <= resp_wire_chirho[479:448];
-                            6'h17: ocl_rdata_chirho <= resp_wire_chirho[511:480];
-                            6'h18: ocl_rdata_chirho <= {30'b0, resp_wire_chirho[513:512]};
-                            default: ocl_rdata_chirho <= 32'hDEADBEEF;
-                        endcase
-                        ocl_rvalid_chirho <= 1'b1;
-                        ocl_rresp_chirho  <= 2'b00;
-                        rd_state_chirho   <= RD_DATA_CHIRHO;
+                        rd_addr_chirho     <= ocl_cl_araddr[7:2];  // Pipeline: capture address
+                        rd_state_chirho    <= RD_DECODE_CHIRHO;
                     end
+                end
+
+                // Pipeline stage: decode address and prepare data (timing closure)
+                RD_DECODE_CHIRHO: begin
+                    case (rd_addr_chirho)
+                        6'h00: ocl_rdata_chirho <= `MINIKANREN_VERSION_CHIRHO;
+                        6'h01: ocl_rdata_chirho <= {29'b0, ctrl_hbm_mode_chirho, ctrl_reset_chirho, ctrl_enable_chirho};
+                        6'h02: ocl_rdata_chirho <= {29'b0, hbm_ready_chirho, 1'b1, 1'b1}; // STATUS with HBM ready
+                        6'h04: ocl_rdata_chirho <= cmd_reg_chirho[31:0];
+                        6'h05: ocl_rdata_chirho <= cmd_reg_chirho[63:32];
+                        6'h06: ocl_rdata_chirho <= {26'b0, cmd_reg_chirho[69:64]};
+                        // Response registers
+                        6'h08: ocl_rdata_chirho <= resp_wire_chirho[31:0];
+                        6'h09: ocl_rdata_chirho <= resp_wire_chirho[63:32];
+                        6'h0A: ocl_rdata_chirho <= resp_wire_chirho[95:64];
+                        6'h0B: ocl_rdata_chirho <= resp_wire_chirho[127:96];
+                        6'h0C: ocl_rdata_chirho <= resp_wire_chirho[159:128];
+                        6'h0D: ocl_rdata_chirho <= resp_wire_chirho[191:160];
+                        6'h0E: ocl_rdata_chirho <= resp_wire_chirho[223:192];
+                        6'h0F: ocl_rdata_chirho <= resp_wire_chirho[255:224];
+                        6'h10: ocl_rdata_chirho <= resp_wire_chirho[287:256];
+                        6'h11: ocl_rdata_chirho <= resp_wire_chirho[319:288];
+                        6'h12: ocl_rdata_chirho <= resp_wire_chirho[351:320];
+                        6'h13: ocl_rdata_chirho <= resp_wire_chirho[383:352];
+                        6'h14: ocl_rdata_chirho <= resp_wire_chirho[415:384];
+                        6'h15: ocl_rdata_chirho <= resp_wire_chirho[447:416];
+                        6'h16: ocl_rdata_chirho <= resp_wire_chirho[479:448];
+                        6'h17: ocl_rdata_chirho <= resp_wire_chirho[511:480];
+                        6'h18: ocl_rdata_chirho <= {30'b0, resp_wire_chirho[513:512]};
+                        default: ocl_rdata_chirho <= 32'hDEADBEEF;
+                    endcase
+                    ocl_rvalid_chirho <= 1'b1;
+                    ocl_rresp_chirho  <= 2'b00;
+                    rd_state_chirho   <= RD_DATA_CHIRHO;
                 end
 
                 RD_DATA_CHIRHO: begin
@@ -749,6 +766,9 @@ end : HBM_ENGINE
 else begin : LEGACY_ENGINE
 
     // Legacy register-based engine (no HBM)
+    // NOTE: Port names .clk and .rst are Clash-generated standard clock/reset ports
+    // and retain their original Clash names per AGENTS.md convention. Custom ports
+    // (enChirho, cmdChirho, respChirho) use the Chirho suffix per project naming.
     searchEngineChirho u_engine_chirho (
         .clk        (clk_engine_chirho),
         .rst        (engine_rst_chirho),
