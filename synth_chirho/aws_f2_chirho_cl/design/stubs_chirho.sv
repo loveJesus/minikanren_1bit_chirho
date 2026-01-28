@@ -14,6 +14,10 @@
 //   This ensures our code can integrate with real AWS HDK without renaming.
 // - Xilinx primitive stubs preserve original names: xpm_cdc_async_rst
 // - SearchEngineChirho uses PascalCase per Verilog module convention
+// - Clash-generated module ports (clk, rst, enChirho, cmdChirho, respChirho)
+//   retain their original Clash-defined names - these are auto-generated and
+//   cannot be renamed without regenerating the Clash output. Port connections
+//   in instantiations use these original names as required by the module interface.
 //
 // ============================================================================
 
