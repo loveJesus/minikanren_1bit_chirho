@@ -26,7 +26,7 @@
 ## Sprint Goals
 
 ### Goal 1: Deploy Hierarchical512Chirho (512² = 262K domains)
-- [ ] Compile `Hierarchical512Chirho.hs` to Verilog with Clash
+- [x] Compile `Hierarchical512Chirho.hs` to Verilog with Clash ✅
 - [ ] Integrate into `cl_minikanren_chirho.sv`
 - [ ] Add register interface for hierarchical ops
 - [ ] Synthesize and create new AFI
@@ -171,7 +171,17 @@ Target (named constants with _CHIRHO suffix):
 - [x] Identified gap: 512² not deployed, only 64-bit
 - [x] Stopped F2 instances to save costs
 - [x] Created SPRINT_CHIRHO.md
-- [ ] Compile Hierarchical512Chirho.hs to Verilog
+- [x] **Compile Hierarchical512Chirho.hs to Verilog** ✅
+  - Fixed type errors (toList → fold + fmap for Vec compatibility)
+  - Generated 8 Verilog modules (486 lines total):
+    - `intersect_hier_262k_chirho.v` (83 lines) - 512² = 262K values
+    - `intersect_hier_65k_chirho.v` (83 lines) - 256² = 65K values
+    - `intersect_hier_4k_chirho.v` (83 lines) - 64² = 4K values
+    - `intersect_hier_262k_64_chirho.v` (154 lines) - 64³ sparse optimized
+    - `intersect_packed_64_chirho.v` (23 lines) - batch 4 domains per beat
+    - `intersect_512_chirho.v` (20 lines) - flat 512-bit
+    - `intersect_256_chirho.v` (20 lines) - flat 256-bit
+    - `intersect_64_chirho.v` (20 lines) - flat 64-bit
 - [ ] Integrate into cl_minikanren_chirho.sv
 
 ---

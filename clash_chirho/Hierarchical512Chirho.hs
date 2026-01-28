@@ -279,7 +279,7 @@ memberHier262k64Chirho valChirho dChirho =
 sparseBytes262k64Chirho :: Hier262k64Chirho -> Int
 sparseBytes262k64Chirho dChirho =
   let l1ActiveChirho = popCount (h262k64Level0Chirho dChirho)
-      l2ActiveChirho = sum $ map popCount (toList (h262k64Level1Chirho dChirho))
+      l2ActiveChirho = fold (+) $ fmap popCount (h262k64Level1Chirho dChirho)
   in 8 + (l1ActiveChirho * 8) + (l2ActiveChirho * 8)
 
 -- ============================================================================
@@ -308,7 +308,7 @@ sparsityHier262kChirho dChirho =
 sparsityHier262k64Chirho :: Hier262k64Chirho -> BitVector 12
 sparsityHier262k64Chirho dChirho =
   let l1CountChirho = popCount (h262k64Level0Chirho dChirho)
-      l2CountChirho = sum $ map popCount (toList (h262k64Level1Chirho dChirho))
+      l2CountChirho = fold (+) $ fmap popCount (h262k64Level1Chirho dChirho)
   in fromIntegral (l1CountChirho + l2CountChirho)
 
 -- | Convert 512² to 64³ (when sparsity detected)
