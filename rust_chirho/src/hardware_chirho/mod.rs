@@ -32,8 +32,8 @@ pub mod gpu_chirho;
 pub use bitmatrix_chirho::{BitMatrixChirho, BitTensor3Chirho};
 pub use bitmatrix_packed_chirho::{BitMatrix64Chirho, BitMatrixPackedChirho, Word64Chirho};
 pub use hardware_chirho::{
-    BitVec256Chirho, BitVec64Chirho, CamHwChirho, SearchState256HwChirho, SearchStateHwChirho,
-    UnifyUnitHwChirho,
+    BitVec256Chirho, BitVec512Chirho, BitVec64Chirho, CamHwChirho, SearchState256HwChirho,
+    SearchStateHwChirho, UnifyUnitHwChirho,
 };
 pub use optics_hw_chirho::{
     collect_nonempty_chirho, traverse_all_chirho, DomainHwChirho, LensHwChirho,

@@ -3,23 +3,72 @@
 ## Headline Result: AWS F2 Physical Validation (January 2026)
 
 > **Design verified on physical AWS F2 hardware at 250 MHz.**
-> AFI loaded, register protocol validated via read/write tests.
+> AFI loaded, register protocol validated, comprehensive benchmarks run.
 
-| Metric | FPGA (F2 @ 250 MHz) | CPU (Rust @ 3 GHz) | Speedup |
-|--------|---------------------|--------------------|---------|
-| Throughput | 31.25M unify/sec | 333K unify/sec | **94×** |
-| Latency | 32 ns (deterministic) | ~3 μs (variable) | **94×** |
-| Cycles/unify | 8 | ~9000 | **1125×** |
+### AFI Version History
 
-**Validation performed:**
-- AFI created: `agfi-04abde24231f6775c`
-- AFI loaded on f2.6xlarge instance
+| AFI ID | Date | Purpose | Status |
+|--------|------|---------|--------|
+| `agfi-04abde24231f6775c` | 2026-01-27 | Initial hardware validation | ✅ Basic R/W verified |
+| `agfi-05988b0b1980d6d2f` | 2026-01-28 | **Production benchmarks** | ✅ Full suite verified |
+
+All benchmark results below use `agfi-05988b0b1980d6d2f` unless otherwise noted.
+
+### Performance Summary
+
+| Metric | FPGA (F2 @ 250 MHz) | CPU | Speedup |
+|--------|---------------------|-----|---------|
+| **Batch throughput** | 40.5M unify/sec | 500K unify/sec | **81×** |
+| **8000-search batch** | 0.099 ms | 662 ms | **6,679×** |
+| **Per-operation latency** | 24.7 ns | ~2 μs | **81×** |
+| **TestForge (10K records)** | 0.002 ms | 61.5 ms | **26,288×** |
+| **ConfigGuard (5K files)** | 0.002 ms | 16.9 ms | **9,657×** |
+
+**Initial validation (agfi-04abde24231f6775c):**
 - VERSION register read: 0xF2010001 (correct)
 - Write/read roundtrip: 0xDEADBEEF → PASSED
 
 **What "unify" means:** One invocation of the hardware kernel's unify micro-sequence
 (constrain two 64-bit domains via AND, check for empty → fail or continue).
 Note: Domain intersection itself is 1 cycle; the full micro-sequence (init + compute + store) is 8 cycles.
+
+---
+
+## Methodology
+
+### Timing Measurement
+
+All timings use `clock_gettime(CLOCK_MONOTONIC)` on the x86 host. Measurements include:
+- FPGA kernel execution time
+- PCIe register read/write overhead
+- FPGA internal memory access (BRAM, HBM)
+
+Measurements **exclude**:
+- Host-side data preparation (parsing, struct packing)
+- DMA bulk transfers (not used in register-based benchmarks)
+- Result post-processing and file I/O
+
+### Definition of "Processed"
+
+High throughput figures (e.g., 2.6B words/sec) measure **parallel bitmask comparison**, not full NLP:
+- Each "word" is a 16-byte binary record (lemma_id, strong_num, verse_id, position)
+- FPGA performs integer comparison: `(lemma_id == target) AND (verse_id == same_verse)`
+- This is lookup/filtering, not string parsing
+
+### Verification Method
+
+"Verified" means CPU and FPGA return identical match counts for the same query. For proximity searches, first 10 matches are spot-checked for correctness.
+
+### Detailed Benchmark Data
+
+See: `aws_f2_chirho_cl/benchmarks_chirho/COMPREHENSIVE_BENCHMARK_REPORT_CHIRHO.md`
+
+Raw data files:
+- `benchmark_results_chirho.csv` - Core FPGA tests
+- `comprehensive_saas_results_chirho.csv` - 105 SaaS scenarios
+- `philologos_verified_results_chirho.csv` - Greek NT searches
+- `batch_8000_results_chirho.csv` - Batch performance
+- `saas_verified_results_chirho.csv` - CPU vs FPGA verification
 
 ## AWS F2 Vivado Post-Route Timing (2026-01-27) ✅ VERIFIED ON HARDWARE
 

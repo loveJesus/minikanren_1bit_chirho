@@ -268,6 +268,109 @@ impl BitVec256Chirho {
     }
 }
 
+/// 512-bit domain for 512² hierarchical structures ☧
+/// Represented as 8 × 64-bit words for AVX-512 friendly layout
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[repr(C, align(64))]
+pub struct BitVec512Chirho(pub [u64; 8]);
+
+impl BitVec512Chirho {
+    pub const ZERO_CHIRHO: Self = BitVec512Chirho([0; 8]);
+    pub const ONES_CHIRHO: Self = BitVec512Chirho([u64::MAX; 8]);
+
+    /// AND - unification/constraint
+    #[inline]
+    pub fn and_chirho(self, other_chirho: Self) -> Self {
+        BitVec512Chirho([
+            self.0[0] & other_chirho.0[0],
+            self.0[1] & other_chirho.0[1],
+            self.0[2] & other_chirho.0[2],
+            self.0[3] & other_chirho.0[3],
+            self.0[4] & other_chirho.0[4],
+            self.0[5] & other_chirho.0[5],
+            self.0[6] & other_chirho.0[6],
+            self.0[7] & other_chirho.0[7],
+        ])
+    }
+
+    /// OR - disjunction/conde
+    #[inline]
+    pub fn or_chirho(self, other_chirho: Self) -> Self {
+        BitVec512Chirho([
+            self.0[0] | other_chirho.0[0],
+            self.0[1] | other_chirho.0[1],
+            self.0[2] | other_chirho.0[2],
+            self.0[3] | other_chirho.0[3],
+            self.0[4] | other_chirho.0[4],
+            self.0[5] | other_chirho.0[5],
+            self.0[6] | other_chirho.0[6],
+            self.0[7] | other_chirho.0[7],
+        ])
+    }
+
+    /// NOT - complement
+    #[inline]
+    pub fn not_chirho(self) -> Self {
+        BitVec512Chirho([
+            !self.0[0], !self.0[1], !self.0[2], !self.0[3],
+            !self.0[4], !self.0[5], !self.0[6], !self.0[7],
+        ])
+    }
+
+    /// Population count (number of 1s)
+    #[inline]
+    pub fn popcount_chirho(self) -> u32 {
+        self.0.iter().map(|w| w.count_ones()).sum()
+    }
+
+    /// Is zero (empty domain = failure)
+    #[inline]
+    pub fn is_zero_chirho(self) -> bool {
+        self.0.iter().all(|&w| w == 0)
+    }
+
+    /// Is singleton (exactly one bit set)
+    #[inline]
+    pub fn is_singleton_chirho(self) -> bool {
+        self.popcount_chirho() == 1
+    }
+
+    /// Find first set bit (0-511), returns 512 if none
+    #[inline]
+    pub fn find_first_chirho(self) -> u32 {
+        for (i_chirho, &word_chirho) in self.0.iter().enumerate() {
+            if word_chirho != 0 {
+                return (i_chirho as u32) * 64 + word_chirho.trailing_zeros();
+            }
+        }
+        512
+    }
+
+    /// Set bit at index (0-511)
+    #[inline]
+    pub fn set_bit_chirho(self, idx_chirho: u32) -> Self {
+        let word_chirho = (idx_chirho / 64) as usize;
+        let bit_chirho = idx_chirho % 64;
+        let mut result_chirho = self;
+        if word_chirho < 8 {
+            result_chirho.0[word_chirho] |= 1u64 << bit_chirho;
+        }
+        result_chirho
+    }
+
+    /// Test bit at index (0-511)
+    #[inline]
+    pub fn test_bit_chirho(self, idx_chirho: u32) -> bool {
+        let word_chirho = (idx_chirho / 64) as usize;
+        let bit_chirho = idx_chirho % 64;
+        if word_chirho < 8 {
+            (self.0[word_chirho] & (1u64 << bit_chirho)) != 0
+        } else {
+            false
+        }
+    }
+}
+
 /// Search state with 256-bit domains ☧
 /// For larger value spaces (up to 256 values per variable)
 #[derive(Debug, Clone, Copy)]

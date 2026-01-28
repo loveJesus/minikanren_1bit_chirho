@@ -483,6 +483,306 @@ impl Hierarchical16kChirho {
     }
 }
 
+// ============================================================================
+// Hierarchical65kChirho: 256 × 256 = 65,536 values (2-level with 256-bit words)
+// ============================================================================
+
+/// 2-level hierarchical domain with 256-bit words: 256 × 256 = 65,536 values
+///
+/// Trades depth for width: 2 levels instead of 3, but uses 256-bit SIMD.
+/// May be faster than 64³ on CPUs with good AVX2 support.
+///
+/// ```text
+/// root: BitVec256 (bit i → leaves[i] is non-empty)
+/// leaves: [BitVec256; 256] (256 values per leaf)
+/// ```
+#[derive(Clone)]
+pub struct Hierarchical65kChirho {
+    /// Bit i set means leaves[i] is non-empty
+    pub root_chirho: BitVec256Chirho,
+    /// Actual value membership, 256 values per leaf
+    pub leaves_chirho: Box<[BitVec256Chirho; 256]>,
+}
+
+impl Hierarchical65kChirho {
+    /// Empty domain
+    pub fn empty_chirho() -> Self {
+        Self {
+            root_chirho: BitVec256Chirho::ZERO_CHIRHO,
+            leaves_chirho: Box::new([BitVec256Chirho::ZERO_CHIRHO; 256]),
+        }
+    }
+
+    /// Full domain (all 65,536 values)
+    pub fn full_chirho() -> Self {
+        Self {
+            root_chirho: BitVec256Chirho::ONES_CHIRHO,
+            leaves_chirho: Box::new([BitVec256Chirho::ONES_CHIRHO; 256]),
+        }
+    }
+
+    /// Range domain [0, n)
+    pub fn range_chirho(n_chirho: u32) -> Self {
+        assert!(n_chirho <= 65536, "Value must be <= 65536");
+        let mut result_chirho = Self::empty_chirho();
+
+        let full_leaves_chirho = n_chirho / 256;
+        let remainder_chirho = n_chirho % 256;
+
+        // Fill complete leaves
+        for i_chirho in 0..full_leaves_chirho as usize {
+            result_chirho.leaves_chirho[i_chirho] = BitVec256Chirho::ONES_CHIRHO;
+            result_chirho.root_chirho = result_chirho.root_chirho.set_bit_chirho(i_chirho as u32);
+        }
+
+        // Partial last leaf
+        if remainder_chirho > 0 && (full_leaves_chirho as usize) < 256 {
+            let leaf_idx_chirho = full_leaves_chirho as usize;
+            let mut words_chirho = [0u64; 4];
+            let full_words_chirho = remainder_chirho / 64;
+            let rem_bits_chirho = remainder_chirho % 64;
+
+            for i_chirho in 0..full_words_chirho as usize {
+                words_chirho[i_chirho] = u64::MAX;
+            }
+            if rem_bits_chirho > 0 && (full_words_chirho as usize) < 4 {
+                words_chirho[full_words_chirho as usize] = (1u64 << rem_bits_chirho) - 1;
+            }
+
+            result_chirho.leaves_chirho[leaf_idx_chirho] = BitVec256Chirho(words_chirho);
+            result_chirho.root_chirho = result_chirho.root_chirho.set_bit_chirho(leaf_idx_chirho as u32);
+        }
+
+        result_chirho
+    }
+
+    /// Single value domain
+    pub fn singleton_chirho(value_chirho: u32) -> Self {
+        assert!(value_chirho < 65536, "Value must be < 65536");
+        let mut result_chirho = Self::empty_chirho();
+        let leaf_idx_chirho = (value_chirho / 256) as usize;
+        let bit_idx_chirho = value_chirho % 256;
+        result_chirho.leaves_chirho[leaf_idx_chirho] = result_chirho.leaves_chirho[leaf_idx_chirho]
+            .set_bit_chirho(bit_idx_chirho);
+        result_chirho.root_chirho = result_chirho.root_chirho.set_bit_chirho(leaf_idx_chirho as u32);
+        result_chirho
+    }
+
+    /// Check if value is in domain
+    pub fn contains_chirho(&self, value_chirho: u32) -> bool {
+        if value_chirho >= 65536 {
+            return false;
+        }
+        let leaf_idx_chirho = (value_chirho / 256) as usize;
+        if !self.root_chirho.test_bit_chirho(leaf_idx_chirho as u32) {
+            return false;
+        }
+        let bit_idx_chirho = value_chirho % 256;
+        self.leaves_chirho[leaf_idx_chirho].test_bit_chirho(bit_idx_chirho)
+    }
+
+    /// Intersect two domains (2-level: AND roots, then AND matching leaves)
+    pub fn intersect_chirho(&self, other_chirho: &Self) -> Self {
+        let new_root_chirho = self.root_chirho.and_chirho(other_chirho.root_chirho);
+        if new_root_chirho.is_zero_chirho() {
+            return Self::empty_chirho();
+        }
+
+        let mut new_leaves_chirho = Box::new([BitVec256Chirho::ZERO_CHIRHO; 256]);
+        let mut final_root_chirho = BitVec256Chirho::ZERO_CHIRHO;
+
+        // Iterate through set bits in root
+        for word_idx_chirho in 0..4 {
+            let mut bits_chirho = new_root_chirho.0[word_idx_chirho];
+            while bits_chirho != 0 {
+                let bit_pos_chirho = bits_chirho.trailing_zeros();
+                bits_chirho &= bits_chirho - 1;
+                let i_chirho = (word_idx_chirho * 64 + bit_pos_chirho as usize) as usize;
+
+                let leaf_result_chirho = self.leaves_chirho[i_chirho]
+                    .and_chirho(other_chirho.leaves_chirho[i_chirho]);
+
+                if !leaf_result_chirho.is_zero_chirho() {
+                    new_leaves_chirho[i_chirho] = leaf_result_chirho;
+                    final_root_chirho = final_root_chirho.set_bit_chirho(i_chirho as u32);
+                }
+            }
+        }
+
+        Self {
+            root_chirho: final_root_chirho,
+            leaves_chirho: new_leaves_chirho,
+        }
+    }
+
+    /// Check if empty
+    pub fn is_empty_chirho(&self) -> bool {
+        self.root_chirho.is_zero_chirho()
+    }
+
+    /// Count values in domain
+    pub fn count_chirho(&self) -> u32 {
+        let mut count_chirho = 0u32;
+        for word_idx_chirho in 0..4 {
+            let mut bits_chirho = self.root_chirho.0[word_idx_chirho];
+            while bits_chirho != 0 {
+                let bit_pos_chirho = bits_chirho.trailing_zeros();
+                bits_chirho &= bits_chirho - 1;
+                let i_chirho = word_idx_chirho * 64 + bit_pos_chirho as usize;
+                count_chirho += self.leaves_chirho[i_chirho].popcount_chirho();
+            }
+        }
+        count_chirho
+    }
+}
+
+// ============================================================================
+// Hierarchical262kWideChirho: 512 × 512 = 262,144 values (2-level with 512-bit words)
+// ============================================================================
+
+use crate::hardware_chirho::BitVec512Chirho;
+
+/// 2-level hierarchical domain with 512-bit words: 512 × 512 = 262,144 values
+///
+/// Same capacity as Hierarchical256kChirho (64³) but with only 2 levels.
+/// Trades memory (larger leaves) for fewer indirections.
+///
+/// ```text
+/// root: BitVec512 (bit i → leaves[i] is non-empty)
+/// leaves: [BitVec512; 512] (512 values per leaf)
+/// ```
+#[derive(Clone)]
+pub struct Hierarchical262kWideChirho {
+    /// Bit i set means leaves[i] is non-empty
+    pub root_chirho: BitVec512Chirho,
+    /// Actual value membership, 512 values per leaf
+    pub leaves_chirho: Box<[BitVec512Chirho; 512]>,
+}
+
+impl Hierarchical262kWideChirho {
+    /// Empty domain
+    pub fn empty_chirho() -> Self {
+        Self {
+            root_chirho: BitVec512Chirho::ZERO_CHIRHO,
+            leaves_chirho: Box::new([BitVec512Chirho::ZERO_CHIRHO; 512]),
+        }
+    }
+
+    /// Range domain [0, n)
+    pub fn range_chirho(n_chirho: u32) -> Self {
+        assert!(n_chirho <= 262144, "Value must be <= 262144");
+        let mut result_chirho = Self::empty_chirho();
+
+        let full_leaves_chirho = n_chirho / 512;
+        let remainder_chirho = n_chirho % 512;
+
+        // Fill complete leaves
+        for i_chirho in 0..full_leaves_chirho as usize {
+            result_chirho.leaves_chirho[i_chirho] = BitVec512Chirho::ONES_CHIRHO;
+            result_chirho.root_chirho = result_chirho.root_chirho.set_bit_chirho(i_chirho as u32);
+        }
+
+        // Partial last leaf
+        if remainder_chirho > 0 && (full_leaves_chirho as usize) < 512 {
+            let leaf_idx_chirho = full_leaves_chirho as usize;
+            let mut words_chirho = [0u64; 8];
+            let full_words_chirho = remainder_chirho / 64;
+            let rem_bits_chirho = remainder_chirho % 64;
+
+            for i_chirho in 0..full_words_chirho as usize {
+                words_chirho[i_chirho] = u64::MAX;
+            }
+            if rem_bits_chirho > 0 && (full_words_chirho as usize) < 8 {
+                words_chirho[full_words_chirho as usize] = (1u64 << rem_bits_chirho) - 1;
+            }
+
+            result_chirho.leaves_chirho[leaf_idx_chirho] = BitVec512Chirho(words_chirho);
+            result_chirho.root_chirho = result_chirho.root_chirho.set_bit_chirho(leaf_idx_chirho as u32);
+        }
+
+        result_chirho
+    }
+
+    /// Single value domain
+    pub fn singleton_chirho(value_chirho: u32) -> Self {
+        assert!(value_chirho < 262144, "Value must be < 262144");
+        let mut result_chirho = Self::empty_chirho();
+        let leaf_idx_chirho = (value_chirho / 512) as usize;
+        let bit_idx_chirho = value_chirho % 512;
+        result_chirho.leaves_chirho[leaf_idx_chirho] = result_chirho.leaves_chirho[leaf_idx_chirho]
+            .set_bit_chirho(bit_idx_chirho);
+        result_chirho.root_chirho = result_chirho.root_chirho.set_bit_chirho(leaf_idx_chirho as u32);
+        result_chirho
+    }
+
+    /// Check if value is in domain
+    pub fn contains_chirho(&self, value_chirho: u32) -> bool {
+        if value_chirho >= 262144 {
+            return false;
+        }
+        let leaf_idx_chirho = (value_chirho / 512) as usize;
+        if !self.root_chirho.test_bit_chirho(leaf_idx_chirho as u32) {
+            return false;
+        }
+        let bit_idx_chirho = value_chirho % 512;
+        self.leaves_chirho[leaf_idx_chirho].test_bit_chirho(bit_idx_chirho)
+    }
+
+    /// Intersect two domains (2-level: AND roots, then AND matching leaves)
+    pub fn intersect_chirho(&self, other_chirho: &Self) -> Self {
+        let new_root_chirho = self.root_chirho.and_chirho(other_chirho.root_chirho);
+        if new_root_chirho.is_zero_chirho() {
+            return Self::empty_chirho();
+        }
+
+        let mut new_leaves_chirho = Box::new([BitVec512Chirho::ZERO_CHIRHO; 512]);
+        let mut final_root_chirho = BitVec512Chirho::ZERO_CHIRHO;
+
+        // Iterate through set bits in root (8 words of 64 bits each)
+        for word_idx_chirho in 0..8 {
+            let mut bits_chirho = new_root_chirho.0[word_idx_chirho];
+            while bits_chirho != 0 {
+                let bit_pos_chirho = bits_chirho.trailing_zeros();
+                bits_chirho &= bits_chirho - 1;
+                let i_chirho = word_idx_chirho * 64 + bit_pos_chirho as usize;
+
+                let leaf_result_chirho = self.leaves_chirho[i_chirho]
+                    .and_chirho(other_chirho.leaves_chirho[i_chirho]);
+
+                if !leaf_result_chirho.is_zero_chirho() {
+                    new_leaves_chirho[i_chirho] = leaf_result_chirho;
+                    final_root_chirho = final_root_chirho.set_bit_chirho(i_chirho as u32);
+                }
+            }
+        }
+
+        Self {
+            root_chirho: final_root_chirho,
+            leaves_chirho: new_leaves_chirho,
+        }
+    }
+
+    /// Check if empty
+    pub fn is_empty_chirho(&self) -> bool {
+        self.root_chirho.is_zero_chirho()
+    }
+
+    /// Count values in domain
+    pub fn count_chirho(&self) -> u32 {
+        let mut count_chirho = 0u32;
+        for word_idx_chirho in 0..8 {
+            let mut bits_chirho = self.root_chirho.0[word_idx_chirho];
+            while bits_chirho != 0 {
+                let bit_pos_chirho = bits_chirho.trailing_zeros();
+                bits_chirho &= bits_chirho - 1;
+                let i_chirho = word_idx_chirho * 64 + bit_pos_chirho as usize;
+                count_chirho += self.leaves_chirho[i_chirho].popcount_chirho();
+            }
+        }
+        count_chirho
+    }
+}
+
 #[cfg(test)]
 mod tests_chirho {
     use super::*;

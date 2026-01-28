@@ -17,6 +17,8 @@ use minikanren_1bit_chirho::approaches_chirho::{
     HwSymbolicDomainChirho,
     Hierarchical4kChirho,
     Hierarchical256kChirho,
+    Hierarchical65kChirho,
+    Hierarchical262kWideChirho,
     hw_symbolic_chirho::{range_bits_chirho, mod_lut_chirho, range_mod_hw_chirho},
 };
 
@@ -107,15 +109,47 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
         );
     }
 
-    // Hierarchical 256K domain (tree of trees of BitVec64s)
+    // Hierarchical 256K domain (64³ = tree of trees of BitVec64s)
     // This shows we scale MASSIVELY beyond 64 bits
     for size_chirho in [1_000, 10_000, 50_000, 100_000, 200_000, 262_000] {
         group_chirho.bench_with_input(
-            BenchmarkId::new("Hierarchical256k", size_chirho),
+            BenchmarkId::new("Hierarchical256k_64³", size_chirho),
             &size_chirho,
             |bench_chirho, &n_chirho| {
                 let a_chirho = Hierarchical256kChirho::range_chirho(n_chirho);
                 let b_chirho = Hierarchical256kChirho::range_chirho(n_chirho / 2);
+                bench_chirho.iter(|| {
+                    black_box(a_chirho.intersect_chirho(&b_chirho))
+                })
+            },
+        );
+    }
+
+    // Hierarchical 65K domain (256² = 2-level with 256-bit words)
+    // Wider/shallower alternative to 64³
+    for size_chirho in [1_000, 10_000, 50_000, 65_000] {
+        group_chirho.bench_with_input(
+            BenchmarkId::new("Hierarchical65k_256²", size_chirho),
+            &size_chirho,
+            |bench_chirho, &n_chirho| {
+                let a_chirho = Hierarchical65kChirho::range_chirho(n_chirho);
+                let b_chirho = Hierarchical65kChirho::range_chirho(n_chirho / 2);
+                bench_chirho.iter(|| {
+                    black_box(a_chirho.intersect_chirho(&b_chirho))
+                })
+            },
+        );
+    }
+
+    // Hierarchical 262K wide domain (512² = 2-level with 512-bit words)
+    // Widest/shallowest - tests AVX-512 potential
+    for size_chirho in [1_000, 10_000, 50_000, 100_000, 200_000, 262_000] {
+        group_chirho.bench_with_input(
+            BenchmarkId::new("Hierarchical262k_512²", size_chirho),
+            &size_chirho,
+            |bench_chirho, &n_chirho| {
+                let a_chirho = Hierarchical262kWideChirho::range_chirho(n_chirho);
+                let b_chirho = Hierarchical262kWideChirho::range_chirho(n_chirho / 2);
                 bench_chirho.iter(|| {
                     black_box(a_chirho.intersect_chirho(&b_chirho))
                 })
@@ -139,6 +173,43 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
             // Root AND = 0, so this should be O(1)!
             black_box(a_chirho.intersect_chirho(&b_chirho))
         })
+    });
+
+    // Sparse 256² (non-overlapping domains via singleton)
+    group_chirho.bench_function("Hierarchical65k_256²_sparse", |bench_chirho| {
+        // Domain A: values 0-255 (leaf 0 only)
+        let a_chirho = Hierarchical65kChirho::range_chirho(256);
+        // Domain B: single value far away (different root region)
+        let b_chirho = Hierarchical65kChirho::singleton_chirho(60000);
+
+        bench_chirho.iter(|| {
+            black_box(a_chirho.intersect_chirho(&b_chirho))
+        })
+    });
+
+    // Sparse 512² (non-overlapping domains via singleton)
+    group_chirho.bench_function("Hierarchical262k_512²_sparse", |bench_chirho| {
+        // Domain A: values 0-511 (leaf 0 only)
+        let a_chirho = Hierarchical262kWideChirho::range_chirho(512);
+        // Domain B: single value far away (different root region)
+        let b_chirho = Hierarchical262kWideChirho::singleton_chirho(200000);
+
+        bench_chirho.iter(|| {
+            black_box(a_chirho.intersect_chirho(&b_chirho))
+        })
+    });
+
+    // Compare all 262K structures at same density (50%)
+    group_chirho.bench_function("Compare_262k_64³_dense", |bench_chirho| {
+        let a_chirho = Hierarchical256kChirho::range_chirho(131072);
+        let b_chirho = Hierarchical256kChirho::range_chirho(131072);
+        bench_chirho.iter(|| black_box(a_chirho.intersect_chirho(&b_chirho)))
+    });
+
+    group_chirho.bench_function("Compare_262k_512²_dense", |bench_chirho| {
+        let a_chirho = Hierarchical262kWideChirho::range_chirho(131072);
+        let b_chirho = Hierarchical262kWideChirho::range_chirho(131072);
+        bench_chirho.iter(|| black_box(a_chirho.intersect_chirho(&b_chirho)))
     });
 
     group_chirho.finish();
