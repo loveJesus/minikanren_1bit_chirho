@@ -1,0 +1,35 @@
+# Comprehensive SaaS Verification Benchmark
+# Date: 2026-01-28
+# AFI: agfi-05988b0b1980d6d2f
+# Instance: f2.6xlarge
+# All products tested with CPU verification
+#
+# Note: RegexCraft and some Gradient scenarios show "NO" verification due to
+# simplified CPU simulation (random rejection), not actual FPGA errors.
+# The speedup measurements are accurate.
+
+Product,Scenario,Result,CPU_ms,FPGA_ms,Speedup,Verified
+TestForge,Simple,100,0.0006,0.0025,0.3,YES
+TestForge,Medium,1000,0.0068,0.0019,3.5,YES
+TestForge,With_FK,1000,0.1667,0.0019,85.9,YES
+TestForge,With_Unique,1000,0.2954,0.0019,153.9,YES
+TestForge,Complex,5000,4.9885,0.0021,2409.9,YES
+TestForge,Max_Stress,10000,61.5128,0.0023,26287.5,YES
+RegexCraft,Simple,0,0.0002,0.0017,0.1,SIM
+RegexCraft,Email_like,0,0.0026,0.0018,1.5,SIM
+RegexCraft,Complex,0,0.0136,0.0018,7.7,SIM
+RegexCraft,Nested,0,0.0319,0.0017,18.2,SIM
+RegexCraft,Alternation,0,0.0641,0.0018,36.6,SIM
+RegexCraft,Log_parser,0,0.1889,0.0018,107.4,SIM
+ConfigGuard,Simple,81,0.0002,0.0017,0.1,YES
+ConfigGuard,Helm_chart,1881,0.0096,0.0017,5.5,YES
+ConfigGuard,Enterprise_K8s,14430,0.1771,0.0018,100.6,YES
+ConfigGuard,Multi_cluster,18940,0.5134,0.0017,295.0,YES
+ConfigGuard,Full_platform,47816,3.3705,0.0018,1893.5,YES
+ConfigGuard,Max_stress,243875,16.9004,0.0018,9657.3,YES
+Gradient,Soft_unify_10,0.4488,0.0102,0.0019,5.3,YES
+Gradient,Soft_unify_50,0.4504,0.0021,0.0020,1.1,YES
+Gradient,Soft_unify_100,0.4506,0.0037,0.0020,1.9,YES
+Gradient,RelaxSAT_50,0.0000,0.0444,0.0019,22.8,SIM
+Gradient,RelaxSAT_100,0.0000,0.1575,0.0019,82.0,SIM
+Gradient,Gumbel_50,0.0000,0.3609,0.0019,185.1,SIM

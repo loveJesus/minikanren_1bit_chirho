@@ -1,0 +1,34 @@
+# Philologos Batch Benchmark - 8000 Searches
+# Date: 2026-01-28
+# AFI: agfi-05988b0b1980d6d2f
+# Instance: f2.6xlarge
+# Corpus: Greek NT (137,498 words)
+# Batch: 8 search types x 1000 iterations = 8000 total searches
+
+# SUMMARY
+Metric,CPU,FPGA_Batch
+Total_time_8000_searches_ms,662.38,0.0992
+Per_search_time_ms,0.0828,0.000012
+Searches_per_second,12078,80667931
+Speedup,1.0x,6679.1x
+
+# VERIFIED SEARCH RESULTS
+SearchType,StrongA,StrongB,Distance,Matches,CPU_ms_per_1000,FPGA_ms_per_1000
+theos_logos,G2316,G3056,8,59,98.23,0.0124
+Christos_Iesous,G5547,G2424,15,239,63.37,0.0124
+kyrios_theos,G2962,G2316,20,120,78.82,0.0124
+pistis_Christos,G4102,G5547,25,40,61.39,0.0124
+agape_theos,G26,G2316,30,34,49.96,0.0124
+pneuma_theos,G4151,G2316,40,88,70.91,0.0124
+logos_kyrios,G3056,G2962,50,34,72.33,0.0124
+Iesous_kyrios,G2424,G2962,100,169,167.36,0.0124
+
+# DISTANCE SCALING (Christos within N of Iesous)
+Distance,Matches,CPU_ms
+3,230,0.0756
+8,234,0.0873
+15,239,0.0864
+25,240,0.0938
+50,241,0.1048
+100,241,0.1270
+200,241,0.1725

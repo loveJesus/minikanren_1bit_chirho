@@ -1,0 +1,22 @@
+Test,Metric,Value,Unit
+RegisterLatency,Read latency,923.414650,ns
+RegisterLatency,Write latency,195.257300,ns
+RegisterLatency,Round-trip,1118.604220,ns
+RegisterLatency,Read throughput,1.082937,M ops/sec
+HBM_Bandwidth,Sequential write,0.096241,MB/s
+HBM_Bandwidth,Sequential read,0.047479,MB/s
+BitVec64,Intersection latency,1932.277400,ns
+BitVec64,Throughput,0.517524,M unify/sec
+Hierarchical4K,Domain read (8 blocks),1440492.211900,ns
+Hierarchical4K,Intersection latency,1280462.958000,ns
+Hierarchical4K,Throughput,0.000781,M unify/sec
+Hierarchical256K,Sparse read (32 L2 blocks),6562111.091000,ns
+Hierarchical256K,Throughput,0.000152,M unify/sec
+Hierarchical256K,Effective bandwidth,0.000312,Gbit/s
+BatchUnify,Total batch time,0.002470,ms
+BatchUnify,Per-pair latency,24.700000,ns
+BatchUnify,Throughput,40.485830,M unify/sec
+HBM_Random,Random read latency,80021.039500,ns
+HBM_Random,Random write latency,39471.523200,ns
+Sustained,Operations in 1 sec,655791.000000,ops
+Sustained,Throughput,0.655791,M ops/sec

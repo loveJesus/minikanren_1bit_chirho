@@ -1,0 +1,104 @@
+Product,Scenario,Metric,Value
+# ============================================================================
+# miniKanren F2 FPGA - SaaS Workload Benchmark Results
+# Date: 2026-01-28
+# AFI: agfi-05988b0b1980d6d2f
+# Instance: f2.6xlarge
+# Clock: 250 MHz (A2), HBM: 450 MHz (H2)
+# ============================================================================
+
+# TESTFORGE: Constraint-Based Test Data Generation
+TestForge,Simple user (100 rec, 3 const),Records,100
+TestForge,Simple user (100 rec, 3 const),Constraints,3
+TestForge,Simple user (100 rec, 3 const),ActualMs,0.01
+TestForge,Simple user (100 rec, 3 const),TargetMs,2
+TestForge,Complex user (100 rec, 10 const),Records,100
+TestForge,Complex user (100 rec, 10 const),Constraints,10
+TestForge,Complex user (100 rec, 10 const),ActualMs,0.02
+TestForge,Complex user (100 rec, 10 const),TargetMs,15
+TestForge,Complex user (1K rec, 10 const),Records,1000
+TestForge,Complex user (1K rec, 10 const),Constraints,10
+TestForge,Complex user (1K rec, 10 const),ActualMs,0.20
+TestForge,Complex user (1K rec, 10 const),TargetMs,80
+TestForge,With FK refs (1K rec, 15 const),Records,1000
+TestForge,With FK refs (1K rec, 15 const),Constraints,15
+TestForge,With FK refs (1K rec, 15 const),ActualMs,0.31
+TestForge,With FK refs (1K rec, 15 const),TargetMs,150
+TestForge,Projection10K,EstimatedMs,0.08
+
+# REGEXCRAFT: Regex Synthesis from Examples
+RegexCraft,Simple pattern,PosExamples,3
+RegexCraft,Simple pattern,NegExamples,2
+RegexCraft,Simple pattern,ASTCandidates,50
+RegexCraft,Simple pattern,ActualMs,0.01
+RegexCraft,Simple pattern,TargetMs,5
+RegexCraft,Email-like,PosExamples,5
+RegexCraft,Email-like,NegExamples,5
+RegexCraft,Email-like,ASTCandidates,500
+RegexCraft,Email-like,ActualMs,0.10
+RegexCraft,Email-like,TargetMs,50
+RegexCraft,Complex with groups,PosExamples,10
+RegexCraft,Complex with groups,NegExamples,10
+RegexCraft,Complex with groups,ASTCandidates,2000
+RegexCraft,Complex with groups,ActualMs,0.86
+RegexCraft,Complex with groups,TargetMs,200
+RegexCraft,Very constrained,PosExamples,20
+RegexCraft,Very constrained,NegExamples,20
+RegexCraft,Very constrained,ASTCandidates,5000
+RegexCraft,Very constrained,ActualMs,4.28
+RegexCraft,Very constrained,TargetMs,500
+
+# CONFIGGUARD: Configuration Validation Engine
+ConfigGuard,Single deployment,Files,1
+ConfigGuard,Single deployment,Rules,10
+ConfigGuard,Single deployment,CrossRefs,0
+ConfigGuard,Single deployment,ActualMs,0.00
+ConfigGuard,Single deployment,TargetMs,2
+ConfigGuard,Helm chart (20 files),Files,20
+ConfigGuard,Helm chart (20 files),Rules,50
+ConfigGuard,Helm chart (20 files),CrossRefs,10
+ConfigGuard,Helm chart (20 files),ActualMs,0.04
+ConfigGuard,Helm chart (20 files),TargetMs,25
+ConfigGuard,Full cluster (500 files),Files,500
+ConfigGuard,Full cluster (500 files),Rules,100
+ConfigGuard,Full cluster (500 files),CrossRefs,50
+ConfigGuard,Full cluster (500 files),ActualMs,1.65
+ConfigGuard,Full cluster (500 files),TargetMs,200
+ConfigGuard,Cross-reference heavy,Files,500
+ConfigGuard,Cross-reference heavy,Rules,50
+ConfigGuard,Cross-reference heavy,CrossRefs,100
+ConfigGuard,Cross-reference heavy,ActualMs,1.71
+ConfigGuard,Cross-reference heavy,TargetMs,150
+
+# PHILOLOGOS: Biblical & Manuscript Analysis
+Philologos,Single verse variants,DataKB,10
+Philologos,Single verse variants,DomainOps,50
+Philologos,Single verse variants,EstimatedMs,0.14
+Philologos,Single verse variants,TargetMs,5
+Philologos,Word frequency (book),DataKB,100
+Philologos,Word frequency (book),DomainOps,500
+Philologos,Word frequency (book),EstimatedMs,0.16
+Philologos,Word frequency (book),TargetMs,20
+Philologos,Translation consistency,DataKB,200
+Philologos,Translation consistency,DomainOps,1000
+Philologos,Translation consistency,EstimatedMs,0.34
+Philologos,Translation consistency,TargetMs,50
+Philologos,Cross-book allusion,DataKB,5000
+Philologos,Cross-book allusion,DomainOps,10000
+Philologos,Cross-book allusion,EstimatedMs,17.87
+Philologos,Cross-book allusion,TargetMs,200
+Philologos,Translation audit (full),DataKB,10000
+Philologos,Translation audit (full),DomainOps,50000
+Philologos,Translation audit (full),EstimatedMs,35.29
+Philologos,Translation audit (full),TargetMs,500
+Philologos,Manuscript collation,DataKB,50000
+Philologos,Manuscript collation,DomainOps,100000
+Philologos,Manuscript collation,EstimatedMs,175.96
+Philologos,Manuscript collation,TargetMs,2000
+
+# CAPACITY ANALYSIS
+Capacity,SustainedOpsPerSec,49401914
+Capacity,DailyMillionQueries,4268325
+Capacity,TotalDailyOps,2145000000
+Capacity,DailyCapacity,4268325347504
+Capacity,UtilizationPercent,0.05

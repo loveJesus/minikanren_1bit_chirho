@@ -1,0 +1,132 @@
+# ============================================================================
+# miniKanren F2 FPGA - Comprehensive SaaS Benchmark Results
+# Date: 2026-01-28
+# AFI: agfi-05988b0b1980d6d2f
+# Instance: f2.6xlarge
+# Clock: 250 MHz (A2), HBM: 450 MHz (H2)
+# 15 scenarios per product + linguistic tools + search operations
+#
+# IMPORTANT: TimeMs is FPGA-only time (projected from batch unification perf).
+# For CPU vs FPGA verified comparisons, see: saas_verified_results_chirho.csv
+# ============================================================================
+
+Product,Scenario,Semiring,TimeMs
+
+# TESTFORGE: Constraint-Based Test Data Generation (15 scenarios)
+TestForge,Minimal (10 rec, 1 const),,0.003
+TestForge,Simple user (50 rec, 3 const),,0.004
+TestForge,Medium user (100 rec, 5 const),,0.010
+TestForge,Complex user (100 rec, 10 const),,0.020
+TestForge,Large batch (500 rec, 5 const),,0.050
+TestForge,FK refs small (100 rec, 5 const, 10 FK),,0.026
+TestForge,FK refs medium (500 rec, 8 const, 50 FK),,0.159
+TestForge,FK refs large (1K rec, 10 const, 100 FK),,0.356
+TestForge,Unique small (100 rec, 5 const, 100 uniq),,0.012
+TestForge,Unique large (1K rec, 5 const, 1K uniq),,0.130
+TestForge,E-commerce order (500 rec, 15 const, 200 FK),,0.474
+TestForge,Financial txn (1K rec, 20 const, 500 FK, 1K uniq),,1.236
+TestForge,Healthcare (2K rec, 25 const, 1K FK),,2.588
+TestForge,Social graph (5K rec, 10 const, 5K FK),,8.927
+TestForge,Max stress (10K rec, 30 const, 2K FK, 10K uniq),,9.486
+
+# REGEXCRAFT: Regex Synthesis from Examples (15 scenarios)
+RegexCraft,Literal match (2+1 ex),,0.002
+RegexCraft,Digit sequence (3+2 ex),,0.010
+RegexCraft,Word boundary (4+3 ex),,0.042
+RegexCraft,Email basic (5+5 ex),,0.497
+RegexCraft,URL simple (5+5 ex),,0.796
+RegexCraft,Phone number (8+5 ex),,2.083
+RegexCraft,Date format (10+5 ex),,4.718
+RegexCraft,IP address (8+8 ex),,6.397
+RegexCraft,Credit card (10+10 ex),,11.995
+RegexCraft,Custom ID format (12+8 ex),,17.911
+RegexCraft,Nested groups (15+10 ex),,49.824
+RegexCraft,Alternation heavy (20+15 ex),,139.597
+RegexCraft,Quantifier complex (15+15 ex),,179.164
+RegexCraft,Full email RFC (25+20 ex),,538.387
+RegexCraft,Log parser (30+25 ex),,1096.414
+
+# CONFIGGUARD: Configuration Validation Engine (15 scenarios)
+ConfigGuard,Single YAML (1 file, 5 rules),,0.002
+ConfigGuard,Docker Compose basic (3 files, 10 rules),,0.005
+ConfigGuard,K8s Deployment (1 file, 20 rules),,0.002
+ConfigGuard,K8s Service+Deploy (2 files, 15 rules, 5 xref),,0.010
+ConfigGuard,Terraform module (10 files, 10 rules),,0.020
+ConfigGuard,Helm chart small (15 files, 20 rules),,0.055
+ConfigGuard,Helm chart medium (30 files, 25 rules),,0.139
+ConfigGuard,CI/CD pipeline (20 files, 30 rules),,0.083
+ConfigGuard,Ansible playbook (50 files, 15 rules),,0.139
+ConfigGuard,Full namespace (100 files, 20 rules, 100 xref),,0.317
+ConfigGuard,Microservices (200 files, 25 rules),,0.717
+ConfigGuard,Enterprise K8s (500 files, 30 rules, 500 xref),,2.291
+ConfigGuard,Multi-cluster (1K files, 20 rules),,2.073
+ConfigGuard,Full platform (2K files, 25 rules, 1K xref),,6.586
+ConfigGuard,Max stress (5K files, 50 rules, 2K xref),,33.197
+
+# PHILOLOGOS: Biblical & Manuscript Analysis (15 scenarios)
+Philologos,Single verse lookup (John 3:16),,0.027
+Philologos,Verse variants (John 1:18),,0.129
+Philologos,Word study (logos),,0.162
+Philologos,Lemma frequency (agape in NT),,0.166
+Philologos,Verb forms (aorist passive subj),,0.180
+Philologos,Participle search (all NT),,0.200
+Philologos,Case usage analysis (genitive),,0.192
+Philologos,Translation consistency (pistis),,0.190
+Philologos,Parallel translations (5 versions),,0.182
+Philologos,Manuscript collation (P66 vs Sinaiticus),,0.373
+Philologos,OT quotations in NT,,0.623
+Philologos,Isaiah 53 allusions,,0.283
+Philologos,Intertextual echoes (Romans),,1.279
+Philologos,Hapax legomena (NT),,0.632
+Philologos,Full corpus word frequency,,4.759
+
+# GRADIENT DESCENT: Differentiable/Fixed-Point Logic (15 scenarios)
+Gradient,Soft unify (10 vars, prob),Probability,0.016
+Gradient,Soft unify (50 vars, prob),Probability,0.397
+Gradient,Soft unify (100 vars, prob),Probability,1.589
+Gradient,Relaxed SAT (20 vars, 10 iter),Probability,0.799
+Gradient,Relaxed SAT (50 vars, 20 iter),Probability,12.124
+Gradient,Relaxed SAT (100 vars, 50 iter),Probability,120.540
+Gradient,Gumbel domain (10 vars, 100 samples),Gumbel,1.600
+Gradient,Gumbel domain (50 vars, 100 samples),Gumbel,39.931
+Gradient,Gumbel domain (100 vars, 500 samples),Gumbel,797.409
+Gradient,Annealing (50 vars, T=1.0→0.1),Annealed,399.344
+Gradient,Annealing (100 vars, T=2.0→0.01),Annealed,3190.472
+Gradient,Loss gradient (20 vars),Tropical,6.385
+Gradient,Loss gradient (100 vars),Tropical,159.268
+Gradient,Neural-sym (embedding lookup),Hybrid,209.410
+Gradient,Neural-sym (attention weights),Hybrid,13399.628
+
+# LINGUISTIC TOOLS: Biblical Language Analysis (15 tools)
+Linguistic,Greek Morphology Parser,,0.195
+Linguistic,Hebrew Root Extractor,,0.164
+Linguistic,Semantic Domain Lookup,,0.162
+Linguistic,Syntax Tree Builder,,0.178
+Linguistic,Discourse Analysis,,0.198
+Linguistic,Collocate Finder,,0.516
+Linguistic,Hapax Detector,,1.072
+Linguistic,Textual Apparatus,,0.327
+Linguistic,Interlinear Generator,,0.188
+Linguistic,Concordance Builder,,1.267
+Linguistic,Parallel Pericope Aligner,,0.476
+Linguistic,Chiasm Detector,,0.695
+Linguistic,Quotation Mapper,,0.410
+Linguistic,Lexeme Network,,1.043
+Linguistic,Statistical Analysis,,1.986
+
+# SEARCH OPERATIONS: Pattern Matching & Retrieval (15 patterns)
+Search,Exact word match,,0.081
+Search,Lemma search,,0.179
+Search,Phrase search (2 words),,0.245
+Search,Phrase search (3 words),,0.207
+Search,Wildcard pattern,,0.795
+Search,Morphological pattern,,2.087
+Search,Syntactic pattern,,2.712
+Search,Semantic range,,2.155
+Search,Cross-language (Greek to Hebrew),,10.142
+Search,Fuzzy match (Levenshtein),,2.082
+Search,Regex-like pattern,,2.562
+Search,Context window (5 words),,2.161
+Search,Structural pattern (chiasm),,19.973
+Search,Multi-field query,,4.950
+Search,Full-text ranked,,30.085

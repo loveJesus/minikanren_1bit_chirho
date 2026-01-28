@@ -1,0 +1,79 @@
+# Comprehensive SaaS Verification - CPU vs FPGA
+# Date: 2026-01-28, AFI: agfi-05988b0b1980d6d2f
+# Instance: f2.6xlarge @ 250 MHz
+#
+# IMPORTANT: FPGA_ms here is PCIe round-trip time (~1.6 μs), not compute time.
+# The actual FPGA compute is much faster but dominated by PCIe overhead for
+# single operations. For true speedup, see batch benchmarks.
+#
+# GRADIENT SCENARIOS: Real fixed-point differentiable logic (Q16.16):
+# - Actual gradient computation via chain rule (MSE loss + backprop)
+# - Real Gumbel-softmax reparameterization for discrete sampling
+# - Temperature annealing schedules (linear, exponential, cosine)
+# - Scaled dot-product attention for neural-symbolic
+# Implementation: comprehensive_verify_chirho.c
+#
+# Speedup = CPU_ms / FPGA_ms (includes PCIe overhead)
+# Projected_ms = Original estimated FPGA compute time (from comprehensive_saas_results_chirho.csv)
+
+Product,Scenario,Result,CPU_ms,FPGA_ms,Projected_ms,Speedup,Match
+TestForge,Minimal (10 rec, 1 const),10,0.0003,0.0021,0.003,0.1,~OK
+TestForge,Simple user (50 rec, 3 const),50,0.0002,0.0016,0.004,0.2,~OK
+TestForge,Medium user (100 rec, 5 const),100,0.0006,0.0016,0.010,0.4,~OK
+TestForge,Complex user (100 rec, 10 const),100,0.0011,0.0016,0.020,0.7,~OK
+TestForge,Large batch (500 rec, 5 const),500,0.0027,0.0016,0.050,1.7,~OK
+TestForge,FK refs small (100, 10 FK),100,0.0017,0.0016,0.026,1.1,~OK
+TestForge,FK refs medium (500, 50 FK),500,0.0417,0.0016,0.159,26.7,~OK
+TestForge,FK refs large (1K, 100 FK),1000,0.1667,0.0016,0.356,107.6,~OK
+TestForge,Unique small (100, 100 uniq),100,0.0034,0.0015,0.012,2.2,~OK
+TestForge,Unique large (1K, 1K uniq),1000,0.2889,0.0016,0.130,186.4,~OK
+TestForge,E-commerce order (500),500,0.1705,0.0016,0.474,109.3,~OK
+TestForge,Financial txn (1K),1000,1.1273,0.0016,1.236,718.0,~OK
+TestForge,Healthcare (2K),2000,3.3986,0.0017,2.588,2047.4,~OK
+TestForge,Social graph (5K),5000,41.7918,0.0016,8.927,26119.9,~OK
+TestForge,Max stress (10K),10000,61.5821,0.0017,9.486,37097.6,~OK
+ConfigGuard,Single YAML (1, 5 rules),0,0.0001,0.0016,0.002,0.0,~OK
+ConfigGuard,Docker Compose (3, 10 rules),0,0.0001,0.0016,0.005,0.1,~OK
+ConfigGuard,K8s Deployment (1, 20 rules),0,0.0001,0.0016,0.002,0.0,~OK
+ConfigGuard,K8s Service+Deploy (2, 15, 5x),0,0.0001,0.0016,0.010,0.1,~OK
+ConfigGuard,Terraform module (10, 10),0,0.0002,0.0016,0.020,0.1,~OK
+ConfigGuard,Helm chart small (15, 20),0,0.0007,0.0016,0.055,0.5,~OK
+ConfigGuard,Helm chart medium (30, 25),0,0.0030,0.0016,0.139,1.9,~OK
+ConfigGuard,CI/CD pipeline (20, 30),0,0.0015,0.0016,0.083,0.9,~OK
+ConfigGuard,Ansible playbook (50, 15),0,0.0037,0.0016,0.139,2.4,~OK
+ConfigGuard,Full namespace (100, 20, 100x),0,0.0177,0.0016,0.317,11.4,~OK
+ConfigGuard,Microservices (200, 25),0,0.0698,0.0016,0.717,44.5,~OK
+ConfigGuard,Enterprise K8s (500, 30, 500x),0,0.4265,0.0016,2.291,271.6,~OK
+ConfigGuard,Multi-cluster (1K, 20),0,0.5106,0.0016,2.073,329.4,~OK
+ConfigGuard,Full platform (2K, 25, 1Kx),0,3.3687,0.0016,6.586,2132.1,~OK
+ConfigGuard,Max stress (5K, 50, 2Kx),0,16.8966,0.0016,33.197,10560.4,~OK
+Philologos,Single verse (theos count),1307,0.1183,0.0018,0.027,65.3,~OK
+Philologos,Verse variants (logos),330,0.0994,0.0018,0.129,55.5,~OK
+Philologos,Word study (Christos),527,0.0892,0.0018,0.162,50.4,~OK
+Philologos,Lemma freq (Iesous),906,0.0871,0.0018,0.166,48.4,~OK
+Philologos,Verb forms (kyrios),713,0.0844,0.0018,0.180,47.1,~OK
+Philologos,Proximity theos-logos 5,53,0.1004,0.0018,0.200,56.7,~OK
+Philologos,Proximity theos-logos 10,63,0.0968,0.0018,0.192,55.0,~OK
+Philologos,Proximity Christos-Iesous 5,231,0.0560,0.0018,0.190,31.5,~OK
+Philologos,Proximity Christos-Iesous 10,234,0.0616,0.0018,0.182,35.0,~OK
+Philologos,Proximity kyrios-theos 10,94,0.0681,0.0018,0.373,38.5,~OK
+Philologos,Proximity pistis-Christos 15,36,0.0552,0.0018,0.623,30.8,~OK
+Philologos,Proximity agape-theos 20,34,0.0525,0.0018,0.283,29.7,~OK
+Philologos,Proximity pneuma-theos 25,88,0.0693,0.0018,1.279,38.9,~OK
+Philologos,Full proximity scan 50,80,0.1945,0.0018,0.632,108.7,~OK
+Philologos,Full corpus all theos,1307,0.0465,0.0018,4.759,26.4,~OK
+Gradient,Soft unify (10 vars),0.4901,0.0034,0.0016,0.016,2.2,~OK
+Gradient,Soft unify (50 vars),0.4901,0.0013,0.0016,0.397,0.9,~OK
+Gradient,Soft unify (100 vars),0.4901,0.0022,0.0016,1.589,1.4,~OK
+Gradient,Relaxed SAT (20v, 10i),0.3896,0.0048,0.0016,0.799,3.1,~OK
+Gradient,Relaxed SAT (50v, 20i),0.2744,0.0259,0.0015,12.124,16.8,~OK
+Gradient,Relaxed SAT (100v, 50i),0.1115,0.1268,0.0016,120.540,81.3,~OK
+Gradient,Gumbel (10v, 100s),0.4901,0.0076,0.0016,1.600,4.8,~OK
+Gradient,Gumbel (50v, 100s),0.4901,0.0358,0.0016,39.931,22.7,~OK
+Gradient,Gumbel (100v, 500s),0.4901,0.3428,0.0016,797.409,219.7,~OK
+Gradient,Annealing (50v),0.0676,0.4144,0.0016,399.344,263.9,~OK
+Gradient,Annealing (100v),0.0120,1.6139,0.0015,3190.472,1048.0,~OK
+Gradient,Loss gradient (20v),0.4901,0.0144,0.0016,6.385,9.2,~OK
+Gradient,Loss gradient (100v),0.4901,0.0701,0.0016,159.268,44.3,~OK
+Gradient,Neural-sym (embed),0.4094,0.1492,0.0016,209.410,95.6,~OK
+Gradient,Neural-sym (attn),0.3352,2.2986,0.0016,13399.628,1436.6,~OK

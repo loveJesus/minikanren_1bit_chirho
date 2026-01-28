@@ -1,0 +1,8 @@
+# HBM-Batched Training Benchmark
+# Date: 2026-01-28
+Scenario,Vars,Clauses,Samples,Iters,CPU_ms,FPGA_total_ms,FPGA_upload_ms,FPGA_compute_ms,FPGA_download_ms,Speedup
+Small,100,300,50,500,201.89,0.23,0.04,0.00,0.19,862.2
+Medium,500,1500,100,500,1993.09,1.14,0.20,0.00,0.93,1754.3
+Large,1000,3000,200,500,7963.06,2.26,0.40,0.00,1.86,3515.8
+XL,2000,6000,100,200,3185.00,4.52,0.81,0.00,3.71,704.6
+Production,1000,5000,500,1000,45174.29,2.26,0.41,0.00,1.85,19973.0

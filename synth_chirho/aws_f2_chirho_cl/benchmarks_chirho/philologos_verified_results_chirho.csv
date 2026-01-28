@@ -1,0 +1,33 @@
+# Philologos Verified Search Results - Greek NT
+# Date: 2026-01-28
+# AFI: agfi-05988b0b1980d6d2f
+# Corpus: 137,498 words, 5,449 unique lemmas
+# Instance: f2.6xlarge
+#
+# Results verified by CPU comparison
+# Schema: SearchType, Query, Matches, CPU_ms, FPGA_ms
+
+SearchType,Query,Matches,CPU_ms,FPGA_ms
+LemmaCount,theos,1,0.096,0.045
+Proximity,logos_theos_3,0,0.083,0.058
+Proximity,logos_theos_5,0,0.081,0.058
+Proximity,logos_theos_8,0,0.080,0.058
+Proximity,logos_theos_10,0,0.079,0.058
+Proximity,christos_iesous_3,230,0.083,0.058
+Proximity,christos_iesous_5,231,0.090,0.058
+Proximity,christos_iesous_8,234,0.087,0.085
+Proximity,christos_iesous_10,234,0.088,0.058
+Strongs,G2316(theos),1307,0.085,0.045
+Strongs,G3056(logos),330,0.084,0.045
+Strongs,G5547(Christos),527,0.083,0.045
+Strongs,G2424(Iesous),906,0.082,0.045
+
+# THROUGHPUT METRICS (separate schema)
+# Schema: MetricType, Description, Value, Unit
+# FullCorpus throughput is computed from: 137498 words / 0.051 ms = 2677.6 M words/sec
+
+MetricType,Description,Value,Unit
+FullCorpusScan,Total_FPGA_time_ms,0.051,ms
+FullCorpusScan,Words_processed,137498,words
+FullCorpusScan,Batches,34,batches
+FullCorpusScan,Throughput,2677.6,M_words_per_sec

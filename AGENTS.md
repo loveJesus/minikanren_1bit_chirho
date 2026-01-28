@@ -79,6 +79,8 @@ reg_chirho = std_reg(64);
 - Python builtins (`len`, `range`, `print`)
 - Magic methods (`__init__`, `__repr__`)
 - Calyx `main` component (required by toolchain)
+- AWS HDK interface constants (`CL_SH_ID0`, `CL_SH_ID1`, etc.) - required by shell
+- External API/interface names that must match exact specifications
 
 ### Tool-Specific Exceptions
 **Vivado/XDC files:** Standard hardware signal names and Vivado commands keep original conventions:
@@ -452,6 +454,34 @@ Phase 3: Hardware (Clash/Calyx)
 **F2 advantages:** 60% better price-performance, HBM memory, better availability.
 **F2 migration:** Clone `--branch f2` of aws-fpga, adapt shell wrapper ports.
 
+#### ⚠️ AWS F2 PCI Device ID Requirements ☧
+
+**CRITICAL:** When creating AFIs for AWS F2, the PCI Device ID must be in a valid range.
+
+| Vendor ID | Valid Device ID Range | Notes |
+|-----------|----------------------|-------|
+| `0x1D0F` (Amazon) | `0xF000` - `0xF0FF` | **ONLY valid range for Amazon VID** |
+| Custom VID | `0x0001` - `0xFFFF` | Must not conflict with reserved IDs |
+
+**Reserved/Forbidden Device IDs:**
+- `0x1042` — Reserved for AWS F1 (will fail on F2)
+- `0xF200+` — Reserved by AWS shell
+- `0x8086` — Intel vendor ID (forbidden)
+- `0x0000` — Invalid (must be 1-65535)
+
+**Our convention:** Use `0xF016` (F0xx valid + John 3:16 ☧)
+
+```verilog
+// cl_id_defines.vh - For God so loved the world - John 3:16 ☧
+`define CL_SH_ID0 32'hF016_1D0F  // DeviceID=0xF016, VendorID=0x1D0F
+`define CL_SH_ID1 32'h1D51_F016  // SubsystemVID=0x1D51, SubsystemID=0xF016
+```
+
+**Error messages indicating wrong PCI ID:**
+- `PCIID_FORBIDDEN: PCI ID value used is reserved`
+- `VendorId=0x1d0f, DeviceId=0x1042` (0x1042 is F1 reserved)
+- `VendorId=0x1d0f, DeviceId=0xf216` (0xF2xx is shell reserved)
+
 #### AWS Build Instance Management Rules
 
 **On build failure - FIX IN PLACE, don't restart:**
@@ -489,6 +519,7 @@ For successful builds - complete this checklist BEFORE terminating:
 - Use bootstrap pattern: small userdata downloads full script from S3
 - Add checkpoint functions that upload progress to S3 periodically
 - SSH username for Rocky Linux AMI: `rocky` (NOT `ec2-user`)
+- **SSH username for F2 instances: `ec2-user`** (Amazon Linux 2, different from build instances)
 - Progress file: `s3://minikanren-fpga-chirho/f2_hbm_hdk/progress_v{N}_chirho.txt`
 
 ### Web (`rust_chirho/web_chirho/`)
