@@ -129,7 +129,7 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
     // Wider/shallower alternative to 64³
     for size_chirho in [1_000, 10_000, 50_000, 65_000] {
         group_chirho.bench_with_input(
-            BenchmarkId::new("Hierarchical65k_256²", size_chirho),
+            BenchmarkId::new("Hierarchical65kChirho_256²", size_chirho),
             &size_chirho,
             |bench_chirho, &n_chirho| {
                 let a_chirho = Hierarchical65kChirho::range_chirho(n_chirho);
@@ -145,7 +145,7 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
     // Widest/shallowest - tests AVX-512 potential
     for size_chirho in [1_000, 10_000, 50_000, 100_000, 200_000, 262_000] {
         group_chirho.bench_with_input(
-            BenchmarkId::new("Hierarchical262k_512²", size_chirho),
+            BenchmarkId::new("Hierarchical262kWideChirho_512²", size_chirho),
             &size_chirho,
             |bench_chirho, &n_chirho| {
                 let a_chirho = Hierarchical262kWideChirho::range_chirho(n_chirho);
@@ -176,7 +176,7 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
     });
 
     // Sparse 256² (non-overlapping domains via singleton)
-    group_chirho.bench_function("Hierarchical65k_256²_sparse", |bench_chirho| {
+    group_chirho.bench_function("Hierarchical65kChirho_256²_sparse", |bench_chirho| {
         // Domain A: values 0-255 (leaf 0 only)
         let a_chirho = Hierarchical65kChirho::range_chirho(256);
         // Domain B: single value far away (different root region)
@@ -188,7 +188,7 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
     });
 
     // Sparse 512² (non-overlapping domains via singleton)
-    group_chirho.bench_function("Hierarchical262k_512²_sparse", |bench_chirho| {
+    group_chirho.bench_function("Hierarchical262kWideChirho_512²_sparse", |bench_chirho| {
         // Domain A: values 0-511 (leaf 0 only)
         let a_chirho = Hierarchical262kWideChirho::range_chirho(512);
         // Domain B: single value far away (different root region)
@@ -200,13 +200,13 @@ fn bench_intersection_by_size_chirho(c_chirho: &mut Criterion) {
     });
 
     // Compare all 262K structures at same density (50%)
-    group_chirho.bench_function("Compare_262k_64³_dense", |bench_chirho| {
+    group_chirho.bench_function("CompareChirho_262k_64³_dense", |bench_chirho| {
         let a_chirho = Hierarchical256kChirho::range_chirho(131072);
         let b_chirho = Hierarchical256kChirho::range_chirho(131072);
         bench_chirho.iter(|| black_box(a_chirho.intersect_chirho(&b_chirho)))
     });
 
-    group_chirho.bench_function("Compare_262k_512²_dense", |bench_chirho| {
+    group_chirho.bench_function("CompareChirho_262k_512²_dense", |bench_chirho| {
         let a_chirho = Hierarchical262kWideChirho::range_chirho(131072);
         let b_chirho = Hierarchical262kWideChirho::range_chirho(131072);
         bench_chirho.iter(|| black_box(a_chirho.intersect_chirho(&b_chirho)))

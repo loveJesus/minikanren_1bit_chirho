@@ -1,13 +1,11 @@
 # miniKanren as 1-Bit Matrix Operations ☧
 
+> **"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."** — John 3:16
+
 [![crates.io](https://img.shields.io/crates/v/minikanren_1bit_chirho.svg)](https://crates.io/crates/minikanren_1bit_chirho)
 [![docs.rs](https://docs.rs/minikanren_1bit_chirho/badge.svg)](https://docs.rs/minikanren_1bit_chirho)
 
-> **"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."** — John 3:16
-
 ---
-
-> **See also:** [`README_CHIRHO.md`](README_CHIRHO.md) for enhanced documentation and [`AGENTS.md`](AGENTS.md) for project conventions.
 
 ## Project Vision
 
@@ -46,7 +44,8 @@ miniKanren search = sparse Boolean tensor network contraction
 |-------------|------|--------|----------|
 | `BitVec64Chirho` | 64 | 8 bytes | Small enums, flags |
 | `BitVec256Chirho` | 256 | 32 bytes | Extended enums (AVX2/AVX-512) |
-| `Hierarchical4kChirho` | 4,096 | 520 bytes | ASCII, small integers |
+| `BitVec512Chirho` | 512 | 64 bytes | Wide SIMD (AVX-512 native) |
+| `Hierarchical4kChirho` | 4,096 | 520 bytes | ASCII, small integers (64²) |
 | `Hierarchical16kChirho` | 16,384 | 2 KB | Extended ASCII, type IDs (64×256) |
 | `Hierarchical65kChirho` | 65,536 | 8 KB | Unicode BMP subset (256²) |
 | `Hierarchical256kChirho` | 262,144 | 32 KB | Unicode BMP (64³) |
@@ -103,7 +102,7 @@ Single operations (hardware): **~420 picoseconds** (single CPU cycle)
 | Domain Type | Intersect | Overhead | Notes |
 |-------------|-----------|----------|-------|
 | BitVec64 (64) | 420 ps | 1× | Single CPU cycle |
-| Hierarchical4k (4096) | 39 ns | 93× | 2-level hierarchy (64²) |
+| Hierarchical4k (4096) | 39 ns | 93× | 2-level hierarchy |
 | Hierarchical256k (262k) | 367 ns | 870× | 3-level hierarchy (64³) |
 | **Hierarchical262kWide (262k)** | **240 ns** | **570×** | 2-level (512²) — **1.5× faster** |
 | **DiffHierarchical4k (soft)** | **1.26 µs** | **3000×** | Enables gradients |
@@ -161,17 +160,6 @@ The 1-bit matrix representation is ideal for parallel hardware:
 - 64-bit unify: **4ns** (single cycle @ 250MHz)
 - 4096-value intersect: **28ns** (7 cycles)
 - Greek NT "λογος NEAR θεος": **156ns** (39 cycles, 8 results)
-
-### FPGA Projections (@ 100MHz)
-
-| Operation | Cycles | Latency | Pipeline |
-|-----------|--------|---------|----------|
-| Unify (AND) | 1 | 10ns | 100M/sec |
-| Fork (branch) | 2 | 20ns | 50M/sec |
-| Hash cons | 4 | 40ns | 25M/sec |
-| Full search step | 8 | 80ns | 12.5M/sec |
-
-**Resource estimate:** ~2000 LUTs for 8-variable, 64-value engine (fits on iCE40 HX8K)
 
 ### Application Benchmarks
 
@@ -267,6 +255,11 @@ source ~/.ghcup/env && ghcup set ghc 9.6.4
 cabal build --allow-newer
 clash --verilog MiniKanrenChirho.hs
 # Output: verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v
+
+# AWS F2 Synthesis
+cd synth_chirho/aws_f2_chirho
+./scripts/synth_minikanren_chirho.sh
+# Output: 263.9 MHz, timing met
 ```
 
 ## Project Structure
@@ -343,9 +336,9 @@ minikanren_1bit_chirho/
 | `tabling_chirho.rs` | SLG-style memoization |
 | `semiring_chirho.rs` | Bool/Prob/Tropical/Count/Log |
 | `approaches_chirho/` | Domain types for infinite miniKanren |
-| `hierarchical_chirho.rs` | 4k/256k value hierarchical domains |
+| `hierarchical_chirho.rs` | 4k/65k/256k/262k-wide hierarchical domains |
 | `diff_hierarchical_chirho.rs` | **Differentiable 4k domains (soft)** |
-| `hardware_chirho.rs` | FPGA primitives (BitVec64, CAM) |
+| `hardware_chirho.rs` | FPGA primitives (BitVec64, BitVec256, BitVec512, CAM) |
 | `optics_hw_chirho.rs` | **Hardware optics (3000× faster)** |
 | `diff_semiring_chirho.rs` | Differentiable logic with gradients |
 | `sudoku_chirho.rs` | Sudoku solver (9-bit domains) |
@@ -389,6 +382,19 @@ Haskell compiled to Verilog via Clash:
 | `MiniKanrenChirho.hs` | Core search engine |
 | `HashConsChirho.hs` | Hardware term interning |
 
+### AWS F2 FPGA (`synth_chirho/aws_f2_chirho/`)
+
+Production synthesis on AWS F2 (Versal Premium VP1802):
+
+| Resource | Used | Available | % |
+|----------|------|-----------|---|
+| LUTs | 12,847 | 2,607,360 | 0.5% |
+| FFs | 8,234 | 5,214,720 | 0.2% |
+| BRAMs | 32 | 2,856 | 1.1% |
+| HBM Channels | 8 | 32 | 25% |
+
+**Timing:** 263.9 MHz achieved (target 250 MHz), +0.21 ns slack
+
 ## Research Findings
 
 See `spec_chirho/findings_chirho/` for detailed documentation:
@@ -399,6 +405,19 @@ See `spec_chirho/findings_chirho/` for detailed documentation:
 4. **Hardware Feasibility** — Resource estimates and architecture
 5. **Open Problems** — 18 research challenges
 6. **Bibliography** — 28 references
+
+## Academic Papers
+
+The `paper_chirho/` directory contains a comprehensive paper with six component papers:
+
+| Paper | Title | Focus |
+|-------|-------|-------|
+| A | Hash Consing | Demand-driven term creation |
+| B | Tensor Networks | Composition as contraction |
+| C | GPU Acceleration | WebGPU implementation |
+| D | Rust Implementation | Production performance |
+| E | **FPGA Synthesis** | Hardware acceleration (AWS F2 verified) |
+| F | Differentiable Logic | Gradient-based learning |
 
 ## Problems Solved
 
@@ -429,6 +448,8 @@ result_chirho = compute_chirho(input_chirho)
 data TermChirho = ConsChirho TermIdChirho TermIdChirho
 unifyChirho :: DomainChirho -> DomainChirho -> DomainChirho
 ```
+
+See `AGENTS.md` for complete naming convention rules.
 
 ## References
 
