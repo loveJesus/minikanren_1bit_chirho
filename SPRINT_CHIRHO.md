@@ -40,7 +40,16 @@
 - [ ] Benchmark: Batch 1000 problems (target: 80K solves/sec)
 
 ### Goal 3: Neurosymbolic Training Hardware
-- [ ] Verify `DiffTrainChirho.hs` generates correct Verilog
+- [x] Verify `DiffTrainChirho.hs` generates correct Verilog ✅
+  - Q16.16 fixed-point (32-bit with 16 fractional bits)
+  - LFSR random number generator with Gumbel sampling
+  - Gumbel-softmax reparameterization
+  - Training FSM: Idle → LoadWeights → Sample → EvalClauses → AccumGrads → UpdateWeights → Done
+  - Temperature annealing (exponential decay)
+- [x] Verify `DiffFixedChirho.hs` generates correct Verilog ✅
+  - `soft_and_32_chirho.v` - Q16.16 soft AND (probabilistic)
+  - `soft_and_16_chirho.v` - Q8.8 soft AND (inference)
+  - `intersect_prob_domain_64_chirho.v` - Probabilistic domain intersection
 - [ ] Add attention mechanism (scaled dot-product)
 - [ ] Connect to HBM for weight storage
 - [ ] Benchmark: SAT training throughput
