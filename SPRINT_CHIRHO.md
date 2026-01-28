@@ -31,8 +31,27 @@
   - `intersect_hier_65k_chirho.v` - 256² = 65K values, 2M vars
   - **`intersect_hier_16m_chirho.v`** - **256³ = 16.7M values, ~8K vars** ← SWEET SPOT
   - `intersect_hier_134m_chirho.v` - 512³ = 134M values, ~950 vars
-- [ ] Integrate into `cl_minikanren_chirho.sv`
-- [ ] Add register interface for hierarchical ops
+- [x] Integrate into `cl_minikanren_chirho.sv` ✅
+  - Added `ctrl_hier_mode_chirho` register (3 bits)
+  - Extended FSM with `FSM_LOAD_VAR1_BURST_CHIRHO`, `FSM_LOAD_VAR2_BURST_CHIRHO`, etc.
+  - Implemented 256² (65K) hierarchical intersection with 256 parallel ANDs
+  - Level0 summary gating: skip level1 blocks where either input is zero
+- [x] Add register interface for hierarchical ops ✅
+  - `REG_HIER_MODE_CHIRHO` (0x40) - Mode selection (0-4)
+  - `REG_HIER_LEVEL_CHIRHO` (0x44) - Debug: current level
+  - `REG_BEAT_COUNT_CHIRHO` (0x48) - Debug: HBM beat counter
+- [x] Extend FSM for all hierarchy modes ✅
+  - Mode 0: Flat 256-bit (1 beat)
+  - Mode 1: 256² = 65K (257 beats, fully buffered)
+  - Mode 2: 512² = 262K (513 beats, fully buffered)
+  - Mode 3: 256³ = 16.7M (streaming: summaries buffered, level2 streamed)
+  - Mode 4: 512³ = 134M (streaming: summaries buffered, level2 streamed)
+- [x] Add streaming FSM states for 3-level hierarchies ✅
+  - `FSM_LOAD_SUMMARIES_CHIRHO` - Load level0 + level1 for both vars
+  - `FSM_STREAM_LOAD_L2_V1/V2_CHIRHO` - Stream level2 blocks
+  - `FSM_STREAM_COMPUTE_CHIRHO` - 256 parallel ANDs on current block
+  - `FSM_STREAM_STORE_CHIRHO` - Write result back to HBM
+  - `FSM_STREAM_NEXT_BLOCK_CHIRHO` - Advance with sparse skipping
 - [ ] Synthesize and create new AFI
 - [ ] Benchmark hierarchies on FPGA
 
@@ -54,6 +73,17 @@
   - `soft_and_32_chirho.v` - Q16.16 soft AND (probabilistic)
   - `soft_and_16_chirho.v` - Q8.8 soft AND (inference)
   - `intersect_prob_domain_64_chirho.v` - Probabilistic domain intersection
+- [x] Integrate `diffTrainChirho` into `cl_minikanren_chirho.sv` ✅
+  - Copied `diffTrainChirho.v` to synthesis directory
+  - Added training registers: `REG_TRAIN_MODE_CHIRHO`, `REG_TRAIN_CMD_*_CHIRHO`, `REG_TRAIN_RESP_*_CHIRHO`
+  - Instantiated as parallel engine (runs alongside search)
+  - Training cmd: learning_rate, temperature, epochs, samples, clause_count
+  - Training resp: final_loss, current_epoch, valid, done
+- [x] Add probabilistic inference modules ✅
+  - `soft_and_32_chirho` - Q16.16 soft AND (scalar)
+  - `soft_and_16_chirho` - Q8.8 soft AND (inference)
+  - `intersect_prob_domain_64_chirho` - 64-element probabilistic intersection
+  - `REG_INFER_MODE_CHIRHO` (0x70) - Boolean vs probabilistic mode
 - [ ] Add attention mechanism (scaled dot-product)
 - [ ] Connect to HBM for weight storage
 - [ ] Benchmark: SAT training throughput
@@ -199,14 +229,17 @@ Target (named constants with _CHIRHO suffix):
     - `intersect_256_chirho.v` (20 lines) - flat 256-bit
     - `intersect_64_chirho.v` (20 lines) - flat 64-bit
   - Copied key modules to `synth_chirho/aws_f2_chirho_cl/design/`
-- [ ] Integrate into cl_minikanren_chirho.sv
-  - Current: HBM FSM uses 256-bit flat domains
-  - Needed: Extend FSM to load 512² (33KB per domain)
-  - Steps:
-    1. Add `intersect_hier_262k_chirho` module instantiation
-    2. Add HIER_MODE register (0=flat256, 1=hier512²)
-    3. Extend FSM to multi-beat HBM reads (512 beats for full domain)
-    4. Wire hierarchical result to resp_wire_chirho
+- [x] Integrate into cl_minikanren_chirho.sv ✅
+  - Extended FSM to support multi-beat HBM reads for hierarchical domains
+  - Added states: `FSM_LOAD_VAR1_BURST_CHIRHO`, `FSM_LOAD_VAR2_BURST_CHIRHO`,
+    `FSM_COMPUTE_HIER_CHIRHO`, `FSM_STORE_BURST_CHIRHO`
+  - Implemented 256² (65K) domain buffers using BRAM arrays
+  - 256 parallel 256-bit AND operations for level1 intersection
+  - Level0 gating: if summary bit is 0, skip the level1 block entirely
+  - Updated `cl_minikanren_chirho_defines.vh` with:
+    - `HIER_MODE_*_CHIRHO` constants for mode selection
+    - `REG_*_CHIRHO` register address constants
+    - `DOMAIN_SIZE_*_CHIRHO` and `BEATS_*_CHIRHO` for each hierarchy level
 
 ---
 

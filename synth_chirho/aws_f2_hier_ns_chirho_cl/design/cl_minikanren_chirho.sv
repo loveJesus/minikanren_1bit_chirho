@@ -1138,56 +1138,50 @@ if (EN_HBM) begin : HBM_ENGINE
     // This runs combinatorially while FSM handles sequencing
     // ========================================================================
     genvar gi_chirho;
-    generate
-        for (gi_chirho = 0; gi_chirho < 256; gi_chirho = gi_chirho + 1) begin : hier_level1_intersect_chirho
-            // Only intersect if both level0 bits indicate non-empty blocks
-            wire level0_active_chirho = hier_65k_1_level0_chirho[gi_chirho] &
-                                        hier_65k_2_level0_chirho[gi_chirho];
+    for (gi_chirho = 0; gi_chirho < 256; gi_chirho = gi_chirho + 1) begin : hier_level1_intersect_chirho
+        // Only intersect if both level0 bits indicate non-empty blocks
+        wire level0_active_chirho = hier_65k_1_level0_chirho[gi_chirho] &
+                                    hier_65k_2_level0_chirho[gi_chirho];
 
-            // Gated intersection: if either level0 bit is 0, result is 0
-            always_ff @(posedge clk_main_a0) begin
-                if (fsm_state_chirho == FSM_COMPUTE_HIER_CHIRHO) begin
-                    if (level0_active_chirho) begin
-                        hier_65k_result_level1_chirho[gi_chirho] <=
-                            hier_65k_1_level1_chirho[gi_chirho] & hier_65k_2_level1_chirho[gi_chirho];
-                    end else begin
-                        hier_65k_result_level1_chirho[gi_chirho] <= 256'b0;
-                    end
+        // Gated intersection: if either level0 bit is 0, result is 0
+        always_ff @(posedge clk_main_a0) begin
+            if (fsm_state_chirho == FSM_COMPUTE_HIER_CHIRHO) begin
+                if (level0_active_chirho) begin
+                    hier_65k_result_level1_chirho[gi_chirho] <=
+                        hier_65k_1_level1_chirho[gi_chirho] & hier_65k_2_level1_chirho[gi_chirho];
+                end else begin
+                    hier_65k_result_level1_chirho[gi_chirho] <= 256'b0;
                 end
             end
         end
-    endgenerate
+    end  // hier_level1_intersect_chirho
 
     // ========================================================================
     // Streaming Level2 Intersection (256 parallel 256-bit ANDs for current block)
     // Used by 3-level hierarchies (256³, 512³) in streaming mode
     // ========================================================================
     genvar gj_chirho;
-    generate
-        for (gj_chirho = 0; gj_chirho < 256; gj_chirho = gj_chirho + 1) begin : hier_level2_stream_intersect_chirho
-            // Compute intersection of current level2 block
-            always_ff @(posedge clk_main_a0) begin
-                if (fsm_state_chirho == FSM_STREAM_COMPUTE_CHIRHO) begin
-                    hier_16m_result_level2_block_chirho[gj_chirho] <=
-                        hier_16m_1_level2_block_chirho[gj_chirho] & hier_16m_2_level2_block_chirho[gj_chirho];
-                end
+    for (gj_chirho = 0; gj_chirho < 256; gj_chirho = gj_chirho + 1) begin : hier_level2_stream_intersect_chirho
+        // Compute intersection of current level2 block
+        always_ff @(posedge clk_main_a0) begin
+            if (fsm_state_chirho == FSM_STREAM_COMPUTE_CHIRHO) begin
+                hier_16m_result_level2_block_chirho[gj_chirho] <=
+                    hier_16m_1_level2_block_chirho[gj_chirho] & hier_16m_2_level2_block_chirho[gj_chirho];
             end
         end
-    endgenerate
+    end  // hier_level2_stream_intersect_chirho
 
     // Also compute level1 summary updates during streaming
-    generate
-        for (gj_chirho = 0; gj_chirho < 256; gj_chirho = gj_chirho + 1) begin : hier_level1_summary_update_chirho
-            always_ff @(posedge clk_main_a0) begin
-                if (fsm_state_chirho == FSM_LOAD_SUMMARIES_CHIRHO &&
-                    beat_counter_chirho == (beats_required_chirho * 2) - 1) begin
-                    // Intersect level1 summaries
-                    hier_16m_result_level1_chirho[gj_chirho] <=
-                        hier_16m_1_level1_chirho[gj_chirho] & hier_16m_2_level1_chirho[gj_chirho];
-                end
+    for (gj_chirho = 0; gj_chirho < 256; gj_chirho = gj_chirho + 1) begin : hier_level1_summary_update_chirho
+        always_ff @(posedge clk_main_a0) begin
+            if (fsm_state_chirho == FSM_LOAD_SUMMARIES_CHIRHO &&
+                beat_counter_chirho == (beats_required_chirho * 2) - 1) begin
+                // Intersect level1 summaries
+                hier_16m_result_level1_chirho[gj_chirho] <=
+                    hier_16m_1_level1_chirho[gj_chirho] & hier_16m_2_level1_chirho[gj_chirho];
             end
         end
-    endgenerate
+    end  // hier_level1_summary_update_chirho
 
     // AXI4 read channel
     assign hbm_axi4_bus_chirho.arid    = 6'b0;
