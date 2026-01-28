@@ -182,7 +182,15 @@ Target (named constants with _CHIRHO suffix):
     - `intersect_512_chirho.v` (20 lines) - flat 512-bit
     - `intersect_256_chirho.v` (20 lines) - flat 256-bit
     - `intersect_64_chirho.v` (20 lines) - flat 64-bit
+  - Copied key modules to `synth_chirho/aws_f2_chirho_cl/design/`
 - [ ] Integrate into cl_minikanren_chirho.sv
+  - Current: HBM FSM uses 256-bit flat domains
+  - Needed: Extend FSM to load 512² (33KB per domain)
+  - Steps:
+    1. Add `intersect_hier_262k_chirho` module instantiation
+    2. Add HIER_MODE register (0=flat256, 1=hier512²)
+    3. Extend FSM to multi-beat HBM reads (512 beats for full domain)
+    4. Wire hierarchical result to resp_wire_chirho
 
 ---
 
