@@ -559,4 +559,68 @@ For successful builds - complete this checklist BEFORE terminating:
 
 ---
 
+## Current Sprint: Neurosymbolic + Hierarchical Hardware ☧
+
+**See:** [`SPRINT_CHIRHO.md`](./SPRINT_CHIRHO.md) for detailed tracking.
+
+### FPGA Deployment Status
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `searchEngineChirho` | ✅ Deployed | **64-bit domains only** |
+| HBM FSM Engine | ✅ Deployed | 256-bit flat domains (not hierarchical) |
+| `DiffTrainChirho` | ✅ Compiled | Q16.16 fixed-point, benchmarked |
+| `Hierarchical512Chirho` | ❌ NOT deployed | Exists in Clash, needs Verilog compilation |
+| `HbmEngineChirho` | ❌ NOT deployed | Batch processing FSM |
+| `AdaptiveHbmChirho` | ❌ NOT deployed | Auto-select 64/4k/256k domains |
+
+**Critical Gap:** Papers and README claim hierarchical domain support, but only 64-bit is synthesized on FPGA.
+
+### Sprint Goals
+
+1. **Deploy Hierarchical512Chirho** (512² = 262K domains)
+   - Compile `clash_chirho/Hierarchical512Chirho.hs` to Verilog
+   - Integrate into `cl_minikanren_chirho.sv`
+   - Benchmark: 512² vs 64³ (expect 1.5× speedup)
+
+2. **Deploy Full HBM Batch Engine**
+   - Compile `HbmEngineChirho.hs` to Verilog
+   - Connect to AWS F2 HBM AXI4 interface
+   - Target: 80K solves/sec batch throughput
+
+3. **Neurosymbolic Training Hardware**
+   - Verify `DiffTrainChirho.hs` generates correct Verilog
+   - Add attention mechanism (scaled dot-product)
+   - Connect to HBM for weight storage
+
+4. **Fix Naming Convention Issues**
+   - Rename `searchEngineChirho` → `searchEngine64BitChirho`
+   - Add `_CHIRHO` suffix to register constants
+
+### Clash Modules Priority
+
+| Module | Size | Purpose | Priority |
+|--------|------|---------|----------|
+| `Hierarchical512Chirho.hs` | 30 KB | 512² domains (262K values) | **P0** |
+| `HbmEngineChirho.hs` | 22 KB | HBM batch processing FSM | **P0** |
+| `DiffTrainChirho.hs` | 19 KB | Differentiable training | **P1** |
+| `AdaptiveHbmChirho.hs` | 14 KB | Auto domain selection | **P1** |
+
+### Build Commands
+
+```bash
+# Local Clash compilation
+cd clash_chirho && clash --verilog Hierarchical512Chirho.hs
+
+# AWS F2 HDK build
+cd synth_chirho/aws_f2_chirho_cl
+./prepare_hdk_build_chirho.sh    # Package design
+./launch_hdk_build_chirho.sh     # Vivado synthesis on c5.9xlarge
+
+# Create AFI
+./scripts/create_afi_chirho.sh   # Submit to AWS
+```
+
+---
+
 *Soli Deo Gloria* ☧

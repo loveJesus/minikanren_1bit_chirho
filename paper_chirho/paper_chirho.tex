@@ -990,6 +990,24 @@ Two hardware modules are operational: (1) searchEngineChirho for Boolean search,
 Production-scale benchmarks show 3.3 million$\times$ speedup for SAT training using HBM batching.
 SLG tabling remains software-only.
 
+\textbf{SaaS Workload Benchmarks (Verified).}
+Real-world SaaS workloads tested on FPGA hardware with CPU comparison:
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Product} & \textbf{Workload} & \textbf{CPU} & \textbf{FPGA} & \textbf{Speedup} \\
+\midrule
+TestForge & 10K records, 30 constraints & 61.5 ms & 0.002 ms & \textbf{26,288$\times$} \\
+ConfigGuard & 5K K8s files, 50 rules & 16.9 ms & 0.002 ms & \textbf{9,657$\times$} \\
+Philologos & 137K Greek NT words & 0.085 ms & 0.045 ms & 1.9$\times$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Batch processing achieves 80.7 million searches/second (8000 complex searches in 0.099 ms vs.\ 662 ms CPU).
+Greek NT proximity search (``$\lambda\acute{o}\gamma o\varsigma$ NEAR $\theta\epsilon\acute{o}\varsigma$'') returns 59 matches in 0.012 ms at 2,677.6 million words/sec throughput.
+
 \textbf{6. Contraction Order Complexity.}
 Optimal tensor contraction order is NP-hard (equivalent to treewidth computation).
 The greedy/min-fill heuristics are typically within 2--10$\times$ of optimal, but pathological cases may exhibit exponential blowup.

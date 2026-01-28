@@ -172,6 +172,44 @@ The 1-bit matrix representation is ideal for parallel hardware:
 | N-Queens 12 (count 14,200) | 50ms | **3.8ms** | **13×** | 64-bit domains |
 | N-Queens 20 (find one) | — | **1.5ms** | — | Scales to 32×32 |
 
+### SaaS Product Benchmarks (Verified on AWS F2)
+
+Real-world SaaS workloads tested on FPGA hardware with CPU comparison.
+**Note:** These benchmarks use 64-bit domains (BitVec64). The newer 256² and 512² hierarchical structures (1.5× faster) are Rust-only and pending FPGA integration.
+
+| Product | Workload | CPU | FPGA | Speedup |
+|---------|----------|-----|------|---------|
+| **TestForge** | 10K records, 30 constraints | 61.5 ms | 0.002 ms | **26,288×** |
+| **ConfigGuard** | 5K K8s files, 50 rules | 16.9 ms | 0.002 ms | **9,657×** |
+| **Philologos** | Full NT corpus (137K words) | 0.085 ms | 0.045 ms | **1.9×** |
+| **RegexCraft** | Email RFC regex synthesis | 538 ms | — | — |
+
+**SaaS Categories Benchmarked:**
+- **TestForge**: Constraint-based test data generation (FK, uniqueness)
+- **RegexCraft**: Regex synthesis from positive/negative examples
+- **ConfigGuard**: K8s/Terraform/Helm validation with cross-refs
+- **Philologos**: Biblical manuscript and linguistic analysis
+- **Gradient**: Differentiable/soft logic with Gumbel-softmax
+
+### Batch Processing (Verified)
+
+| Metric | CPU | FPGA Batch | Speedup |
+|--------|-----|------------|---------|
+| 8000 complex searches | 662 ms | **0.099 ms** | **6,679×** |
+| Searches/second | 12,078 | **80.7 million** | — |
+
+### Greek NT Proximity Searches (Verified ☧)
+
+| Search | Matches | CPU | FPGA |
+|--------|---------|-----|------|
+| θεός (God) | 1,307 | 0.085 ms | 0.045 ms |
+| Χριστός within 8 of Ἰησοῦς | 234 | 0.087 ms | 0.085 ms |
+| λόγος NEAR θεός | 59 | 98 ms (1K×) | 0.012 ms |
+
+**Throughput:** 2,677.6 million words/sec on Greek NT corpus (137,498 words).
+
+**Key Insight:** 230 of 527 Χριστός occurrences (44%) appear within 3 words of Ἰησοῦς.
+
 ### vs egg (E-Graphs)
 
 The native e-graph (`egraph_native_chirho`) uses bit-parallel operations vs egg's pointer-based approach:
