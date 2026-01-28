@@ -266,20 +266,23 @@ engineStepChirho stChirho cmdChirho = (stChirho', respChirho)
       , respDomainsChirho = engDomainsChirho stChirho'
       }
 
--- | Top-level search engine (synthesizable)
-{-# ANN searchEngineChirho
+-- | Top-level 64-bit search engine (synthesizable)
+-- NOTE: This is the LEGACY 64-bit engine. For larger domains, use:
+--   - intersect_hier_262k_chirho (512² = 262K values)
+--   - intersect_hier_65k_chirho (256² = 65K values)
+{-# ANN searchEngine64BitChirho
   (Synthesize
-    { t_name   = "searchEngineChirho"
+    { t_name   = "searchEngine64BitChirho"
     , t_inputs = [PortName "clk", PortName "rst", PortName "enChirho", PortName "cmdChirho"]
     , t_output = PortName "respChirho"
     }) #-}
-searchEngineChirho
+searchEngine64BitChirho
   :: Clock System
   -> Reset System
   -> Enable System
   -> Signal System SearchCmdChirho
   -> Signal System SearchRespChirho
-searchEngineChirho clkChirho rstChirho enChirho =
+searchEngine64BitChirho clkChirho rstChirho enChirho =
   exposeClockResetEnable (mealy engineStepChirho initEngineChirho) clkChirho rstChirho enChirho
 
 -------------------------------------------------------------------------------

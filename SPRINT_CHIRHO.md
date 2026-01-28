@@ -55,7 +55,10 @@
 - [ ] Benchmark: SAT training throughput
 
 ### Goal 4: Fix Naming Convention Issues
-- [ ] Rename `searchEngineChirho` → `searchEngine64BitChirho`
+- [x] Rename `searchEngineChirho` → `searchEngine64BitChirho` ✅
+  - Updated MiniKanrenChirho.hs TopEntity annotation
+  - Regenerated searchEngine64BitChirho.v
+  - Updated cl_minikanren_chirho.sv module instantiation
 - [ ] Add `_CHIRHO` suffix to register constants
 - [ ] Update papers to clarify deployed vs. planned features
 - [ ] Update README with accurate capability matrix

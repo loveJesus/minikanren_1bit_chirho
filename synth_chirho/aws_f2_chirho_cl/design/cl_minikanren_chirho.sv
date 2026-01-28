@@ -765,11 +765,12 @@ if (EN_HBM) begin : HBM_ENGINE
 end : HBM_ENGINE
 else begin : LEGACY_ENGINE
 
-    // Legacy register-based engine (no HBM)
+    // Legacy 64-bit register-based engine (no HBM)
     // NOTE: Port names .clk and .rst are Clash-generated standard clock/reset ports
     // and retain their original Clash names per AGENTS.md convention. Custom ports
     // (enChirho, cmdChirho, respChirho) use the Chirho suffix per project naming.
-    searchEngineChirho u_engine_chirho (
+    // For larger domains, use hierarchical modules: intersect_hier_262k_chirho (512²)
+    searchEngine64BitChirho u_engine_64bit_chirho (
         .clk        (clk_engine_chirho),
         .rst        (engine_rst_chirho),
         .enChirho   (ctrl_enable_chirho),
