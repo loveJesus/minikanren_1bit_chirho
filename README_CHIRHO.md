@@ -38,6 +38,44 @@ miniKanren search = sparse Boolean tensor network contraction
 | Soft logic | Semiring generalization (Bool/Prob/Tropical/Count) |
 | **Differentiable domains** | **Soft hierarchical (probabilities instead of bits)** |
 
+## Theoretical Contribution: Relational Search IS Tensor Contraction
+
+miniKanren relational search **is** sparse Boolean tensor contraction—not as implementation, but as mathematical identity.
+
+**The distinction matters:**
+
+| Weak Claim (Engineering) | Strong Claim (Mathematics) |
+|--------------------------|---------------------------|
+| "miniKanren can be implemented using bitmaps" | "miniKanren search IS tensor contraction" |
+| Any Turing-complete system can implement any other | There is an isomorphism of mathematical structures |
+| Pragmatic speedup | Reveals hidden algebraic structure |
+
+**The mathematical fusion:**
+
+1. **A variable with finite domain** IS a dimension in a tensor space
+2. **A k-ary relation** IS a Boolean tensor of rank k: `R(x₁,...,xₖ) ↔ T[v₁,...,vₖ] ∈ {0,1}`
+3. **Relational composition** IS tensor contraction: joining on variable x = summing over index x
+4. **The stream of solutions** IS an enumeration of nonzero tensor entries
+
+This parallels how matrix multiplication IS function composition in the category of linear maps—the algebraic structure was always there, hidden in the operational definition.
+
+**What makes this non-obvious:**
+
+Traditional miniKanren semantics are defined operationally (substitutions, streams, interleaving). The tensor structure is *hidden* in these definitions. Our contribution is recognizing that:
+
+> A miniKanren search state IS a point in a Boolean tensor space indexed by variable domains.
+
+**Connections revealed by this framing:**
+
+| Problem Domain | Same Mathematical Structure |
+|----------------|----------------------------|
+| miniKanren search | Tensor network contraction |
+| Database join ordering | Same NP-hard problem |
+| Quantum circuit simulation | Same NP-hard problem |
+| Weighted model counting | Same semiring structure |
+
+The tensor view explains *why* hardware acceleration works: SIMD, GPU tensor cores, and FPGA systolic arrays are designed for exactly this algebraic structure.
+
 ## Domain Types
 
 | Domain Type | Size | Memory | Use Case |

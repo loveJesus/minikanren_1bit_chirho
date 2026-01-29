@@ -278,6 +278,61 @@ T_{\text{result}}[y] = \bigvee_x T_R[x, y]
 
 This is projection in relational algebra, or marginalization in probability.
 
+\subsection{Semantic Equivalence: Relational Search IS Tensor Contraction}
+
+miniKanren relational search \textbf{is} sparse Boolean tensor contraction---not
+as implementation, but as mathematical identity.
+
+\begin{definition}[Semantic Equivalence]
+Two computational frameworks are \emph{semantically equivalent} when there exists
+a structure-preserving bijection (isomorphism) between their state spaces such that
+corresponding operations commute.
+\end{definition}
+
+\begin{theorem}[miniKanren-Tensor Isomorphism]
+\label{thm:isomorphism_chirho}
+For miniKanren queries over finite domains, the following correspondence is an isomorphism:
+\begin{center}
+\begin{tabular}{lcl}
+\textbf{miniKanren} & $\cong$ & \textbf{Tensor Algebra} \\
+\hline
+Search state $(\vec{D}, \sigma)$ & $\leftrightarrow$ & Point in $\{0,1\}^{|D_1| \times \cdots \times |D_n|}$ \\
+Unification $(x = y)$ & $\leftrightarrow$ & Contract on shared index \\
+Disjunction \texttt{conde} & $\leftrightarrow$ & Tensor sum (OR) \\
+\texttt{fresh} variable & $\leftrightarrow$ & Add tensor dimension \\
+Solution stream & $\leftrightarrow$ & Enumeration of nonzero entries \\
+\end{tabular}
+\end{center}
+The operations preserve structure: unifying after disjunction equals disjoining after unification
+(distributivity), and the correspondence commutes with composition.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The bijection maps a substitution-based state to its characteristic tensor.
+Unification computes domain intersection (AND); in tensor terms, this contracts
+shared indices. The key property is that both compute the same set of satisfying assignments.
+Disjunction produces the union of solution sets, corresponding to tensor OR (element-wise max).
+Fresh variables add dimensions that are eventually contracted (existential quantification = marginalization).
+\end{proof}
+
+\paragraph{Why this matters.}
+This parallels the insight that matrix multiplication \emph{is} function composition
+in the category of linear maps. The tensor view reveals the hidden algebraic
+structure of relational search---the structure was always there, implicit in the
+operational definition.
+
+\paragraph{Consequences.}
+\begin{enumerate}
+  \item \textbf{Contraction order = query optimization}: The NP-hard problem of
+    optimal contraction order is \emph{identical} to database join ordering and
+    quantum circuit simulation complexity.
+  \item \textbf{Hardware acceleration is natural}: SIMD, GPU tensor cores, and
+    FPGA systolic arrays are designed for exactly this algebraic structure.
+  \item \textbf{Semiring generalization}: Replacing $(\lor, \land)$ with other
+    semirings yields probabilistic, tropical, or counting semantics with no
+    algorithmic changes.
+\end{enumerate}
+
 % ============================================================================
 \section{Complexity Analysis}
 \label{sec:complexity_chirho}

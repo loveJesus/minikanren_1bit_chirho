@@ -15,6 +15,15 @@
 // limitations under the License.
 // ============================================================================
 
+// ============================================================================
+// NAMING CONVENTION NOTE (per AGENTS.md):
+// This is an AWS HDK file with standard AXI interface naming (hbm_araddr,
+// hbm_awaddr, etc.). These signals are EXEMPT from _chirho suffix requirement
+// per AGENTS.md "Tool-Specific Exceptions" section:
+//   "AWS HDK interface constants (CL_SH_ID0, CL_SH_ID1, etc.) - required by shell"
+// Custom signals added by our project DO use _chirho suffix.
+// For God so loved the world - John 3:16 ☧
+// ============================================================================
 
 // ============================================================================
 // CL_HBM_AXI4
