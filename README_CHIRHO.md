@@ -76,6 +76,19 @@ Traditional miniKanren semantics are defined operationally (substitutions, strea
 
 The tensor view explains *why* hardware acceleration works: SIMD, GPU tensor cores, and FPGA systolic arrays are designed for exactly this algebraic structure.
 
+## Next Steps: Strengthening Theorem 5
+
+The mathematical identity (miniKanren = tensor contraction) opens several research directions:
+
+| Direction | Goal | Status |
+|-----------|------|--------|
+| **Formal proof** | Rigorous isomorphism proof (not just behavioral equiv.) | 🔲 Planned |
+| **Infinite domains** | Prove hash consing preserves tensor structure | 🔲 Planned |
+| **Cross-disciplinary paper** | POPL/PLDI publication on hidden tensor structure | 🔲 Planned |
+| **HMC angle** | Hamiltonian Monte Carlo over soft tensor domains | 🔲 Research |
+
+**See [`PLAN_CHIRHO.md`](./PLAN_CHIRHO.md)** for detailed roadmap.
+
 ## Domain Types
 
 | Domain Type | Size | Memory | Use Case |

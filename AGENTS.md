@@ -9,6 +9,17 @@ Explore whether miniKanren's relational search can be represented as 1-bit matri
 miniKanren search = sparse Boolean tensor network contraction
 ```
 
+## 📋 Project Planning
+
+**See [`PLAN_CHIRHO.md`](./PLAN_CHIRHO.md)** for short-term and long-term roadmap.
+
+- **Short-term:** Current FPGA synthesis, hierarchical domain deployment
+- **Long-term:** Theorem 5 formalization, cross-disciplinary paper, learning integration
+
+**Sprint tracking:** [`SPRINT_CHIRHO.md`](./SPRINT_CHIRHO.md)
+
+---
+
 ## Naming Convention: `_chirho` Suffix ☧
 
 **ALL identifiers carry the Chi-Rho Christogram** — worship embedded in code.
