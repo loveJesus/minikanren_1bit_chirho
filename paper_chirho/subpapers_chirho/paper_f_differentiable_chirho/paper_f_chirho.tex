@@ -115,6 +115,17 @@ Log & $+$ & $\text{log-sum-exp}$ \\
 \end{tabular}
 \end{center}
 
+\paragraph{Three Modes of Operation.}
+We distinguish three complementary modes, each suited to different tasks:
+
+\begin{enumerate}
+  \item \textbf{Exact Boolean/semiring algebra} (tensor contraction): Deterministic computation---prove constraints or compute weights exactly. This is the foundation (Papers A--E).
+
+  \item \textbf{Differentiable relaxation} (soft semiring + Gumbel-softmax): For \emph{training} heuristics and neural-guided choices. Fast gradients but approximate semantics away from Boolean endpoints. \emph{This paper's primary focus.}
+
+  \item \textbf{Probabilistic inference by sampling} (Trace MH / HMC over random streams): For unbiased probabilistic semantics and continuous variables. Hamiltonian Monte Carlo is where AD/tensor machinery truly shines---future work (Section~\ref{sec:sampling_inference_chirho}).
+\end{enumerate}
+
 The probability semiring is \emph{differentiable}: gradients flow through multiplication and addition.
 By parameterizing relation tuples with learnable weights and relaxing Boolean to probability, we enable end-to-end training of logic programs.
 
@@ -423,8 +434,11 @@ where $\tau_0$ is initial temperature, $\tau_{\min}$ is final temperature, $t$ i
 \label{fig:annealing_chirho}
 \end{figure}
 
-\subsection{Gumbel-Softmax for Discrete Choices}
+\subsection{Gumbel-Softmax for Discrete Choices (Training Mode)}
 \label{subsec:gumbel_chirho}
+
+Gumbel-softmax is a \emph{training} technique: it enables gradient-based learning of discrete choices.
+It does \emph{not} provide unbiased probabilistic inference---for that, see Section~\ref{sec:sampling_inference_chirho}.
 
 For branch selection in \texttt{conde}, we use Gumbel-Softmax~\cite{gumbel_softmax_chirho}:
 \[
@@ -446,6 +460,68 @@ For inference requiring hard decisions with soft gradients:
 \end{itemize}
 
 This enables discrete constraint satisfaction during inference while training with continuous gradients.
+
+% ============================================================================
+\section{Sampling-Based Inference (Future Work)}
+\label{sec:sampling_inference_chirho}
+% ============================================================================
+
+Gumbel-softmax is a \emph{training} technique: it provides biased gradients for learning discrete parameters.
+For \emph{unbiased probabilistic inference}---computing posterior distributions over program outputs---we need sampling methods.
+
+\subsection{Trace-Based MCMC}
+\label{subsec:trace_mcmc_chirho}
+
+Following lightweight probabilistic programming approaches~\cite{lightweight_mcmc_chirho}, we can view a logic program's random choices as a \emph{trace}:
+\[
+\text{trace} = [(c_1, v_1), (c_2, v_2), \ldots, (c_n, v_n)]
+\]
+where $c_i$ is a choice point (e.g., branch in \texttt{conde}) and $v_i$ is the selected value.
+
+\textbf{Metropolis-Hastings} over traces:
+\begin{enumerate}
+  \item Run program with current trace, computing likelihood
+  \item Propose new trace by modifying one choice
+  \item Accept/reject based on likelihood ratio
+\end{enumerate}
+
+This provides unbiased samples from the posterior over program outputs given observations.
+
+\subsection{Hamiltonian Monte Carlo for Continuous Variables}
+\label{subsec:hmc_chirho}
+
+For programs with continuous variables (e.g., soft domain weights), Hamiltonian Monte Carlo (HMC) is preferable.
+HMC uses gradient information to propose moves, achieving much better mixing than random-walk MH.
+
+\textbf{Key insight}: The tensor contraction view makes HMC natural.
+The log-probability of a solution is a differentiable function of continuous parameters (soft weights).
+AD through tensor contraction provides the gradients HMC needs.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Method} & \textbf{Use Case} & \textbf{AD Required?} \\
+\midrule
+Gumbel-softmax & Training discrete choices & Yes (for $\nabla$) \\
+Trace MH & Discrete probabilistic inference & No \\
+HMC & Continuous probabilistic inference & Yes (for $\nabla \log p$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Connection to Guanxi}
+\label{subsec:guanxi_chirho}
+
+The tensor contraction framework connects to Guanxi-style constraint propagation:
+\begin{itemize}
+  \item \textbf{Domains as distributions}: Instead of hard bitmasks, probability distributions over values
+  \item \textbf{Constraints as soft factors}: Instead of Boolean satisfaction, likelihood functions
+  \item \textbf{Inference as marginalization}: Tensor contraction computes marginal distributions
+\end{itemize}
+
+HMC over the continuous relaxation provides a principled way to sample from the posterior---this is where the AD/tensor machinery of this paper truly shines.
+
+\textbf{Status}: Trace MH and HMC are \emph{future work}. The current implementation focuses on Gumbel-softmax training (Sections~\ref{subsec:gumbel_chirho}--\ref{subsec:ste_chirho}).
 
 % ============================================================================
 \section{Comparison to Scallop and DeepProbLog}
@@ -608,6 +684,16 @@ For LLM vocabularies (30K--100K tokens) and large constraint problems, \texttt{H
 The differentiable operations described in this paper have been implemented in
 synthesizable hardware (Clash HDL), enabling production-scale training acceleration.
 
+\paragraph{Evidence and Artifacts.}
+\begin{itemize}
+  \item \textbf{Source code}: \texttt{clash\_chirho/DiffTrainChirho.hs} (820 lines)
+  \item \textbf{Synthesis report}: \texttt{synth\_chirho/aws\_f2\_chirho\_cl/reports/synthesis\_chirho.rpt}
+  \item \textbf{Benchmark script}: \texttt{synth\_chirho/aws\_f2\_chirho\_cl/benchmarks\_chirho/diff\_train\_bench\_chirho.py}
+  \item \textbf{CPU baseline}: Rust implementation in \texttt{rust\_chirho/src/diff\_semiring\_chirho.rs}
+\end{itemize}
+
+\textbf{What was measured}: CPU times are Rust \texttt{criterion} benchmarks. FPGA times are cycle counts from simulation multiplied by clock period (4ns @ 250MHz). Speedup = CPU time / FPGA time.
+
 \subsection{Fixed-Point Arithmetic}
 \label{subsec:fixed_point_chirho}
 
@@ -753,6 +839,11 @@ Our approach extends this to constraint solving and learning.
 Jang et al.~\cite{gumbel_softmax_chirho} and Maddison et al.~\cite{concrete_chirho} introduced differentiable discrete sampling.
 We apply this to branch selection in relational programs.
 
+\textbf{Probabilistic Programming and Sampling.}
+Lightweight MCMC~\cite{lightweight_mcmc_chirho} introduced trace-based inference for probabilistic programs.
+Hamiltonian Monte Carlo~\cite{hmc_chirho} uses gradients for efficient sampling.
+Our tensor framework provides gradients naturally, making HMC a promising direction (Section~\ref{sec:sampling_inference_chirho}).
+
 % ============================================================================
 \section{Conclusion}
 \label{sec:conclusion_chirho}
@@ -803,7 +894,7 @@ This is Paper F of a six-paper suite:
 % ============================================================================
 
 \bibliographystyle{plain}
-\bibliography{paper_f_chirho}
+\bibliography{../../paper_chirho}
 
 \vspace{1em}
 \begin{center}
