@@ -1,17 +1,22 @@
 #!/bin/bash
 # ============================================================================
 # For God so loved the world - John 3:16 ☧
-# v4 Build: Hierarchical Domains (256², 512², 256³, 512³) + Neurosymbolic
-# Based on working v3 pattern
+# v5 Build: Floorplanned + 200MHz
+# Changes from v4:
+#   - 200MHz clock (A1 recipe) instead of 250MHz (A2)
+#   - Floorplanning: spread logic across SLR0/SLR1/SLR2
+#   - Dropped 256³ (16M) module to reduce congestion
+#
+# Floorplan:
+#   SLR0: 256² (65K) + Neurosymbolic + HBM interface (MCMC use case)
+#   SLR1: 64-bit + 512² (262K)
+#   SLR2: 512³ (134M) isolated
 #
 # MEMORY REQUIREMENT: 256GB RAM recommended (r5.8xlarge)
-# - c5.9xlarge (72GB) fails with OOM during Timing Optimization
-# - r5.4xlarge (128GB) marginal - uses 123GB+ during build
-# - Vivado uses ~120GB+ peak for this design with HBM IP
 # ============================================================================
 set -x
-exec > >(tee /var/log/hdk-build-v4-chirho.log) 2>&1
-echo "=== v4 Hierarchical + Neurosymbolic Build Starting ☧ ==="
+exec > >(tee /var/log/hdk-build-v5-chirho.log) 2>&1
+echo "=== v5 Floorplanned + 200MHz Build Starting ☧ ==="
 date
 
 export HOME=/root
@@ -35,8 +40,8 @@ mkdir -p $CL_DIR/build/scripts
 mkdir -p $CL_DIR/build/checkpoints
 mkdir -p $CL_DIR/build/constraints
 
-# Download v4 design files (hierarchical + neurosymbolic)
-aws s3 cp s3://$BUCKET_CHIRHO/f2_hbm_hdk/design_v4_hier_ns_chirho.tar.gz /tmp/design.tar.gz
+# Download v5 design files (same as v4 but we'll exclude 16M in encrypt.tcl)
+aws s3 cp s3://$BUCKET_CHIRHO/f2_hbm_hdk/design_v5_floorplan_chirho.tar.gz /tmp/design.tar.gz
 tar -xzf /tmp/design.tar.gz -C $CL_DIR/design/
 
 # Copy HBM wrappers from example
@@ -50,15 +55,15 @@ if [ -f "$HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh" ]; then
     cp $HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh $CL_DIR/design/
 fi
 
-# VALID PCI ID: 0xF004 (AWS valid range 0xF000-0xF0FF, v4 = 04)
+# VALID PCI ID: 0xF005 (AWS valid range 0xF000-0xF0FF, v5 = 05)
 cat > "$CL_DIR/design/cl_id_defines.vh" << 'IDEOF'
 // ============================================================================
 // For God so loved the world - John 3:16 ☧
-// v4: Hierarchical Domains + Neurosymbolic
-// PCI DeviceID 0xF004 = valid AWS range + version 4
+// v5: Floorplanned + 200MHz
+// PCI DeviceID 0xF005 = valid AWS range + version 5
 // ============================================================================
-`define CL_SH_ID0 32'hF004_1D0F
-`define CL_SH_ID1 32'h1D51_F004
+`define CL_SH_ID0 32'hF005_1D0F
+`define CL_SH_ID1 32'h1D51_F005
 IDEOF
 
 # Build script symlinks
@@ -70,7 +75,7 @@ ln -sf $HDK_DIR/common/shell_stable/build/scripts/build_level_1_cl.tcl .
 # Create synthesis TCL
 cat > "$CL_DIR/build/scripts/synth_cl_minikanren_chirho.tcl" << 'SYNTHTCL'
 source ${HDK_SHELL_DIR}/build/scripts/synth_cl_header.tcl
-print "Reading user source codes - v4 Hierarchical + Neurosymbolic ☧"
+print "Reading user source codes - v5 Floorplanned + 200MHz ☧"
 
 read_verilog -sv ${src_post_enc_dir}/cl_dram_dma_pkg.sv
 read_verilog -sv [glob ${src_post_enc_dir}/*.sv]
@@ -128,7 +133,7 @@ read_xdc [ list \
 set_property PROCESSING_ORDER LATE [get_files cl_synth_user.xdc]
 set_property PROCESSING_ORDER LATE [get_files cl_timing_user.xdc]
 
-print "Starting synthesizing customer design ${CL} - v4 ☧"
+print "Starting synthesizing customer design ${CL} - v5 ☧"
 update_compile_order -fileset sources_1
 synth_design -mode out_of_context \
              -top ${CL} \
@@ -138,22 +143,68 @@ synth_design -mode out_of_context \
 source ${HDK_SHELL_DIR}/build/scripts/synth_cl_footer.tcl
 SYNTHTCL
 
+# ============================================================================
+# FLOORPLANNING CONSTRAINTS - v5 ☧
+# Spread logic across SLRs to reduce routing congestion
+# ============================================================================
 cat > "$CL_DIR/build/constraints/cl_synth_user.xdc" << 'XDCEOF'
-# No special synthesis constraints for v4
+# ============================================================================
+# v5 Floorplanning Constraints ☧
+# SLR0: 256² (65K) + Neurosymbolic + HBM (MCMC primary use case)
+# SLR1: 64-bit + 512² (262K)
+# SLR2: 512³ (134M) isolated
+# ============================================================================
+
+# SLR0: MCMC floor - 256² hierarchical + neurosymbolic + HBM interface
+# HBM is physically in SLR0, so HBM-related logic stays here
+create_pblock pblock_slr0_chirho
+add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *hier_65k*}]
+add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *soft_and*}]
+add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *diff_train*}]
+add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *prob_domain*}]
+add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *hbm*}]
+resize_pblock [get_pblocks pblock_slr0_chirho] -add {SLR0}
+
+# SLR1: Pure logic domains - 64-bit + 512² (262K)
+create_pblock pblock_slr1_chirho
+add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *64bit*}]
+add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *searchEngine64*}]
+add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *hier_262k*}]
+add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *intersect_512*}]
+resize_pblock [get_pblocks pblock_slr1_chirho] -add {SLR1}
+
+# SLR2: Large domain isolated - 512³ (134M)
+create_pblock pblock_slr2_chirho
+add_cells_to_pblock [get_pblocks pblock_slr2_chirho] [get_cells -hierarchical -filter {NAME =~ *hier_134m*}]
+resize_pblock [get_pblocks pblock_slr2_chirho] -add {SLR2}
+
+# Allow SLR crossing for AXI/control paths but prefer local placement
+set_property IS_SOFT TRUE [get_pblocks pblock_slr0_chirho]
+set_property IS_SOFT TRUE [get_pblocks pblock_slr1_chirho]
+set_property IS_SOFT TRUE [get_pblocks pblock_slr2_chirho]
 XDCEOF
 
 cat > "$CL_DIR/build/constraints/cl_timing_user.xdc" << 'XDCEOF'
+# ============================================================================
+# v5 Timing Constraints ☧
+# Target: 200MHz (5ns period) - relaxed from v4's 250MHz
+# ============================================================================
+
 # HBM async paths - CDC handled by HBM IP synchronizers
 set_false_path -through [get_pins -hierarchical -filter {NAME =~ *HBM*AXI*WREADY*}]
 set_false_path -through [get_pins -hierarchical -filter {NAME =~ *HBM*AXI*RREADY*}]
 set_false_path -through [get_pins -hierarchical -filter {NAME =~ *HBM*AXI*BREADY*}]
+
+# SLR crossing paths get extra slack (1-2ns crossing delay expected)
+set_multicycle_path 2 -setup -through [get_pins -hierarchical -filter {NAME =~ *SLR*}] -quiet
+set_multicycle_path 1 -hold -through [get_pins -hierarchical -filter {NAME =~ *SLR*}] -quiet
 XDCEOF
 
 cat > "$CL_DIR/build/constraints/small_shell_cl_pnr_user.xdc" << 'PNREOF'
-# No special P&R constraints for v4
+# v5 P&R constraints - floorplanning handled in synth constraints
 PNREOF
 
-# encrypt.tcl - CRITICAL: list ALL v4 design files
+# encrypt.tcl - v5: EXCLUDE 256³ (16M) module
 cat > "$CL_DIR/build/scripts/encrypt.tcl" << 'ENCEOF'
 if {[llength [glob -nocomplain -dir $src_post_enc_dir *]] != 0} {
   eval file delete -force [glob $src_post_enc_dir/*]
@@ -181,11 +232,11 @@ file copy -force $CL_DIR/design/cl_minikanren_chirho.sv $src_post_enc_dir
 file copy -force $CL_DIR/design/searchEngineChirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/searchEngine64BitChirho.v $src_post_enc_dir
 
-# Hierarchical intersection modules
+# Hierarchical intersection modules - NOTE: 16M EXCLUDED for v5
 file copy -force $CL_DIR/design/intersect_512_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_hier_65k_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_hier_262k_chirho.v $src_post_enc_dir
-file copy -force $CL_DIR/design/intersect_hier_16m_chirho.v $src_post_enc_dir
+# EXCLUDED: file copy -force $CL_DIR/design/intersect_hier_16m_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_hier_134m_chirho.v $src_post_enc_dir
 
 # Neurosymbolic modules
@@ -195,27 +246,30 @@ file copy -force $CL_DIR/design/soft_and_16_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_prob_domain_64_chirho.v $src_post_enc_dir
 ENCEOF
 
-echo "Starting v4 HDK build (250 MHz, A2 recipe)..."
+# ============================================================================
+# v5 BUILD: 200MHz (A1 recipe) instead of 250MHz (A2)
+# ============================================================================
+echo "Starting v5 HDK build (200 MHz, A1 recipe, floorplanned)..."
 python3 $HDK_DIR/common/shell_stable/build/scripts/aws_build_dcp_from_cl.py \
     --cl cl_minikanren_chirho \
     --aws_clk_gen \
-    --clock_recipe_a A2 \
-    2>&1 | tee $WORK_DIR_CHIRHO/build_v4_chirho.log
+    --clock_recipe_a A1 \
+    2>&1 | tee $WORK_DIR_CHIRHO/build_v5_chirho.log
 
 cd $CL_DIR/build
 DCP_TAR=$(find . -name "*.Developer_CL.tar" 2>/dev/null | head -1)
 if [ -n "$DCP_TAR" ]; then
-    aws s3 cp "$DCP_TAR" s3://$BUCKET_CHIRHO/f2_hbm_hdk/dcp_v4_hier_ns/
-    echo "v4_hier_ns_success" > /tmp/build_status.txt
+    aws s3 cp "$DCP_TAR" s3://$BUCKET_CHIRHO/f2_hbm_hdk/dcp_v5_floorplan/
+    echo "v5_floorplan_success" > /tmp/build_status.txt
 else
-    echo "v4_hier_ns_failed" > /tmp/build_status.txt
+    echo "v5_floorplan_failed" > /tmp/build_status.txt
 fi
 
-aws s3 cp $WORK_DIR_CHIRHO/build_v4_chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v4_chirho.log
-aws s3 cp /tmp/build_status.txt s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v4_status_chirho.txt
-aws s3 cp /var/log/hdk-build-v4-chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/userdata_v4_chirho.log
+aws s3 cp $WORK_DIR_CHIRHO/build_v5_chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5_chirho.log
+aws s3 cp /tmp/build_status.txt s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5_status_chirho.txt
+aws s3 cp /var/log/hdk-build-v5-chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/userdata_v5_chirho.log
 
-echo "=== v4 Hierarchical + Neurosymbolic Build Complete ☧ ==="
+echo "=== v5 Floorplanned + 200MHz Build Complete ☧ ==="
 date
 
 # Keep instance alive for 30 min to check results, then shutdown
