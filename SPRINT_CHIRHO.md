@@ -121,7 +121,7 @@ cd clash_chirho
 clash --verilog Hierarchical512Chirho.hs
 
 # AWS F2 HDK build
-cd synth_chirho/aws_f2_chirho_cl
+cd synth_chirho/v5_aws_f2_floorplan_chirho_cl
 ./prepare_hdk_build_chirho.sh    # Package design for AWS
 ./launch_hdk_build_chirho.sh     # Run Vivado synthesis on c5.9xlarge
 
@@ -202,8 +202,8 @@ Target (named constants with _CHIRHO suffix):
 | File | Change |
 |------|--------|
 | `clash_chirho/Hierarchical512Chirho.hs` | Ensure TopEntity annotation |
-| `synth_chirho/aws_f2_chirho_cl/design/cl_minikanren_chirho.sv` | Add hierarchical engine instance |
-| `synth_chirho/aws_f2_chirho_cl/benchmarks_chirho/*.c` | Add `_CHIRHO` register constants |
+| `synth_chirho/v5_aws_f2_floorplan_chirho_cl/design/cl_minikanren_chirho.sv` | Add hierarchical engine instance |
+| `synth_chirho/v5_aws_f2_floorplan_chirho_cl/benchmarks_chirho/*.c` | Add `_CHIRHO` register constants |
 | `README.md` | Clarify deployed vs. planned |
 | `README_CHIRHO.md` | Add capability matrix |
 | `paper_chirho/paper_chirho.tex` | Add "Current Limitations" subsection |
@@ -228,7 +228,7 @@ Target (named constants with _CHIRHO suffix):
     - `intersect_512_chirho.v` (20 lines) - flat 512-bit
     - `intersect_256_chirho.v` (20 lines) - flat 256-bit
     - `intersect_64_chirho.v` (20 lines) - flat 64-bit
-  - Copied key modules to `synth_chirho/aws_f2_chirho_cl/design/`
+  - Copied key modules to `synth_chirho/v5_aws_f2_floorplan_chirho_cl/design/`
 - [x] Integrate into cl_minikanren_chirho.sv ✅
   - Extended FSM to support multi-beat HBM reads for hierarchical domains
   - Added states: `FSM_LOAD_VAR1_BURST_CHIRHO`, `FSM_LOAD_VAR2_BURST_CHIRHO`,
@@ -247,7 +247,7 @@ Target (named constants with _CHIRHO suffix):
 
 - `spec_chirho/hardware_synthesis_chirho/HBM_INTEGRATION_PLAN_CHIRHO.md` - HBM architecture
 - `clash_chirho/Hierarchical512Chirho.hs` - 512² implementation
-- `synth_chirho/aws_f2_chirho_cl/launch_hdk_build_chirho.sh` - Build script
+- `synth_chirho/v5_aws_f2_floorplan_chirho_cl/launch_hdk_build_chirho.sh` - Build script
 - `synth_chirho/RESULTS_CHIRHO.md` - Current benchmark results
 
 ---

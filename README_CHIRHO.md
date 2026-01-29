@@ -295,7 +295,7 @@ clash --verilog MiniKanrenChirho.hs
 # Output: verilog/MiniKanrenChirho.searchEngineChirho/searchEngineChirho.v
 
 # AWS F2 Synthesis
-cd synth_chirho/aws_f2_chirho
+cd synth_chirho/v5_aws_f2_floorplan_chirho_cl
 ./scripts/synth_minikanren_chirho.sh
 # Output: 263.9 MHz, timing met
 ```
@@ -320,8 +320,12 @@ minikanren_1bit_chirho/
 │   └── *.hs                       #   MiniKanrenChirho, HashConsChirho
 │
 ├── synth_chirho/                  # FPGA synthesis scripts
-│   ├── aws_f1_chirho/             #   AWS F1 (Virtex UltraScale+)
-│   └── aws_f2_chirho/             #   AWS F2 (Versal Premium) ✅ VERIFIED
+│   ├── v0_f1_synth_chirho/        #   Early F1 experiments
+│   ├── v1_aws_f1_chirho/          #   AWS F1 (incomplete)
+│   ├── v2_aws_f2_chirho/          #   AWS F2 basic (working)
+│   ├── v3_aws_f2_chirho_cl/       #   F2 CL wrapper (working)
+│   ├── v4_aws_f2_hier_ns_chirho_cl/  # Hier+Neurosym (failed routing)
+│   └── v5_aws_f2_floorplan_chirho_cl/ # ✅ Current: Floorplanned 200MHz
 │
 ├── paper_chirho/                  # Academic papers
 │   └── subpapers_chirho/          #   Component papers (A-F)
@@ -420,7 +424,7 @@ Haskell compiled to Verilog via Clash:
 | `MiniKanrenChirho.hs` | Core search engine |
 | `HashConsChirho.hs` | Hardware term interning |
 
-### AWS F2 FPGA (`synth_chirho/aws_f2_chirho/`)
+### AWS F2 FPGA (`synth_chirho/v5_aws_f2_floorplan_chirho_cl/`)
 
 Production synthesis on AWS F2 (Versal Premium VP1802):
 

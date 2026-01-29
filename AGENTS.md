@@ -436,7 +436,9 @@ Phase 3: Hardware (Clash/Calyx)
 | `clash_chirho/MiniKanrenChirho.hs` | ✅ Compiles to Verilog via Clash |
 | `calyx_chirho/tb_domain_chirho.cpp` | Verilator testbench |
 
-### AWS FPGA (`synth_chirho/aws_f1_chirho/`, `synth_chirho/aws_f2_chirho/`)
+### AWS FPGA (`synth_chirho/v5_aws_f2_floorplan_chirho_cl/`)
+
+See `synth_chirho/BUILD_HISTORY_CHIRHO.md` for version history (v0-v5).
 
 | Instance | FPGA | $/hr | AFI Compatible | Capacity |
 |----------|------|------|----------------|----------|
@@ -612,10 +614,10 @@ For successful builds - complete this checklist BEFORE terminating:
 # Local Clash compilation
 cd clash_chirho && clash --verilog Hierarchical512Chirho.hs
 
-# AWS F2 HDK build
-cd synth_chirho/aws_f2_chirho_cl
+# AWS F2 HDK build (v5 with floorplanning)
+cd synth_chirho/v5_aws_f2_floorplan_chirho_cl
 ./prepare_hdk_build_chirho.sh    # Package design
-./launch_hdk_build_chirho.sh     # Vivado synthesis on c5.9xlarge
+./launch_hdk_build_chirho.sh     # Vivado synthesis on r5.8xlarge (256GB)
 
 # Create AFI
 ./scripts/create_afi_chirho.sh   # Submit to AWS

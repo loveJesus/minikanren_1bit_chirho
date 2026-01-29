@@ -61,7 +61,7 @@ High throughput figures (e.g., 2.6B words/sec) measure **parallel bitmask compar
 
 ### Detailed Benchmark Data
 
-See: `aws_f2_chirho_cl/benchmarks_chirho/COMPREHENSIVE_BENCHMARK_REPORT_CHIRHO.md`
+See: `v3_aws_f2_chirho_cl/benchmarks_chirho/COMPREHENSIVE_BENCHMARK_REPORT_CHIRHO.md`
 
 Raw data files:
 - `benchmark_results_chirho.csv` - Core FPGA tests

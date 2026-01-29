@@ -318,8 +318,12 @@ minikanren_1bit_chirho/
 │   └── *.hs                       #   MiniKanrenChirho, HashConsChirho
 │
 ├── synth_chirho/                  # FPGA synthesis scripts
-│   ├── aws_f1_chirho/             #   AWS F1 (Virtex UltraScale+)
-│   └── aws_f2_chirho/             #   AWS F2 (Versal Premium) ✅ VERIFIED
+│   ├── v0_f1_synth_chirho/        #   Early F1 experiments
+│   ├── v1_aws_f1_chirho/          #   AWS F1 (incomplete)
+│   ├── v2_aws_f2_chirho/          #   AWS F2 basic (working)
+│   ├── v3_aws_f2_chirho_cl/       #   F2 CL wrapper (working)
+│   ├── v4_aws_f2_hier_ns_chirho_cl/  # Hier+Neurosym (failed routing)
+│   └── v5_aws_f2_floorplan_chirho_cl/ # ✅ Current: Floorplanned 200MHz
 │
 ├── paper_chirho/                  # Academic papers
 │   └── subpapers_chirho/          #   Component papers (A-F)

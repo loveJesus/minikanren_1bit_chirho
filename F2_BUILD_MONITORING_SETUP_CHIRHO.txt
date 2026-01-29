@@ -1,0 +1,133 @@
+================================================================================
+AWS F2 HBM HDK BUILD MONITORING - SETUP COMPLETE
+================================================================================
+
+BUILD INFORMATION
+-----------------
+Instance ID:        i-0290a40686b6bd84c
+Instance Type:      AWS F2 (FPGA)
+Instance IP:        100.53.84.188
+Instance State:     RUNNING
+Launch Time:        2026-01-28T00:20:38+00:00
+Expected Duration:  3-5 hours
+Start Time:         2026-01-27 19:21:51 EST
+
+S3 BUCKET
+---------
+Bucket:             s3://minikanren-fpga-chirho/
+Prefix:             f2_hbm_hdk/
+Design Upload:      design.tar.gz (9,715 bytes @ 2026-01-27 19:20:10)
+
+MONITORING SETUP
+----------------
+Two scripts have been created for monitoring:
+
+1. BACKGROUND CONTINUOUS MONITOR (RUNNING)
+   Path:             /tmp/monitor_f2_build_chirho.sh
+   Interval:         Every 10 minutes
+   Duration:         Up to 5 hours (30 checks)
+   Task ID:          b334ac9
+   Output:           /private/tmp/claude/tasks/b334ac9.output
+
+   This script will:
+   - Check instance state every 10 minutes
+   - Monitor S3 bucket for build_output_chirho.log
+   - Detect build completion via build_status_chirho.txt
+   - Display last 20 lines of build log each check
+   - Automatically stop when build completes
+
+2. MANUAL QUICK CHECK SCRIPT
+   Path:             /tmp/quick_check_f2_build_chirho.sh
+   Usage:            Run manually anytime for current status
+   Output:           Immediate status report
+
+   This script will:
+   - Show current instance state
+   - List all S3 files
+   - Display last 10 lines of build log if available
+   - Show build status if complete
+
+HOW TO USE
+----------
+OPTION A: Passive Monitoring (Recommended)
+  - Background script is already running
+  - Check every 10 minutes automatically
+  - Will stop when build completes
+  - Results saved to S3
+
+OPTION B: Manual Checks
+  - Run anytime: /tmp/quick_check_f2_build_chirho.sh
+  - Get immediate status without waiting 10 minutes
+
+OPTION C: View Background Progress
+  - View current output: cat /private/tmp/claude/tasks/b334ac9.output
+  - Shows all checks performed so far
+
+EXPECTED S3 FILES ON COMPLETION
+--------------------------------
+✓ build_status_chirho.txt       - Final status (success/error)
+✓ build_output_chirho.log       - Complete build log
+? results_hbm_chirho.tar.gz     - Built artifacts (if successful)
+? vivado_hdr_synthesis_chirho.log - Vivado synthesis log
+
+COMPLETION INDICATORS
+---------------------
+Build Success:
+  - build_status_chirho.txt exists
+  - Contains "SUCCESS" or "COMPLETE"
+  - results_hbm_chirho.tar.gz available
+
+Build Failure:
+  - build_status_chirho.txt exists
+  - Contains "ERROR" or "FAILED"
+  - Check build_output_chirho.log for details
+
+Instance Termination (unexpected):
+  - Instance state changes to "terminated"
+  - S3 may contain partial logs/artifacts
+  - Check CloudWatch for error details
+
+NEXT STEPS
+----------
+1. Check background monitoring progress periodically
+2. Use quick check script for immediate status
+3. When build completes, download results from S3
+4. Review build logs for any warnings/errors
+5. Extract results and deploy to FPGA
+
+MONITORING LOGS LOCATION
+------------------------
+Current Background Task:
+  /private/tmp/claude/tasks/b334ac9.output
+
+Manual Check Results:
+  Run: /tmp/quick_check_f2_build_chirho.sh
+
+Full Monitoring Script:
+  /tmp/monitor_f2_build_chirho.sh
+
+BUILD TIMELINE
+--------------
+2026-01-27 19:20:10 UTC    Design tarball uploaded to S3
+2026-01-27 19:20:38 UTC    Instance launched
+2026-01-27 19:21:51 UTC    Monitoring started
+2026-01-27 19:21:51 UTC    First check: No build log yet (initializing)
+2026-01-27 19:31:51 UTC    Check #2 (expected, 10 min interval)
+2026-01-27 19:41:51 UTC    Check #3
+...
+Expected completion: 2026-01-27 22:20 - 00:20 UTC (3-5 hours from instance launch)
+
+IMPORTANT NOTES
+---------------
+- SSH is blocked by security group - monitoring via S3 only
+- Instance is healthy (no status check failures)
+- Design tarball was successfully uploaded
+- Build should have started automatically on instance launch
+- Monitor will run continuously for up to 5 hours
+- All checks are logged to the background task output
+- You can view progress anytime without interrupting monitoring
+
+================================================================================
+Monitor Status: ACTIVE AND RUNNING
+Next Scheduled Check: 2026-01-27 19:31:51 EST (in ~10 minutes)
+================================================================================
