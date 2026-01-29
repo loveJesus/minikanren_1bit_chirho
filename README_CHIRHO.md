@@ -38,6 +38,18 @@ miniKanren search = sparse Boolean tensor network contraction
 | Soft logic | Semiring generalization (Bool/Prob/Tropical/Count) |
 | **Differentiable domains** | **Soft hierarchical (probabilities instead of bits)** |
 
+## Three Modes of Operation
+
+The tensor framework supports three complementary modes:
+
+| Mode | Operation | Use Case | AD Required? |
+|------|-----------|----------|--------------|
+| **Exact** | Boolean tensor contraction | Prove constraints, compute exactly | No |
+| **Training** | Gumbel-softmax relaxation | Learn heuristics, neural guidance | Yes (for ∇) |
+| **Inference** | Trace MH / HMC sampling | Unbiased probabilistic semantics | Yes (for ∇log p) |
+
+**Key insight**: Gumbel-softmax is for *training* (biased gradients for learning discrete choices). For *unbiased probabilistic inference*, use sampling methods like HMC—this is where AD/tensor machinery truly shines.
+
 ## Theoretical Contribution: Relational Search IS Tensor Contraction
 
 miniKanren relational search **is** sparse Boolean tensor contraction—not as implementation, but as mathematical identity.
