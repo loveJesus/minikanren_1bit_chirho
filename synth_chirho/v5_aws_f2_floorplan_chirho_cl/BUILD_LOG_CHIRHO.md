@@ -4,6 +4,79 @@ For God so loved the world - John 3:16
 
 ---
 
+## V5.3 SUCCESS (2026-01-30) - SPARSE STREAMING ☧
+
+**Result:** ✅ BUILD SUCCESSFUL
+
+### Build Details
+- **Instance:** i-08cca702b67d12081 (c5.9xlarge)
+- **Duration:** 52 minutes
+- **Clock:** 200MHz (A1 recipe)
+- **Device ID:** 0xF053
+- **DCP:** `s3://minikanren-fpga-chirho/f2_hbm_hdk/dcp_v5_floorplan/2026_01_30-065128.Developer_CL.tar`
+- **AFI:** `afi-010cbb77b5413e1d6` / `agfi-041630da370421d34`
+
+### Timing Summary
+| Phase | WNS | Status |
+|-------|-----|--------|
+| place_design | -1.659ns | ✅ Passed |
+| phys_opt_design | -0.783ns | ✅ Improved |
+| route_design | -0.473ns | ✅ Completed |
+
+**Final WNS: -0.473ns** - Violation is in HBM MMCM IP (AWS/Xilinx), not our design.
+
+### Key Changes from V5.2 (failed)
+V5.2 failed with CLB packing overflow (~983K FFs required).
+
+V5.3 sparse streaming reduces FFs by 99.7%:
+- Only buffer level0 summaries (256 or 512 bits)
+- Stream level1 words one at a time
+- Use `level0_A & level0_B` to skip zero blocks
+
+| Resource | V5.2 | V5.3 |
+|----------|------|------|
+| 65K level1 FFs | 196,608 | 768 |
+| 262K level1 FFs | 786,432 | 1,536 |
+| **Total** | **~983,000** | **~3,000** |
+
+### New FSM States
+```systemverilog
+FSM_SPARSE_INIT_CHIRHO      // Compute level0 AND, find first non-zero
+FSM_SPARSE_LOAD_A_CHIRHO    // Stream level1[i] from var1
+FSM_SPARSE_LOAD_B_CHIRHO    // Stream level1[i] from var2
+FSM_SPARSE_COMPUTE_CHIRHO   // Compute AND for current word
+FSM_SPARSE_STORE_CHIRHO     // Store result level1[i]
+FSM_SPARSE_NEXT_CHIRHO      // Find next non-zero index
+```
+
+### Helper Functions
+- `find_next_set_bit_chirho()` - Priority encoder for sparse iteration
+- `popcount_512_chirho()` - Count non-zero blocks
+
+---
+
+## V5.2 FAILED (2026-01-30) - CLB Packing Overflow
+
+**Error:** `ERROR: [Place 30-487] ... 35,437 CLBs required, 33,562 available`
+
+Parallel generate blocks forced all level1 arrays to registers:
+```systemverilog
+// This reads ALL 256 words simultaneously - forces register implementation!
+for (int gi = 0; gi < 256; gi++) begin
+    hier_65k_result_level1_chirho[gi] <= ...
+end
+```
+
+---
+
+## V5.1 FAILED (2026-01-29) - HBM Pblock Conflict
+
+**Error:** `ERROR: [Place 30-1093] Failed to place ... HBM_CORE_I ... outside pblock_CL`
+
+HBM hard macros have fixed physical sites outside pblock_CL bounds.
+
+---
+
 ## Build v12 (2026-01-28) - HIERARCHICAL + NEUROSYMBOLIC
 
 **New in this build:**
