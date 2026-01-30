@@ -1,22 +1,27 @@
 #!/bin/bash
 # ============================================================================
 # For God so loved the world - John 3:16 ☧
-# v5 Build: Floorplanned + 200MHz
+# v5.3 Build: SPARSE STREAMING - reduces FFs from ~983K to ~3K (2026-01-30)
+#
+# Changes from v5.2 (FAILED - CLB packing overflow):
+#   - Replace parallel level1 arrays with sparse streaming
+#   - Only buffer level0 summaries (256/512 bits)
+#   - Stream level1 one word at a time, skip zero blocks
+#   - find_next_set_bit_chirho + popcount_512_chirho helpers
+#
+# Changes from v5.1:
+#   - REMOVED custom pblocks (caused HBM placement failure)
+#   - Added HBM exclusion from shell's pblock_CL
+#
 # Changes from v4:
 #   - 200MHz clock (A1 recipe) instead of 250MHz (A2)
-#   - Floorplanning: spread logic across SLR0/SLR1/SLR2
-#   - Dropped 256³ (16M) module to reduce congestion
+#   - Removed 16M/134M streaming FSMs (caused timing failures)
 #
-# Floorplan:
-#   SLR0: 256² (65K) + Neurosymbolic + HBM interface (MCMC use case)
-#   SLR1: 64-bit + 512² (262K)
-#   SLR2: 512³ (134M) isolated
-#
-# MEMORY REQUIREMENT: 256GB RAM recommended (r5.8xlarge)
+# MEMORY REQUIREMENT: 72GB RAM sufficient (c5.9xlarge)
 # ============================================================================
 set -x
 exec > >(tee /var/log/hdk-build-v5-chirho.log) 2>&1
-echo "=== v5 Floorplanned + 200MHz Build Starting ☧ ==="
+echo "=== v5.3 SPARSE STREAMING Build Starting ☧ ==="
 date
 
 export HOME=/root
@@ -55,15 +60,15 @@ if [ -f "$HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh" ]; then
     cp $HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh $CL_DIR/design/
 fi
 
-# VALID PCI ID: 0xF005 (AWS valid range 0xF000-0xF0FF, v5 = 05)
+# VALID PCI ID: 0xF053 (AWS valid range 0xF000-0xF0FF, v5.3 = 53)
 cat > "$CL_DIR/design/cl_id_defines.vh" << 'IDEOF'
 // ============================================================================
 // For God so loved the world - John 3:16 ☧
-// v5: Floorplanned + 200MHz
-// PCI DeviceID 0xF005 = valid AWS range + version 5
+// v5.3: Sparse Streaming + 200MHz
+// PCI DeviceID 0xF053 = valid AWS range + version 5.3
 // ============================================================================
-`define CL_SH_ID0 32'hF005_1D0F
-`define CL_SH_ID1 32'h1D51_F005
+`define CL_SH_ID0 32'hF053_1D0F
+`define CL_SH_ID1 32'h1D51_F053
 IDEOF
 
 # Build script symlinks
@@ -75,7 +80,7 @@ ln -sf $HDK_DIR/common/shell_stable/build/scripts/build_level_1_cl.tcl .
 # Create synthesis TCL
 cat > "$CL_DIR/build/scripts/synth_cl_minikanren_chirho.tcl" << 'SYNTHTCL'
 source ${HDK_SHELL_DIR}/build/scripts/synth_cl_header.tcl
-print "Reading user source codes - v5 Floorplanned + 200MHz ☧"
+print "Reading user source codes - v5.3 Sparse Streaming + 200MHz ☧"
 
 read_verilog -sv ${src_post_enc_dir}/cl_dram_dma_pkg.sv
 read_verilog -sv [glob ${src_post_enc_dir}/*.sv]
@@ -133,7 +138,7 @@ read_xdc [ list \
 set_property PROCESSING_ORDER LATE [get_files cl_synth_user.xdc]
 set_property PROCESSING_ORDER LATE [get_files cl_timing_user.xdc]
 
-print "Starting synthesizing customer design ${CL} - v5 ☧"
+print "Starting synthesizing customer design ${CL} - v5.3 ☧"
 update_compile_order -fileset sources_1
 synth_design -mode out_of_context \
              -top ${CL} \
@@ -144,44 +149,19 @@ source ${HDK_SHELL_DIR}/build/scripts/synth_cl_footer.tcl
 SYNTHTCL
 
 # ============================================================================
-# FLOORPLANNING CONSTRAINTS - v5 ☧
-# Spread logic across SLRs to reduce routing congestion
+# FLOORPLANNING CONSTRAINTS - v5.1 ☧
+# NO pblock constraints - HBM IP has fixed placement sites
+# Let SSI_SpreadLogic_high directive handle placement naturally
 # ============================================================================
 cat > "$CL_DIR/build/constraints/cl_synth_user.xdc" << 'XDCEOF'
 # ============================================================================
-# v5 Floorplanning Constraints ☧
-# SLR0: 256² (65K) + Neurosymbolic + HBM (MCMC primary use case)
-# SLR1: 64-bit + 512² (262K)
-# SLR2: 512³ (134M) isolated
+# v5.1 Constraints (2026-01-29) ☧
+# NO pblock - HBM IP requires fixed hardware sites that conflict with pblocks
+# Vivado SSI_SpreadLogic_high directive handles placement
 # ============================================================================
 
-# SLR0: MCMC floor - 256² hierarchical + neurosymbolic + HBM interface
-# HBM is physically in SLR0, so HBM-related logic stays here
-create_pblock pblock_slr0_chirho
-add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *hier_65k*}]
-add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *soft_and*}]
-add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *diff_train*}]
-add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *prob_domain*}]
-add_cells_to_pblock [get_pblocks pblock_slr0_chirho] [get_cells -hierarchical -filter {NAME =~ *hbm*}]
-resize_pblock [get_pblocks pblock_slr0_chirho] -add {SLR0}
-
-# SLR1: Pure logic domains - 64-bit + 512² (262K)
-create_pblock pblock_slr1_chirho
-add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *64bit*}]
-add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *searchEngine64*}]
-add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *hier_262k*}]
-add_cells_to_pblock [get_pblocks pblock_slr1_chirho] [get_cells -hierarchical -filter {NAME =~ *intersect_512*}]
-resize_pblock [get_pblocks pblock_slr1_chirho] -add {SLR1}
-
-# SLR2: Large domain isolated - 512³ (134M)
-create_pblock pblock_slr2_chirho
-add_cells_to_pblock [get_pblocks pblock_slr2_chirho] [get_cells -hierarchical -filter {NAME =~ *hier_134m*}]
-resize_pblock [get_pblocks pblock_slr2_chirho] -add {SLR2}
-
-# Allow SLR crossing for AXI/control paths but prefer local placement
-set_property IS_SOFT TRUE [get_pblocks pblock_slr0_chirho]
-set_property IS_SOFT TRUE [get_pblocks pblock_slr1_chirho]
-set_property IS_SOFT TRUE [get_pblocks pblock_slr2_chirho]
+# No pblock constraints - HBM hard macros have fixed locations
+# The SSI_SpreadLogic_high directive will spread logic across SLRs automatically
 XDCEOF
 
 cat > "$CL_DIR/build/constraints/cl_timing_user.xdc" << 'XDCEOF'
@@ -201,10 +181,34 @@ set_multicycle_path 1 -hold -through [get_pins -hierarchical -filter {NAME =~ *S
 XDCEOF
 
 cat > "$CL_DIR/build/constraints/small_shell_cl_pnr_user.xdc" << 'PNREOF'
-# v5 P&R constraints - floorplanning handled in synth constraints
+# ============================================================================
+# v5.2 P&R constraints - HBM exclusion from pblock_CL ☧
+# ============================================================================
+# Problem: AWS shell creates pblock_CL for reconfigurable CL region.
+# HBM IP has fixed physical sites (BLI_HBM_APB_INTF) at chip edges,
+# which are outside pblock_CL bounds. We must exclude HBM from pblock_CL.
+# ============================================================================
+
+# Remove HBM cells from the CL pblock
+# HBM hard macros must be placed at their fixed physical locations
+# These sites are at the bottom of the VU47P die, outside pblock_CL
+set hbm_cells [get_cells -hierarchical -filter {NAME =~ *HBM*} -quiet]
+if {[llength $hbm_cells] > 0} {
+    # Clear any pblock assignment for HBM cells
+    foreach cell $hbm_cells {
+        set pblock [get_pblocks -of_objects $cell -quiet]
+        if {[llength $pblock] > 0} {
+            remove_cells_from_pblock $pblock $cell
+        }
+    }
+}
+
+# Aggressive optimization directives for timing
+set_property STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE AggressiveExplore [get_runs impl_1]
+set_property STEPS.ROUTE_DESIGN.ARGS.DIRECTIVE AggressiveExplore [get_runs impl_1]
 PNREOF
 
-# encrypt.tcl - v5: EXCLUDE 256³ (16M) module
+# encrypt.tcl - v5 REVISED: Only flat + 65K + 262K (no 16M/134M)
 cat > "$CL_DIR/build/scripts/encrypt.tcl" << 'ENCEOF'
 if {[llength [glob -nocomplain -dir $src_post_enc_dir *]] != 0} {
   eval file delete -force [glob $src_post_enc_dir/*]
@@ -232,12 +236,11 @@ file copy -force $CL_DIR/design/cl_minikanren_chirho.sv $src_post_enc_dir
 file copy -force $CL_DIR/design/searchEngineChirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/searchEngine64BitChirho.v $src_post_enc_dir
 
-# Hierarchical intersection modules - NOTE: 16M EXCLUDED for v5
+# Hierarchical intersection modules - V5: ONLY 65K + 262K
 file copy -force $CL_DIR/design/intersect_512_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_hier_65k_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_hier_262k_chirho.v $src_post_enc_dir
-# EXCLUDED: file copy -force $CL_DIR/design/intersect_hier_16m_chirho.v $src_post_enc_dir
-file copy -force $CL_DIR/design/intersect_hier_134m_chirho.v $src_post_enc_dir
+# EXCLUDED in V5: 16M and 134M streaming hierarchies (timing failures)
 
 # Neurosymbolic modules
 file copy -force $CL_DIR/design/diffTrainChirho.v $src_post_enc_dir
@@ -247,9 +250,9 @@ file copy -force $CL_DIR/design/intersect_prob_domain_64_chirho.v $src_post_enc_
 ENCEOF
 
 # ============================================================================
-# v5 BUILD: 200MHz (A1 recipe) instead of 250MHz (A2)
+# v5.3 BUILD: 200MHz (A1 recipe), Sparse Streaming (~3K FFs instead of ~983K)
 # ============================================================================
-echo "Starting v5 HDK build (200 MHz, A1 recipe, floorplanned)..."
+echo "Starting v5.3 HDK build (200 MHz, A1 recipe, sparse streaming)..."
 python3 $HDK_DIR/common/shell_stable/build/scripts/aws_build_dcp_from_cl.py \
     --cl cl_minikanren_chirho \
     --aws_clk_gen \
@@ -269,7 +272,7 @@ aws s3 cp $WORK_DIR_CHIRHO/build_v5_chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/bu
 aws s3 cp /tmp/build_status.txt s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5_status_chirho.txt
 aws s3 cp /var/log/hdk-build-v5-chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/userdata_v5_chirho.log
 
-echo "=== v5 Floorplanned + 200MHz Build Complete ☧ ==="
+echo "=== v5.3 Sparse Streaming + 200MHz Build Complete ☧ ==="
 date
 
 # Keep instance alive for 30 min to check results, then shutdown
