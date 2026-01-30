@@ -15,7 +15,8 @@ use super::trait_chirho::{
 /// - Rayon for parallel search (optional)
 #[derive(Debug)]
 pub struct CpuBackendChirho {
-    /// Whether to use parallel search
+    /// Whether to use parallel search (reserved for rayon integration)
+    #[allow(dead_code)]
     parallel_chirho: bool,
 }
 
