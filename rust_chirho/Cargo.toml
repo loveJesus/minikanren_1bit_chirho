@@ -36,6 +36,13 @@ getrandom = { version = "0.2", features = ["js"], optional = true }
 # Parallel processing (optional)
 rayon = { version = "1.10", optional = true }
 
+# Logging (optional, for FPGA backend diagnostics)
+log = { version = "0.4", optional = true }
+
+# Memory-mapped I/O for FPGA PCIe (Linux only, optional)
+[target.'cfg(target_os = "linux")'.dependencies]
+memmap2 = { version = "0.9", optional = true }
+
 [dev-dependencies]
 # For benchmarking on stable
 criterion = "0.5"
@@ -133,6 +140,11 @@ parallel_chirho = ["rayon"]
 # Enable Verilator co-simulation for hardware verification (P5-00)
 # Requires: verilator installed, searchEngineChirho.v compiled
 verilator_chirho = []
+
+# Enable FPGA backend (AWS F2 via PCIe)
+# Requires: Running on F2 instance with AFI loaded
+# Only links memmap2 on Linux (where FPGA hardware exists)
+fpga_chirho = ["log", "memmap2"]
 
 # ============================================================================
 # Category-theoretic extensions (Kmett-inspired)

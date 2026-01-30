@@ -90,6 +90,9 @@
 // Module hierarchy ☧
 // ============================================================================
 
+/// Pluggable solver backends (CPU/FPGA)
+pub mod backend_chirho;
+
 /// Reference implementation: traditional stream-based miniKanren
 pub mod reference_chirho;
 
@@ -144,6 +147,16 @@ pub mod verify_hw_chirho;
 // ============================================================================
 
 // These allow `use minikanren_1bit_chirho::TermStoreChirho` to keep working
+
+// Backend types (pluggable CPU/FPGA)
+pub use backend_chirho::{
+    create_backend_chirho, create_cpu_backend_chirho,
+    BackendConfigChirho, BackendInfoChirho, ConstraintChirho, CpuBackendChirho,
+    DomainVecChirho, SolutionChirho, SolverBackendChirho,
+};
+
+#[cfg(feature = "fpga_chirho")]
+pub use backend_chirho::{create_fpga_backend_chirho, FpgaBackendChirho};
 
 // Core types (from reference implementation)
 pub use reference_chirho::terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};

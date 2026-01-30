@@ -1,11 +1,18 @@
 //! Build script for miniKanren 1-bit ☧
 //!
-//! Handles Verilator compilation when the `verilator_chirho` feature is enabled.
+//! - Generates FPGA register constants from Verilog defines (fpga_chirho feature)
+//! - Handles Verilator compilation (verilator_chirho feature)
 //!
 //! "Except the Lord build the house, they labour in vain that build it" — Psalm 127:1
 
 fn main() {
-    // Only run Verilator build if the feature is enabled
+    // Generate FPGA register constants from Verilog
+    #[cfg(feature = "fpga_chirho")]
+    {
+        generate_fpga_regs_chirho();
+    }
+
+    // Verilator build if enabled
     #[cfg(feature = "verilator_chirho")]
     {
         build_verilator_chirho();
@@ -14,6 +21,138 @@ fn main() {
     // Always rerun if build.rs changes
     println!("cargo:rerun-if-changed=build.rs");
 }
+
+/// Generate Rust constants from cl_minikanren_chirho_defines.vh
+#[cfg(feature = "fpga_chirho")]
+fn generate_fpga_regs_chirho() {
+    use std::env;
+    use std::fs;
+    use std::path::Path;
+
+    let out_dir_chirho = env::var("OUT_DIR").unwrap();
+    let dest_path_chirho = Path::new(&out_dir_chirho).join("fpga_regs_chirho.rs");
+
+    // Try to find the Verilog defines file
+    let vh_paths_chirho = [
+        "../synth_chirho/v5_aws_f2_floorplan_chirho_cl/design/cl_minikanren_chirho_defines.vh",
+        "../../synth_chirho/v5_aws_f2_floorplan_chirho_cl/design/cl_minikanren_chirho_defines.vh",
+        "../synth_chirho/v4_aws_f2_hier_ns_chirho_cl/design/cl_minikanren_chirho_defines.vh",
+    ];
+
+    let vh_content_chirho = vh_paths_chirho
+        .iter()
+        .find_map(|path| {
+            if Path::new(path).exists() {
+                println!("cargo:rerun-if-changed={}", path);
+                fs::read_to_string(path).ok()
+            } else {
+                None
+            }
+        });
+
+    let mut output_chirho = String::new();
+    output_chirho.push_str("// Auto-generated from cl_minikanren_chirho_defines.vh ☧\n");
+    output_chirho.push_str("// Do not edit - run `cargo build` to regenerate from Verilog\n");
+    output_chirho.push_str("// Source of truth: synth_chirho/.../cl_minikanren_chirho_defines.vh\n\n");
+
+    if let Some(content_chirho) = vh_content_chirho {
+        // Parse `define REG_NAME_CHIRHO 8'hXX lines
+        for line_chirho in content_chirho.lines() {
+            if let Some(reg_chirho) = parse_verilog_define_chirho(line_chirho) {
+                output_chirho.push_str(&reg_chirho);
+            }
+        }
+        println!("cargo:warning=Generated FPGA registers from Verilog defines ☧");
+    } else {
+        // Fallback: use hardcoded defaults if .vh not found
+        println!("cargo:warning=Verilog defines not found, using fallback register addresses");
+        output_chirho.push_str("// Fallback values (Verilog file not found at build time)\n\n");
+        output_chirho.push_str(FALLBACK_REGS_CHIRHO);
+    }
+
+    fs::write(&dest_path_chirho, output_chirho).unwrap();
+}
+
+#[cfg(feature = "fpga_chirho")]
+fn parse_verilog_define_chirho(line_chirho: &str) -> Option<String> {
+    let line_chirho = line_chirho.trim();
+
+    // Match: `define REG_NAME_CHIRHO 8'hXX // comment
+    // Also match OP_ and HBM_ defines
+    if !line_chirho.starts_with("`define REG_")
+        && !line_chirho.starts_with("`define OP_")
+        && !line_chirho.starts_with("`define HBM_")
+    {
+        return None;
+    }
+
+    let parts_chirho: Vec<&str> = line_chirho.split_whitespace().collect();
+    if parts_chirho.len() < 3 {
+        return None;
+    }
+
+    let name_chirho = parts_chirho[1];
+    let value_str_chirho = parts_chirho[2];
+
+    // Parse Verilog literal: 8'h00, 32'h1234, etc.
+    let value_chirho = parse_verilog_literal_chirho(value_str_chirho)?;
+
+    // Extract comment if present
+    let comment_chirho = if let Some(idx) = line_chirho.find("//") {
+        line_chirho[idx + 2..].trim()
+    } else {
+        ""
+    };
+
+    Some(format!(
+        "/// {}\npub const {}: u64 = 0x{:X};\n\n",
+        comment_chirho, name_chirho, value_chirho
+    ))
+}
+
+#[cfg(feature = "fpga_chirho")]
+fn parse_verilog_literal_chirho(s_chirho: &str) -> Option<u64> {
+    // Handle formats: 8'h00, 32'hDEADBEEF, 34'h0_0000_0000, 4'h0
+    if let Some(idx) = s_chirho.find("'h") {
+        let hex_part_chirho = &s_chirho[idx + 2..];
+        let clean_chirho: String = hex_part_chirho.chars().filter(|c| c.is_ascii_hexdigit()).collect();
+        u64::from_str_radix(&clean_chirho, 16).ok()
+    } else if let Some(idx) = s_chirho.find("'d") {
+        let dec_part_chirho = &s_chirho[idx + 2..];
+        dec_part_chirho.parse().ok()
+    } else if let Some(idx) = s_chirho.find("'b") {
+        let bin_part_chirho = &s_chirho[idx + 2..];
+        let clean_chirho: String = bin_part_chirho.chars().filter(|c| *c == '0' || *c == '1').collect();
+        u64::from_str_radix(&clean_chirho, 2).ok()
+    } else {
+        // Plain number
+        s_chirho.parse().ok()
+    }
+}
+
+#[cfg(feature = "fpga_chirho")]
+const FALLBACK_REGS_CHIRHO: &str = r#"
+/// Read-only version
+pub const REG_VERSION_CHIRHO: u64 = 0x00;
+/// bit0=enable, bit1=reset, bit2=hbm_mode
+pub const REG_CONTROL_CHIRHO: u64 = 0x04;
+/// bit0=done, bit1=valid, bit2=hbm_ready
+pub const REG_STATUS_CHIRHO: u64 = 0x08;
+/// cmdChirho[31:0]
+pub const REG_CMD_LO_CHIRHO: u64 = 0x10;
+/// cmdChirho[63:32]
+pub const REG_CMD_MID_CHIRHO: u64 = 0x14;
+/// cmdChirho[69:64]
+pub const REG_CMD_HI_CHIRHO: u64 = 0x18;
+/// Response registers start
+pub const REG_RESP_BASE_CHIRHO: u64 = 0x20;
+/// Hierarchical mode selection
+pub const REG_HIER_MODE_CHIRHO: u64 = 0x40;
+/// Training mode control
+pub const REG_TRAIN_MODE_CHIRHO: u64 = 0x50;
+/// Inference mode control
+pub const REG_INFER_MODE_CHIRHO: u64 = 0x70;
+"#;
 
 #[cfg(feature = "verilator_chirho")]
 fn build_verilator_chirho() {
