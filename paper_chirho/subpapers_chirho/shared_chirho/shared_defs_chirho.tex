@@ -10,64 +10,7 @@
 % ============================================================================
 
 % The Finite-Domain miniKanren Kernel
-% This precise definition is referenced by all papers to avoid ambiguity.
-
 \newcommand{\fdmk}{FD-miniKanren\xspace}  % Finite-Domain miniKanren
-
-\begin{definition}[Finite-Domain miniKanren Kernel]
-\label{def:fdmk}
-The \emph{Finite-Domain miniKanren Kernel} (\fdmk) is a subset of miniKanren
-where:
-\begin{enumerate}
-  \item Each variable $x$ has a \emph{domain} $D_x \subseteq U$ for finite universe $U$
-  \item Domains are represented as bitmasks: $D_x \in \{0,1\}^{|U|}$
-  \item Equality constraints $(x = y)$ compute domain intersection: $D_x \cap D_y$
-  \item Variable binding uses union-find with path compression
-  \item Infinite structures (lists, trees) are supported via hash-consed term IDs
-\end{enumerate}
-\end{definition}
-
-\begin{definition}[Domain]
-A \emph{domain} for variable $x$ over universe $U = \{0, 1, \ldots, n-1\}$ is a
-bitmask $D_x \in \{0,1\}^n$ where $D_x[i] = 1$ iff value $i$ is possible for $x$.
-\end{definition}
-
-\begin{definition}[Search State]
-A \emph{search state} is a tuple $(\vec{D}, \sigma)$ where $\vec{D}$ is a
-vector of domains and $\sigma$ is a union-find structure tracking variable
-equivalences.
-\end{definition}
-
-% ============================================================================
-% Key Theorems (proven once, cited in multiple papers)
-% ============================================================================
-
-\begin{theorem}[Domain Unification as AND]
-\label{thm:unify-and}
-Given state $(\vec{D}, \sigma)$ and goal $(x = y)$:
-\begin{enumerate}
-  \item Find roots: $r_x = \text{find}(\sigma, x)$, $r_y = \text{find}(\sigma, y)$
-  \item Compute intersection: $D' = D_{r_x} \land D_{r_y}$
-  \item If $D' = \vec{0}$: fail (no common values)
-  \item Otherwise: union $r_x, r_y$ in $\sigma$, set $D_{r} = D'$
-\end{enumerate}
-\end{theorem}
-
-\begin{theorem}[Relations as Tensors]
-\label{thm:relation-tensor}
-A relation $R(x_1, \ldots, x_k)$ over domains $|D_1|, \ldots, |D_k|$ is a
-sparse Boolean tensor $T_R \in \{0,1\}^{|D_1| \times \cdots \times |D_k|}$
-where $T_R[v_1, \ldots, v_k] = 1$ iff $(v_1, \ldots, v_k) \in R$.
-\end{theorem}
-
-\begin{theorem}[Composition as Contraction]
-\label{thm:composition-contraction}
-Given relations $R(x, y)$ and $S(y, z)$, their composition $(R \circ S)(x, z)$
-equals tensor contraction over $y$:
-\[
-T_{R \circ S}[i, k] = \bigvee_j (T_R[i, j] \land T_S[j, k])
-\]
-\end{theorem}
 
 % ============================================================================
 % Scope Clarification (include in each paper's introduction)
@@ -93,8 +36,8 @@ propagation core, not full structural unification.
 
 % Search
 \newcommand{\state}{(\vec{D}, \sigma)} % Search state
-\newcommand{\find}{\text{find}}        % Union-find find
-\newcommand{\union}{\text{union}}      % Union-find union
+\newcommand{\findChirho}{\text{find}}      % Union-find find
+\newcommand{\unionChirho}{\text{union}}    % Union-find union
 
 % Tensors
 \newcommand{\tensor}[1]{T_{#1}}        % Tensor for relation R
@@ -150,5 +93,10 @@ By the grace of God, this paper was developed in collaboration with Claude
 writing. Google Gemini and OpenAI's GPT-5.2 Codex provided valuable feedback
 on drafts.
 }
+
+% ============================================================================
+% Example environment (for papers that use it)
+% ============================================================================
+\newenvironment{exampleChirho}{\par\noindent\textbf{Example.}\itshape}{\par}
 
 % Soli Deo Gloria

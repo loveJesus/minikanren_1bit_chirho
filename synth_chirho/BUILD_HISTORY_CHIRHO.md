@@ -9,7 +9,117 @@
 | v2 | `v2_aws_f2_chirho/` | F2 | ✅ Working | Basic 64-bit domains |
 | v3 | `v3_aws_f2_chirho_cl/` | F2 | ✅ Working | CL wrapper, HBM integration |
 | v4 | `v4_aws_f2_hier_ns_chirho_cl/` | F2 | ❌ Failed | Routing congestion |
-| v5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | 🔄 Planned | Floorplanning + 200MHz |
+| v5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | 🔄 In Progress | No pblocks + 200MHz |
+| v5.1 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ❌ Failed | HBM pblock_CL conflict |
+| v5.2 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ❌ Failed | CLB packing overflow |
+| v5.3 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | 🔄 Pending | Sparse streaming |
+
+---
+
+## v5.2 Post-Mortem: CLB Packing Overflow
+
+### Build Details
+- **Date:** 2026-01-30
+- **Instance:** c5.9xlarge (72GB RAM)
+- **Duration:** ~1h 13m (failed during placement)
+- **Clock:** 250MHz (A2 recipe)
+
+### What Failed
+```
+ERROR: [Place 30-487] The packing of instances into a set of CLBs defined by
+       a pblock constraint could not be obeyed. There are a total of 142215
+       CLBs in the pblock, of which 33562 CLBs are available, however, the
+       unplaced instances require 35437 CLBs.
+```
+
+**Root Cause:** Parallel generate blocks force arrays to be registers, not BRAM.
+
+```systemverilog
+// This reads ALL 256 words simultaneously - forces register implementation!
+for (int gi = 0; gi < 256; gi++) begin
+    hier_65k_result_level1_chirho[gi] <=
+        hier_65k_1_level1_chirho[gi] & hier_65k_2_level1_chirho[gi];
+end
+```
+
+**Resource consumption:**
+- 65K engine: 256 × 256 bits × 3 arrays = **196,608 FFs**
+- 262K engine: 512 × 512 bits × 3 arrays = **786,432 FFs**
+- Total hierarchical buffers: **~983,000 FFs** (vs ~1.2M available in pblock_CL)
+- Plus 65,536 fanout on CE signals causing routing congestion
+
+### Fix for v5.3: Sparse Streaming
+
+**Key insight:** Use level0 summary to skip zero blocks.
+
+```
+1. Load level0_A and level0_B (256 or 512 bits each)
+2. Compute level0_result = level0_A & level0_B
+3. For each bit i where level0_result[i] == 1:
+   - Stream level1_A[i] from HBM channel 0
+   - Stream level1_B[i] from HBM channel 1
+   - Compute level1_result[i] = level1_A[i] & level1_B[i]
+   - Stream result to HBM channel 2
+4. Skip all zero blocks (no HBM access needed)
+```
+
+**Expected resource reduction:**
+
+| Component | V5.2 (parallel) | V5.3 (streaming) |
+|-----------|-----------------|------------------|
+| 65K level1 buffers | 196,608 FFs | 768 FFs |
+| 262K level1 buffers | 786,432 FFs | 1,536 FFs |
+| Index FIFO | 0 | ~512 FFs |
+| **Total** | **~983,000 FFs** | **~3,000 FFs** |
+
+**Performance (typical sparse domain, 10 bits set in level0):**
+
+| Metric | V5.2 (parallel) | V5.3 (streaming) |
+|--------|-----------------|------------------|
+| HBM reads | 1026 beats | 22 beats |
+| Compute cycles | 1 | 10 |
+| Total latency | ~7μs | **~50ns** |
+| Speedup | 1× | **140×** |
+
+---
+
+## v5.1 Post-Mortem: HBM Pblock Conflict
+
+### Build Details
+- **Date:** 2026-01-29
+- **Instance:** c5.9xlarge (72GB RAM)
+- **Duration:** ~4 minutes (failed during placement)
+- **Clock:** 200MHz (A1 recipe)
+
+### What Failed
+```
+ERROR: [Place 30-1093] Failed to place WRAPPER/CL/HBM_ENABLED.HBM_AXI4_CHIRHO/
+       HBM_PRESENT_EQ_1.HBM_WRAPPER_I/HBM_CORE_I/inst/TWO_STACK.u_hbm_top/
+       TWO_STACK_HBM.hbm_two_stack_intf/HBM_ONE_STACK_INTF<0>_INST
+       on device because ... placed on site BLI_HBM_APB_INTF_X8Y0 ...
+       is outside its area constraints. Inst PBlock: pblock_CL.
+```
+
+**Root Cause:** AWS HDK shell creates `pblock_CL` for the reconfigurable CL region.
+HBM IP has **fixed physical locations** at `BLI_HBM_APB_INTF` sites at chip edges.
+These sites are outside `pblock_CL` bounds.
+
+When HBM is instantiated inside the CL hierarchy (`WRAPPER/CL/HBM_ENABLED...`),
+Vivado tries to place it within `pblock_CL`, which conflicts with HBM's fixed sites.
+
+### Fix for v5.2
+Add constraints to exclude HBM cells from `pblock_CL`:
+```tcl
+set hbm_cells [get_cells -hierarchical -filter {NAME =~ *HBM*} -quiet]
+if {[llength $hbm_cells] > 0} {
+    foreach cell $hbm_cells {
+        set pblock [get_pblocks -of_objects $cell -quiet]
+        if {[llength $pblock] > 0} {
+            remove_cells_from_pblock $pblock $cell
+        }
+    }
+}
+```
 
 ---
 
@@ -49,55 +159,91 @@ ERROR: [Route 35-4445] route_design is terminated due to errors/critical warning
 
 ---
 
-## v5 Plan: Floorplanning + 200MHz
+## v5 Design: Simplified + Floorplanned (Final 2026-01-29)
 
-### Changes from v4
+### V5 Scope (Final)
 
-1. **Clock Frequency:** 250MHz → 200MHz
-   - Relaxes timing, allows longer routes around congestion
-   - Low-risk change
+**Previous V4 failed due to 3-level streaming FSM complexity:**
+- Critical path: `hier_16m_level1_idx_chirho_reg` with 32,775 fanout
+- 14 logic levels through mux trees
+- WNS: -6.256ns at 200MHz
 
-2. **Floorplanning Constraints:** Spread logic across SLRs
-   ```
-   ┌─────────────────────────────────┐
-   │            SLR2                 │
-   │   512³ (134M) - isolated        │
-   ├─────────────────────────────────┤
-   │            SLR1                 │
-   │   64-bit + 512² (262K)          │
-   ├─────────────────────────────────┤
-   │            SLR0                 │
-   │   256² + Neurosym + HBM         │  ← Primary MCMC use case
-   └─────────────────────────────────┘
-   ```
+**V5 implements 2-level hierarchies (fully buffered):**
+1. **Flat 256-bit** - 256 values (1 HBM beat) ✓
+2. **65K (256²)** - 65,536 values (257 beats) ✓
+3. **262K (512²)** - 262,144 values (1026 beats) ✓ **with word assembly**
 
-3. **Simplified Design:** Drop 256³ (16M) for now
-   - Reduces routing pressure
-   - 512³ covers "millions" use case
-   - Can add back in v6 if v5 succeeds
+**Removed from V5:**
+- 1M (1024²) - Requires 4× word assembly (TODO: V6)
+- 16M (256³) - Streaming FSM caused timing failures
+- 134M (512³) - Streaming FSM not implemented
 
-### Rationale for Floorplan
+**Key V5 addition:** 262K uses 512-bit words assembled from 2× 256-bit HBM beats
 
-- **SLR0:** 256² (65K) pairs with Neurosymbolic for MCMC workloads
-  - Weight storage fits in 256KB BRAM
-  - Primary use case per Ed Kmett feedback
-  - Close to HBM for weight persistence
+### V5 Floorplan (Final)
 
-- **SLR1:** 64-bit (tiny) + 512² (262K)
-  - Pure logic domains without probabilistic weights
-  - Medium density, won't cause congestion
+```
+┌─────────────────────────────────────┐
+│       SLR0 (near HBM)               │
+│  Everything on one SLR:             │
+│  - 65K (256²) buffers: 24KB BRAM    │
+│  - 262K (512²) buffers: 99KB BRAM   │
+│  - Neurosymbolic training           │
+│  - Control FSM + Flat domains       │
+│  - Soft AND / prob intersection     │
+│  (~8% utilization)                  │
+├─────────────────────────────────────┤
+│       SLR1 + SLR2                   │
+│       (empty/reserved)              │
+│       Future: 1M (1024²)            │
+└─────────────────────────────────────┘
+```
 
-- **SLR2:** 512³ (134M) alone
-  - Largest module isolated
-  - HBM-backed anyway (crosses SLR via AXI)
+**Rationale:** All MCMC workload on SLR0 for minimum HBM latency.
+65K + 262K domains + Gumbel-softmax training iterations stay local.
 
-### Expected Outcome
+**Word assembly:** 262K (512²) uses 512-bit words. HBM provides 256-bit beats.
+FSM assembles: even beat → low 256 bits, odd beat → high 256 bits.
+
+XDC constraints assign cells to pblocks:
+- `small_shell_cl_pnr_user.xdc` contains pblock definitions
+- `CONTAIN_ROUTING true` isolates SLRs
+- AggressiveExplore directives enabled
+
+### Key Code Changes (V5 Revision)
+
+1. **Removed 16M streaming FSM states:**
+   - `FSM_LOAD_SUMMARIES_CHIRHO`
+   - `FSM_STREAM_LOAD_L2_V1_CHIRHO`
+   - `FSM_STREAM_LOAD_L2_V2_CHIRHO`
+   - `FSM_STREAM_COMPUTE_CHIRHO`
+   - `FSM_STREAM_STORE_CHIRHO`
+   - `FSM_STREAM_NEXT_BLOCK_CHIRHO`
+
+2. **Removed large buffer declarations (3-level hierarchies):**
+   - `hier_16m_*` (256³ buffers) - streaming FSM complexity
+   - `hier_134m_*` (512³ buffers) - not implemented
+
+3. **Added 262K (512²) with word assembly:**
+   - 512-bit words assembled from 2× 256-bit HBM beats
+   - Beat 0: low half of level0, Beat 1: high half of level0
+   - Beats 2-1025: level1 words (even→low, odd→high)
+   - 512 parallel ANDs for level1 intersection
+
+4. **FSM enum reduced from 5 to 4 bits**
+
+### Expected Outcome (Final)
 
 | Metric | v4 | v5 (Expected) |
 |--------|-----|---------------|
-| Congestion | 7/8 | 4-5/8 |
-| Timing Slack | Failed | Met @ 200MHz |
+| Logic Levels | 14 | <8 |
+| Max Fanout | 32,775 | <1000 |
+| Congestion | 7/8 | 3-4/8 |
+| Timing Slack | -6.256ns | Met @ 200MHz |
 | Build Success | ❌ | ✅ |
+| Max Domain Size | 134M (broken) | 262K (working) |
+| BRAM Usage | ~200 | ~30 |
+| SLR Distribution | SLR0 only | SLR0 only |
 
 ---
 
