@@ -14,7 +14,7 @@
 | v5.2 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ❌ Failed | CLB packing overflow |
 | v5.3 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ⚠️ HBM Issues | AFI loads but FSM stuck, see below |
 | v5.4 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ✅ FSM Works | FSM cycles through states, STATUS hardcoded |
-| v5.5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | 🔄 Building | STATUS register fix, forward declarations |
+| v5.5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ✅ AFI Created | STATUS register fix, agfi-0261e88151bcb39a5 |
 | v6 | TBD | F2 | 📋 Designed | Arbitrary-depth hierarchies, see V6_ARCHITECTURE_ANALYSIS_CHIRHO.md |
 
 ---
@@ -150,7 +150,28 @@ always_ff @(posedge clk_main_a0) begin
 but these signals were declared at line 744-745 (inside FSM). SystemVerilog requires forward
 declarations when signals are referenced before their primary declaration.
 
-**Build Status:** 🔄 In progress on c5.9xlarge (i-0abe335de5572bcb5)
+**Build Status:** ✅ Success (2026-01-30)
+
+**Timing Results:**
+- WNS: -1.451ns (timing warning, acceptable for AFI)
+- Critical path: `sparse_idx_chirho_reg[3]` → `axi_addr_chirho0`
+- Route time: 19:34
+- Peak memory: 8.6 GB
+
+**AFI Details:**
+- **FpgaImageId:** `afi-09a3738b7480e9973`
+- **FpgaImageGlobalId:** `agfi-0261e88151bcb39a5`
+- **Created:** 2026-01-30T20:14:35Z
+
+**S3 Artifacts:**
+```
+s3://minikanren-fpga-chirho/f2_hbm_hdk/
+├── dcp_v5.5/2026_01_30-181259.Developer_CL.tar  # 21MB DCP
+├── design_v5.5_chirho.tar.gz                     # Design tarball
+├── build_v5.5_hdk_chirho.sh                      # Build script
+├── build_v5.5_chirho.log                         # Vivado log
+└── build_v5.5_status_chirho.txt                  # "v5.5_success"
+```
 
 ---
 
