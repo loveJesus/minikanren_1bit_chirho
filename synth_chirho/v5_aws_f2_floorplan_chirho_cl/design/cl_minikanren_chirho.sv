@@ -469,6 +469,10 @@ end : HBM_DISABLED
     logic ocl_bvalid_chirho;
     logic [1:0] ocl_bresp_chirho;
 
+    // V5.5: Forward declarations for STATUS register (used in OCL read before FSM declaration)
+    logic op_done_chirho;
+    logic op_valid_chirho;
+
     always_ff @(posedge clk_main_a0) begin
         if (!rst_main_n_sync_chirho) begin
             wr_state_chirho     <= WR_IDLE_CHIRHO;
@@ -740,9 +744,7 @@ if (EN_HBM) begin : HBM_ENGINE
     // Beat counter for burst transfers (beat_counter_chirho moved to forward declarations)
     logic [19:0] beats_required_chirho;
 
-    // Result status
-    logic op_done_chirho;
-    logic op_valid_chirho;
+    // Result status (op_done_chirho, op_valid_chirho moved to forward declarations for STATUS register)
     logic hier_domain_empty_chirho;
 
     // AXI4 control signals (axi_addr_chirho moved to forward declarations)

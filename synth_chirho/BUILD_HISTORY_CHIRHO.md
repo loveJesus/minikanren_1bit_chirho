@@ -12,7 +12,145 @@
 | v5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | 🔄 In Progress | No pblocks + 200MHz |
 | v5.1 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ❌ Failed | HBM pblock_CL conflict |
 | v5.2 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ❌ Failed | CLB packing overflow |
-| v5.3 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ✅ SUCCESS | Sparse streaming, AFI: afi-010cbb77b5413e1d6 |
+| v5.3 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ⚠️ HBM Issues | AFI loads but FSM stuck, see below |
+| v5.4 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ✅ FSM Works | FSM cycles through states, STATUS hardcoded |
+| v5.5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | 🔄 Building | STATUS register fix, forward declarations |
+| v6 | TBD | F2 | 📋 Designed | Arbitrary-depth hierarchies, see V6_ARCHITECTURE_ANALYSIS_CHIRHO.md |
+
+---
+
+## v5.3 F2 Testing Results: HBM Communication Issues ☧
+
+### Test Details
+- **Date:** 2026-01-30
+- **Instance:** f2.6xlarge (i-0d5d9941e4034da3e) at 52.54.165.179
+- **AFI:** afi-010cbb77b5413e1d6 / agfi-041630da370421d34
+- **Device ID:** 0xF053 (confirmed via fpga-describe-local-image)
+
+### What Works ✅
+| Test | Result | Notes |
+|------|--------|-------|
+| AFI Load | ✅ Pass | Device 0xF053 detected |
+| VERSION read | ✅ 0xF2020001 | Matches MINIKANREN_VERSION_CHIRHO |
+| STATUS read | ✅ 0x07 | hbm_ready=1 |
+| CONTROL write | ✅ 0x05 readback | Register writes work |
+| CMD write | ✅ 0x00200010 | Command registers work |
+
+### What Fails ❌
+| Test | Result | Notes |
+|------|--------|-------|
+| FSM completion | ❌ Never | op_done stays 0 after 100ms |
+| RESP registers | ❌ All zeros | beat_counter=0, no progress |
+| HBM reads | ❌ Stuck | FSM waiting for rvalid |
+
+### Root Cause Analysis
+
+**Issue 1: Register Address Conflicts (V5.3 bug)**
+```
+Case labels in OCL read logic were duplicated:
+- 6'h10 used for both RESP[8] and HIER_MODE (0x40)
+- 6'h14-6'h18 used for both RESP[12-16] and TRAIN registers
+
+This caused Vivado synthesis undefined behavior.
+```
+
+**Issue 2: AXI Handshake Missing (V5.3 bug)**
+```
+FSM sets arvalid=1 and immediately waits for rvalid.
+Proper AXI4 requires:
+1. Set arvalid=1 with address
+2. Wait until arready=1 (address accepted)
+3. Then wait for rvalid (data returned)
+
+Our FSM skips step 2, so if arready was low, the
+address request was never accepted.
+```
+
+**Issue 3: Unclear if HBM Controller Responding**
+```
+STATUS shows hbm_ready=1, but that only means initialization
+completed. The HBM AXI4 interface may still reject requests
+if address/size/burst parameters are incorrect.
+```
+
+### V5.4 Fix Plan
+
+1. **Fix register map** (DONE in cl_minikanren_chirho.sv):
+   - HIER_MODE moved to 0x80 (6'h20)
+   - TRAIN registers moved to 0x90+ (6'h24-6'h2C)
+   - No more conflicts with RESP registers
+
+2. **Add AXI handshake** (DEFERRED - diagnose first with debug regs):
+   - May add FSM_WAIT_ARREADY_CHIRHO state if debug shows arready issue
+   - Debug registers will reveal if arready=0 is blocking
+
+3. **Add debug registers** (DONE in cl_minikanren_chirho.sv):
+   - 0xC0: FSM_STATE - Current FSM state (5 bits)
+   - 0xC4: AXI_STATUS - {bready,bvalid,awvalid,awready,rready,rvalid,arvalid,arready}
+   - 0xC8: AXI_ADDR_LO - axi_addr_chirho[31:0]
+   - 0xCC: AXI_ADDR_HI - axi_addr_chirho[33:32]
+   - 0xD0: BEAT_COUNT - beat_counter_chirho[19:0]
+   - 0xD4: SPARSE_IDX - sparse_idx_chirho[8:0]
+
+4. **Fix width bug** (DONE in cl_minikanren_chirho.sv):
+   - Changed `i < max_idx` to `i <= max_idx` with inclusive bounds
+   - Use 9'd255 for 65K mode, 9'd511 for 262K mode
+
+### V5.4 Test Results (2026-01-30)
+
+**AFI:** `afi-07fd1ddc4e2c1615c` / `agfi-0d5a0236dacd50a9e` ✅
+
+**Key Findings:**
+
+| Test | Result | Notes |
+|------|--------|-------|
+| VERSION | ✅ 0xF2540001 | V5.4 confirmed |
+| Debug regs | ✅ Working | FSM_STATE, AXI_STATUS readable |
+| FSM execution | ✅ Working | Cycles through LOAD_VAR1→LOAD_VAR2→COMPUTE→STORE_RESULT→BATCH_NEXT |
+| Address calc | ✅ Working | var_id=1 maps to 0x20000020 (HBM_BASE + 0x20) |
+| STATUS reg | ❌ Hardcoded | Always shows done=1, valid=1 |
+
+**Critical Discovery: FSM Start Requires BOTH Bits!**
+```
+CONTROL must be 0x05 (not 0x01):
+- bit 0: ctrl_enable_chirho
+- bit 2: ctrl_hbm_mode_chirho (REQUIRED!)
+
+FSM start condition (line 832):
+if (ctrl_enable_chirho && ctrl_hbm_mode_chirho && hbm_ready_chirho)
+```
+
+**Command Encoding Gotcha:**
+```
+var_id_2 spans CMD_LO[31:20] and CMD_MID[3:0]!
+See BUILD_LOG_CHIRHO.md for correct encode_command() function.
+```
+
+### V5.5 Build (2026-01-30) - STATUS Register Fix ☧
+
+**Changes:**
+1. STATUS register now reads actual `op_done_chirho` and `op_valid_chirho` signals
+2. Added forward declarations at line 473-474 (signals used at line 587)
+3. Device ID: `0xF055` (version 5.5)
+4. Version register: `0xF2550001`
+
+**Critical Fix - Forward Declarations:**
+```systemverilog
+// Line 470-474: Forward declarations BEFORE OCL read logic
+logic [1:0] ocl_bresp_chirho;
+
+// V5.5: Forward declarations for STATUS register (used in OCL read before FSM declaration)
+logic op_done_chirho;
+logic op_valid_chirho;
+
+always_ff @(posedge clk_main_a0) begin
+```
+
+**Why needed:** In V5.4, the OCL read logic at line 583 used `op_done_chirho` and `op_valid_chirho`,
+but these signals were declared at line 744-745 (inside FSM). SystemVerilog requires forward
+declarations when signals are referenced before their primary declaration.
+
+**Build Status:** 🔄 In progress on c5.9xlarge (i-0abe335de5572bcb5)
 
 ---
 
@@ -324,6 +462,8 @@ XDC constraints assign cells to pblocks:
 | v4 | 0xF004 | Hier + Neurosym |
 | v5 | 0xF005 | Floorplanned |
 | v5.3 | 0xF053 | Sparse streaming |
+| v5.4 | 0xF054 | Debug registers, FSM working |
+| v5.5 | 0xF055 | STATUS register fix |
 
 All use Vendor ID 0x1D0F (Amazon) with valid range 0xF000-0xF0FF.
 

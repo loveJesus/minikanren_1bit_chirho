@@ -97,13 +97,14 @@ assert_eq!(queens_chirho.count_solutions_chirho(), 92);
 - **SIMD acceleration**: AVX2/AVX-512 bulk operations
 - **Differentiable**: Gradients flow through logic (Gumbel-softmax, learnable relations)
 - **Hardware-ready**: Calyx IR and Clash for FPGA synthesis (verified)
+- **AWS FPGA**: F2 instances with HBM support (V5.5 deployed)
 - **Multiple semirings**: Boolean, Probability, Tropical, Counting
 
 ## Feature Flags
 
 ```toml
 [dependencies]
-minikanren_1bit_chirho = { version = "0.1", features = ["kmett_chirho"] }
+minikanren_1bit_chirho = { version = "0.3", features = ["kmett_chirho"] }
 ```
 
 | Feature | Description |
@@ -112,6 +113,8 @@ minikanren_1bit_chirho = { version = "0.1", features = ["kmett_chirho"] }
 | `egg_chirho` | External egg crate for more features |
 | `goal_ast_chirho` | Goals as AST for introspection |
 | `gpu_chirho` | WebGPU backend |
+| `fpga_chirho` | AWS F2 FPGA backend via PCIe (Linux only) |
+| `parallel_chirho` | Multi-core parallel processing (rayon) |
 | `optics_chirho` | Kmett-style Prisms, Lenses, Traversals |
 | `free_goal_chirho` | Free Monad for Bool/Prob/SMT interpreters |
 | `comonad_chirho` | Search zipper with extend |
