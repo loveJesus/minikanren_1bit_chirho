@@ -624,24 +624,21 @@ if (EN_HBM) begin : HBM_ENGINE
     // Supports: 256-bit flat, 256² (65K), 512² (262K), 256³ (16.7M), 512³ (134M)
     // ========================================================================
 
-    // HBM FSM states (extended for multi-beat hierarchical and streaming reads)
-    typedef enum logic [4:0] {
+    // HBM FSM states - V5.3 SPARSE STREAMING
+    typedef enum logic [3:0] {
         FSM_IDLE_CHIRHO,
         FSM_LOAD_VAR1_CHIRHO,           // Single beat (flat 256-bit)
-        FSM_LOAD_VAR1_BURST_CHIRHO,     // Multi-beat for 2-level hierarchy
+        FSM_LOAD_LEVEL0_V1_CHIRHO,      // Load level0 summary for var1
         FSM_LOAD_VAR2_CHIRHO,
-        FSM_LOAD_VAR2_BURST_CHIRHO,
+        FSM_LOAD_LEVEL0_V2_CHIRHO,      // Load level0 summary for var2
         FSM_COMPUTE_CHIRHO,             // Flat intersection
-        FSM_COMPUTE_HIER_CHIRHO,        // 2-level hierarchical intersection
+        FSM_SPARSE_INIT_CHIRHO,         // Compute level0 AND, find first non-zero
+        FSM_SPARSE_LOAD_A_CHIRHO,       // Stream level1[i] from var1
+        FSM_SPARSE_LOAD_B_CHIRHO,       // Stream level1[i] from var2
+        FSM_SPARSE_COMPUTE_CHIRHO,      // Compute AND for current word
+        FSM_SPARSE_STORE_CHIRHO,        // Store result level1[i]
+        FSM_SPARSE_NEXT_CHIRHO,         // Find next non-zero index
         FSM_STORE_RESULT_CHIRHO,
-        FSM_STORE_BURST_CHIRHO,
-        // Streaming states for 3-level hierarchies (256³, 512³)
-        FSM_LOAD_SUMMARIES_CHIRHO,      // Load level0 + level1 summaries
-        FSM_STREAM_LOAD_L2_V1_CHIRHO,   // Stream level2 blocks for var1
-        FSM_STREAM_LOAD_L2_V2_CHIRHO,   // Stream level2 blocks for var2
-        FSM_STREAM_COMPUTE_CHIRHO,      // Compute current level2 block
-        FSM_STREAM_STORE_CHIRHO,        // Store current level2 result
-        FSM_STREAM_NEXT_BLOCK_CHIRHO,   // Advance to next level2 block
         FSM_BATCH_NEXT_CHIRHO
     } hbm_fsm_state_t_chirho;
 
@@ -663,58 +660,47 @@ if (EN_HBM) begin : HBM_ENGINE
     // Hierarchical Domain Buffers (multiple sizes for benchmarking)
     // ========================================================================
 
-    // 256² = 65K values (8KB per domain) - FULLY BUFFERED
-    // Level 0 (summary): 256 bits indicating which level-1 blocks are non-zero
-    // Level 1 (data): 256 × 256 bits = 8KB
+    // ========================================================================
+    // V5.3 SPARSE STREAMING: Only level0 buffered, level1 streamed
+    // ========================================================================
+    // Key insight: Use level0 AND result to skip zero blocks entirely.
+    // Only stream non-zero level1 words through HBM.
+    // Reduces FFs from ~983,000 to ~3,000.
+
+    // 256² = 65K values - SPARSE STREAMING
+    // Level 0 (summary): 256 bits - BUFFERED (small)
+    // Level 1 (data): STREAMED one word at a time
     logic [255:0] hier_65k_1_level0_chirho;
-    logic [255:0] hier_65k_1_level1_chirho [0:255];  // BRAM: 256 × 256-bit words
     logic [255:0] hier_65k_2_level0_chirho;
-    logic [255:0] hier_65k_2_level1_chirho [0:255];
     logic [255:0] hier_65k_result_level0_chirho;
-    logic [255:0] hier_65k_result_level1_chirho [0:255];
+    // Streaming buffers (1 word each, not 256!)
+    logic [255:0] hier_65k_stream_a_chirho;
+    logic [255:0] hier_65k_stream_b_chirho;
+    logic [255:0] hier_65k_stream_result_chirho;
 
-    // 512² = 262K values (33KB per domain) - FULLY BUFFERED
-    // Level 0 (summary): 512 bits indicating which level-1 blocks are non-zero
-    // Level 1 (data): 512 × 512 bits = 33KB
+    // 512² = 262K values - SPARSE STREAMING
+    // Level 0 (summary): 512 bits = 2 HBM beats - BUFFERED
+    // Level 1 (data): STREAMED one word at a time
     logic [511:0] hier_262k_1_level0_chirho;
-    logic [511:0] hier_262k_1_level1_chirho [0:511];  // BRAM: 512 × 512-bit words
     logic [511:0] hier_262k_2_level0_chirho;
-    logic [511:0] hier_262k_2_level1_chirho [0:511];
     logic [511:0] hier_262k_result_level0_chirho;
-    logic [511:0] hier_262k_result_level1_chirho [0:511];
+    // Streaming buffers (1 word each, not 512!)
+    logic [511:0] hier_262k_stream_a_chirho;
+    logic [511:0] hier_262k_stream_b_chirho;
+    logic [511:0] hier_262k_stream_result_chirho;
 
-    // 256³ = 16.7M values (2MB per domain) - STREAMING MODE
-    // Too large to fully buffer; process block-by-block
-    // Level 0: 256 bits (which level1 blocks exist)
-    // Level 1: 256 × 256 bits = 8KB (which level2 blocks exist)
-    // Level 2: 256 × 256 × 256 bits = 2MB (actual data, streamed)
-    logic [255:0] hier_16m_1_level0_chirho;
-    logic [255:0] hier_16m_1_level1_chirho [0:255];
-    logic [255:0] hier_16m_2_level0_chirho;
-    logic [255:0] hier_16m_2_level1_chirho [0:255];
-    logic [255:0] hier_16m_result_level0_chirho;
-    logic [255:0] hier_16m_result_level1_chirho [0:255];
-    // Level 2 streaming buffers (one block at a time)
-    logic [255:0] hier_16m_1_level2_block_chirho [0:255];
-    logic [255:0] hier_16m_2_level2_block_chirho [0:255];
-    logic [255:0] hier_16m_result_level2_block_chirho [0:255];
-    logic [7:0] hier_16m_level1_idx_chirho;  // Current level1 block being processed
-    logic [7:0] hier_16m_level2_idx_chirho;  // Current level2 block within level1
+    // Sparse index tracking
+    logic [8:0] sparse_idx_chirho;           // Current level1 index being processed
+    logic [8:0] sparse_count_chirho;         // Total non-zero level1 words
+    logic [8:0] sparse_processed_chirho;     // How many we've processed
+    logic sparse_stream_phase_chirho;        // 0=load A, 1=load B
 
-    // 512³ = 134M values (16MB per domain) - STREAMING MODE
-    // Level 0: 512 bits, Level 1: 512 × 512 bits = 33KB, Level 2: streamed
-    logic [511:0] hier_134m_1_level0_chirho;
-    logic [511:0] hier_134m_1_level1_chirho [0:511];
-    logic [511:0] hier_134m_2_level0_chirho;
-    logic [511:0] hier_134m_2_level1_chirho [0:511];
-    logic [511:0] hier_134m_result_level0_chirho;
-    logic [511:0] hier_134m_result_level1_chirho [0:511];
-    // Level 2 streaming buffers
-    logic [511:0] hier_134m_1_level2_block_chirho [0:511];
-    logic [511:0] hier_134m_2_level2_block_chirho [0:511];
-    logic [511:0] hier_134m_result_level2_block_chirho [0:511];
-    logic [8:0] hier_134m_level1_idx_chirho;
-    logic [8:0] hier_134m_level2_idx_chirho;
+    // NOTE: 256³ (16M) and 512³ (134M) REMOVED in V5 for timing closure.
+    // These 3-level streaming hierarchies caused critical path violations:
+    // - 14 logic levels through mux trees
+    // - 32,775 fanout on level1_idx register
+    // - WNS: -6.256ns at 200MHz
+    // Future: Add pipelining to streaming FSM before re-enabling.
 
     // Beat counter for burst transfers
     logic [19:0] beat_counter_chirho;  // Extended to handle 512³ (up to 525K beats)
@@ -740,44 +726,33 @@ if (EN_HBM) begin : HBM_ENGINE
         batch_count_chirho = cmd_reg_chirho[51:36];
     end
 
-    // HBM address calculation based on hierarchy mode
+    // HBM address calculation based on hierarchy mode (V5: flat + 65K + 262K)
     function automatic [33:0] var_to_hbm_addr_chirho(input [15:0] var_id_chirho);
         case (ctrl_hier_mode_chirho)
-            `HIER_MODE_FLAT256_CHIRHO:    return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} << 5);      // 32B per var
-            `HIER_MODE_HIER_65K_CHIRHO:   return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} * 20'd8224);   // ~8KB per var
-            `HIER_MODE_HIER_262K_CHIRHO:  return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} * 20'd33024);  // ~33KB per var
-            `HIER_MODE_HIER_16M_CHIRHO:   return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} * 24'd2097408); // ~2MB per var
-            `HIER_MODE_HIER_134M_CHIRHO:  return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} * 28'd16810496); // ~16MB per var
+            `HIER_MODE_FLAT256_CHIRHO:    return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} << 5);       // 32B per var
+            `HIER_MODE_HIER_65K_CHIRHO:   return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} * 20'd8224);  // ~8KB per var
+            `HIER_MODE_HIER_262K_CHIRHO:  return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} * 20'd33024); // ~33KB per var
             default:                      return `HBM_VAR_DOMAINS_BASE_CHIRHO + ({18'b0, var_id_chirho} << 5);
         endcase
     endfunction
 
-    // Beats required for initial load (summaries only for 3-level hierarchies)
+    // Beats required for initial load (V5: flat + 65K + 262K)
+    // 262K: 2 beats for level0 (512 bits) + 1024 beats for level1 (512 words × 2 beats each)
     function automatic [19:0] get_beats_required_chirho();
         case (ctrl_hier_mode_chirho)
             `HIER_MODE_FLAT256_CHIRHO:    return 20'd1;
             `HIER_MODE_HIER_65K_CHIRHO:   return 20'd257;    // 1 level0 + 256 level1
-            `HIER_MODE_HIER_262K_CHIRHO:  return 20'd513;    // 2 level0 + 512 level1 (512-bit words)
-            `HIER_MODE_HIER_16M_CHIRHO:   return 20'd257;    // 1 level0 + 256 level1 (summaries only, level2 streamed)
-            `HIER_MODE_HIER_134M_CHIRHO:  return 20'd513;    // 2 level0 + 512 level1 (summaries only, level2 streamed)
+            `HIER_MODE_HIER_262K_CHIRHO:  return 20'd1026;   // 2 level0 + 1024 level1 (512 × 2 beats)
             default:                      return 20'd1;
         endcase
     endfunction
 
-    // Check if this hierarchy mode uses streaming (3-level)
-    function automatic logic is_streaming_mode_chirho();
-        return (ctrl_hier_mode_chirho == `HIER_MODE_HIER_16M_CHIRHO) ||
-               (ctrl_hier_mode_chirho == `HIER_MODE_HIER_134M_CHIRHO);
-    endfunction
-
     // Get number of level1 blocks for current mode
-    function automatic [9:0] get_level1_count_chirho();
+    function automatic [10:0] get_level1_count_chirho();
         case (ctrl_hier_mode_chirho)
-            `HIER_MODE_HIER_65K_CHIRHO:   return 10'd256;
-            `HIER_MODE_HIER_262K_CHIRHO:  return 10'd512;
-            `HIER_MODE_HIER_16M_CHIRHO:   return 10'd256;
-            `HIER_MODE_HIER_134M_CHIRHO:  return 10'd512;
-            default:                      return 10'd1;
+            `HIER_MODE_HIER_65K_CHIRHO:   return 11'd256;
+            `HIER_MODE_HIER_262K_CHIRHO:  return 11'd512;
+            default:                      return 11'd1;
         endcase
     endfunction
 
@@ -791,13 +766,20 @@ if (EN_HBM) begin : HBM_ENGINE
             hier_65k_1_level0_chirho  <= 256'b0;
             hier_65k_2_level0_chirho  <= 256'b0;
             hier_65k_result_level0_chirho <= 256'b0;
+            hier_262k_1_level0_chirho <= 512'b0;
+            hier_262k_2_level0_chirho <= 512'b0;
             hier_262k_result_level0_chirho <= 512'b0;
-            hier_16m_result_level0_chirho <= 256'b0;
-            hier_134m_result_level0_chirho <= 512'b0;
-            hier_16m_level1_idx_chirho <= 8'b0;
-            hier_16m_level2_idx_chirho <= 8'b0;
-            hier_134m_level1_idx_chirho <= 9'b0;
-            hier_134m_level2_idx_chirho <= 9'b0;
+            // V5.3 sparse streaming buffers
+            hier_65k_stream_a_chirho <= 256'b0;
+            hier_65k_stream_b_chirho <= 256'b0;
+            hier_65k_stream_result_chirho <= 256'b0;
+            hier_262k_stream_a_chirho <= 512'b0;
+            hier_262k_stream_b_chirho <= 512'b0;
+            hier_262k_stream_result_chirho <= 512'b0;
+            sparse_idx_chirho <= 9'b0;
+            sparse_count_chirho <= 9'b0;
+            sparse_processed_chirho <= 9'b0;
+            sparse_stream_phase_chirho <= 1'b0;
             op_done_chirho            <= 1'b0;
             op_valid_chirho           <= 1'b0;
             batch_idx_chirho          <= 16'b0;
@@ -821,21 +803,13 @@ if (EN_HBM) begin : HBM_ENGINE
                         axi_addr_chirho       <= var_to_hbm_addr_chirho(var_id_1_chirho);
                         axi_read_req_chirho   <= 1'b1;
                         axi_burst_len_chirho  <= (ctrl_hier_mode_chirho == `HIER_MODE_FLAT256_CHIRHO) ? 8'b0 : 8'hFF;
-                        // Reset streaming indices
-                        hier_16m_level1_idx_chirho <= 8'b0;
-                        hier_16m_level2_idx_chirho <= 8'b0;
-                        hier_134m_level1_idx_chirho <= 9'b0;
-                        hier_134m_level2_idx_chirho <= 9'b0;
-                        // Branch based on hierarchy mode
+                        // Branch based on hierarchy mode (V5.3: sparse streaming)
                         case (ctrl_hier_mode_chirho)
                             `HIER_MODE_FLAT256_CHIRHO:
                                 fsm_state_chirho <= FSM_LOAD_VAR1_CHIRHO;
                             `HIER_MODE_HIER_65K_CHIRHO,
                             `HIER_MODE_HIER_262K_CHIRHO:
-                                fsm_state_chirho <= FSM_LOAD_VAR1_BURST_CHIRHO;
-                            `HIER_MODE_HIER_16M_CHIRHO,
-                            `HIER_MODE_HIER_134M_CHIRHO:
-                                fsm_state_chirho <= FSM_LOAD_SUMMARIES_CHIRHO;  // 3-level streaming
+                                fsm_state_chirho <= FSM_LOAD_LEVEL0_V1_CHIRHO;  // V5.3: load level0 only
                             default:
                                 fsm_state_chirho <= FSM_LOAD_VAR1_CHIRHO;
                         endcase
@@ -861,45 +835,215 @@ if (EN_HBM) begin : HBM_ENGINE
                     end
                 end
 
-                // Hierarchical 256² mode (multi-beat burst)
-                FSM_LOAD_VAR1_BURST_CHIRHO: begin
+                // ================================================================
+                // V5.3 SPARSE STREAMING: Load level0 only, then stream level1
+                // ================================================================
+
+                // Load level0 summary for var1 (1 beat for 65K, 2 beats for 262K)
+                FSM_LOAD_LEVEL0_V1_CHIRHO: begin
                     if (hbm_axi4_bus_chirho.rvalid && hbm_axi4_bus_chirho.rready) begin
-                        if (beat_counter_chirho == 16'b0) begin
-                            // First beat is level0 summary
+                        if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
                             hier_65k_1_level0_chirho <= hbm_axi4_bus_chirho.rdata;
-                        end else if (beat_counter_chirho <= 16'd256) begin
-                            // Beats 1-256 are level1 data
-                            hier_65k_1_level1_chirho[beat_counter_chirho - 1] <= hbm_axi4_bus_chirho.rdata;
-                        end
-
-                        beat_counter_chirho <= beat_counter_chirho + 1;
-
-                        if (beat_counter_chirho >= beats_required_chirho - 1) begin
-                            // Done loading var1, start var2
                             axi_read_req_chirho <= 1'b0;
-                            beat_counter_chirho <= 16'b0;
-                            axi_addr_chirho     <= var_to_hbm_addr_chirho(var_id_2_chirho);
+                            axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_2_chirho);
                             axi_read_req_chirho <= 1'b1;
-                            fsm_state_chirho    <= FSM_LOAD_VAR2_BURST_CHIRHO;
+                            fsm_state_chirho <= FSM_LOAD_LEVEL0_V2_CHIRHO;
+                        end else begin  // 262K: need 2 beats
+                            if (beat_counter_chirho == 20'd0) begin
+                                hier_262k_1_level0_chirho[255:0] <= hbm_axi4_bus_chirho.rdata;
+                                beat_counter_chirho <= 20'd1;
+                            end else begin
+                                hier_262k_1_level0_chirho[511:256] <= hbm_axi4_bus_chirho.rdata;
+                                axi_read_req_chirho <= 1'b0;
+                                beat_counter_chirho <= 20'd0;
+                                axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_2_chirho);
+                                axi_read_req_chirho <= 1'b1;
+                                fsm_state_chirho <= FSM_LOAD_LEVEL0_V2_CHIRHO;
+                            end
                         end
                     end
                 end
 
-                FSM_LOAD_VAR2_BURST_CHIRHO: begin
+                // Load level0 summary for var2
+                FSM_LOAD_LEVEL0_V2_CHIRHO: begin
                     if (hbm_axi4_bus_chirho.rvalid && hbm_axi4_bus_chirho.rready) begin
-                        if (beat_counter_chirho == 16'b0) begin
+                        if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
                             hier_65k_2_level0_chirho <= hbm_axi4_bus_chirho.rdata;
-                        end else if (beat_counter_chirho <= 16'd256) begin
-                            hier_65k_2_level1_chirho[beat_counter_chirho - 1] <= hbm_axi4_bus_chirho.rdata;
-                        end
-
-                        beat_counter_chirho <= beat_counter_chirho + 1;
-
-                        if (beat_counter_chirho >= beats_required_chirho - 1) begin
                             axi_read_req_chirho <= 1'b0;
-                            beat_counter_chirho <= 16'b0;
-                            fsm_state_chirho    <= FSM_COMPUTE_HIER_CHIRHO;
+                            fsm_state_chirho <= FSM_SPARSE_INIT_CHIRHO;
+                        end else begin  // 262K: need 2 beats
+                            if (beat_counter_chirho == 20'd0) begin
+                                hier_262k_2_level0_chirho[255:0] <= hbm_axi4_bus_chirho.rdata;
+                                beat_counter_chirho <= 20'd1;
+                            end else begin
+                                hier_262k_2_level0_chirho[511:256] <= hbm_axi4_bus_chirho.rdata;
+                                axi_read_req_chirho <= 1'b0;
+                                beat_counter_chirho <= 20'd0;
+                                fsm_state_chirho <= FSM_SPARSE_INIT_CHIRHO;
+                            end
                         end
+                    end
+                end
+
+                // Initialize sparse iteration: compute level0 AND, find first non-zero
+                FSM_SPARSE_INIT_CHIRHO: begin
+                    if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                        hier_65k_result_level0_chirho <= level0_and_65k_chirho;
+                        hier_domain_empty_chirho <= (level0_and_65k_chirho == 256'b0);
+                        op_valid_chirho <= (level0_and_65k_chirho != 256'b0);
+                        sparse_count_chirho <= popcount_512_chirho({256'b0, level0_and_65k_chirho});
+                        sparse_idx_chirho <= find_next_set_bit_chirho({256'b0, level0_and_65k_chirho}, 9'd0, 9'd256);
+                    end else begin
+                        hier_262k_result_level0_chirho <= level0_and_262k_chirho;
+                        hier_domain_empty_chirho <= (level0_and_262k_chirho == 512'b0);
+                        op_valid_chirho <= (level0_and_262k_chirho != 512'b0);
+                        sparse_count_chirho <= popcount_512_chirho(level0_and_262k_chirho);
+                        sparse_idx_chirho <= find_next_set_bit_chirho(level0_and_262k_chirho, 9'd0, 9'd512);
+                    end
+                    sparse_processed_chirho <= 9'd0;
+
+                    // If empty, skip directly to store
+                    if ((ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO && level0_and_65k_chirho == 256'b0) ||
+                        (ctrl_hier_mode_chirho == `HIER_MODE_HIER_262K_CHIRHO && level0_and_262k_chirho == 512'b0)) begin
+                        fsm_state_chirho <= FSM_STORE_RESULT_CHIRHO;
+                    end else begin
+                        fsm_state_chirho <= FSM_SPARSE_LOAD_A_CHIRHO;
+                    end
+                end
+
+                // Stream level1[sparse_idx] from var1
+                FSM_SPARSE_LOAD_A_CHIRHO: begin
+                    // Calculate address: base + level0_size + (idx * word_size)
+                    if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho) + 34'd32 +
+                                          ({25'b0, sparse_idx_chirho} << 5);  // 32 bytes per word
+                        axi_burst_len_chirho <= 8'd0;  // Single beat
+                    end else begin
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho) + 34'd64 +
+                                          ({25'b0, sparse_idx_chirho} << 6);  // 64 bytes per word
+                        axi_burst_len_chirho <= 8'd1;  // 2 beats for 512-bit
+                    end
+                    axi_read_req_chirho <= 1'b1;
+
+                    if (hbm_axi4_bus_chirho.rvalid && hbm_axi4_bus_chirho.rready) begin
+                        if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                            hier_65k_stream_a_chirho <= hbm_axi4_bus_chirho.rdata;
+                            axi_read_req_chirho <= 1'b0;
+                            fsm_state_chirho <= FSM_SPARSE_LOAD_B_CHIRHO;
+                        end else begin
+                            if (beat_counter_chirho == 20'd0) begin
+                                hier_262k_stream_a_chirho[255:0] <= hbm_axi4_bus_chirho.rdata;
+                                beat_counter_chirho <= 20'd1;
+                            end else begin
+                                hier_262k_stream_a_chirho[511:256] <= hbm_axi4_bus_chirho.rdata;
+                                axi_read_req_chirho <= 1'b0;
+                                beat_counter_chirho <= 20'd0;
+                                fsm_state_chirho <= FSM_SPARSE_LOAD_B_CHIRHO;
+                            end
+                        end
+                    end
+                end
+
+                // Stream level1[sparse_idx] from var2
+                FSM_SPARSE_LOAD_B_CHIRHO: begin
+                    if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_2_chirho) + 34'd32 +
+                                          ({25'b0, sparse_idx_chirho} << 5);
+                        axi_burst_len_chirho <= 8'd0;
+                    end else begin
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_2_chirho) + 34'd64 +
+                                          ({25'b0, sparse_idx_chirho} << 6);
+                        axi_burst_len_chirho <= 8'd1;
+                    end
+                    axi_read_req_chirho <= 1'b1;
+
+                    if (hbm_axi4_bus_chirho.rvalid && hbm_axi4_bus_chirho.rready) begin
+                        if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                            hier_65k_stream_b_chirho <= hbm_axi4_bus_chirho.rdata;
+                            axi_read_req_chirho <= 1'b0;
+                            fsm_state_chirho <= FSM_SPARSE_COMPUTE_CHIRHO;
+                        end else begin
+                            if (beat_counter_chirho == 20'd0) begin
+                                hier_262k_stream_b_chirho[255:0] <= hbm_axi4_bus_chirho.rdata;
+                                beat_counter_chirho <= 20'd1;
+                            end else begin
+                                hier_262k_stream_b_chirho[511:256] <= hbm_axi4_bus_chirho.rdata;
+                                axi_read_req_chirho <= 1'b0;
+                                beat_counter_chirho <= 20'd0;
+                                fsm_state_chirho <= FSM_SPARSE_COMPUTE_CHIRHO;
+                            end
+                        end
+                    end
+                end
+
+                // Compute AND for current word
+                FSM_SPARSE_COMPUTE_CHIRHO: begin
+                    if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                        hier_65k_stream_result_chirho <= hier_65k_stream_a_chirho & hier_65k_stream_b_chirho;
+                    end else begin
+                        hier_262k_stream_result_chirho <= hier_262k_stream_a_chirho & hier_262k_stream_b_chirho;
+                    end
+                    fsm_state_chirho <= FSM_SPARSE_STORE_CHIRHO;
+                end
+
+                // Store result level1[sparse_idx]
+                FSM_SPARSE_STORE_CHIRHO: begin
+                    if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho) + 34'd32 +
+                                          ({25'b0, sparse_idx_chirho} << 5);
+                        axi_wdata_chirho <= hier_65k_stream_result_chirho;
+                        axi_burst_len_chirho <= 8'd0;
+                    end else begin
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho) + 34'd64 +
+                                          ({25'b0, sparse_idx_chirho} << 6) +
+                                          ({33'b0, beat_counter_chirho[0]} << 5);
+                        if (beat_counter_chirho == 20'd0) begin
+                            axi_wdata_chirho <= hier_262k_stream_result_chirho[255:0];
+                        end else begin
+                            axi_wdata_chirho <= hier_262k_stream_result_chirho[511:256];
+                        end
+                    end
+                    axi_write_req_chirho <= 1'b1;
+
+                    if (hbm_axi4_bus_chirho.bvalid && hbm_axi4_bus_chirho.bready) begin
+                        if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                            axi_write_req_chirho <= 1'b0;
+                            fsm_state_chirho <= FSM_SPARSE_NEXT_CHIRHO;
+                        end else begin
+                            if (beat_counter_chirho == 20'd0) begin
+                                beat_counter_chirho <= 20'd1;
+                            end else begin
+                                axi_write_req_chirho <= 1'b0;
+                                beat_counter_chirho <= 20'd0;
+                                fsm_state_chirho <= FSM_SPARSE_NEXT_CHIRHO;
+                            end
+                        end
+                    end
+                end
+
+                // Find next non-zero index or finish
+                FSM_SPARSE_NEXT_CHIRHO: begin
+                    sparse_processed_chirho <= sparse_processed_chirho + 1;
+
+                    if (sparse_processed_chirho + 1 >= sparse_count_chirho) begin
+                        // All non-zero blocks processed, store level0 result
+                        fsm_state_chirho <= FSM_STORE_RESULT_CHIRHO;
+                    end else begin
+                        // Find next set bit
+                        if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                            sparse_idx_chirho <= find_next_set_bit_chirho(
+                                {256'b0, level0_and_65k_chirho},
+                                sparse_idx_chirho + 1,
+                                9'd256
+                            );
+                        end else begin
+                            sparse_idx_chirho <= find_next_set_bit_chirho(
+                                level0_and_262k_chirho,
+                                sparse_idx_chirho + 1,
+                                9'd512
+                            );
+                        end
+                        fsm_state_chirho <= FSM_SPARSE_LOAD_A_CHIRHO;
                     end
                 end
 
@@ -931,43 +1075,58 @@ if (EN_HBM) begin : HBM_ENGINE
                     fsm_state_chirho <= FSM_STORE_RESULT_CHIRHO;
                 end
 
-                // Hierarchical compute (level0 intersection determines which level1 to process)
-                FSM_COMPUTE_HIER_CHIRHO: begin
-                    // Intersect level0 summaries first
-                    hier_65k_result_level0_chirho <= hier_65k_1_level0_chirho & hier_65k_2_level0_chirho;
+                // FSM_COMPUTE_HIER_CHIRHO removed in V5.3 - replaced by FSM_SPARSE_INIT_CHIRHO
 
-                    // Check if result is non-empty
-                    hier_domain_empty_chirho <= (hier_65k_1_level0_chirho & hier_65k_2_level0_chirho) == 256'b0;
-                    op_valid_chirho <= (hier_65k_1_level0_chirho & hier_65k_2_level0_chirho) != 256'b0;
-
-                    // Level1 intersections happen in parallel (combinatorially wired below)
-                    beat_counter_chirho <= 16'b0;
-                    fsm_state_chirho    <= FSM_STORE_BURST_CHIRHO;
-                end
-
+                // Store result (flat mode or hierarchical level0)
                 FSM_STORE_RESULT_CHIRHO: begin
-                    // Flat mode: single beat write
-                    axi_addr_chirho      <= var_to_hbm_addr_chirho(var_id_1_chirho);
-                    axi_wdata_chirho     <= domain_result_flat_chirho;
-                    axi_write_req_chirho <= 1'b1;
+                    if (ctrl_hier_mode_chirho == `HIER_MODE_FLAT256_CHIRHO) begin
+                        // Flat mode: single beat write
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho);
+                        axi_wdata_chirho <= domain_result_flat_chirho;
+                        axi_write_req_chirho <= 1'b1;
 
-                    if (hbm_axi4_bus_chirho.bvalid && hbm_axi4_bus_chirho.bready) begin
-                        axi_write_req_chirho <= 1'b0;
-                        fsm_state_chirho     <= FSM_BATCH_NEXT_CHIRHO;
+                        if (hbm_axi4_bus_chirho.bvalid && hbm_axi4_bus_chirho.bready) begin
+                            axi_write_req_chirho <= 1'b0;
+                            fsm_state_chirho <= FSM_BATCH_NEXT_CHIRHO;
+                        end
+                    end else begin
+                        // V5.3: Hierarchical mode - store level0 result only
+                        // (level1 results already stored during sparse streaming)
+                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho);
+
+                        if (ctrl_hier_mode_chirho == `HIER_MODE_HIER_65K_CHIRHO) begin
+                            axi_wdata_chirho <= hier_65k_result_level0_chirho;
+                            axi_write_req_chirho <= 1'b1;
+
+                            if (hbm_axi4_bus_chirho.bvalid && hbm_axi4_bus_chirho.bready) begin
+                                axi_write_req_chirho <= 1'b0;
+                                fsm_state_chirho <= FSM_BATCH_NEXT_CHIRHO;
+                            end
+                        end else begin  // 262K: 2 beats for level0
+                            if (beat_counter_chirho == 20'd0) begin
+                                axi_wdata_chirho <= hier_262k_result_level0_chirho[255:0];
+                            end else begin
+                                axi_wdata_chirho <= hier_262k_result_level0_chirho[511:256];
+                            end
+                            axi_write_req_chirho <= 1'b1;
+
+                            if (hbm_axi4_bus_chirho.bvalid && hbm_axi4_bus_chirho.bready) begin
+                                if (beat_counter_chirho == 20'd0) begin
+                                    beat_counter_chirho <= 20'd1;
+                                end else begin
+                                    axi_write_req_chirho <= 1'b0;
+                                    beat_counter_chirho <= 20'd0;
+                                    fsm_state_chirho <= FSM_BATCH_NEXT_CHIRHO;
+                                end
+                            end
+                        end
                     end
                 end
 
-                FSM_STORE_BURST_CHIRHO: begin
-                    // Hierarchical mode: multi-beat write
-                    axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho) + ({18'b0, beat_counter_chirho} << 5);
-
-                    if (beat_counter_chirho == 16'b0) begin
-                        axi_wdata_chirho <= hier_65k_result_level0_chirho;
-                    end else if (beat_counter_chirho <= 16'd256) begin
-                        axi_wdata_chirho <= hier_65k_result_level1_chirho[beat_counter_chirho - 1];
-                    end
-
-                    axi_write_req_chirho <= 1'b1;
+                // FSM_STORE_BURST_CHIRHO removed in V5.3 - level1 stored during sparse streaming
+                // This dummy case prevents synthesis warning about missing enum value
+                default: begin
+                    axi_write_req_chirho <= 1'b0;
 
                     if (hbm_axi4_bus_chirho.bvalid && hbm_axi4_bus_chirho.bready) begin
                         axi_write_req_chirho <= 1'b0;
@@ -979,146 +1138,9 @@ if (EN_HBM) begin : HBM_ENGINE
                     end
                 end
 
-                // ================================================================
-                // 3-Level Streaming States (256³ and 512³)
-                // ================================================================
-                // For 16M and 134M hierarchies, we stream level2 blocks one at a time
-                // to avoid requiring 2MB+ of on-chip buffers per domain.
-
-                FSM_LOAD_SUMMARIES_CHIRHO: begin
-                    // Load level0 and level1 summaries for both variables
-                    // These fit in BRAM (8KB for 256³, 33KB for 512³)
-                    if (hbm_axi4_bus_chirho.rvalid && hbm_axi4_bus_chirho.rready) begin
-                        // Store based on which variable we're loading (use high bit of beat_counter)
-                        if (beat_counter_chirho < beats_required_chirho) begin
-                            // Loading var1 summaries
-                            if (beat_counter_chirho == 20'd0) begin
-                                hier_16m_1_level0_chirho <= hbm_axi4_bus_chirho.rdata;
-                            end else begin
-                                hier_16m_1_level1_chirho[beat_counter_chirho - 1] <= hbm_axi4_bus_chirho.rdata;
-                            end
-                        end else begin
-                            // Loading var2 summaries
-                            if (beat_counter_chirho == beats_required_chirho) begin
-                                hier_16m_2_level0_chirho <= hbm_axi4_bus_chirho.rdata;
-                            end else begin
-                                hier_16m_2_level1_chirho[beat_counter_chirho - beats_required_chirho - 1] <= hbm_axi4_bus_chirho.rdata;
-                            end
-                        end
-
-                        beat_counter_chirho <= beat_counter_chirho + 1;
-
-                        // After loading var1 summaries, switch to var2
-                        if (beat_counter_chirho == beats_required_chirho - 1) begin
-                            axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_2_chirho);
-                        end
-
-                        // After loading both, compute summary intersections and start streaming
-                        if (beat_counter_chirho >= (beats_required_chirho * 2) - 1) begin
-                            axi_read_req_chirho <= 1'b0;
-                            // Intersect level0 and level1 summaries
-                            hier_16m_result_level0_chirho <= hier_16m_1_level0_chirho & hier_16m_2_level0_chirho;
-                            hier_16m_level1_idx_chirho <= 8'b0;
-                            hier_16m_level2_idx_chirho <= 8'b0;
-                            beat_counter_chirho <= 20'b0;
-                            fsm_state_chirho <= FSM_STREAM_LOAD_L2_V1_CHIRHO;
-                        end
-                    end
-                end
-
-                FSM_STREAM_LOAD_L2_V1_CHIRHO: begin
-                    // Stream level2 block for var1 (256 beats for 256³, 512 for 512³)
-                    // Only load if both level1 summary bits are set (sparse optimization)
-                    if (hier_16m_1_level1_chirho[hier_16m_level1_idx_chirho][hier_16m_level2_idx_chirho] &&
-                        hier_16m_2_level1_chirho[hier_16m_level1_idx_chirho][hier_16m_level2_idx_chirho]) begin
-                        // Calculate address: base + level1_offset + level2_offset
-                        axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho) +
-                                          ({12'b0, hier_16m_level1_idx_chirho} * 20'd8224) + // level1 block offset
-                                          ({12'b0, hier_16m_level2_idx_chirho} << 5) +       // level2 beat offset
-                                          20'd8224;  // Skip level0+level1 headers
-                        axi_read_req_chirho <= 1'b1;
-
-                        if (hbm_axi4_bus_chirho.rvalid && hbm_axi4_bus_chirho.rready) begin
-                            hier_16m_1_level2_block_chirho[beat_counter_chirho[7:0]] <= hbm_axi4_bus_chirho.rdata;
-                            beat_counter_chirho <= beat_counter_chirho + 1;
-
-                            if (beat_counter_chirho >= 20'd255) begin
-                                axi_read_req_chirho <= 1'b0;
-                                beat_counter_chirho <= 20'b0;
-                                fsm_state_chirho <= FSM_STREAM_LOAD_L2_V2_CHIRHO;
-                            end
-                        end
-                    end else begin
-                        // Skip this block (sparse: level1 bit not set)
-                        fsm_state_chirho <= FSM_STREAM_NEXT_BLOCK_CHIRHO;
-                    end
-                end
-
-                FSM_STREAM_LOAD_L2_V2_CHIRHO: begin
-                    // Stream level2 block for var2
-                    axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_2_chirho) +
-                                      ({12'b0, hier_16m_level1_idx_chirho} * 20'd8224) +
-                                      ({12'b0, hier_16m_level2_idx_chirho} << 5) +
-                                      20'd8224;
-                    axi_read_req_chirho <= 1'b1;
-
-                    if (hbm_axi4_bus_chirho.rvalid && hbm_axi4_bus_chirho.rready) begin
-                        hier_16m_2_level2_block_chirho[beat_counter_chirho[7:0]] <= hbm_axi4_bus_chirho.rdata;
-                        beat_counter_chirho <= beat_counter_chirho + 1;
-
-                        if (beat_counter_chirho >= 20'd255) begin
-                            axi_read_req_chirho <= 1'b0;
-                            beat_counter_chirho <= 20'b0;
-                            fsm_state_chirho <= FSM_STREAM_COMPUTE_CHIRHO;
-                        end
-                    end
-                end
-
-                FSM_STREAM_COMPUTE_CHIRHO: begin
-                    // Intersect the current level2 blocks (256 parallel ANDs)
-                    // Result computed combinatorially in generate block below
-                    fsm_state_chirho <= FSM_STREAM_STORE_CHIRHO;
-                end
-
-                FSM_STREAM_STORE_CHIRHO: begin
-                    // Write intersected level2 block back to result
-                    axi_addr_chirho <= var_to_hbm_addr_chirho(var_id_1_chirho) +
-                                      ({12'b0, hier_16m_level1_idx_chirho} * 20'd8224) +
-                                      ({12'b0, hier_16m_level2_idx_chirho} << 5) +
-                                      20'd8224;
-                    axi_wdata_chirho <= hier_16m_result_level2_block_chirho[beat_counter_chirho[7:0]];
-                    axi_write_req_chirho <= 1'b1;
-
-                    if (hbm_axi4_bus_chirho.bvalid && hbm_axi4_bus_chirho.bready) begin
-                        axi_write_req_chirho <= 1'b0;
-                        beat_counter_chirho <= beat_counter_chirho + 1;
-
-                        if (beat_counter_chirho >= 20'd255) begin
-                            beat_counter_chirho <= 20'b0;
-                            fsm_state_chirho <= FSM_STREAM_NEXT_BLOCK_CHIRHO;
-                        end
-                    end
-                end
-
-                FSM_STREAM_NEXT_BLOCK_CHIRHO: begin
-                    // Advance to next level2 block, or next level1 block, or done
-                    if (hier_16m_level2_idx_chirho >= 8'd255) begin
-                        // Done with this level1 block, advance to next
-                        hier_16m_level2_idx_chirho <= 8'b0;
-                        if (hier_16m_level1_idx_chirho >= 8'd255) begin
-                            // All done! Store summary and finish
-                            op_done_chirho <= 1'b1;
-                            op_valid_chirho <= (hier_16m_result_level0_chirho != 256'b0);
-                            fsm_state_chirho <= FSM_BATCH_NEXT_CHIRHO;
-                        end else begin
-                            hier_16m_level1_idx_chirho <= hier_16m_level1_idx_chirho + 1;
-                            fsm_state_chirho <= FSM_STREAM_LOAD_L2_V1_CHIRHO;
-                        end
-                    end else begin
-                        hier_16m_level2_idx_chirho <= hier_16m_level2_idx_chirho + 1;
-                        fsm_state_chirho <= FSM_STREAM_LOAD_L2_V1_CHIRHO;
-                    end
-                end
+                // NOTE: 3-Level Streaming States (256³ and 512³) REMOVED in V5
+                // These caused 14 logic levels and 32,775 fanout on level1_idx_chirho
+                // resulting in -6.256ns WNS at 200MHz. Future: add pipelining.
 
                 FSM_BATCH_NEXT_CHIRHO: begin
                     batch_idx_chirho <= batch_idx_chirho + 1;
@@ -1134,54 +1156,46 @@ if (EN_HBM) begin : HBM_ENGINE
     end
 
     // ========================================================================
-    // Hierarchical Level1 Intersection (256 parallel 256-bit ANDs)
-    // This runs combinatorially while FSM handles sequencing
+    // V5.3 SPARSE STREAMING - Sequential level1 intersection
     // ========================================================================
-    genvar gi_chirho;
-    for (gi_chirho = 0; gi_chirho < 256; gi_chirho = gi_chirho + 1) begin : hier_level1_intersect_chirho
-        // Only intersect if both level0 bits indicate non-empty blocks
-        wire level0_active_chirho = hier_65k_1_level0_chirho[gi_chirho] &
-                                    hier_65k_2_level0_chirho[gi_chirho];
+    // Instead of 256/512 parallel ANDs requiring ~983K FFs, we stream one
+    // word at a time using level0 to skip zero blocks.
+    //
+    // Typical case (10 bits set in level0): 10 words × 3 cycles = 30 cycles
+    // Worst case (all bits set): 256 or 512 words × 3 cycles
+    // But uses only ~3K FFs instead of ~983K FFs!
 
-        // Gated intersection: if either level0 bit is 0, result is 0
-        always_ff @(posedge clk_main_a0) begin
-            if (fsm_state_chirho == FSM_COMPUTE_HIER_CHIRHO) begin
-                if (level0_active_chirho) begin
-                    hier_65k_result_level1_chirho[gi_chirho] <=
-                        hier_65k_1_level1_chirho[gi_chirho] & hier_65k_2_level1_chirho[gi_chirho];
-                end else begin
-                    hier_65k_result_level1_chirho[gi_chirho] <= 256'b0;
-                end
+    // Compute level0 intersection (combinational - used by FSM)
+    wire [255:0] level0_and_65k_chirho = hier_65k_1_level0_chirho & hier_65k_2_level0_chirho;
+    wire [511:0] level0_and_262k_chirho = hier_262k_1_level0_chirho & hier_262k_2_level0_chirho;
+
+    // Find first set bit (priority encoder for next non-zero index)
+    // For 65K mode: scan 256 bits; for 262K mode: scan 512 bits
+    function automatic [8:0] find_next_set_bit_chirho(
+        input [511:0] bitvec_chirho,
+        input [8:0] start_idx_chirho,
+        input [8:0] max_idx_chirho
+    );
+        integer i_chirho;
+        find_next_set_bit_chirho = 9'd511;  // Default: not found
+        for (i_chirho = 0; i_chirho < 512; i_chirho = i_chirho + 1) begin
+            if (i_chirho >= start_idx_chirho && i_chirho < max_idx_chirho && bitvec_chirho[i_chirho]) begin
+                find_next_set_bit_chirho = i_chirho[8:0];
+                break;
             end
         end
-    end  // hier_level1_intersect_chirho
+    endfunction
 
-    // ========================================================================
-    // Streaming Level2 Intersection (256 parallel 256-bit ANDs for current block)
-    // Used by 3-level hierarchies (256³, 512³) in streaming mode
-    // ========================================================================
-    genvar gj_chirho;
-    for (gj_chirho = 0; gj_chirho < 256; gj_chirho = gj_chirho + 1) begin : hier_level2_stream_intersect_chirho
-        // Compute intersection of current level2 block
-        always_ff @(posedge clk_main_a0) begin
-            if (fsm_state_chirho == FSM_STREAM_COMPUTE_CHIRHO) begin
-                hier_16m_result_level2_block_chirho[gj_chirho] <=
-                    hier_16m_1_level2_block_chirho[gj_chirho] & hier_16m_2_level2_block_chirho[gj_chirho];
-            end
+    // Count set bits (popcount for determining total non-zero blocks)
+    function automatic [8:0] popcount_512_chirho(input [511:0] bitvec_chirho);
+        integer i_chirho;
+        popcount_512_chirho = 9'b0;
+        for (i_chirho = 0; i_chirho < 512; i_chirho = i_chirho + 1) begin
+            popcount_512_chirho = popcount_512_chirho + {8'b0, bitvec_chirho[i_chirho]};
         end
-    end  // hier_level2_stream_intersect_chirho
+    endfunction
 
-    // Also compute level1 summary updates during streaming
-    for (gj_chirho = 0; gj_chirho < 256; gj_chirho = gj_chirho + 1) begin : hier_level1_summary_update_chirho
-        always_ff @(posedge clk_main_a0) begin
-            if (fsm_state_chirho == FSM_LOAD_SUMMARIES_CHIRHO &&
-                beat_counter_chirho == (beats_required_chirho * 2) - 1) begin
-                // Intersect level1 summaries
-                hier_16m_result_level1_chirho[gj_chirho] <=
-                    hier_16m_1_level1_chirho[gj_chirho] & hier_16m_2_level1_chirho[gj_chirho];
-            end
-        end
-    end  // hier_level1_summary_update_chirho
+    // NOTE: Parallel generate blocks REMOVED in V5.3 - replaced by sparse streaming FSM above.
 
     // AXI4 read channel
     assign hbm_axi4_bus_chirho.arid    = 6'b0;
@@ -1225,7 +1239,7 @@ else begin : LEGACY_ENGINE
     // NOTE: Port names .clk and .rst are Clash-generated standard clock/reset ports
     // and retain their original Clash names per AGENTS.md convention. Custom ports
     // (enChirho, cmdChirho, respChirho) use the Chirho suffix per project naming.
-    // For larger domains, use hierarchical modules: intersect_hier_262k_chirho (512²)
+    // V5: HBM engine supports flat256 + 65K (256²) modes with floorplanning
     searchEngine64BitChirho u_engine_64bit_chirho (
         .clk        (clk_engine_chirho),
         .rst        (engine_rst_chirho),
