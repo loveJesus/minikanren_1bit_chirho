@@ -17,11 +17,11 @@
 // IMPORTANT: For Amazon VID 0x1D0F, Device ID MUST be in range 0xF000-0xF0FF
 // - 0x1042 is FORBIDDEN (reserved for F1)
 // - 0xF200+ is FORBIDDEN (reserved by AWS shell)
-// - We use 0xF016 = F0xx valid range + tribute to John 3:16 ☧
-`define CL_SH_ID0       32'hF016_1D0F
+// - V5.3: 0xF053, V5.4: 0xF054, V5.5: 0xF055
+`define CL_SH_ID0       32'hF055_1D0F
 
 // CL_SH_ID1
 // - PCIe Subsystem/Subsystem Vendor ID Values
-//    31:16: PCIe Subsystem ID (0xF016 = matching our device ID)
+//    31:16: PCIe Subsystem ID (0xF055 = matching our device ID)
 //    15: 0: PCIe Subsystem Vendor ID (0x1D51)
-`define CL_SH_ID1       32'h1D51_F016
+`define CL_SH_ID1       32'h1D51_F055

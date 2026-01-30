@@ -4,6 +4,230 @@ For God so loved the world - John 3:16
 
 ---
 
+## V5.4 BUILD COMPLETE (2026-01-30) - DEBUG REGISTERS + WIDTH FIX ☧
+
+**Result:** ⚠️ BUILD WITH TIMING WARNING
+
+### Build Details
+- **Instance:** i-08cca702b67d12081 (c5.9xlarge) at 98.87.148.68
+- **Duration:** 58 minutes
+- **Clock:** 200MHz (A1 recipe)
+- **Device ID:** 0xF054
+- **Version:** 0xF2540001
+- **DCP:** `s3://minikanren-fpga-chirho/f2_hbm_hdk/dcp_v5_floorplan/2026_01_30-150751.Developer_CL.tar`
+- **AFI:** `afi-07fd1ddc4e2c1615c` / `agfi-0d5a0236dacd50a9e` (pending)
+
+### Timing Warning
+```
+CRITICAL WARNING: Found {WRAPPER/CL/HBM_ENGINE.sparse_idx_chirho_reg[0]/C -->
+                        WRAPPER/CL/HBM_ENGINE.sparse_idx_chirho_reg[1]/D}
+                  negative setup slack paths
+```
+The sparse_idx register has a timing violation. May affect functionality - needs testing.
+
+### Changes from V5.3
+1. **Register map fix**: HIER/TRAIN registers moved to 0x80+ to avoid overlap with RESP (0x20-0x5C)
+2. **Width bug fix**: `find_next_set_bit_chirho` uses `<=` with inclusive bounds (9'd255, 9'd511)
+3. **Debug registers**: Added read-only registers at 0xC0-0xD4:
+   - 0xC0: FSM_STATE (current FSM state, 4 bits)
+   - 0xC4: AXI_STATUS {bready,bvalid,awvalid,awready,rready,rvalid,arvalid,arready}
+   - 0xC8: AXI_ADDR_LO
+   - 0xCC: AXI_ADDR_HI
+   - 0xD0: BEAT_COUNT
+   - 0xD4: SPARSE_IDX
+4. **Version update**: 0xF2540001
+5. **Forward declarations**: Moved FSM typedef + debug signals earlier for OCL visibility
+
+### V5.4 Test Results (2026-01-30)
+
+**AFI Status:** ✅ Available and loaded on F2 (52.54.165.179)
+
+**Verified Working:**
+- VERSION register returns 0xF2540001 ✓
+- Debug registers readable at 0xC0-0xD4 ✓
+- FSM responds to CONTROL register ✓
+- FSM executes through states: IDLE → LOAD_VAR1 → LOAD_VAR2 → COMPUTE → STORE_RESULT → BATCH_NEXT → IDLE ✓
+- Address calculation working: var_id=1 maps to HBM_BASE + 0x20 = 0x20000020 ✓
+
+**Issues Found:**
+1. **STATUS register hardcoded** (line 583): `done=1, valid=1` always - doesn't reflect actual state
+2. **FSM auto-restarts**: After reaching IDLE, if CONTROL=0x05 still set, operation restarts
+3. **Command encoding was wrong**: Initial tests used wrong field layout (fixed below)
+
+**Fixes Applied:**
+1. Command encoding corrected (see "Command Format" section below)
+2. Register offset map clarified (OCL uses 6-bit word addresses)
+
+**Next Steps for V5.5:**
+1. Fix STATUS register to show actual `op_done_chirho` state
+2. Consider adding "one-shot" mode that auto-clears enable after completion
+3. Pipeline sparse_idx to fix timing violation
+
+---
+
+## V5.4 Register Interface Reference ☧
+
+**CRITICAL:** The FSM requires BOTH `ctrl_enable_chirho` AND `ctrl_hbm_mode_chirho` to start!
+
+### OCL Register Map (AXI-Lite, BAR0)
+
+OCL uses 6-bit word addresses. Byte address = word_addr × 4.
+
+| Byte Addr | Word | R/W | Name | Description |
+|-----------|------|-----|------|-------------|
+| 0x00 | 6'h00 | R | VERSION | 0xF2540001 for V5.4 |
+| 0x04 | 6'h01 | R/W | CONTROL | bit0=enable, bit1=reset, bit2=hbm_mode |
+| 0x08 | 6'h02 | R | STATUS | bit0=done, bit1=valid, bit2=hbm_ready |
+| 0x0C | 6'h03 | R/W | MODE | Operation mode flags |
+| 0x10 | 6'h04 | R/W | CMD_LO | {var_id_1[15:0], opcode[3:0]} |
+| 0x14 | 6'h05 | R/W | CMD_MID | {batch_count[15:0], var_id_2[15:0]} |
+| 0x18 | 6'h06 | R/W | CMD_HI | {unused[25:0], batch_count[17:16]} |
+| 0x20-0x5C | 6'h08-17 | R | RESP[0-15] | Response data (512-bit + flags) |
+| 0x80 | 6'h20 | R/W | HIER_MODE | Hierarchy mode (0=flat256, 1=65k, 2=262k) |
+| 0xC0 | 6'h30 | R | FSM_STATE | Current FSM state (4 bits) |
+| 0xC4 | 6'h31 | R | AXI_STATUS | {bready,bvalid,awvalid,awready,rready,rvalid,arvalid,arready} |
+| 0xC8 | 6'h32 | R | AXI_ADDR_LO | Current HBM address [31:0] |
+| 0xCC | 6'h33 | R | AXI_ADDR_HI | Current HBM address [33:32] |
+| 0xD0 | 6'h34 | R | BEAT_COUNT | AXI beat counter |
+| 0xD4 | 6'h35 | R | SPARSE_IDX | Current sparse level1 index |
+
+### CONTROL Register (0x04)
+
+```
+Bit 0: ctrl_enable_chirho    - Enable HBM engine
+Bit 1: ctrl_reset_chirho     - Reset FSM
+Bit 2: ctrl_hbm_mode_chirho  - HBM operation mode (REQUIRED for FSM to start!)
+```
+
+**⚠️ IMPORTANT:** To start an HBM operation, you MUST write:
+```python
+CONTROL = 0x05  # enable (bit 0) + hbm_mode (bit 2) = 0b0101
+```
+
+Writing only `0x01` (enable) will NOT start the FSM!
+
+### FSM Start Condition (from line 832)
+
+```systemverilog
+if (ctrl_enable_chirho && ctrl_hbm_mode_chirho && hbm_ready_chirho) begin
+    // FSM starts here
+end
+```
+
+All three conditions must be true:
+1. `ctrl_enable_chirho` = CONTROL[0] = 1
+2. `ctrl_hbm_mode_chirho` = CONTROL[2] = 1
+3. `hbm_ready_chirho` = STATUS[2] = 1 (HBM IP ready)
+
+### Command Format
+
+**⚠️ IMPORTANT:** The cmd_reg field layout spans register boundaries!
+
+```
+cmd_reg_chirho bit layout (70 bits total):
+  [3:0]   = opcode (4 bits)
+  [19:4]  = var_id_1 (16 bits)
+  [35:20] = var_id_2 (16 bits) - SPANS CMD_LO[31:20] and CMD_MID[3:0]
+  [51:36] = batch_count (16 bits)
+  [69:52] = reserved
+
+Register writes:
+  CMD_LO (0x10)  -> cmd_reg[31:0]
+  CMD_MID (0x14) -> cmd_reg[63:32]
+  CMD_HI (0x18)  -> cmd_reg[69:64]
+```
+
+**Correct encoding for var_id_1=0, var_id_2=1, batch=1, op=INTERSECT:**
+
+```python
+def encode_command(opcode, var_id_1, var_id_2, batch_count):
+    # var_id_2 spans CMD_LO[31:20] and CMD_MID[3:0]
+    var_id_2_lo = var_id_2 & 0xFFF       # bits [11:0] -> CMD_LO[31:20]
+    var_id_2_hi = (var_id_2 >> 12) & 0xF # bits [15:12] -> CMD_MID[3:0]
+
+    cmd_lo = (var_id_2_lo << 20) | (var_id_1 << 4) | opcode
+    cmd_mid = (batch_count << 4) | var_id_2_hi
+    return cmd_lo, cmd_mid
+
+# Example: var1=0, var2=1, batch=1, op=1
+# cmd_lo  = 0x00100001
+# cmd_mid = 0x00000010
+```
+
+**Address mapping:**
+```
+var_id -> HBM_BASE (0x2_0000_0000) + var_id * bytes_per_var
+
+Mode         | bytes_per_var
+-------------|---------------
+FLAT256 (0)  | 32 bytes
+HIER_65K (1) | 8,224 bytes
+HIER_262K (2)| 33,024 bytes
+```
+
+### PCI Device Path on F2
+
+```bash
+# Find FPGA device
+lspci | grep Amazon  # Should show device ID 0xf054
+
+# BAR0 path (64MB OCL)
+/sys/bus/pci/devices/0000:34:00.0/resource0
+
+# BAR4 path (128GB HBM - if needed for direct access)
+/sys/bus/pci/devices/0000:34:00.0/resource4
+```
+
+### Example Test Script
+
+```python
+import mmap, struct, os, time
+
+BAR = "/sys/bus/pci/devices/0000:34:00.0/resource0"
+fd = os.open(BAR, os.O_RDWR | os.O_SYNC)
+mm = mmap.mmap(fd, 64*1024*1024)
+
+def read_reg(off):
+    mm.seek(off); return struct.unpack('<I', mm.read(4))[0]
+
+def write_reg(off, val):
+    mm.seek(off); mm.write(struct.pack('<I', val))
+
+def encode_cmd(op, v1, v2, batch):
+    v2_lo = v2 & 0xFFF
+    v2_hi = (v2 >> 12) & 0xF
+    cmd_lo = (v2_lo << 20) | (v1 << 4) | op
+    cmd_mid = (batch << 4) | v2_hi
+    return cmd_lo, cmd_mid
+
+# Verify V5.4
+assert read_reg(0x00) == 0xF2540001, "Not V5.4!"
+
+# Setup command: intersect var0 and var1, batch=1
+write_reg(0x04, 0x00)  # Clear CONTROL
+write_reg(0x80, 0x00)  # HIER_MODE = FLAT256
+cmd_lo, cmd_mid = encode_cmd(1, 0, 1, 1)  # op=INTERSECT, v1=0, v2=1, batch=1
+write_reg(0x10, cmd_lo)
+write_reg(0x14, cmd_mid)
+
+# Start with BOTH enable and hbm_mode!
+write_reg(0x04, 0x05)  # CONTROL = 0x05
+
+# Poll FSM until IDLE (FSM=0)
+for i in range(100):
+    time.sleep(0.002)
+    fsm = read_reg(0xC0)
+    if fsm == 0:
+        write_reg(0x04, 0x00)  # Clear CONTROL to stop auto-restart
+        print(f"Completed in {i*2}ms")
+        break
+    print(f"FSM={fsm} AXI=0x{read_reg(0xC4):02X} ADDR=0x{read_reg(0xC8):08X}")
+
+mm.close()
+```
+
+---
+
 ## V5.3 SUCCESS (2026-01-30) - SPARSE STREAMING ☧
 
 **Result:** ✅ BUILD SUCCESSFUL

@@ -13,8 +13,9 @@
   // CL Name for F2 shell instantiation
   `define CL_NAME cl_minikanren_chirho
 
-  // Version register (F2 = 0xF2, HBM = 0x02, version = 0x0001)
-  `define MINIKANREN_VERSION_CHIRHO 32'hF2_02_0001
+  // Version register (F2 = 0xF2, 55 = V5.5, version = 0x0001)
+  // V5.3: 0xF2020001, V5.4: 0xF2540001, V5.5: 0xF2550001
+  `define MINIKANREN_VERSION_CHIRHO 32'hF2_55_0001
 
   // Enable HBM support (recommended for async operations)
   `define FPGA_LESS_RST
@@ -45,16 +46,25 @@
   `define OP_IS_GROUND_CHIRHO   4'h3  // Check if single value
 
   // ========================================================================
-  // Hierarchical Domain Mode Selection
+  // Hierarchical Domain Mode Selection (V5: flat + 65K only)
   // ========================================================================
-  // Modes select domain size for different problem scales
-  // Larger domains support more values per variable but require more HBM reads
+  // V5 Scope: Only flat256 and 65K modes are fully implemented
+  // - flat256: 256 values (1 HBM beat) - simplest mode
+  // - 65K: 256² = 65,536 values (257 beats) - max complexity for V5
+  //
+  // REMOVED in V5 (timing closure / implementation incomplete):
+  // - 262K (512²): requires 512-bit word assembly from 256-bit bus
+  // - 1M (1024²): requires 1024-bit word assembly from 256-bit bus
+  // - 16M (256³): streaming FSM caused -6.256ns WNS at 200MHz
+  // - 134M (512³): streaming FSM not implemented
 
-  `define HIER_MODE_FLAT256_CHIRHO     3'd0  // 256 values (1 HBM beat)
-  `define HIER_MODE_HIER_65K_CHIRHO    3'd1  // 256² = 65K values (256 beats + 1 summary)
-  `define HIER_MODE_HIER_262K_CHIRHO   3'd2  // 512² = 262K values (512 beats + 1 summary)
-  `define HIER_MODE_HIER_16M_CHIRHO    3'd3  // 256³ = 16.7M values (~8K beats) ← SWEET SPOT
-  `define HIER_MODE_HIER_134M_CHIRHO   3'd4  // 512³ = 134M values (~65K beats)
+  `define HIER_MODE_FLAT256_CHIRHO     3'd0  // 256 values (1 HBM beat) ✓ V5
+  `define HIER_MODE_HIER_65K_CHIRHO    3'd1  // 256² = 65K values (257 beats) ✓ V5
+  `define HIER_MODE_HIER_262K_CHIRHO   3'd2  // 512² = 262K values (1026 beats) ✓ V5
+  // Modes 3+ defined for future use but NOT implemented in V5 RTL
+  `define HIER_MODE_HIER_1M_CHIRHO     3'd3  // TODO: V6
+  // `define HIER_MODE_HIER_16M_CHIRHO  3'd3  // Replaced by 1M
+  // `define HIER_MODE_HIER_134M_CHIRHO 3'd4  // Removed (streaming complexity)
 
   // Register addresses (OCL AXI-Lite, word-aligned)
   `define REG_VERSION_CHIRHO      8'h00  // Read-only version
@@ -63,24 +73,24 @@
   `define REG_CMD_LO_CHIRHO       8'h10  // cmdChirho[31:0]
   `define REG_CMD_MID_CHIRHO      8'h14  // cmdChirho[63:32]
   `define REG_CMD_HI_CHIRHO       8'h18  // cmdChirho[69:64]
-  `define REG_HIER_MODE_CHIRHO    8'h40  // Hierarchical mode selection (3 bits)
-  `define REG_HIER_LEVEL_CHIRHO   8'h44  // Current hierarchy level (debug)
-  `define REG_BEAT_COUNT_CHIRHO   8'h48  // HBM beat counter (debug)
+  // V5.4: Moved HIER registers to 0x80+ to avoid conflict with RESP (0x20-0x5C)
+  `define REG_HIER_MODE_CHIRHO    8'h80  // Hierarchical mode selection (3 bits)
+  // REG_HIER_LEVEL and REG_BEAT_COUNT moved to debug section at 0xC0+
   `define REG_RESP_BASE_CHIRHO    8'h20  // Response registers start
 
   // Domain sizes per hierarchy mode (bytes per variable domain)
-  `define DOMAIN_SIZE_FLAT256_CHIRHO    32      // 256 bits = 32 bytes
-  `define DOMAIN_SIZE_HIER_65K_CHIRHO   8224    // 256² bits + summary = ~8KB
-  `define DOMAIN_SIZE_HIER_262K_CHIRHO  33024   // 512² bits + summary = ~33KB
-  `define DOMAIN_SIZE_HIER_16M_CHIRHO   2097408 // 256³ bits + summaries = ~2MB
-  `define DOMAIN_SIZE_HIER_134M_CHIRHO  16810496 // 512³ bits + summaries = ~16MB
+  `define DOMAIN_SIZE_FLAT256_CHIRHO    32      // 256 bits = 32 bytes ✓ V5
+  `define DOMAIN_SIZE_HIER_65K_CHIRHO   8224    // 256² bits + summary = ~8KB ✓ V5
+  `define DOMAIN_SIZE_HIER_262K_CHIRHO  33024   // 512² bits + summary = ~33KB ✓ V5
+  // Larger sizes defined for future use but NOT implemented in V5
+  `define DOMAIN_SIZE_HIER_1M_CHIRHO    131200  // TODO: V6
 
   // HBM beats required per domain (256-bit beats)
-  `define BEATS_FLAT256_CHIRHO      1
-  `define BEATS_HIER_65K_CHIRHO     258    // 256 data + 1 level1 + 1 level0
-  `define BEATS_HIER_262K_CHIRHO    1026   // 512 × 512/256 + summaries
-  `define BEATS_HIER_16M_CHIRHO     65794  // 256³/256 + summaries
-  `define BEATS_HIER_134M_CHIRHO    525314 // 512³/256 + summaries
+  `define BEATS_FLAT256_CHIRHO      1     // ✓ V5
+  `define BEATS_HIER_65K_CHIRHO     257   // 1 level0 + 256 level1 ✓ V5
+  `define BEATS_HIER_262K_CHIRHO    1026  // 2 beats for level0 + 512×2 for level1 ✓ V5
+  // Larger hierarchies require 4× word assembly
+  `define BEATS_HIER_1M_CHIRHO      4100  // TODO: V6
 
   // ========================================================================
   // Neurosymbolic Training Mode
@@ -115,6 +125,16 @@
   `define REG_INFER_MODE_CHIRHO     8'h70  // bit0=prob_mode (0=Boolean, 1=Probabilistic)
   `define INFER_MODE_BOOL_CHIRHO    1'b0   // Standard Boolean intersection
   `define INFER_MODE_PROB_CHIRHO    1'b1   // Probabilistic soft intersection (Q8.8/Q16.16)
+
+  // ========================================================================
+  // V5.4 Debug Registers (read-only, zero cost visibility)
+  // ========================================================================
+  `define REG_FSM_STATE_CHIRHO      8'hC0  // Current FSM state (5 bits)
+  `define REG_AXI_STATUS_CHIRHO     8'hC4  // AXI signals: {bready,bvalid,awvalid,awready,rready,rvalid,arvalid,arready}
+  `define REG_AXI_ADDR_LO_CHIRHO    8'hC8  // axi_addr_chirho[31:0]
+  `define REG_AXI_ADDR_HI_CHIRHO    8'hCC  // axi_addr_chirho[33:32]
+  `define REG_BEAT_COUNT_CHIRHO     8'hD0  // beat_counter_chirho[19:0]
+  `define REG_SPARSE_IDX_CHIRHO     8'hD4  // sparse_idx_chirho[8:0]
 
   // Probabilistic domain format (for intersect_prob_domain_64_chirho):
   //   [1087:1024] = 64-bit presence mask (ANDed like Boolean)

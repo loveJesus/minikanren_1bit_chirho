@@ -21,14 +21,24 @@
 //   0x2_0000_0000 - 0x2_0FFF_FFFF: Hash table (256 MB)
 //   0x2_1000_0000 - 0x2_8FFF_FFFF: Tabling cache (2 GB)
 //
-// Register Map (via OCL AXI-Lite):
+// Register Map (via OCL AXI-Lite) - V5.4 FIXED (no address conflicts)
 //   0x000: VERSION   - Read-only version register
 //   0x004: CONTROL   - bit0=enable, bit1=reset, bit2=hbm_mode
 //   0x008: STATUS    - bit0=done, bit1=valid, bit2=hbm_ready
 //   0x010: CMD_LO    - cmdChirho[31:0]
 //   0x014: CMD_MID   - cmdChirho[63:32]
 //   0x018: CMD_HI    - cmdChirho[69:64]
-//   0x020-0x060: RESP[0-8] - respChirho[513:0] (9 x 64-bit)
+//   0x020-0x05C: RESP[0-15] - respChirho[513:0] (16 x 32-bit)
+//   --- Hierarchical/Training at 0x80+ (V5.4: moved to avoid overlap) ---
+//   0x080: HIER_MODE - Hierarchical domain mode select
+//   0x090: TRAIN_MODE - bit0=enable, bit1=reset
+//   0x094: TRAIN_CMD_LO
+//   0x098: TRAIN_CMD_MID
+//   0x09C: TRAIN_CMD_HI
+//   0x0A0: TRAIN_CMD_TOP
+//   0x0A4: TRAIN_RESP_LO
+//   0x0A8: TRAIN_RESP_HI
+//   0x0B0: INFER_MODE - Probabilistic inference mode
 //
 // Naming Conventions (per AGENTS.md):
 //   - Internal signals:    snake_chirho      (e.g., clk_engine_chirho)
@@ -289,6 +299,36 @@ module cl_minikanren_chirho
     cfg_bus_t hbm_stat_bus_chirho();
 
     // ========================================================================
+    // V5.4: Forward declarations for debug register visibility
+    // (These must appear before the OCL read logic that references them)
+    // ========================================================================
+
+    // HBM FSM states - V5.3 SPARSE STREAMING (moved here for debug visibility)
+    typedef enum logic [3:0] {
+        FSM_IDLE_CHIRHO,
+        FSM_LOAD_VAR1_CHIRHO,           // Single beat (flat 256-bit)
+        FSM_LOAD_LEVEL0_V1_CHIRHO,      // Load level0 summary for var1
+        FSM_LOAD_VAR2_CHIRHO,
+        FSM_LOAD_LEVEL0_V2_CHIRHO,      // Load level0 summary for var2
+        FSM_COMPUTE_CHIRHO,             // Flat intersection
+        FSM_SPARSE_INIT_CHIRHO,         // Compute level0 AND, find first non-zero
+        FSM_SPARSE_LOAD_A_CHIRHO,       // Stream level1[i] from var1
+        FSM_SPARSE_LOAD_B_CHIRHO,       // Stream level1[i] from var2
+        FSM_SPARSE_COMPUTE_CHIRHO,      // Compute AND for current word
+        FSM_SPARSE_STORE_CHIRHO,        // Store result level1[i]
+        FSM_SPARSE_NEXT_CHIRHO,         // Find next non-zero index
+        FSM_STORE_RESULT_CHIRHO,
+        FSM_BATCH_NEXT_CHIRHO
+    } hbm_fsm_state_t_chirho;
+
+    hbm_fsm_state_t_chirho fsm_state_chirho;
+
+    // Debug-visible signals (declared here for OCL read logic)
+    logic [8:0] sparse_idx_chirho;           // Current level1 index being processed
+    logic [19:0] beat_counter_chirho;        // Extended to handle 512³ (up to 525K beats)
+    logic [33:0] axi_addr_chirho;            // Current HBM address
+
+    // ========================================================================
     // Reset Synchronizer
     // ========================================================================
 
@@ -467,20 +507,20 @@ end : HBM_DISABLED
                                 ctrl_reset_chirho    <= ocl_cl_wdata[1];
                                 ctrl_hbm_mode_chirho <= ocl_cl_wdata[2];
                             end
-                            6'h04: cmd_reg_chirho[31:0]  <= ocl_cl_wdata;
-                            6'h05: cmd_reg_chirho[63:32] <= ocl_cl_wdata;
-                            6'h06: cmd_reg_chirho[69:64] <= ocl_cl_wdata[5:0];
-                            6'h10: ctrl_hier_mode_chirho <= ocl_cl_wdata[2:0]; // REG_HIER_MODE_CHIRHO (0x40)
-                            // Neurosymbolic training registers (0x50-0x60)
-                            6'h14: begin // REG_TRAIN_MODE_CHIRHO (0x50)
+                            6'h04: cmd_reg_chirho[31:0]  <= ocl_cl_wdata;  // 0x10: CMD_LO
+                            6'h05: cmd_reg_chirho[63:32] <= ocl_cl_wdata;  // 0x14: CMD_MID
+                            6'h06: cmd_reg_chirho[69:64] <= ocl_cl_wdata[5:0]; // 0x18: CMD_HI
+                            // V5.4: Hierarchical/Training at 0x80+ (no overlap with RESP)
+                            6'h20: ctrl_hier_mode_chirho <= ocl_cl_wdata[2:0]; // 0x80: HIER_MODE
+                            6'h24: begin // 0x90: TRAIN_MODE
                                 train_enable_chirho <= ocl_cl_wdata[0];
                                 train_reset_chirho  <= ocl_cl_wdata[1];
                             end
-                            6'h15: train_cmd_chirho[31:0]   <= ocl_cl_wdata; // REG_TRAIN_CMD_LO (0x54)
-                            6'h16: train_cmd_chirho[63:32]  <= ocl_cl_wdata; // REG_TRAIN_CMD_MID (0x58)
-                            6'h17: train_cmd_chirho[95:64]  <= ocl_cl_wdata; // REG_TRAIN_CMD_HI (0x5C)
-                            6'h18: train_cmd_chirho[127:96] <= ocl_cl_wdata; // REG_TRAIN_CMD_TOP (0x60)
-                            6'h1C: infer_prob_mode_chirho <= ocl_cl_wdata[0]; // REG_INFER_MODE (0x70)
+                            6'h25: train_cmd_chirho[31:0]   <= ocl_cl_wdata; // 0x94: TRAIN_CMD_LO
+                            6'h26: train_cmd_chirho[63:32]  <= ocl_cl_wdata; // 0x98: TRAIN_CMD_MID
+                            6'h27: train_cmd_chirho[95:64]  <= ocl_cl_wdata; // 0x9C: TRAIN_CMD_HI
+                            6'h28: train_cmd_chirho[127:96] <= ocl_cl_wdata; // 0xA0: TRAIN_CMD_TOP
+                            6'h2C: infer_prob_mode_chirho <= ocl_cl_wdata[0]; // 0xB0: INFER_MODE
                         endcase
                         ocl_bvalid_chirho <= 1'b1;
                         ocl_bresp_chirho  <= 2'b00;
@@ -540,38 +580,52 @@ end : HBM_DISABLED
                     case (rd_addr_chirho)
                         6'h00: ocl_rdata_chirho <= `MINIKANREN_VERSION_CHIRHO;
                         6'h01: ocl_rdata_chirho <= {29'b0, ctrl_hbm_mode_chirho, ctrl_reset_chirho, ctrl_enable_chirho};
-                        6'h02: ocl_rdata_chirho <= {29'b0, hbm_ready_chirho, 1'b1, 1'b1}; // STATUS with HBM ready
+                        6'h02: ocl_rdata_chirho <= {29'b0, hbm_ready_chirho, op_valid_chirho, op_done_chirho}; // V5.5: actual status
                         6'h04: ocl_rdata_chirho <= cmd_reg_chirho[31:0];
                         6'h05: ocl_rdata_chirho <= cmd_reg_chirho[63:32];
                         6'h06: ocl_rdata_chirho <= {26'b0, cmd_reg_chirho[69:64]};
-                        // Response registers
-                        6'h08: ocl_rdata_chirho <= resp_wire_chirho[31:0];
-                        6'h09: ocl_rdata_chirho <= resp_wire_chirho[63:32];
-                        6'h0A: ocl_rdata_chirho <= resp_wire_chirho[95:64];
-                        6'h0B: ocl_rdata_chirho <= resp_wire_chirho[127:96];
-                        6'h0C: ocl_rdata_chirho <= resp_wire_chirho[159:128];
-                        6'h0D: ocl_rdata_chirho <= resp_wire_chirho[191:160];
-                        6'h0E: ocl_rdata_chirho <= resp_wire_chirho[223:192];
-                        6'h0F: ocl_rdata_chirho <= resp_wire_chirho[255:224];
-                        6'h10: ocl_rdata_chirho <= resp_wire_chirho[287:256];
-                        6'h11: ocl_rdata_chirho <= resp_wire_chirho[319:288];
-                        6'h12: ocl_rdata_chirho <= resp_wire_chirho[351:320];
-                        6'h13: ocl_rdata_chirho <= resp_wire_chirho[383:352];
-                        6'h14: ocl_rdata_chirho <= resp_wire_chirho[415:384];
-                        6'h15: ocl_rdata_chirho <= resp_wire_chirho[447:416];
-                        6'h16: ocl_rdata_chirho <= resp_wire_chirho[479:448];
-                        6'h17: ocl_rdata_chirho <= resp_wire_chirho[511:480];
-                        6'h18: ocl_rdata_chirho <= {30'b0, resp_wire_chirho[513:512]};
-                        6'h10: ocl_rdata_chirho <= {29'b0, ctrl_hier_mode_chirho}; // REG_HIER_MODE_CHIRHO (0x40)
-                        // Neurosymbolic training registers (0x50-0x68)
-                        6'h14: ocl_rdata_chirho <= {30'b0, train_reset_chirho, train_enable_chirho}; // REG_TRAIN_MODE
-                        6'h15: ocl_rdata_chirho <= train_cmd_chirho[31:0];   // REG_TRAIN_CMD_LO
-                        6'h16: ocl_rdata_chirho <= train_cmd_chirho[63:32];  // REG_TRAIN_CMD_MID
-                        6'h17: ocl_rdata_chirho <= train_cmd_chirho[95:64];  // REG_TRAIN_CMD_HI
-                        6'h18: ocl_rdata_chirho <= train_cmd_chirho[127:96]; // REG_TRAIN_CMD_TOP
-                        6'h19: ocl_rdata_chirho <= train_resp_chirho[31:0];  // REG_TRAIN_RESP_LO (0x64)
-                        6'h1A: ocl_rdata_chirho <= train_resp_chirho[63:32]; // REG_TRAIN_RESP_HI (0x68)
-                        6'h1C: ocl_rdata_chirho <= {31'b0, infer_prob_mode_chirho}; // REG_INFER_MODE (0x70)
+                        // Response registers (0x20-0x5C, no conflicts)
+                        6'h08: ocl_rdata_chirho <= resp_wire_chirho[31:0];    // 0x20
+                        6'h09: ocl_rdata_chirho <= resp_wire_chirho[63:32];   // 0x24
+                        6'h0A: ocl_rdata_chirho <= resp_wire_chirho[95:64];   // 0x28
+                        6'h0B: ocl_rdata_chirho <= resp_wire_chirho[127:96];  // 0x2C
+                        6'h0C: ocl_rdata_chirho <= resp_wire_chirho[159:128]; // 0x30
+                        6'h0D: ocl_rdata_chirho <= resp_wire_chirho[191:160]; // 0x34
+                        6'h0E: ocl_rdata_chirho <= resp_wire_chirho[223:192]; // 0x38
+                        6'h0F: ocl_rdata_chirho <= resp_wire_chirho[255:224]; // 0x3C
+                        6'h10: ocl_rdata_chirho <= resp_wire_chirho[287:256]; // 0x40
+                        6'h11: ocl_rdata_chirho <= resp_wire_chirho[319:288]; // 0x44
+                        6'h12: ocl_rdata_chirho <= resp_wire_chirho[351:320]; // 0x48
+                        6'h13: ocl_rdata_chirho <= resp_wire_chirho[383:352]; // 0x4C
+                        6'h14: ocl_rdata_chirho <= resp_wire_chirho[415:384]; // 0x50
+                        6'h15: ocl_rdata_chirho <= resp_wire_chirho[447:416]; // 0x54
+                        6'h16: ocl_rdata_chirho <= resp_wire_chirho[479:448]; // 0x58
+                        6'h17: ocl_rdata_chirho <= {30'b0, resp_wire_chirho[513:512]}; // 0x5C (flags)
+                        // V5.4: Hierarchical/Training at 0x80+ (no overlap with RESP)
+                        6'h20: ocl_rdata_chirho <= {29'b0, ctrl_hier_mode_chirho}; // 0x80: HIER_MODE
+                        6'h24: ocl_rdata_chirho <= {30'b0, train_reset_chirho, train_enable_chirho}; // 0x90: TRAIN_MODE
+                        6'h25: ocl_rdata_chirho <= train_cmd_chirho[31:0];   // 0x94: TRAIN_CMD_LO
+                        6'h26: ocl_rdata_chirho <= train_cmd_chirho[63:32];  // 0x98: TRAIN_CMD_MID
+                        6'h27: ocl_rdata_chirho <= train_cmd_chirho[95:64];  // 0x9C: TRAIN_CMD_HI
+                        6'h28: ocl_rdata_chirho <= train_cmd_chirho[127:96]; // 0xA0: TRAIN_CMD_TOP
+                        6'h29: ocl_rdata_chirho <= train_resp_chirho[31:0];  // 0xA4: TRAIN_RESP_LO
+                        6'h2A: ocl_rdata_chirho <= train_resp_chirho[63:32]; // 0xA8: TRAIN_RESP_HI
+                        6'h2C: ocl_rdata_chirho <= {31'b0, infer_prob_mode_chirho}; // 0xB0: INFER_MODE
+                        // V5.4: Debug registers at 0xC0+ (zero cost visibility)
+                        6'h30: ocl_rdata_chirho <= {27'b0, fsm_state_chirho}; // 0xC0: FSM_STATE
+                        6'h31: ocl_rdata_chirho <= {24'b0,                    // 0xC4: AXI_STATUS
+                            hbm_axi4_bus_chirho.bready,   // bit 7
+                            hbm_axi4_bus_chirho.bvalid,   // bit 6
+                            hbm_axi4_bus_chirho.awvalid,  // bit 5 (our awvalid)
+                            hbm_axi4_bus_chirho.awready,  // bit 4
+                            hbm_axi4_bus_chirho.rready,   // bit 3 (our rready)
+                            hbm_axi4_bus_chirho.rvalid,   // bit 2
+                            hbm_axi4_bus_chirho.arvalid,  // bit 1 (our arvalid)
+                            hbm_axi4_bus_chirho.arready}; // bit 0
+                        6'h32: ocl_rdata_chirho <= axi_addr_chirho[31:0];     // 0xC8: AXI_ADDR_LO
+                        6'h33: ocl_rdata_chirho <= {30'b0, axi_addr_chirho[33:32]}; // 0xCC: AXI_ADDR_HI
+                        6'h34: ocl_rdata_chirho <= {12'b0, beat_counter_chirho}; // 0xD0: BEAT_COUNT
+                        6'h35: ocl_rdata_chirho <= {23'b0, sparse_idx_chirho}; // 0xD4: SPARSE_IDX
                         default: ocl_rdata_chirho <= 32'hDEADBEEF;
                     endcase
                     ocl_rvalid_chirho <= 1'b1;
@@ -624,25 +678,7 @@ if (EN_HBM) begin : HBM_ENGINE
     // Supports: 256-bit flat, 256² (65K), 512² (262K), 256³ (16.7M), 512³ (134M)
     // ========================================================================
 
-    // HBM FSM states - V5.3 SPARSE STREAMING
-    typedef enum logic [3:0] {
-        FSM_IDLE_CHIRHO,
-        FSM_LOAD_VAR1_CHIRHO,           // Single beat (flat 256-bit)
-        FSM_LOAD_LEVEL0_V1_CHIRHO,      // Load level0 summary for var1
-        FSM_LOAD_VAR2_CHIRHO,
-        FSM_LOAD_LEVEL0_V2_CHIRHO,      // Load level0 summary for var2
-        FSM_COMPUTE_CHIRHO,             // Flat intersection
-        FSM_SPARSE_INIT_CHIRHO,         // Compute level0 AND, find first non-zero
-        FSM_SPARSE_LOAD_A_CHIRHO,       // Stream level1[i] from var1
-        FSM_SPARSE_LOAD_B_CHIRHO,       // Stream level1[i] from var2
-        FSM_SPARSE_COMPUTE_CHIRHO,      // Compute AND for current word
-        FSM_SPARSE_STORE_CHIRHO,        // Store result level1[i]
-        FSM_SPARSE_NEXT_CHIRHO,         // Find next non-zero index
-        FSM_STORE_RESULT_CHIRHO,
-        FSM_BATCH_NEXT_CHIRHO
-    } hbm_fsm_state_t_chirho;
-
-    hbm_fsm_state_t_chirho fsm_state_chirho;
+    // (FSM typedef moved to forward declarations section for debug visibility)
 
     // Command parsing
     logic [15:0] var_id_1_chirho;
@@ -689,8 +725,7 @@ if (EN_HBM) begin : HBM_ENGINE
     logic [511:0] hier_262k_stream_b_chirho;
     logic [511:0] hier_262k_stream_result_chirho;
 
-    // Sparse index tracking
-    logic [8:0] sparse_idx_chirho;           // Current level1 index being processed
+    // Sparse index tracking (sparse_idx_chirho moved to forward declarations)
     logic [8:0] sparse_count_chirho;         // Total non-zero level1 words
     logic [8:0] sparse_processed_chirho;     // How many we've processed
     logic sparse_stream_phase_chirho;        // 0=load A, 1=load B
@@ -702,8 +737,7 @@ if (EN_HBM) begin : HBM_ENGINE
     // - WNS: -6.256ns at 200MHz
     // Future: Add pipelining to streaming FSM before re-enabling.
 
-    // Beat counter for burst transfers
-    logic [19:0] beat_counter_chirho;  // Extended to handle 512³ (up to 525K beats)
+    // Beat counter for burst transfers (beat_counter_chirho moved to forward declarations)
     logic [19:0] beats_required_chirho;
 
     // Result status
@@ -711,10 +745,9 @@ if (EN_HBM) begin : HBM_ENGINE
     logic op_valid_chirho;
     logic hier_domain_empty_chirho;
 
-    // AXI4 control signals
+    // AXI4 control signals (axi_addr_chirho moved to forward declarations)
     logic axi_read_req_chirho;
     logic axi_write_req_chirho;
-    logic [33:0] axi_addr_chirho;
     logic [255:0] axi_wdata_chirho;
     logic [7:0] axi_burst_len_chirho;  // For burst transfers
 
@@ -892,13 +925,13 @@ if (EN_HBM) begin : HBM_ENGINE
                         hier_domain_empty_chirho <= (level0_and_65k_chirho == 256'b0);
                         op_valid_chirho <= (level0_and_65k_chirho != 256'b0);
                         sparse_count_chirho <= popcount_512_chirho({256'b0, level0_and_65k_chirho});
-                        sparse_idx_chirho <= find_next_set_bit_chirho({256'b0, level0_and_65k_chirho}, 9'd0, 9'd256);
+                        sparse_idx_chirho <= find_next_set_bit_chirho({256'b0, level0_and_65k_chirho}, 9'd0, 9'd255);
                     end else begin
                         hier_262k_result_level0_chirho <= level0_and_262k_chirho;
                         hier_domain_empty_chirho <= (level0_and_262k_chirho == 512'b0);
                         op_valid_chirho <= (level0_and_262k_chirho != 512'b0);
                         sparse_count_chirho <= popcount_512_chirho(level0_and_262k_chirho);
-                        sparse_idx_chirho <= find_next_set_bit_chirho(level0_and_262k_chirho, 9'd0, 9'd512);
+                        sparse_idx_chirho <= find_next_set_bit_chirho(level0_and_262k_chirho, 9'd0, 9'd511);
                     end
                     sparse_processed_chirho <= 9'd0;
 
@@ -1034,13 +1067,13 @@ if (EN_HBM) begin : HBM_ENGINE
                             sparse_idx_chirho <= find_next_set_bit_chirho(
                                 {256'b0, level0_and_65k_chirho},
                                 sparse_idx_chirho + 1,
-                                9'd256
+                                9'd255
                             );
                         end else begin
                             sparse_idx_chirho <= find_next_set_bit_chirho(
                                 level0_and_262k_chirho,
                                 sparse_idx_chirho + 1,
-                                9'd512
+                                9'd511
                             );
                         end
                         fsm_state_chirho <= FSM_SPARSE_LOAD_A_CHIRHO;
@@ -1171,15 +1204,16 @@ if (EN_HBM) begin : HBM_ENGINE
 
     // Find first set bit (priority encoder for next non-zero index)
     // For 65K mode: scan 256 bits; for 262K mode: scan 512 bits
+    // V5.4 FIX: Use inclusive max (<=) so 511 fits in 9 bits
     function automatic [8:0] find_next_set_bit_chirho(
         input [511:0] bitvec_chirho,
         input [8:0] start_idx_chirho,
-        input [8:0] max_idx_chirho
+        input [8:0] max_idx_chirho  // Inclusive upper bound (use 255 or 511)
     );
         integer i_chirho;
         find_next_set_bit_chirho = 9'd511;  // Default: not found
         for (i_chirho = 0; i_chirho < 512; i_chirho = i_chirho + 1) begin
-            if (i_chirho >= start_idx_chirho && i_chirho < max_idx_chirho && bitvec_chirho[i_chirho]) begin
+            if (i_chirho >= start_idx_chirho && i_chirho <= max_idx_chirho && bitvec_chirho[i_chirho]) begin
                 find_next_set_bit_chirho = i_chirho[8:0];
                 break;
             end
