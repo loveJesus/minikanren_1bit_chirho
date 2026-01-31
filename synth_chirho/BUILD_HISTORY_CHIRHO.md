@@ -180,12 +180,35 @@ s3://minikanren-fpga-chirho/f2_hbm_hdk/
 - AFI: agfi-0261e88151bcb39a5
 - Device ID: 0xF055
 
-**Register Verification:**
+**⚠️ CRITICAL BUG DISCOVERED (2026-01-31):**
+
+The benchmark had incorrect register addresses!
+- Benchmark read 0x04 as "STATUS", but 0x04 is actually CONTROL
+- Actual STATUS is at 0x08
+
+| Register | Address | Benchmark Error |
+|----------|---------|-----------------|
+| VERSION | 0x00 | ✅ Correct |
+| CONTROL | 0x04 | ❌ Was reading this as "STATUS" |
+| STATUS | 0x08 | ❌ Was not reading this at all |
+
+**What we actually measured:**
+| Address | Value | Actual Register | Interpretation |
+|---------|-------|-----------------|----------------|
+| 0x00 | 0xF2550001 | VERSION | V5.5 confirmed ✅ |
+| 0x04 | 0x00000004 | CONTROL | ctrl_hbm_mode=1 (HBM mode enabled) |
+| 0x08 | **UNKNOWN** | STATUS | Never read! hbm_ready was never verified |
+
+The "hbm_ready=1" claim in the original report was actually "ctrl_hbm_mode=1".
+**Actual HBM status needs re-testing with corrected benchmark.**
+
+**Updated register map (correct):**
 | Register | Value | Notes |
 |----------|-------|-------|
-| VERSION | 0xF2550001 | V5.5 confirmed |
-| STATUS | 0x00000004 | HBM ready, op_done/valid working |
-| HIER_MODE | 0x00000000 | 64-bit domain mode |
+| VERSION (0x00) | 0xF2550001 | V5.5 confirmed |
+| CONTROL (0x04) | 0x00000004 | ctrl_hbm_mode=1 |
+| STATUS (0x08) | ??? | Needs re-testing |
+| HIER_MODE (0x80) | 0x00000000 | 64-bit domain mode |
 
 **PCIe Latency (Direct mmap):**
 | Operation | Latency | Notes |

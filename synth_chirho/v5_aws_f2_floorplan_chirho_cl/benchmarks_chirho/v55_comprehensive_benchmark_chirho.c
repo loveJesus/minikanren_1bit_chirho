@@ -32,11 +32,21 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-// FPGA register map (V5.5)
+// FPGA register map (V5.5) - CORRECTED from cl_minikanren_chirho.sv OCL logic
+// OCL uses addr[7:2] as case selector, so byte_addr = case_value * 4
 #define FPGA_BAR0_SIZE_CHIRHO     0x10000
-#define REG_VERSION_CHIRHO        0x0000
-#define REG_STATUS_CHIRHO         0x0004
-#define REG_CTRL_CHIRHO           0x0008
+#define REG_VERSION_CHIRHO        0x0000  // 6'h00: VERSION (read-only)
+#define REG_CONTROL_CHIRHO        0x0004  // 6'h01: CONTROL {hbm_mode[2], reset[1], enable[0]}
+#define REG_STATUS_CHIRHO         0x0008  // 6'h02: STATUS {hbm_ready[2], valid[1], done[0]}
+// NOTE: Previous benchmark INCORRECTLY had STATUS at 0x04 (which is CONTROL)!
+// This explains why the benchmark report said "hbm_ready=1" when it was actually "ctrl_hbm_mode=1"
+#define REG_CMD_LO_CHIRHO         0x0010  // 6'h04: cmd[31:0]
+#define REG_CMD_MID_CHIRHO        0x0014  // 6'h05: cmd[63:32]
+#define REG_CMD_HI_CHIRHO         0x0018  // 6'h06: cmd[69:64]
+#define REG_RESP_BASE_CHIRHO      0x0020  // 6'h08-6'h17: Response registers
+#define REG_HIER_MODE_CHIRHO      0x0080  // 6'h20: Hierarchical mode
+#define REG_FSM_STATE_CHIRHO      0x00C0  // 6'h30: Debug - FSM state
+// Direct domain registers (used for 64-bit simulation path, not full HBM path)
 #define REG_DOMAIN_A_CHIRHO       0x0100
 #define REG_DOMAIN_B_CHIRHO       0x0108
 #define REG_RESULT_CHIRHO         0x0110

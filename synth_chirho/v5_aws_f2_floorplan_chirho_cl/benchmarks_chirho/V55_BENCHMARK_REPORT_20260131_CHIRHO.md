@@ -80,9 +80,18 @@ PCI Device: 0000:34:00.0
   - Vendor ID: 0x1D0F (Amazon)
   - Device ID: 0xF055 (miniKanren V5.5)
 
-STATUS Register: 0x00000004
-  - done=0, valid=0, hbm_ready=1
-  - HBM memory subsystem operational
+⚠️ REGISTER ADDRESS BUG DISCOVERED (2026-01-31):
+The benchmark was reading address 0x04 as "STATUS", but 0x04 is actually CONTROL!
+  - 0x04 = CONTROL register (enable, reset, hbm_mode)
+  - 0x08 = STATUS register (done, valid, hbm_ready)
+
+What we actually measured at 0x04 (CONTROL):
+  Value 0x00000004 = ctrl_hbm_mode=1 (bit 2 set)
+  This means HBM mode was enabled, NOT that HBM was ready!
+
+To verify actual HBM status, read address 0x08.
+This bug affects the interpretation of "hbm_ready" in this report.
+The hierarchical 512² benchmarks need re-running with correct addresses.
 ```
 
 ---
