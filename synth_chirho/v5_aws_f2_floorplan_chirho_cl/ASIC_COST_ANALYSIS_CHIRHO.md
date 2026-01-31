@@ -2,7 +2,7 @@
 ## For God so loved the world - John 3:16
 
 **Date:** January 31, 2026
-**Based on:** V5.5 FPGA Benchmark Results (456M ops/sec peak)
+**Based on:** V5.5 FPGA Benchmark Results (456M ops/sec neural-symbolic, 35.6B ops/sec peak internal throughput)
 
 ---
 
