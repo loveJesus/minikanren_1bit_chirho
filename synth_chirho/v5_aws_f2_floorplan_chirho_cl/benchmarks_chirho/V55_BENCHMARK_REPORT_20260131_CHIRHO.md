@@ -10,47 +10,61 @@
 
 ## Understanding These Metrics
 
-**This report contains two types of throughput - both are genuine hardware measurements:**
+**This report contains two distinct types of numbers:**
 
-| Metric Type | What It Measures | Example | How It's Real |
-|-------------|------------------|---------|---------------|
-| **Job Completion Rate** | PCIe round-trips completed | 1.78M jobs/sec | Measured wall-clock time |
-| **Internal Operation Rate** | Parallel bit-ops on FPGA die | 35.6B ops/sec | Hardware parallelism |
+| Column | Source | Status |
+|--------|--------|--------|
+| **Time_ms** | Wall-clock measurement | ✅ **Measured** |
+| **Operations** | Calculated from scenario parameters | ⚠️ **Modeled** |
+| **Ops/sec** | Operations ÷ Time | ⚠️ **Derived** |
 
-**Both numbers are real.** The FPGA performs massive internal parallelism per job:
+### What's Measured vs. Modeled
 
-- Each PCIe command triggers **256+ parallel bit comparisons** per clock cycle
-- At 250 MHz × 256 bits = **64 billion bit-ops/sec** theoretical internal capacity
-- The "35.6B ops/sec" for intertextual analysis represents **actual parallel operations on silicon**
+**MEASURED (verified):**
+- PCIe register write throughput: **1.78M writes/sec**
+- PCIe register read throughput: **0.78M reads/sec**
+- Batch queue timing: wall-clock accurate
 
-This is analogous to GPU throughput:
-- GPU launches ~1000 kernels/sec (job rate)
-- GPU performs 10+ TFLOPS internally (operation rate)
-- Both are real measurements of the same hardware
+**MODELED (calculated, not hardware-verified):**
+- "Operations" = scenario complexity estimate (rows × constraints × FKs, or words × distance, etc.)
+- "Ops/sec" = modeled operations ÷ measured time
+- These are **application-level semantic work estimates**, not hardware-counted operations
+
+**NOT YET VERIFIED:**
+- No hardware performance counters reading actual internal operations
+- No batch DMA path with proven per-element processing
+- No read-back verification proving FPGA executed all modeled operations
+
+### Theoretical Peak (Design Spec)
+
+Based on RTL design, the FPGA *should* perform:
+- 256-bit domain intersection per clock cycle
+- At 250 MHz = 64 billion bit-comparisons/sec theoretical peak
+- But this benchmark does not prove that rate is achieved
 
 ---
 
 ## Executive Summary
 
-### Job Completion Rate (Host-Visible)
+### Measured PCIe Throughput (VERIFIED)
 
-| Metric | Measured Value | Notes |
-|--------|----------------|-------|
-| **Single-Op Register Path** | ~0.78M jobs/sec | ~1.29µs per PCIe roundtrip |
-| **Batch Queue Stream** | **1.78M jobs/sec** | Sustained read throughput |
-| **Batch Write Injection** | **3.56M jobs/sec** | Write side of queue |
+| Metric | Measured Value | Method |
+|--------|----------------|--------|
+| **Single-Op Register Write** | ~0.78M ops/sec | Wall-clock timing |
+| **Batch Queue Write** | **3.56M writes/sec** | Wall-clock timing |
+| **Batch Queue Read** | **1.78M reads/sec** | Wall-clock timing |
 
-### Internal Operation Rate (FPGA Silicon)
+### Modeled Application Throughput (DERIVED)
 
-| Scenario | Operations | Time (ms) | Internal Rate | What's Happening |
-|----------|------------|-----------|---------------|------------------|
-| Intertextual Romans | 54,999,200 | 1.54 | **35.6B ops/sec** | Parallel word comparisons |
-| Social graph FK | 25,050,000 | 28.09 | **892M ops/sec** | FK relationship checks |
-| Proximity search | 3,299,952 | 6.16 | **535M ops/sec** | Word-distance queries |
-| Neural-sym attention | 671,088,640 | 1472.95 | **456M ops/sec** | Embedding dot products |
+| Scenario | Modeled Ops | Time (ms) | Derived Rate | Basis |
+|----------|-------------|-----------|--------------|-------|
+| Intertextual Romans | 54,999,200 | 1.54 | 35.6B ops/sec | words × comparisons |
+| Social graph FK | 25,050,000 | 28.09 | 892M ops/sec | rows × FKs |
+| Proximity search | 3,299,952 | 6.16 | 535M ops/sec | words × distance |
+| Neural-sym attention | 671,088,640 | 1472.95 | 456M ops/sec | entities × dim × epochs |
 
-**Bottom Line:** The FPGA completes **1.78M jobs/sec** via PCIe, with each job triggering
-**billions of parallel bit operations** on the FPGA die. Both metrics are genuine.
+**Note:** These derived rates assume the FPGA processes all modeled operations. To fully verify,
+we would need hardware counters or batch result verification.
 
 ---
 
@@ -86,7 +100,7 @@ STATUS Register: 0x00000004
 | Social graph | 25,050,000 | 28.09 | **892M** | 5000 rows, 5000 FKs |
 | Max stress | 20,310,000 | 168.56 | **120M** | 10000 rows, 30 constraints |
 
-**Analysis:** The FPGA performs **892M parallel bit operations/sec** on social graph FK resolution - genuine hardware parallelism from 256-bit domain intersections at 250 MHz. Each FK check triggers parallel constraint propagation across all candidate values simultaneously.
+**Analysis:** The modeled throughput of 892M ops/sec is derived from (25M modeled operations ÷ 28ms measured time). This assumes the FPGA processes one FK relationship per write command. The 1.78M measured PCIe throughput is the verified baseline.
 
 ### 2.2 Philologos: Biblical/Linguistic Analysis
 
@@ -99,7 +113,7 @@ STATUS Register: 0x00000004
 | Intertextual Romans | 54,999,200 | 1.54 | **35.6B** | OT echoes |
 | Hapax legomena | 549,992 | 1.54 | **357M** | Unique words |
 
-**Analysis:** The proximity search engine performs **534M parallel bit comparisons/sec** for word-distance queries. The intertextual analysis achieves **35.6 billion ops/sec** - this is genuine hardware parallelism: 256-bit domain intersections at 250 MHz enable massive parallel pattern matching across biblical corpora.
+**Analysis:** The derived throughput of 534M-35.6B ops/sec comes from dividing modeled word comparisons by measured time. The "Operations" count represents semantic work (word pairs × distance checks). **Caveat:** Without hardware counters, we cannot verify the FPGA actually performed 54M internal comparisons vs. completing a simpler fixed-iteration loop. The measured PCIe throughput of 1.78M ops/sec is the verified baseline.
 
 ### 2.3 ConfigGuard: Configuration Validation
 
