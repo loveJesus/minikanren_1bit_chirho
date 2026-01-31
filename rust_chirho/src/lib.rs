@@ -151,12 +151,13 @@ pub mod verify_hw_chirho;
 // Backend types (pluggable CPU/FPGA)
 pub use backend_chirho::{
     create_backend_chirho, create_cpu_backend_chirho,
-    BackendConfigChirho, BackendInfoChirho, ConstraintChirho, CpuBackendChirho,
-    DomainVecChirho, SolutionChirho, SolverBackendChirho,
+    BackendConfigChirho, BackendInfoChirho, ConstraintChirho,
+    CpuBackendChirho, DomainVecChirho, SolutionChirho, SolverBackendChirho,
+    TrainConfigChirho, TrainResultChirho,
 };
 
 #[cfg(feature = "fpga_chirho")]
-pub use backend_chirho::{create_fpga_backend_chirho, FpgaBackendChirho};
+pub use backend_chirho::{create_fpga_backend_chirho, FpgaBackendChirho, HbmConfigChirho};
 
 // Core types (from reference implementation)
 pub use reference_chirho::terms_chirho::{TermChirho, TermIdChirho, TermStoreChirho};

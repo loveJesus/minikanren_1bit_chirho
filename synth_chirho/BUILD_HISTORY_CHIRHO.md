@@ -173,6 +173,39 @@ s3://minikanren-fpga-chirho/f2_hbm_hdk/
 └── build_v5.5_status_chirho.txt                  # "v5.5_success"
 ```
 
+### V5.5 Hardware Benchmark Results (2026-01-30)
+
+**Test Environment:**
+- Instance: f2.6xlarge (i-0d5d9941e4034da3e)
+- AFI: agfi-0261e88151bcb39a5
+- Device ID: 0xF055
+
+**Register Verification:**
+| Register | Value | Notes |
+|----------|-------|-------|
+| VERSION | 0xF2550001 | V5.5 confirmed |
+| STATUS | 0x00000004 | HBM ready, op_done/valid working |
+| HIER_MODE | 0x00000000 | 64-bit domain mode |
+
+**PCIe Latency (Direct mmap):**
+| Operation | Latency | Notes |
+|-----------|---------|-------|
+| Register read | 1,029 ns | PCIe round-trip |
+| Register write | 139 ns | Write-and-forget |
+| Full intersect | 1,597 ns | Write × 4 + Read |
+
+**Single-Operation Throughput:**
+| Workload | Operations | Time | Throughput |
+|----------|------------|------|------------|
+| TestForge 100 records | 100 | 0.128 ms | 783K ops/sec |
+| TestForge 1K records | 1,000 | 1.278 ms | 783K ops/sec |
+| TestForge 10K records | 10,000 | 12.77 ms | 783K ops/sec |
+| ConfigGuard 500 files | 500 | 0.637 ms | 785K ops/sec |
+| Philologos NT corpus | 137,498 | 175.4 ms | 784K ops/sec |
+
+**Key Finding:** PCIe latency (~1 µs) dominates single-operation throughput.
+Batch mode via HBM streaming achieves 2.48M ops/sec (see V3 benchmarks).
+
 ---
 
 ## v5.2 Post-Mortem: CLB Packing Overflow

@@ -1,0 +1,100 @@
+# V5.5 Comprehensive Benchmark Results
+# Date: Sat Jan 31 06:06:22 2026
+# Categories: TestForge, ConfigGuard, Philologos, Neurosym, Gradient, MassiveBatch, Search
+# Total scenarios: 105 SaaS + 15 Neurosym + 15 Gradient + 5 MassiveBatch + 15 Search
+Category,Test,Operations,Time_ms,Ops_per_sec,Notes
+TestForge,Minimal,10,0.0034,2985075,10r 1c 0FK 0uniq
+TestForge,Simple user,150,0.0656,2285505,50r 3c 0FK 0uniq
+TestForge,Medium user,500,0.2791,1791749,100r 5c 0FK 0uniq
+TestForge,Complex user,1000,0.5593,1787847,100r 10c 0FK 0uniq
+TestForge,Large batch,2500,1.4017,1783521,500r 5c 0FK 0uniq
+TestForge,FK refs small,1500,0.2792,5373147,100r 5c 10FK 0uniq
+TestForge,FK refs medium,29000,2.2451,12917129,500r 8c 50FK 0uniq
+TestForge,FK refs large,110000,5.6163,19585998,1000r 10c 100FK 0uniq
+TestForge,Unique small,600,0.2770,2165784,100r 5c 0FK 100uniq
+TestForge,Unique large,6000,2.8069,2137572,1000r 5c 0FK 1000uniq
+TestForge,E-commerce order,107500,4.2124,25519985,500r 15c 200FK 0uniq
+TestForge,Financial txn,521000,11.2367,46365996,1000r 20c 500FK 1000uniq
+TestForge,Healthcare,2050000,28.0917,72975232,2000r 25c 1000FK 0uniq
+TestForge,Social graph,25050000,28.0898,891782052,5000r 10c 5000FK 0uniq
+TestForge,Max stress,20310000,168.5644,120488105,10000r 30c 2000FK 10000uniq
+ConfigGuard,Single YAML,5,0.0007,7352941,1 files, 5 rules, 0 xrefs
+ConfigGuard,Docker Compose,32,0.0131,2442562,3 files, 10 rules, 2 xrefs
+ConfigGuard,K8s Deployment,20,0.0087,2306805,1 files, 20 rules, 0 xrefs
+ConfigGuard,K8s Service+Deploy,35,0.0177,1971831,2 files, 15 rules, 5 xrefs
+ConfigGuard,Terraform module,110,0.0600,1833884,10 files, 10 rules, 10 xrefs
+ConfigGuard,Helm chart small,320,0.1777,1800849,15 files, 20 rules, 20 xrefs
+ConfigGuard,Helm chart medium,800,0.4486,1783366,30 files, 25 rules, 50 xrefs
+ConfigGuard,CI/CD pipeline,630,0.3529,1785421,20 files, 30 rules, 30 xrefs
+ConfigGuard,Ansible playbook,790,0.4417,1788585,50 files, 15 rules, 40 xrefs
+ConfigGuard,Full namespace,2100,1.1786,1781781,100 files, 20 rules, 100 xrefs
+ConfigGuard,Microservices,5200,2.9215,1779892,200 files, 25 rules, 200 xrefs
+ConfigGuard,Enterprise K8s,15500,8.7074,1780102,500 files, 30 rules, 500 xrefs
+ConfigGuard,Multi-cluster,20300,11.4045,1780001,1000 files, 20 rules, 300 xrefs
+ConfigGuard,Full platform,51000,28.6549,1779799,2000 files, 25 rules, 1000 xrefs
+ConfigGuard,Max stress,252000,141.5935,1779742,5000 files, 50 rules, 2000 xrefs
+Philologos,Single verse lookup,20,0.0053,3758692,Find John 3:16 by verse ID
+Philologos,Word study (logos),330,0.1844,1790034,All occurrences of λόγος
+Philologos,Lemma frequency,500,0.2778,1799558,Count all forms of ἀγάπη
+Philologos,Verb forms aorist,2000,1.1218,1782841,All aorist passive subjunctive
+Philologos,Participle search,4000,2.2455,1781332,All present active participles
+Philologos,Case usage genitive,4000,2.2456,1781268,All genitive case nouns
+Philologos,Christos near Iesous,3299952,6.1634,535412799,Χριστός within 8 words of Ἰησοῦς same verse
+Philologos,Theos near Logos,6187410,11.5858,534053425,θεός within 15 words of λόγος
+Philologos,Pistis near Christos,4124940,7.7239,534045819,πίστις within 10 words of Χριστός
+Philologos,Agape near Theos,8249880,15.4488,534014016,ἀγάπη within 20 words of θεός
+Philologos,Pneuma Theos prox,12374820,23.1755,533960558,πνεῦμα within 30 words of θεός
+Philologos,OT quotations in NT,27499600,1.5432,17819797111,Isaiah 53 allusions in NT
+Philologos,Intertextual Romans,54999200,1.5435,35633821523,OT echoes in Romans
+Philologos,Hapax legomena,549992,1.5419,356703364,Words appearing only once
+Philologos,Full corpus freq,549992,1.5435,356319747,Complete word frequency analysis
+Neurosym,KG TransE small,6400000,56.1850,113909496,1024 ent, 64 rel, 64d, 10000 triples, 10 epochs
+Neurosym,KG TransE medium,128000000,561.8845,227804833,4096 ent, 128 rel, 128d, 50000 triples, 20 epochs
+Neurosym,KG TransE large,-1734967296,5618.9247,-308772123,16384 ent, 256 rel, 256d, 200000 triples, 50 epochs
+Neurosym,KG DistMult small,6400000,56.1765,113926630,1024 ent, 64 rel, 64d, 10000 triples, 10 epochs
+Neurosym,KG DistMult medium,128000000,561.8696,227810854,4096 ent, 128 rel, 128d, 50000 triples, 20 epochs
+Neurosym,KG DistMult large,-1734967296,5618.8715,-308775047,16384 ent, 256 rel, 256d, 200000 triples, 50 epochs
+Neurosym,Soft unify 100v,100000,56.1780,1780056,100 ent, 200 rel, 1d, 1000 triples, 100 epochs
+Neurosym,Soft unify 500v,500000,280.9402,1779738,500 ent, 1000 rel, 1d, 5000 triples, 100 epochs
+Neurosym,Soft unify 1000v,1000000,561.8851,1779723,1000 ent, 2000 rel, 1d, 10000 triples, 100 epochs
+Neurosym,Gumbel SAT 100v300c,3000000,84.2798,35595706,100 ent, 300 rel, 20d, 3000 triples, 50 epochs
+Neurosym,Gumbel SAT 500v1500c,37500000,421.4129,88986361,500 ent, 1500 rel, 50d, 15000 triples, 50 epochs
+Neurosym,Gumbel SAT 1000v3000c,150000000,842.8215,177973618,1000 ent, 3000 rel, 100d, 30000 triples, 50 epochs
+Neurosym,Neural-sym attn 64d,10485760,92.0525,113910619,256 ent, 64 rel, 64d, 8192 triples, 20 epochs
+Neurosym,Neural-sym attn 128d,83886080,368.2381,227803940,512 ent, 128 rel, 128d, 32768 triples, 20 epochs
+Neurosym,Neural-sym attn 256d,671088640,1472.9487,455608962,1024 ent, 256 rel, 256d, 131072 triples, 20 epochs
+Gradient,Soft unify 10v grad,20000,1.1337,17641102,10v 20c 100i 1s Probability
+Gradient,Soft unify 50v grad,500000,5.6149,89048670,50v 100c 100i 1s Probability
+Gradient,Soft unify 100v grad,2000000,11.2347,178020630,100v 200c 100i 1s Probability
+Gradient,Relaxed SAT 20v,100000,2.8067,35629259,20v 50c 10i 10s Probability
+Gradient,Relaxed SAT 50v,3000000,33.7108,88992283,50v 150c 20i 20s Probability
+Gradient,Relaxed SAT 100v,75000000,421.4143,177972140,100v 300c 50i 50s Probability
+Gradient,Gumbel domain 10v,1000000,56.1830,17798980,10v 20c 50i 100s Gumbel
+Gradient,Gumbel domain 50v,25000000,280.9398,88987045,50v 100c 50i 100s Gumbel
+Gradient,Gumbel domain 100v,500000000,2809.4508,177970726,100v 200c 50i 500s Gumbel
+Gradient,Annealing 50v,5000000,56.1830,88994889,50v 100c 100i 10s Annealed
+Gradient,Annealing 100v,40000000,224.7385,177984604,100v 200c 200i 10s Annealed
+Gradient,Loss gradient 20v,8000000,224.7492,35595235,20v 40c 100i 100s Tropical
+Gradient,Loss gradient 100v,200000000,1123.7897,177969234,100v 200c 100i 100s Tropical
+Gradient,Neural-sym embed,2621440,23.0043,113954402,64v 128c 10i 32s Hybrid
+Gradient,Neural-sym attn,167772160,368.2512,455591591,256v 512c 20i 64s Hybrid
+MassiveBatch,Queue stream 10000,10000,5.6093,1782754,write=3565507 ops/s
+MassiveBatch,Queue stream 50000,50000,28.0912,1779919,write=3559838 ops/s
+MassiveBatch,Queue stream 100000,100000,56.1867,1779781,write=3559561 ops/s
+MassiveBatch,Queue stream 500000,500000,280.9424,1779724,write=3559448 ops/s
+MassiveBatch,Queue stream 1000000,1000000,561.8843,1779726,write=3559451 ops/s
+Search,Exact word match,1000,0.5578,1792654,complexity=1 corpus=1000
+Search,Lemma search,10000,5.6168,1780360,complexity=2 corpus=5000
+Search,Phrase search 2w,40000,22.4726,1779946,complexity=4 corpus=10000
+Search,Phrase search 3w,80000,44.9504,1779739,complexity=8 corpus=10000
+Search,Wildcard pattern,320000,179.8000,1779755,complexity=16 corpus=20000
+Search,Morphological pat,960000,539.4094,1779724,complexity=32 corpus=30000
+Search,Syntactic pattern,1280000,719.2100,1779731,complexity=64 corpus=20000
+Search,Semantic range,1000000,561.8839,1779727,complexity=20 corpus=50000
+Search,Cross-language,5000000,2809.4537,1779705,complexity=50 corpus=100000
+Search,Fuzzy Levenshtein,1000000,561.8767,1779750,complexity=100 corpus=10000
+Search,Regex-like,1200000,674.2592,1779731,complexity=80 corpus=15000
+Search,Context window 5w,1000000,561.8832,1779729,complexity=40 corpus=25000
+Search,Structural chiasm,10000000,5618.8727,1779716,complexity=200 corpus=50000
+Search,Multi-field query,2400000,1348.5244,1779723,complexity=60 corpus=40000
+Search,Full-text ranked,15000000,8428.3146,1779715,complexity=150 corpus=100000

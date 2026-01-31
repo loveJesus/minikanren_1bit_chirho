@@ -535,6 +535,82 @@ For successful builds - complete this checklist BEFORE terminating:
 - **SSH username for F2 instances: `ec2-user`** (Amazon Linux 2, different from build instances)
 - Progress file: `s3://minikanren-fpga-chirho/f2_hbm_hdk/progress_v{N}_chirho.txt`
 
+### FPGA Development Findings Log ☧
+
+**Date: 2026-01-31 | V5.5 AFI Testing on f2.6xlarge**
+
+#### ✅ Working
+
+| Finding | Details |
+|---------|---------|
+| AFI loads successfully | `agfi-0261e88151bcb39a5`, VERSION=0xF2550001 |
+| Register access works | BAR0 at 0000:34:00.0, resource0 |
+| HIER_MODE register | 0x00=Flat256, 0x01=65K, 0x02=262K - all settable |
+| STATUS bit 2 (hbm_ready) | Returns 1, indicates HBM controller up |
+
+#### ⚠️ Critical Performance Finding: O_SYNC
+
+| mmap Mode | Latency | Ops/sec | Notes |
+|-----------|---------|---------|-------|
+| `O_SYNC` | 119 μs | 8,390 | **90× SLOWER** |
+| No O_SYNC | 1.29 μs | 776,000 | Correct performance |
+| Write-Combine (`resource0_wc`) | 1.29 μs | 774,300 | Equivalent |
+
+**Rule:** NEVER use O_SYNC for FPGA register access benchmarks.
+
+#### ❌ Not Working
+
+| Issue | Details | Status |
+|-------|---------|--------|
+| HBM writes don't persist | BAR4 write 0xDEADBEEF → readback 0x0 | BLOCKING |
+| HBM FSM doesn't complete | FSM_STATE changes but done bit never set | BLOCKING |
+| Batch interface | BATCH_STATUS never signals completion | BLOCKING |
+| Training registers | All read 0x00000000 | Needs investigation |
+
+#### 🔬 HBM Investigation (2026-01-31)
+
+```
+AXI_STATUS toggles: 0x01 (arready) ↔ 0x0C (rvalid+rready)
+FSM_STATE values: 0x99, 0xBD, 0xDA, 0xB9, 0xDB (debug encodings)
+AXI_ADDR: 0x28100000 (valid HBM domain address)
+```
+
+**Hypothesis:** HBM controller needs initialization sequence not documented in cl_hbm_axi4.
+**Next step:** Check AWS F2 HDK examples for HBM init, or try different BAR4 offset.
+
+#### 🔄 Additional Testing (2026-01-31 continued)
+
+**AFI Reload Test:**
+- Reloaded AFI, DMA timeout counters reset to 0
+- HBM BAR4 writes still don't persist (22M writes/sec measured, 0/16 readback match)
+- Conclusion: Not a transient state issue
+
+**AWS SDK Observation:**
+- Earlier benchmark (benchmark_v55_20260130_chirho.csv) showed 1.94M ops/sec
+- That benchmark used `fpga_pci_peek`/`fpga_pci_poke` from AWS SDK
+- SDK library exists (`/usr/local/lib64/libfpga_mgmt.so`) but headers missing
+- SDK may use different PCIe transaction mechanism than raw mmap
+
+**Path Forward:**
+1. Install AWS FPGA SDK development headers on F2 instance
+2. Or: Use AWS XDMA driver for DMA transfers instead of mmap
+3. Or: Check if cl_hbm_axi4 needs APB-based init sequence
+4. Document: raw BAR4 mmap does NOT work for HBM access on F2
+
+#### 📊 Real Benchmark Results (Correct)
+
+| Test | Ops/sec | Latency |
+|------|---------|---------|
+| Flat256 100K | 775,972 | 1.29 μs |
+| Hier65K 100K | 775,867 | 1.29 μs |
+| Hier262K 1M | 774,725 | 1.29 μs |
+
+**Bottleneck:** PCIe register access latency (1.29 μs), not compute.
+
+**To achieve higher throughput:** Must use HBM batch mode (upload data → trigger FSM → read results), but HBM writes currently don't persist.
+
+---
+
 ### Web (`rust_chirho/web_chirho/`)
 
 | File | Description |
@@ -635,5 +711,7 @@ cd synth_chirho/v5_aws_f2_floorplan_chirho_cl
 ```
 
 ---
+### Hallelujah More Notes:
+You need the AWS FPGA SDK to get the AFI to run well with HBM
 
 *Soli Deo Gloria* ☧

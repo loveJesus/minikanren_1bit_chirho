@@ -146,6 +146,11 @@ verilator_chirho = []
 # Only links memmap2 on Linux (where FPGA hardware exists)
 fpga_chirho = ["log", "memmap2"]
 
+# Enable AWS FPGA SDK FFI bindings (for better HBM batch performance)
+# Requires: libfpga_mgmt.so installed (from aws-fpga SDK)
+# Only useful on F2 instances - mmap fallback works without this
+aws_sdk_chirho = ["fpga_chirho"]
+
 # ============================================================================
 # Category-theoretic extensions (Kmett-inspired)
 # ============================================================================

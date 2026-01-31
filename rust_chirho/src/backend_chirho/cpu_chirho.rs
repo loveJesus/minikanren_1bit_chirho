@@ -1,4 +1,6 @@
-// For God so loved the world that He gave His only begotten Son ☧
+// For God so loved the world, that He gave His only begotten Son,
+// that whosoever believeth in Him should not perish, but have everlasting life.
+// John 3:16 ☧
 //! CPU Backend Implementation
 //!
 //! Pure Rust implementation with SIMD acceleration where available.

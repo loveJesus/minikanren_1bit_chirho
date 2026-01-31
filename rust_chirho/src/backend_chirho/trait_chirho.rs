@@ -1,9 +1,52 @@
-// For God so loved the world that He gave His only begotten Son ☧
+// For God so loved the world, that He gave His only begotten Son,
+// that whosoever believeth in Him should not perish, but have everlasting life.
+// John 3:16 ☧
 //! Solver Backend Trait
 //!
 //! Defines the interface that both CPU and FPGA backends implement.
 
 use std::fmt::Debug;
+
+// Re-use BitVec256Chirho from hardware module to avoid duplication
+pub use crate::hardware_chirho::hardware_chirho::BitVec256Chirho;
+
+/// Neurosymbolic training configuration
+#[derive(Debug, Clone, Copy)]
+pub struct TrainConfigChirho {
+    /// Learning rate in Q16.16 fixed-point (0x00001999 = 0.1)
+    pub learning_rate_q16_chirho: u32,
+    /// Temperature in Q16.16 fixed-point (0x00020000 = 2.0)
+    pub temperature_q16_chirho: u32,
+    /// Number of training epochs
+    pub num_epochs_chirho: u16,
+    /// Number of Gumbel samples per epoch
+    pub num_samples_chirho: u16,
+    /// Number of clauses/constraints
+    pub clause_count_chirho: u32,
+}
+
+impl Default for TrainConfigChirho {
+    fn default() -> Self {
+        Self {
+            learning_rate_q16_chirho: 0x0000_1999, // 0.1
+            temperature_q16_chirho: 0x0002_0000,   // 2.0
+            num_epochs_chirho: 100,
+            num_samples_chirho: 50,
+            clause_count_chirho: 100,
+        }
+    }
+}
+
+/// Training result from neurosymbolic engine
+#[derive(Debug, Clone, Copy)]
+pub struct TrainResultChirho {
+    /// Final loss in Q16.16 fixed-point
+    pub final_loss_q16_chirho: u32,
+    /// Current epoch when training completed
+    pub final_epoch_chirho: u16,
+    /// Whether training converged (loss below threshold)
+    pub converged_chirho: bool,
+}
 
 /// Information about a solver backend
 #[derive(Debug, Clone)]
@@ -168,5 +211,67 @@ pub trait SolverBackendChirho: Send + Sync + Debug {
     /// Check if backend is healthy (FPGA may disconnect)
     fn is_healthy_chirho(&self) -> bool {
         true
+    }
+
+    // ========================================================================
+    // BitVec256 Operations (256-bit domains)
+    // ========================================================================
+
+    /// Intersect two 256-bit domains (AND)
+    fn intersect_256_chirho(&self, a_chirho: &BitVec256Chirho, b_chirho: &BitVec256Chirho) -> BitVec256Chirho {
+        a_chirho.and_chirho(*b_chirho)
+    }
+
+    /// Count set bits in 256-bit domain
+    fn popcount_256_chirho(&self, a_chirho: &BitVec256Chirho) -> u32 {
+        a_chirho.popcount_chirho() as u32
+    }
+
+    /// Batch intersect 256-bit domain pairs
+    fn intersect_256_batch_chirho(&self, pairs_chirho: &[(BitVec256Chirho, BitVec256Chirho)]) -> Vec<BitVec256Chirho> {
+        pairs_chirho
+            .iter()
+            .map(|(a_chirho, b_chirho)| self.intersect_256_chirho(a_chirho, b_chirho))
+            .collect()
+    }
+
+    // ========================================================================
+    // Neurosymbolic Training (Gumbel-softmax on FPGA)
+    // ========================================================================
+
+    /// Check if neurosymbolic training engine is available
+    fn neurosym_available_chirho(&self) -> bool {
+        false // Override in FPGA backend
+    }
+
+    /// Start on-chip neurosymbolic training
+    ///
+    /// # Arguments
+    /// - `config_chirho`: Training hyperparameters
+    ///
+    /// # Returns
+    /// Training result with final loss and convergence status
+    fn train_neurosym_chirho(&self, _config_chirho: &TrainConfigChirho) -> Result<TrainResultChirho, String> {
+        Err("Neurosymbolic training not available on this backend".to_string())
+    }
+
+    /// Execute soft AND (Q16.16 probability multiplication)
+    ///
+    /// Returns P(A ∧ B) = P(A) × P(B) in Q16.16 fixed-point
+    fn soft_and_q16_chirho(&self, a_q16_chirho: u32, b_q16_chirho: u32) -> u32 {
+        // Default CPU implementation: (a * b) >> 16 for Q16.16
+        ((a_q16_chirho as u64 * b_q16_chirho as u64) >> 16) as u32
+    }
+
+    /// Execute soft AND on 64-element Q8.8 domain
+    ///
+    /// Element-wise probability multiplication for probabilistic constraint propagation
+    fn soft_domain_and_chirho(&self, a_domain_chirho: &[u16; 64], b_domain_chirho: &[u16; 64]) -> [u16; 64] {
+        let mut result_chirho = [0u16; 64];
+        for i_chirho in 0..64 {
+            // Q8.8 multiplication: (a * b) >> 8
+            result_chirho[i_chirho] = ((a_domain_chirho[i_chirho] as u32 * b_domain_chirho[i_chirho] as u32) >> 8) as u16;
+        }
+        result_chirho
     }
 }

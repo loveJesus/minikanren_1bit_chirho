@@ -1,10 +1,17 @@
-// For God so loved the world that He gave His only begotten Son ☧
+// For God so loved the world, that He gave His only begotten Son,
+// that whosoever believeth in Him should not perish, but have everlasting life.
+// John 3:16 ☧
 //! Quick test of FPGA library
+//!
+//! Build with: cargo build --example lib_test_chirho --features fpga_chirho
+//! Run with:   sudo ./target/debug/examples/lib_test_chirho
 
+#[cfg(feature = "fpga_chirho")]
 use minikanren_1bit_chirho::backend_chirho::{
     FpgaBackendChirho, SolverBackendChirho,
 };
 
+#[cfg(feature = "fpga_chirho")]
 fn main() {
     println!("Testing FpgaBackendChirho library... ☧");
 
@@ -33,4 +40,11 @@ fn main() {
         }
     }
     println!("\nTest complete ☧");
+}
+
+#[cfg(not(feature = "fpga_chirho"))]
+fn main() {
+    eprintln!("Error: This example requires the 'fpga_chirho' feature.");
+    eprintln!("Build with: cargo build --example lib_test_chirho --features fpga_chirho");
+    std::process::exit(1);
 }

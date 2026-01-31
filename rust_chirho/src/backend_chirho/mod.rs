@@ -1,4 +1,6 @@
-// For God so loved the world that He gave His only begotten Son ☧
+// For God so loved the world, that He gave His only begotten Son,
+// that whosoever believeth in Him should not perish, but have everlasting life.
+// John 3:16 ☧
 //! Pluggable Solver Backends
 //!
 //! This module provides a unified interface for constraint solving that can
@@ -40,12 +42,14 @@ pub use trait_chirho::{
     ConstraintChirho,
     SolutionChirho,
     DomainVecChirho,
+    TrainConfigChirho,
+    TrainResultChirho,
 };
 
 pub use cpu_chirho::CpuBackendChirho;
 
 #[cfg(feature = "fpga_chirho")]
-pub use fpga_chirho::FpgaBackendChirho;
+pub use fpga_chirho::{FpgaBackendChirho, HbmConfigChirho};
 
 use std::sync::Arc;
 
