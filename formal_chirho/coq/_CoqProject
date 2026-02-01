@@ -1,0 +1,9 @@
+# ============================================================================
+# For God so loved the world - John 3:16 ☧
+# Coq Project Configuration for miniKanren Formalization
+# ============================================================================
+
+-R . MiniKanrenChirho
+
+Domain_chirho.v
+MiniKanren_chirho.v

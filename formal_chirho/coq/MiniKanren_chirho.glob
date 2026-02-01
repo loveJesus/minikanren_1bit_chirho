@@ -1,0 +1,625 @@
+DIGEST f7eaebc067edf403342009599ae0afb0
+FMiniKanrenChirho.MiniKanren_chirho
+R1683:1690 Stdlib.Init.Nat <> <> lib
+R1720:1727 Stdlib.Arith.PeanoNat <> <> lib
+R1757:1766 Stdlib.Lists.List <> <> lib
+R1796:1808 Stdlib.NArith.NArith <> <> lib
+R1838:1846 Stdlib.Bool.Bool <> <> lib
+R1876:1878 Stdlib.micromega.Lia <> <> lib
+R1918:1930 MiniKanrenChirho.Domain_chirho <> <> lib
+R1940:1952 Stdlib.Lists.List ListNotations <> mod
+def 2056:2068 <> var_id_chirho
+R2073:2075 Corelib.Init.Datatypes <> nat ind
+def 2089:2102 <> term_id_chirho
+R2107:2109 Corelib.Init.Datatypes <> nat ind
+ind 2182:2192 <> term_chirho
+constr 2208:2220 <> VarTermChirho
+constr 2257:2269 <> IntTermChirho
+constr 2294:2306 <> NilTermChirho
+constr 2326:2339 <> ConsTermChirho
+constr 2395:2407 <> SymTermChirho
+R2237:2240 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2224:2236 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+R2241:2251 MiniKanrenChirho.MiniKanren_chirho <> term_chirho:1 ind
+R2274:2277 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2273:2273 Corelib.Numbers.BinNums <> Z ind
+R2278:2288 MiniKanrenChirho.MiniKanren_chirho <> term_chirho:1 ind
+R2310:2320 MiniKanrenChirho.MiniKanren_chirho <> term_chirho:1 ind
+R2357:2360 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2343:2356 MiniKanrenChirho.MiniKanren_chirho <> term_id_chirho def
+R2375:2378 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2361:2374 MiniKanrenChirho.MiniKanren_chirho <> term_id_chirho def
+R2379:2389 MiniKanrenChirho.MiniKanren_chirho <> term_chirho:1 ind
+R2414:2417 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2411:2413 Corelib.Init.Datatypes <> nat ind
+R2418:2428 MiniKanrenChirho.MiniKanren_chirho <> term_chirho:1 ind
+scheme 2182:2192 <> term_chirho_rect
+scheme 2182:2192 <> term_chirho_ind
+scheme 2182:2192 <> term_chirho_rec
+scheme 2182:2192 <> term_chirho_sind
+ind 2534:2544 <> goal_chirho
+constr 2560:2574 <> UnifyGoalChirho
+constr 2628:2641 <> ConjGoalChirho
+constr 2691:2704 <> DisjGoalChirho
+constr 2754:2768 <> FreshGoalChirho
+constr 2822:2835 <> CallGoalChirho
+constr 2884:2900 <> SucceedGoalChirho
+constr 2920:2933 <> FailGoalChirho
+R2591:2594 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2578:2590 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+R2608:2611 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2595:2607 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+R2612:2622 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2656:2659 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2645:2655 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2671:2674 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2660:2670 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2675:2685 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2719:2722 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2708:2718 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2734:2737 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2723:2733 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2738:2748 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2772:2772 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2801:2805 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2786:2789 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2773:2785 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+R2790:2800 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2806:2816 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2842:2845 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2839:2841 Corelib.Init.Datatypes <> nat ind
+R2864:2867 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R2846:2849 Corelib.Init.Datatypes <> list ind
+R2851:2863 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+R2868:2878 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2904:2914 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+R2937:2947 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho:3 ind
+scheme 2534:2544 <> goal_chirho_rect
+scheme 2534:2544 <> goal_chirho_ind
+scheme 2534:2544 <> goal_chirho_rec
+scheme 2534:2544 <> goal_chirho_sind
+rec 3049:3060 <> state_chirho
+proj 3085:3104 <> domains_state_chirho
+proj 3142:3162 <> next_var_state_chirho
+R3121:3124 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R3108:3120 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+R3125:3137 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R3166:3178 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+def 3254:3270 <> init_state_chirho
+R3277:3279 Corelib.Init.Datatypes <> nat ind
+binder 3273:3273 <> n:8
+R3284:3295 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+R3302:3316 MiniKanrenChirho.MiniKanren_chirho <> Mk_state_chirho constr
+R3328:3345 MiniKanrenChirho.Domain_chirho <> full_domain_chirho def
+R3347:3347 MiniKanrenChirho.MiniKanren_chirho <> n:8 var
+def 3430:3447 <> apply_unify_chirho
+R3454:3465 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 3450:3450 <> s:9
+R3477:3489 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+binder 3469:3470 <> v1:10
+binder 3472:3473 <> v2:11
+R3498:3509 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+R3526:3545 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R3547:3547 MiniKanrenChirho.MiniKanren_chirho <> s:9 var
+R3549:3550 MiniKanrenChirho.MiniKanren_chirho <> v1:10 var
+binder 3520:3521 <> d1:12
+R3567:3586 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R3588:3588 MiniKanrenChirho.MiniKanren_chirho <> s:9 var
+R3590:3591 MiniKanrenChirho.MiniKanren_chirho <> v2:11 var
+binder 3561:3562 <> d2:13
+R3611:3633 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R3635:3636 MiniKanrenChirho.MiniKanren_chirho <> d1:12 var
+R3638:3639 MiniKanrenChirho.MiniKanren_chirho <> d2:13 var
+binder 3602:3606 <> isect:14
+R3646:3660 MiniKanrenChirho.MiniKanren_chirho <> Mk_state_chirho constr
+binder 3671:3671 <> v:15
+R3691:3694 Corelib.Init.Datatypes <> ::bool_scope:x_'||'_x not
+R3679:3685 Stdlib.Arith.PeanoNat Nat eqb def
+R3687:3687 MiniKanrenChirho.MiniKanren_chirho <> v:15 var
+R3689:3690 MiniKanrenChirho.MiniKanren_chirho <> v1:10 var
+R3695:3701 Stdlib.Arith.PeanoNat Nat eqb def
+R3703:3703 MiniKanrenChirho.MiniKanren_chirho <> v:15 var
+R3705:3706 MiniKanrenChirho.MiniKanren_chirho <> v2:11 var
+R3738:3757 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R3759:3759 MiniKanrenChirho.MiniKanren_chirho <> s:9 var
+R3761:3761 MiniKanrenChirho.MiniKanren_chirho <> v:15 var
+R3713:3717 MiniKanrenChirho.MiniKanren_chirho <> isect:14 var
+R3769:3789 MiniKanrenChirho.MiniKanren_chirho <> next_var_state_chirho proj
+R3791:3791 MiniKanrenChirho.MiniKanren_chirho <> s:9 var
+def 3898:3912 <> run_goal_chirho
+R3922:3924 Corelib.Init.Datatypes <> nat ind
+binder 3915:3918 <> fuel:16
+R3932:3942 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+binder 3928:3928 <> g:17
+R3950:3961 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 3946:3946 <> s:18
+R3970:3973 Corelib.Init.Datatypes <> list ind
+R3975:3986 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+R3999:4002 MiniKanrenChirho.MiniKanren_chirho <> fuel:16 var
+R4018:4019 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R4048:4048 Corelib.Init.Datatypes <> S constr
+R4069:4069 MiniKanrenChirho.MiniKanren_chirho <> g:17 var
+R4082:4098 MiniKanrenChirho.MiniKanren_chirho <> SucceedGoalChirho constr
+R4103:4103 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R4105:4105 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R4104:4104 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+R4113:4126 MiniKanrenChirho.MiniKanren_chirho <> FailGoalChirho constr
+R4131:4132 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R4140:4154 MiniKanrenChirho.MiniKanren_chirho <> UnifyGoalChirho constr
+R4183:4200 MiniKanrenChirho.MiniKanren_chirho <> apply_unify_chirho def
+R4202:4202 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+binder 4177:4178 <> s':22
+R4224:4245 MiniKanrenChirho.Domain_chirho <> is_empty_domain_chirho def
+R4248:4267 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R4269:4270 MiniKanrenChirho.MiniKanren_chirho <> s':22 var
+R4305:4305 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R4308:4308 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R4306:4307 MiniKanrenChirho.MiniKanren_chirho <> s':22 var
+R4289:4290 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R4316:4329 MiniKanrenChirho.MiniKanren_chirho <> ConjGoalChirho constr
+R4348:4355 Stdlib.Lists.List <> flat_map def
+R4385:4399 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho:19 def
+R4410:4410 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+R4358:4372 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho:19 def
+R4419:4432 MiniKanrenChirho.MiniKanren_chirho <> DisjGoalChirho constr
+R4477:4480 Corelib.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4451:4465 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho:19 def
+R4476:4476 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+R4481:4495 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho:19 def
+R4506:4506 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+R4514:4528 MiniKanrenChirho.MiniKanren_chirho <> FreshGoalChirho constr
+R4552:4572 MiniKanrenChirho.MiniKanren_chirho <> next_var_state_chirho proj
+R4574:4574 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+binder 4547:4547 <> v:23
+R4597:4611 MiniKanrenChirho.MiniKanren_chirho <> Mk_state_chirho constr
+R4614:4633 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R4635:4635 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+R4639:4639 Corelib.Init.Datatypes <> S constr
+R4641:4641 MiniKanrenChirho.MiniKanren_chirho <> v:23 var
+binder 4591:4592 <> s':24
+R4655:4669 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho:19 def
+R4683:4684 MiniKanrenChirho.MiniKanren_chirho <> s':24 var
+R4680:4680 MiniKanrenChirho.MiniKanren_chirho <> v:23 var
+R4692:4705 MiniKanrenChirho.MiniKanren_chirho <> CallGoalChirho constr
+R4781:4781 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R4783:4783 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R4782:4782 MiniKanrenChirho.MiniKanren_chirho <> s:18 var
+rec 4884:4903 <> sparse_tensor_chirho
+proj 4929:4949 <> entries_tensor_chirho
+proj 5000:5018 <> arity_tensor_chirho
+R4953:4956 Corelib.Init.Datatypes <> list ind
+R4959:4962 Corelib.Init.Datatypes <> list ind
+R4964:4966 Corelib.Init.Datatypes <> nat ind
+R5022:5024 Corelib.Init.Datatypes <> nat ind
+def 5105:5123 <> empty_tensor_chirho
+R5134:5136 Corelib.Init.Datatypes <> nat ind
+binder 5126:5130 <> arity:28
+R5141:5160 MiniKanrenChirho.MiniKanren_chirho <> sparse_tensor_chirho rec
+R5167:5182 MiniKanrenChirho.MiniKanren_chirho <> Mk_tensor_chirho constr
+R5184:5185 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R5187:5191 MiniKanrenChirho.MiniKanren_chirho <> arity:28 var
+def 5241:5263 <> domain_to_tensor_chirho
+R5270:5282 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 5266:5266 <> d:29
+R5290:5292 Corelib.Init.Datatypes <> nat ind
+binder 5286:5286 <> n:30
+R5301:5320 MiniKanrenChirho.MiniKanren_chirho <> sparse_tensor_chirho rec
+R5342:5347 Stdlib.Lists.List <> filter def
+R5386:5388 Corelib.Lists.ListDef <> seq def
+R5392:5392 MiniKanrenChirho.MiniKanren_chirho <> n:30 var
+binder 5354:5354 <> i:31
+R5359:5378 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R5380:5380 MiniKanrenChirho.MiniKanren_chirho <> i:31 var
+R5382:5382 MiniKanrenChirho.MiniKanren_chirho <> d:29 var
+binder 5331:5337 <> indices:32
+R5400:5415 MiniKanrenChirho.MiniKanren_chirho <> Mk_tensor_chirho constr
+R5418:5420 Corelib.Lists.ListDef <> map def
+R5437:5443 MiniKanrenChirho.MiniKanren_chirho <> indices:32 var
+binder 5427:5427 <> i:33
+R5432:5432 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R5434:5434 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R5433:5433 MiniKanrenChirho.MiniKanren_chirho <> i:33 var
+def 5540:5559 <> entries_match_chirho
+R5570:5573 Corelib.Init.Datatypes <> list ind
+R5575:5577 Corelib.Init.Datatypes <> nat ind
+binder 5562:5563 <> e1:34
+binder 5565:5566 <> e2:35
+R5590:5592 Corelib.Init.Datatypes <> nat ind
+binder 5581:5586 <> shared:36
+R5597:5600 Corelib.Init.Datatypes <> bool ind
+R5634:5642 Stdlib.Lists.List <> nth_error def
+R5644:5645 MiniKanrenChirho.MiniKanren_chirho <> e2:35 var
+R5613:5621 Stdlib.Lists.List <> nth_error def
+R5626:5631 MiniKanrenChirho.MiniKanren_chirho <> shared:36 var
+R5623:5624 MiniKanrenChirho.MiniKanren_chirho <> e1:34 var
+R5658:5661 Corelib.Init.Datatypes <> Some constr
+R5667:5670 Corelib.Init.Datatypes <> Some constr
+R5678:5684 Stdlib.Arith.PeanoNat Nat eqb def
+R5704:5708 Corelib.Init.Datatypes <> false constr
+def 5773:5792 <> merge_entries_chirho
+R5803:5806 Corelib.Init.Datatypes <> list ind
+R5808:5810 Corelib.Init.Datatypes <> nat ind
+binder 5795:5796 <> e1:37
+binder 5798:5799 <> e2:38
+R5823:5825 Corelib.Init.Datatypes <> nat ind
+binder 5814:5819 <> shared:39
+R5830:5833 Corelib.Init.Datatypes <> list ind
+R5835:5837 Corelib.Init.Datatypes <> nat ind
+R5860:5863 Corelib.Init.Datatypes <> ::list_scope:x_'++'_x not
+R5844:5849 Corelib.Lists.ListDef <> firstn def
+R5858:5859 MiniKanrenChirho.MiniKanren_chirho <> e1:37 var
+R5851:5856 MiniKanrenChirho.MiniKanren_chirho <> shared:39 var
+R5883:5886 Corelib.Init.Datatypes <> ::list_scope:x_'++'_x not
+R5864:5868 Corelib.Lists.ListDef <> skipn def
+R5881:5882 MiniKanrenChirho.MiniKanren_chirho <> e1:37 var
+R5871:5871 Corelib.Init.Datatypes <> S constr
+R5873:5878 MiniKanrenChirho.MiniKanren_chirho <> shared:39 var
+R5887:5891 Corelib.Lists.ListDef <> skipn def
+R5895:5896 MiniKanrenChirho.MiniKanren_chirho <> e2:38 var
+def 5955:5974 <> filter_option_chirho
+binder 5977:5977 <> A:40
+R5992:5995 Corelib.Init.Datatypes <> list ind
+R5998:6003 Corelib.Init.Datatypes <> option ind
+R6005:6005 MiniKanrenChirho.MiniKanren_chirho <> A:40 var
+binder 5988:5988 <> l:41
+R6011:6014 Corelib.Init.Datatypes <> list ind
+R6016:6016 MiniKanrenChirho.MiniKanren_chirho <> A:40 var
+R6029:6029 MiniKanrenChirho.MiniKanren_chirho <> l:41 var
+R6040:6041 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R6046:6047 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R6057:6060 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R6053:6056 Corelib.Init.Datatypes <> None constr
+R6069:6088 MiniKanrenChirho.MiniKanren_chirho <> filter_option_chirho:42 def
+R6105:6108 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R6099:6102 Corelib.Init.Datatypes <> Some constr
+R6118:6121 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R6122:6141 MiniKanrenChirho.MiniKanren_chirho <> filter_option_chirho:42 def
+def 6232:6253 <> contract_tensor_chirho
+R6264:6283 MiniKanrenChirho.MiniKanren_chirho <> sparse_tensor_chirho rec
+binder 6256:6257 <> t1:44
+binder 6259:6260 <> t2:45
+R6296:6298 Corelib.Init.Datatypes <> nat ind
+binder 6287:6292 <> shared:46
+R6307:6326 MiniKanrenChirho.MiniKanren_chirho <> sparse_tensor_chirho rec
+R6347:6354 Stdlib.Lists.List <> flat_map def
+R6558:6578 MiniKanrenChirho.MiniKanren_chirho <> entries_tensor_chirho proj
+R6580:6581 MiniKanrenChirho.MiniKanren_chirho <> t1:44 var
+binder 6361:6362 <> e1:47
+R6371:6390 MiniKanrenChirho.MiniKanren_chirho <> filter_option_chirho def
+R6393:6395 Corelib.Lists.ListDef <> map def
+R6525:6545 MiniKanrenChirho.MiniKanren_chirho <> entries_tensor_chirho proj
+R6547:6548 MiniKanrenChirho.MiniKanren_chirho <> t2:45 var
+binder 6402:6403 <> e2:48
+R6417:6436 MiniKanrenChirho.MiniKanren_chirho <> entries_match_chirho def
+R6438:6439 MiniKanrenChirho.MiniKanren_chirho <> e1:47 var
+R6441:6442 MiniKanrenChirho.MiniKanren_chirho <> e2:48 var
+R6444:6449 MiniKanrenChirho.MiniKanren_chirho <> shared:46 var
+R6514:6517 Corelib.Init.Datatypes <> None constr
+R6462:6465 Corelib.Init.Datatypes <> Some constr
+R6468:6487 MiniKanrenChirho.MiniKanren_chirho <> merge_entries_chirho def
+R6489:6490 MiniKanrenChirho.MiniKanren_chirho <> e1:47 var
+R6492:6493 MiniKanrenChirho.MiniKanren_chirho <> e2:48 var
+R6495:6500 MiniKanrenChirho.MiniKanren_chirho <> shared:46 var
+binder 6337:6342 <> joined:49
+R6589:6604 MiniKanrenChirho.MiniKanren_chirho <> Mk_tensor_chirho constr
+R6606:6611 MiniKanrenChirho.MiniKanren_chirho <> joined:49 var
+R6661:6663 Corelib.Init.Nat <> ::nat_scope:x_'-'_x not
+R6636:6638 Corelib.Init.Nat <> ::nat_scope:x_'+'_x not
+R6614:6632 MiniKanrenChirho.MiniKanren_chirho <> arity_tensor_chirho proj
+R6634:6635 MiniKanrenChirho.MiniKanren_chirho <> t1:44 var
+R6639:6657 MiniKanrenChirho.MiniKanren_chirho <> arity_tensor_chirho proj
+R6659:6660 MiniKanrenChirho.MiniKanren_chirho <> t2:45 var
+def 6766:6785 <> compile_unify_chirho
+R6796:6808 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 6788:6789 <> d1:50
+binder 6791:6792 <> d2:51
+R6816:6818 Corelib.Init.Datatypes <> nat ind
+binder 6812:6812 <> n:52
+R6827:6846 MiniKanrenChirho.MiniKanren_chirho <> sparse_tensor_chirho rec
+R6866:6888 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R6890:6891 MiniKanrenChirho.MiniKanren_chirho <> d1:50 var
+R6893:6894 MiniKanrenChirho.MiniKanren_chirho <> d2:51 var
+binder 6857:6861 <> isect:53
+R6913:6918 Stdlib.Lists.List <> filter def
+R6961:6963 Corelib.Lists.ListDef <> seq def
+R6967:6967 MiniKanrenChirho.MiniKanren_chirho <> n:52 var
+binder 6925:6925 <> i:54
+R6930:6949 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R6951:6951 MiniKanrenChirho.MiniKanren_chirho <> i:54 var
+R6953:6957 MiniKanrenChirho.MiniKanren_chirho <> isect:53 var
+binder 6905:6908 <> vals:55
+R6975:6990 MiniKanrenChirho.MiniKanren_chirho <> Mk_tensor_chirho constr
+R6993:6995 Corelib.Lists.ListDef <> map def
+R7015:7018 MiniKanrenChirho.MiniKanren_chirho <> vals:55 var
+binder 7002:7002 <> v:56
+R7007:7007 Stdlib.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R7009:7010 Stdlib.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R7012:7012 Stdlib.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R7008:7008 MiniKanrenChirho.MiniKanren_chirho <> v:56 var
+R7011:7011 MiniKanrenChirho.MiniKanren_chirho <> v:56 var
+prf 7153:7175 <> unify_intersects_chirho
+R7193:7204 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 7189:7189 <> s:57
+R7216:7228 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+binder 7208:7209 <> v1:58
+binder 7211:7212 <> v2:59
+R7244:7261 MiniKanrenChirho.MiniKanren_chirho <> apply_unify_chirho def
+R7263:7263 MiniKanrenChirho.MiniKanren_chirho <> s:57 var
+R7265:7266 MiniKanrenChirho.MiniKanren_chirho <> v1:58 var
+R7268:7269 MiniKanrenChirho.MiniKanren_chirho <> v2:59 var
+binder 7238:7239 <> s':60
+R7302:7306 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R7276:7295 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R7297:7298 MiniKanrenChirho.MiniKanren_chirho <> s':60 var
+R7300:7301 MiniKanrenChirho.MiniKanren_chirho <> v1:58 var
+R7307:7329 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R7332:7351 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R7353:7353 MiniKanrenChirho.MiniKanren_chirho <> s:57 var
+R7355:7356 MiniKanrenChirho.MiniKanren_chirho <> v1:58 var
+R7360:7379 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R7381:7381 MiniKanrenChirho.MiniKanren_chirho <> s:57 var
+R7383:7384 MiniKanrenChirho.MiniKanren_chirho <> v2:59 var
+R7422:7439 MiniKanrenChirho.MiniKanren_chirho <> apply_unify_chirho def
+R7459:7470 Stdlib.Arith.PeanoNat Nat eqb_refl thm
+R7459:7470 Stdlib.Arith.PeanoNat Nat eqb_refl thm
+R7459:7470 Stdlib.Arith.PeanoNat Nat eqb_refl thm
+prf 7578:7599 <> conj_sequential_chirho
+R7620:7622 Corelib.Init.Datatypes <> nat ind
+binder 7613:7616 <> fuel:61
+R7634:7644 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+binder 7626:7627 <> g1:62
+binder 7629:7630 <> g2:63
+R7652:7663 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 7648:7648 <> s:64
+R7718:7722 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R7669:7683 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R7686:7686 Corelib.Init.Datatypes <> S constr
+R7688:7691 MiniKanrenChirho.MiniKanren_chirho <> fuel:61 var
+R7695:7708 MiniKanrenChirho.MiniKanren_chirho <> ConjGoalChirho constr
+R7710:7711 MiniKanrenChirho.MiniKanren_chirho <> g1:62 var
+R7713:7714 MiniKanrenChirho.MiniKanren_chirho <> g2:63 var
+R7717:7717 MiniKanrenChirho.MiniKanren_chirho <> s:64 var
+R7723:7730 Stdlib.Lists.List <> flat_map def
+R7759:7773 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R7775:7778 MiniKanrenChirho.MiniKanren_chirho <> fuel:61 var
+R7780:7781 MiniKanrenChirho.MiniKanren_chirho <> g1:62 var
+R7783:7783 MiniKanrenChirho.MiniKanren_chirho <> s:64 var
+R7733:7747 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R7749:7752 MiniKanrenChirho.MiniKanren_chirho <> fuel:61 var
+R7754:7755 MiniKanrenChirho.MiniKanren_chirho <> g2:63 var
+prf 7885:7901 <> disj_union_chirho
+R7922:7924 Corelib.Init.Datatypes <> nat ind
+binder 7915:7918 <> fuel:65
+R7936:7946 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+binder 7928:7929 <> g1:66
+binder 7931:7932 <> g2:67
+R7954:7965 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 7950:7950 <> s:68
+R8020:8024 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R7971:7985 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R7988:7988 Corelib.Init.Datatypes <> S constr
+R7990:7993 MiniKanrenChirho.MiniKanren_chirho <> fuel:65 var
+R7997:8010 MiniKanrenChirho.MiniKanren_chirho <> DisjGoalChirho constr
+R8012:8013 MiniKanrenChirho.MiniKanren_chirho <> g1:66 var
+R8015:8016 MiniKanrenChirho.MiniKanren_chirho <> g2:67 var
+R8019:8019 MiniKanrenChirho.MiniKanren_chirho <> s:68 var
+R8050:8053 Corelib.Init.Datatypes <> ::list_scope:x_'++'_x not
+R8025:8039 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R8041:8044 MiniKanrenChirho.MiniKanren_chirho <> fuel:65 var
+R8046:8047 MiniKanrenChirho.MiniKanren_chirho <> g1:66 var
+R8049:8049 MiniKanrenChirho.MiniKanren_chirho <> s:68 var
+R8054:8068 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R8070:8073 MiniKanrenChirho.MiniKanren_chirho <> fuel:65 var
+R8075:8076 MiniKanrenChirho.MiniKanren_chirho <> g2:67 var
+R8078:8078 MiniKanrenChirho.MiniKanren_chirho <> s:68 var
+prf 8204:8228 <> unify_tensor_equiv_chirho
+R8250:8262 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 8242:8243 <> d1:69
+binder 8245:8246 <> d2:70
+R8270:8272 Corelib.Init.Datatypes <> nat ind
+binder 8266:8266 <> v:71
+R8280:8282 Corelib.Init.Datatypes <> nat ind
+binder 8276:8276 <> n:72
+R8293:8329 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R8289:8291 Corelib.Init.Peano <> ::nat_scope:x_'<'_x not
+R8288:8288 MiniKanrenChirho.MiniKanren_chirho <> v:71 var
+R8292:8292 MiniKanrenChirho.MiniKanren_chirho <> n:72 var
+R8391:8397 Corelib.Init.Logic <> ::type_scope:x_'<->'_x not
+R8384:8386 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R8330:8349 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R8351:8351 MiniKanrenChirho.MiniKanren_chirho <> v:71 var
+R8354:8376 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R8378:8379 MiniKanrenChirho.MiniKanren_chirho <> d1:69 var
+R8381:8382 MiniKanrenChirho.MiniKanren_chirho <> d2:70 var
+R8387:8390 Corelib.Init.Datatypes <> true constr
+R8398:8399 Stdlib.Lists.List <> In def
+R8409:8429 MiniKanrenChirho.MiniKanren_chirho <> entries_tensor_chirho proj
+R8432:8451 MiniKanrenChirho.MiniKanren_chirho <> compile_unify_chirho def
+R8453:8454 MiniKanrenChirho.MiniKanren_chirho <> d1:69 var
+R8456:8457 MiniKanrenChirho.MiniKanren_chirho <> d2:70 var
+R8459:8459 MiniKanrenChirho.MiniKanren_chirho <> n:72 var
+R8401:8401 Stdlib.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R8403:8404 Stdlib.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R8406:8406 Stdlib.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R8402:8402 MiniKanrenChirho.MiniKanren_chirho <> v:71 var
+R8405:8405 MiniKanrenChirho.MiniKanren_chirho <> v:71 var
+R8507:8526 MiniKanrenChirho.MiniKanren_chirho <> compile_unify_chirho def
+R8619:8628 Stdlib.Lists.List <> in_map_iff thm
+R8619:8628 Stdlib.Lists.List <> in_map_iff thm
+R8683:8691 Stdlib.Lists.List <> filter_In thm
+R8683:8691 Stdlib.Lists.List <> filter_In thm
+R8715:8720 Stdlib.Lists.List <> in_seq thm
+R8715:8720 Stdlib.Lists.List <> in_seq thm
+R8800:8809 Stdlib.Lists.List <> in_map_iff thm
+R8800:8809 Stdlib.Lists.List <> in_map_iff thm
+R8900:8908 Stdlib.Lists.List <> filter_In thm
+R8900:8908 Stdlib.Lists.List <> filter_In thm
+prf 9025:9048 <> contraction_assoc_chirho
+R9073:9092 MiniKanrenChirho.MiniKanren_chirho <> sparse_tensor_chirho rec
+binder 9062:9063 <> t1:73
+binder 9065:9066 <> t2:74
+binder 9068:9069 <> t3:75
+R9102:9104 Corelib.Init.Datatypes <> nat ind
+binder 9096:9096 <> i:76
+binder 9098:9098 <> j:77
+R9228:9231 Corelib.Init.Logic <> True ind
+def 9771:9789 <> encode_state_chirho
+R9796:9807 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 9792:9792 <> s:78
+R9818:9821 Corelib.Init.Datatypes <> list ind
+R9823:9835 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+binder 9811:9814 <> vars:79
+R9844:9847 Corelib.Init.Datatypes <> list ind
+R9850:9853 Corelib.Init.Datatypes <> list ind
+R9855:9857 Corelib.Init.Datatypes <> nat ind
+R9917:9919 Corelib.Lists.ListDef <> map def
+R10030:10033 MiniKanrenChirho.MiniKanren_chirho <> vars:79 var
+binder 9926:9926 <> v:80
+R9935:9940 Stdlib.Lists.List <> filter def
+R10015:10017 Corelib.Lists.ListDef <> seq def
+binder 9947:9947 <> i:81
+R9952:9971 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R9973:9973 MiniKanrenChirho.MiniKanren_chirho <> i:81 var
+R9976:9995 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R9997:9997 MiniKanrenChirho.MiniKanren_chirho <> s:78 var
+R9999:9999 MiniKanrenChirho.MiniKanren_chirho <> v:80 var
+prf 10149:10169 <> domains_refine_chirho
+R10190:10192 Corelib.Init.Datatypes <> nat ind
+binder 10183:10186 <> fuel:82
+R10200:10210 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+binder 10196:10196 <> g:83
+R10221:10232 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 10214:10214 <> s:84
+binder 10216:10217 <> s':85
+R10270:10275 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R10238:10239 Stdlib.Lists.List <> In def
+R10245:10259 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R10261:10264 MiniKanrenChirho.MiniKanren_chirho <> fuel:82 var
+R10266:10266 MiniKanrenChirho.MiniKanren_chirho <> g:83 var
+R10268:10268 MiniKanrenChirho.MiniKanren_chirho <> s:84 var
+R10241:10242 MiniKanrenChirho.MiniKanren_chirho <> s':85 var
+R10288:10300 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+binder 10284:10284 <> v:86
+R10310:10312 Corelib.Init.Datatypes <> nat ind
+binder 10304:10306 <> val:87
+R10377:10382 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R10370:10372 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10318:10337 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R10339:10341 MiniKanrenChirho.MiniKanren_chirho <> val:87 var
+R10344:10363 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R10365:10366 MiniKanrenChirho.MiniKanren_chirho <> s':85 var
+R10368:10368 MiniKanrenChirho.MiniKanren_chirho <> v:86 var
+R10373:10376 Corelib.Init.Datatypes <> true constr
+R10434:10436 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10383:10402 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R10404:10406 MiniKanrenChirho.MiniKanren_chirho <> val:87 var
+R10409:10428 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R10430:10430 MiniKanrenChirho.MiniKanren_chirho <> s:84 var
+R10432:10432 MiniKanrenChirho.MiniKanren_chirho <> v:86 var
+R10437:10440 Corelib.Init.Datatypes <> true constr
+R10683:10704 MiniKanrenChirho.Domain_chirho <> is_empty_domain_chirho def
+R10683:10704 MiniKanrenChirho.Domain_chirho <> is_empty_domain_chirho def
+R10859:10876 MiniKanrenChirho.MiniKanren_chirho <> apply_unify_chirho def
+R10932:10935 Corelib.Init.Datatypes <> ::bool_scope:x_'||'_x not
+R10920:10926 Stdlib.Arith.PeanoNat Nat eqb def
+R10936:10942 Stdlib.Arith.PeanoNat Nat eqb def
+R10932:10935 Corelib.Init.Datatypes <> ::bool_scope:x_'||'_x not
+R10920:10926 Stdlib.Arith.PeanoNat Nat eqb def
+R10936:10942 Stdlib.Arith.PeanoNat Nat eqb def
+R10980:11006 MiniKanrenChirho.Domain_chirho <> member_intersect_iff_chirho thm
+R10980:11006 MiniKanrenChirho.Domain_chirho <> member_intersect_iff_chirho thm
+R11073:11084 Stdlib.Bool.Bool <> orb_true_iff thm
+R11073:11084 Stdlib.Bool.Bool <> orb_true_iff thm
+R11152:11161 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11152:11161 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11211:11220 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11211:11220 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11308:11318 Stdlib.Lists.List <> in_flat_map thm
+R11308:11318 Stdlib.Lists.List <> in_flat_map thm
+R11500:11509 Stdlib.Lists.List <> in_app_iff thm
+R11500:11509 Stdlib.Lists.List <> in_app_iff thm
+R11696:11716 MiniKanrenChirho.MiniKanren_chirho <> next_var_state_chirho proj
+R11696:11716 MiniKanrenChirho.MiniKanren_chirho <> next_var_state_chirho proj
+prf 12085:12103 <> search_equiv_chirho
+R12121:12123 Corelib.Init.Datatypes <> nat ind
+binder 12117:12117 <> n:88
+R12134:12136 Corelib.Init.Datatypes <> nat ind
+binder 12127:12130 <> fuel:89
+R12144:12154 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+binder 12140:12140 <> g:90
+R12162:12173 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 12158:12158 <> s:91
+R12192:12203 MiniKanrenChirho.MiniKanren_chirho <> state_chirho rec
+binder 12187:12188 <> s':92
+R12241:12246 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R12209:12210 Stdlib.Lists.List <> In def
+R12216:12230 MiniKanrenChirho.MiniKanren_chirho <> run_goal_chirho def
+R12232:12235 MiniKanrenChirho.MiniKanren_chirho <> fuel:89 var
+R12237:12237 MiniKanrenChirho.MiniKanren_chirho <> g:90 var
+R12239:12239 MiniKanrenChirho.MiniKanren_chirho <> s:91 var
+R12212:12213 MiniKanrenChirho.MiniKanren_chirho <> s':92 var
+R12259:12271 MiniKanrenChirho.MiniKanren_chirho <> var_id_chirho def
+binder 12255:12255 <> v:93
+R12291:12293 Corelib.Init.Datatypes <> nat ind
+binder 12285:12287 <> val:94
+R12358:12363 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R12351:12353 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R12299:12318 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R12320:12322 MiniKanrenChirho.MiniKanren_chirho <> val:94 var
+R12325:12344 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R12346:12347 MiniKanrenChirho.MiniKanren_chirho <> s':92 var
+R12349:12349 MiniKanrenChirho.MiniKanren_chirho <> v:93 var
+R12354:12357 Corelib.Init.Datatypes <> true constr
+R12415:12417 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R12364:12383 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R12385:12387 MiniKanrenChirho.MiniKanren_chirho <> val:94 var
+R12390:12409 MiniKanrenChirho.MiniKanren_chirho <> domains_state_chirho proj
+R12411:12411 MiniKanrenChirho.MiniKanren_chirho <> s:91 var
+R12413:12413 MiniKanrenChirho.MiniKanren_chirho <> v:93 var
+R12418:12421 Corelib.Init.Datatypes <> true constr
+R12479:12499 MiniKanrenChirho.MiniKanren_chirho <> domains_refine_chirho thm
+R12479:12499 MiniKanrenChirho.MiniKanren_chirho <> domains_refine_chirho thm
+def 12613:12627 <> conj_all_chirho
+R12635:12638 Corelib.Init.Datatypes <> list ind
+R12640:12650 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+binder 12630:12631 <> gs:95
+R12655:12665 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+R12678:12679 MiniKanrenChirho.MiniKanren_chirho <> gs:95 var
+R12690:12691 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R12696:12712 MiniKanrenChirho.MiniKanren_chirho <> SucceedGoalChirho constr
+R12718:12718 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R12720:12720 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R12732:12735 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R12743:12756 MiniKanrenChirho.MiniKanren_chirho <> ConjGoalChirho constr
+R12761:12775 MiniKanrenChirho.MiniKanren_chirho <> conj_all_chirho:96 def
+def 12845:12859 <> disj_all_chirho
+R12867:12870 Corelib.Init.Datatypes <> list ind
+R12872:12882 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+binder 12862:12863 <> gs:98
+R12887:12897 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+R12910:12911 MiniKanrenChirho.MiniKanren_chirho <> gs:98 var
+R12922:12923 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R12928:12941 MiniKanrenChirho.MiniKanren_chirho <> FailGoalChirho constr
+R12947:12947 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R12949:12949 Stdlib.Lists.List ListNotations ::list_scope:'['_x_']' not
+R12961:12964 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R12972:12985 MiniKanrenChirho.MiniKanren_chirho <> DisjGoalChirho constr
+R12990:13004 MiniKanrenChirho.MiniKanren_chirho <> disj_all_chirho:99 def
+def 13069:13083 <> ex_unify_chirho
+R13087:13097 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+R13104:13118 MiniKanrenChirho.MiniKanren_chirho <> FreshGoalChirho constr
+binder 13125:13125 <> x:101
+R13132:13146 MiniKanrenChirho.MiniKanren_chirho <> FreshGoalChirho constr
+binder 13153:13153 <> y:102
+R13160:13174 MiniKanrenChirho.MiniKanren_chirho <> UnifyGoalChirho constr
+R13176:13176 MiniKanrenChirho.MiniKanren_chirho <> x:101 var
+R13178:13178 MiniKanrenChirho.MiniKanren_chirho <> y:102 var
+def 13229:13242 <> ex_disj_chirho
+R13246:13256 MiniKanrenChirho.MiniKanren_chirho <> goal_chirho ind
+R13263:13277 MiniKanrenChirho.MiniKanren_chirho <> FreshGoalChirho constr
+binder 13284:13284 <> x:103
+R13291:13304 MiniKanrenChirho.MiniKanren_chirho <> DisjGoalChirho constr
+R13311:13325 MiniKanrenChirho.MiniKanren_chirho <> UnifyGoalChirho constr
+R13327:13327 MiniKanrenChirho.MiniKanren_chirho <> x:103 var
+R13337:13351 MiniKanrenChirho.MiniKanren_chirho <> UnifyGoalChirho constr
+R13353:13353 MiniKanrenChirho.MiniKanren_chirho <> x:103 var

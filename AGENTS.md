@@ -456,6 +456,33 @@ See `synth_chirho/BUILD_HISTORY_CHIRHO.md` for version history (v0-v5).
 | f1.2xlarge | Xilinx UltraScale+ | $1.65 | F1 only | Scarce |
 | f2.6xlarge | AMD Virtex UltraScale+ HBM | $1.98 | F2 only | Available |
 
+#### AWS AMI Reference ☧
+
+**Build Instances (HDK compilation):**
+
+| AMI ID | Name | Use For | SSH User |
+|--------|------|---------|----------|
+| `ami-0cb1b6ae2ff99f8bf` | FPGA Developer AMI 1.18.0 (Rocky Linux) | HDK builds | `rocky` |
+| `ami-01198b89d80ebfdd2` | FPGA Developer AMI (Ubuntu) 1.17.0 | Alternative | `ubuntu` |
+
+**Runtime Instances (AFI execution):**
+
+| AMI ID | Name | Use For | SSH User |
+|--------|------|---------|----------|
+| `ami-0cb1b6ae2ff99f8bf` | FPGA Developer AMI 1.18.0 (Rocky Linux) | F2 AFI runtime | `rocky` |
+
+**Instance Type Selection:**
+
+| Use Case | Recommended | RAM | Notes |
+|----------|-------------|-----|-------|
+| HDK Build (first try) | c5.4xlarge | 32GB | $0.68/hr, may OOM |
+| HDK Build (safe) | c5.9xlarge | 72GB | $1.53/hr, guaranteed |
+| AFI Runtime | f2.6xlarge | 64GB | $1.98/hr + FPGA |
+
+**IAM Profile:** `minikanren-synth-profile-chirho`
+**Security Group:** `sg-02f8df5ffdf398f2e` (minikanren-synth-sg-chirho)
+**Key Pair:** `fpga-benchmark-chirho`
+
 **Key insight:** F1 and F2 AFIs are **NOT compatible**. Different FPGA vendors require full rebuild.
 
 | Component | Portable? | Notes |
@@ -534,6 +561,46 @@ For successful builds - complete this checklist BEFORE terminating:
 - SSH username for Rocky Linux AMI: `rocky` (NOT `ec2-user`)
 - **SSH username for F2 instances: `ec2-user`** (Amazon Linux 2, different from build instances)
 - Progress file: `s3://minikanren-fpga-chirho/f2_hbm_hdk/progress_v{N}_chirho.txt`
+
+#### Common Build Issues & Fixes ☧
+
+**1. Tar Extraction Double-Nesting**
+
+When creating design tarballs locally:
+```bash
+# WRONG - creates design/design/ on extraction
+tar -czvf design_v5.7.tar.gz design/
+# Then: tar -xzf design.tar.gz -C $CL_DIR/design/  # Creates $CL_DIR/design/design/
+```
+
+**FIX - Extract to parent directory:**
+```bash
+# In build script, extract to $CL_DIR/ not $CL_DIR/design/
+tar -xzf /tmp/design.tar.gz -C $CL_DIR/
+# This creates $CL_DIR/design/ correctly
+```
+
+**OR - Create tarball without directory prefix:**
+```bash
+cd design && tar -czvf ../design_v5.7.tar.gz *
+# Then: tar -xzf design.tar.gz -C $CL_DIR/design/  # Works correctly
+```
+
+**2. macOS Extended Attributes in Tarballs**
+
+When extracting on Linux, you'll see warnings:
+```
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+```
+These warnings are harmless - the files extract correctly.
+
+**3. Permission Denied When Fixing Builds**
+
+Build runs as root, SSH is as rocky. Use `sudo`:
+```bash
+sudo rm -rf $CL_DIR/design/*
+sudo tar -xzf /tmp/design.tar.gz -C $CL_DIR/
+```
 
 ### FPGA Development Findings Log ☧
 

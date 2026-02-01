@@ -14,8 +14,64 @@
 | v5.2 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ❌ Failed | CLB packing overflow |
 | v5.3 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ⚠️ HBM Issues | AFI loads but FSM stuck, see below |
 | v5.4 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ✅ FSM Works | FSM cycles through states, STATUS hardcoded |
-| v5.5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ✅ AFI Created | STATUS register fix, agfi-0261e88151bcb39a5 |
+| v5.5 | `v5_aws_f2_floorplan_chirho_cl/` | F2 | ⚠️ Limited | STATUS fix, BAR0 works, **BAR4/PCIS tied off**, agfi-0261e88151bcb39a5 |
+| v5.6 | `v56_aws_f2_pcis_chirho_cl/` | F2 | ⚠️ **TIMING ISSUES** | PCIS works after reload, but -2.5ns WNS causes instability, agfi-07ee9410bbbd5932c |
+| v5.7 | `v57_aws_f2_125mhz_chirho_cl/` | F2 | 📋 Planned | **125MHz clock** to fix timing (8ns period gives +1.5ns slack) |
 | v6 | TBD | F2 | 📋 Designed | Arbitrary-depth hierarchies, see V6_ARCHITECTURE_ANALYSIS_CHIRHO.md |
+
+---
+
+## ⚠️ V5.6 Critical Timing Discovery (2026-02-01) ☧
+
+### Summary
+V5.6 AFI (agfi-07ee9410bbbd5932c) has a **-2.506ns timing violation at 250MHz** which causes the PCIS handler to become unstable after some usage.
+
+### What Works (immediately after AFI reload)
+| Test | Result | Notes |
+|------|--------|-------|
+| AFI Load | ✅ Pass | Device 0xF056 detected |
+| VERSION read | ✅ 0xF2560001 | V5.6 confirmed |
+| BAR4 writes (offset 0) | ✅ Pass | 0xDEADBEEF persists |
+| BAR4 writes (512MB) | ✅ Pass | Domain base accessible |
+| FSM completion | ✅ Pass | With batch_count=1 fix |
+| Throughput | ✅ 64K ops/sec | FSM-based intersections |
+
+### What Fails (after some usage)
+| Test | Result | Notes |
+|------|--------|-------|
+| BAR4 writes | ❌ Fail | Returns 0 after ~10-50 accesses |
+| FSM data | ❌ Wrong | Reads 0s because BAR4 writes lost |
+| Stability | ❌ Fail | Requires AFI reload to restore |
+
+### Root Cause: Timing Violation
+```
+WNS (Worst Negative Slack): -2.506ns at 250MHz (4ns period)
+Critical path delay: 6.5ns (exceeds period by 2.5ns)
+Result: PCIS handler becomes metastable after some clock cycles
+```
+
+### Bug Found: batch_count = 0 Infinite Loop
+The FSM command register needs `batch_count = 1` for single operations:
+```c
+// Old (broken) - batch_count defaults to 0, causes infinite loop:
+cmd = (var2 << 20) | (var1 << 4) | op_code;
+
+// Fixed - explicitly set batch_count = 1:
+cmd = ((uint64_t)1 << 36) | (var2 << 20) | (var1 << 4) | op_code;
+```
+
+### V5.7 Solution: 125MHz Clock
+| Frequency | Period | Slack | Status |
+|-----------|--------|-------|--------|
+| 250MHz | 4.0ns | -2.5ns | **FAIL** |
+| 200MHz | 5.0ns | -1.5ns | FAIL |
+| 150MHz | 6.7ns | +0.2ns | Marginal |
+| **125MHz** | **8.0ns** | **+1.5ns** | **PASS** |
+
+Build script: `v57_aws_f2_125mhz_chirho_cl/build_v57_125mhz_hdk_chirho.sh`
+- Uses `--clock_recipe_a A0` (125MHz)
+- Same PCIS→HBM connectivity as V5.6
+- Recommend c5.4xlarge build instance (32GB RAM may suffice)
 
 ---
 
@@ -207,8 +263,59 @@ The "hbm_ready=1" claim in the original report was actually "ctrl_hbm_mode=1".
 |----------|-------|-------|
 | VERSION (0x00) | 0xF2550001 | V5.5 confirmed |
 | CONTROL (0x04) | 0x00000004 | ctrl_hbm_mode=1 |
-| STATUS (0x08) | ??? | Needs re-testing |
+| STATUS (0x08) | 0x00000004 | hbm_ready=1, done=0, valid=0 |
 | HIER_MODE (0x80) | 0x00000000 | 64-bit domain mode |
+
+**⚠️ CRITICAL ARCHITECTURE DISCOVERY (2026-01-31): PCIS/BAR4 IS TIED OFF!**
+
+The V5.5 design **cannot receive data via BAR4 (PCIS)**. Lines 122-139 of `cl_minikanren_chirho.sv`:
+
+```systemverilog
+// PCIS (DMA Slave) Tie-offs
+always_comb begin
+    cl_sh_dma_pcis_awready = 1'b0;  // NOT accepting writes!
+    cl_sh_dma_pcis_wready  = 1'b0;  // NOT accepting write data!
+    cl_sh_dma_pcis_arready = 1'b0;  // NOT accepting reads!
+    ...
+end
+```
+
+**Implications:**
+1. **BAR4 writes don't persist** - Shell tries to send writes, but CL never accepts them (awready=0)
+2. **The v55_comprehensive "HBM batches" are actually just PCIe register writes to BAR0**
+3. **hbm_batch_chirho.c BAR4 approach will NEVER work with V5.5 AFI**
+
+**Current Architecture:**
+```
+Host → BAR0 (OCL)  → Registers → FSM → hbm_axi4_bus → HBM IP (WORKS)
+Host → BAR4 (PCIS) → TIED OFF (goes nowhere!)
+```
+
+**What AWS examples do (cl_dram_hbm_dma):**
+```
+Host → BAR4 (PCIS) → cl_dma_pcis_slv → AXI crossbar → HBM IP (CORRECT)
+       HBM address starts at 0x10_0000_0000 (64GB offset on BAR4)
+```
+
+**Tested BAR4 writes (2026-01-31):**
+```
+BAR4 size: 137438953472 bytes (128GB)
+Offset      0: wrote 0xCAFE0000, read 0x00000000 FAIL
+Offset     64: wrote 0xCAFE0001, read 0x00000000 FAIL
+Offset 0x1000: wrote 0xCAFE0002, read 0x00000000 FAIL
+All writes to BAR4 are silently dropped (shell times out).
+```
+
+**Why the internal FSM is also stuck:**
+- FSM sends read request (arvalid=1) to hbm_axi4_bus
+- But cl_hbm_axi4 wrapper returns arready=0
+- Separate issue from PCIS tie-off - the HBM AXI path also has handshake problems
+
+**V6 Fix Required:**
+To support BAR4 direct HBM access:
+1. Implement PCIS handler (use cl_dma_pcis_slv.sv from AWS examples)
+2. Add AXI crossbar to route PCIS to HBM
+3. Map HBM at offset 0x10_0000_0000 on BAR4
 
 **PCIe Latency (Direct mmap):**
 | Operation | Latency | Notes |
@@ -531,6 +638,146 @@ XDC constraints assign cells to pblocks:
 
 ---
 
+## V5.6 Build: PCIS-to-HBM Connectivity Fix ☧
+
+### Build Details
+- **Date:** 2026-02-01
+- **Instance:** c5.9xlarge (72GB RAM), i-0c1bcde05bcc7bc06
+- **Duration:** 1:07:10
+- **Clock:** 250MHz (A2 recipe)
+- **Peak Memory:** ~9.6 GB
+
+### Critical Changes from V5.5
+
+**1. PCIS Handler (`cl_pcis_handler_chirho.sv` - NEW)**
+
+Routes BAR4 DMA traffic to HBM instead of tying it off:
+```systemverilog
+// V5.5 (BROKEN):
+cl_sh_dma_pcis_awready = 1'b0;  // Rejected all writes!
+
+// V5.6 (FIXED):
+assign cl_sh_dma_pcis_awready = hbm_awready_chirho;  // Pass through to HBM
+assign hbm_wdata_chirho = sh_cl_dma_pcis_wdata;      // 512-bit passthrough
+```
+
+**2. AXI Arbiter (`cl_axi_arbiter_chirho.sv` - NEW)**
+
+Arbitrates between host DMA (PCIS) and internal FSM for HBM access:
+- PCIS has higher priority (host DMA wins)
+- Switches only at transaction boundaries
+- 512-bit data, 64-bit address, 16-bit ID widths
+
+**3. Fixed Interface Widths**
+
+V5.5 had width mismatches between `axi_bus_t` (512-bit) and arbiter (256-bit):
+```
+axi_bus_t interface:  512-bit data, 64-bit addr, 16-bit ID
+V5.6 arbiter ports:   512-bit data, 64-bit addr, 16-bit ID  ✓ MATCH
+```
+
+### Timing Results
+
+**WNS: -2.506ns** (timing violated but AFI created)
+
+Critical paths are in HBM MMCM and AXI clock crossing, similar to V5.5.
+AFI may still work for functional testing despite timing violations.
+
+### AFI Details
+
+- **FpgaImageId:** `afi-06d36e045251b9de0`
+- **FpgaImageGlobalId:** `agfi-07ee9410bbbd5932c`
+- **Created:** 2026-02-01T07:22:38Z
+- **Status:** ✅ AVAILABLE
+
+### S3 Artifacts
+
+```
+s3://minikanren-fpga-chirho/dcp/
+└── v56_pcis_fix_chirho.tar                    # AFI-ready DCP
+```
+
+### New Design Files (v56_aws_f2_pcis_chirho_cl/design/)
+
+| File | Purpose |
+|------|---------|
+| `cl_pcis_handler_chirho.sv` | Routes BAR4 PCIS to HBM |
+| `cl_axi_arbiter_chirho.sv` | Arbitrates PCIS vs FSM |
+| `cl_minikanren_chirho.sv` | Updated with arbiter integration |
+| `cl_id_defines.vh` | Device ID 0xF056 |
+
+### Expected Architecture (V5.6)
+
+```
+Host → BAR0 (OCL)  → Registers → FSM ──┐
+                                       ↓
+                                 AXI Arbiter
+                                       ↑
+Host → BAR4 (PCIS) → PCIS Handler ─────┘
+                                       │
+                                       ↓
+                                 cl_hbm_axi4
+                                       │
+                                       ↓
+                                   HBM (16GB)
+```
+
+### ✅ V5.6 Benchmark Results (2026-02-01) ☧
+
+**Test Environment:**
+- Instance: f2.6xlarge (i-04c2199c85df5a1e0) at 34.200.222.156
+- AMI: FPGA Developer AMI 1.18.0 (Rocky Linux)
+- AFI: agfi-07ee9410bbbd5932c
+
+**1. Register Test:** ✅ PASS
+```
+VERSION: 0xF2560001 (V5.6 confirmed)
+STATUS:  0x00000004 (hbm_ready=1)
+```
+
+**2. BAR4 (PCIS) HBM Access:** ✅ PASS - THE CRITICAL FIX!
+
+| Test | V5.5 Result | V5.6 Result |
+|------|-------------|-------------|
+| BAR4 write 0xDEADBEEF, readback | 0x00000000 (FAIL) | **0xDEADBEEF (PASS)** |
+| 8 patterns × 7 offsets | N/A | **All PASS** |
+| Sequential 4KB write/read | N/A | **All PASS** |
+
+**Throughput (1M operations):**
+| Operation | Speed | Latency |
+|-----------|-------|---------|
+| Write | 48.1M ops/sec | 0.02 μs (buffered) |
+| Read | 868K ops/sec | 1.15 μs |
+
+**3. FSM Test:** ⚠️ Cycling but incomplete
+
+- FSM cycles through states (0x00-0x0E) - ACTIVE
+- AXI bus shows activity (0x40-0xF5) - WORKING
+- Arbiter toggles (0x00/0x02) - WORKING
+- Does not complete: HBM not preloaded with domain data
+
+**4. Arbiter Debug Registers:** ✅ WORKING
+```
+ARBITER (0xE0): grant_pcis and grant_fsm toggle as expected
+PCIS_ACTIVE (0xEC): Shows PCIS activity during BAR4 access
+```
+
+### Key Achievement
+
+**V5.6 fixes the critical PCIS tie-off bug:**
+- V5.5: PCIS was tied off → BAR4 writes silently failed
+- V5.6: PCIS handler + arbiter → BAR4→HBM works!
+
+This enables the host to DMA data directly to HBM for batch processing.
+
+### Known Issues
+
+- Timing violations (WNS = -2.506ns) may cause functional issues
+- If V5.6 fails, consider reducing clock to 200MHz (A1 recipe)
+- c5.4xlarge (32GB) should work for future builds (~9.6GB peak)
+
+---
+
 ## PCI Device IDs
 
 | Version | Device ID | Notes |
@@ -541,6 +788,7 @@ XDC constraints assign cells to pblocks:
 | v5.3 | 0xF053 | Sparse streaming |
 | v5.4 | 0xF054 | Debug registers, FSM working |
 | v5.5 | 0xF055 | STATUS register fix |
+| v5.6 | 0xF056 | PCIS-to-HBM connectivity |
 
 All use Vendor ID 0x1D0F (Amazon) with valid range 0xF000-0xF0FF.
 

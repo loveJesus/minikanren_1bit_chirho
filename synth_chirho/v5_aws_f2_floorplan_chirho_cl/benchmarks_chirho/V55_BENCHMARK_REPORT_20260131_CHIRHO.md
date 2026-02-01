@@ -8,6 +8,33 @@
 
 ---
 
+## ⚠️ CRITICAL ARCHITECTURE LIMITATION (Discovered 2026-01-31)
+
+**BAR4 (PCIS) is TIED OFF in V5.5** - The design only accepts traffic via BAR0 registers.
+
+| Interface | Status | What It Means |
+|-----------|--------|---------------|
+| **BAR0 (OCL)** | ✅ Works | Register read/write at 0.78-1.78M ops/sec |
+| **BAR4 (PCIS)** | ❌ Tied Off | All writes silently dropped, reads return 0 |
+| **Internal HBM** | ⚠️ FSM Stuck | arready=0, AXI handshake incomplete |
+
+**What this benchmark actually measures:**
+- PCIe register write throughput to BAR0 (OCL AXI-Lite)
+- NOT actual HBM batch processing
+- NOT BAR4 direct memory access to HBM
+
+**The "HBM batch" tests in this report:**
+- Write pairs to REG_DOMAIN_A/B (registers at 0x100/0x108)
+- Measure wall-clock time for N register writes
+- Do NOT verify data reached HBM or results were computed
+
+**To use actual HBM in V6:**
+1. Implement PCIS handler (currently tied off)
+2. Route BAR4 traffic through AXI crossbar to HBM
+3. Fix HBM AXI handshake (arready=0 issue)
+
+---
+
 ## Understanding These Metrics
 
 **This report contains two distinct types of numbers:**

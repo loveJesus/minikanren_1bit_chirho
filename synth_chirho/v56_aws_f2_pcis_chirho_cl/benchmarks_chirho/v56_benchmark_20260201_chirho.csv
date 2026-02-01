@@ -1,0 +1,23 @@
+# V5.6 HBM Benchmark Results - 2026-02-01 ☧
+# Instance: f2.6xlarge (i-04c2199c85df5a1e0) at 34.200.222.156
+# AFI: agfi-07ee9410bbbd5932c
+# AMI: FPGA Developer AMI 1.18.0 (Rocky Linux)
+#
+test_name,result,value,unit,notes
+version_check,PASS,0xF2560001,hex,V5.6 confirmed
+status_hbm_ready,PASS,1,bool,HBM controller ready
+bar4_pattern_0xDEADBEEF,PASS,0xDEADBEEF,hex,Write/read match (V5.5 was 0x0)
+bar4_pattern_0xCAFEBABE,PASS,0xCAFEBABE,hex,Write/read match
+bar4_pattern_0x12345678,PASS,0x12345678,hex,Write/read match
+bar4_offset_0,PASS,1,bool,Offset 0 bytes
+bar4_offset_64,PASS,1,bool,Offset 64 bytes
+bar4_offset_4096,PASS,1,bool,Offset 4096 bytes
+bar4_offset_65536,PASS,1,bool,Offset 65536 bytes
+bar4_sequential_4kb,PASS,1024,u32,All 4KB matches
+bar4_write_throughput,PASS,48125279,ops/sec,1M writes buffered
+bar4_read_throughput,PASS,867922,ops/sec,1M reads 1.15μs latency
+bar4_read_latency,PASS,1.15,μs,Average PCIe latency
+fsm_active,PASS,1,bool,FSM cycles through states
+axi_active,PASS,1,bool,AXI bus shows activity
+arbiter_active,PASS,1,bool,Arbiter toggles grant signals
+fsm_completion,INCOMPLETE,0,bool,Needs HBM domain data preload

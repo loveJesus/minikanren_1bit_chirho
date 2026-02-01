@@ -1,4 +1,4 @@
-# V6 Architecture Analysis: Arbitrary-Depth Sparse Hierarchies ☧
+# V6 Architecture Analysis: Dual-Pathway Sparse Hierarchies ☧
 
 For God so loved the world - John 3:16
 
@@ -6,40 +6,105 @@ For God so loved the world - John 3:16
 
 ## Requirements
 
-1. **Word sizes up to 2K bits** (2048 bits = 256 bytes)
-2. **Arbitrary tree depth** (not hardcoded)
+1. **Dual word sizes:** 256-bit (native HBM) and 512-bit (proven in V5.3)
+2. **Variable depth:** 2, 3, or 4 levels per word size
 3. **Sparse streaming** (implicit indexing via popcount)
 4. **HBM-friendly** (sequential access patterns)
+5. **V5.4 fixes included:** Register map, AXI handshake, debug registers
 
 ---
 
-## Domain Size Analysis
+## V6 Domain Modes (6 Total)
 
-| Word Size | Levels | Domain Size | Memory (dense) | Memory (sparse, 0.001%) |
-|-----------|--------|-------------|----------------|-------------------------|
-| 512-bit | 2 | 262K | 33 KB | ~270 bytes |
-| 512-bit | 3 | 134M | 16 MB | ~16 KB |
-| 512-bit | 4 | 68B | 8.5 GB | ~8 MB |
-| 2048-bit | 2 | 4M | 512 KB | ~500 bytes |
-| 2048-bit | 3 | 8.6B | 1 GB | ~1 MB |
-| 2048-bit | 4 | 17.6T | 2 TB | ~2 GB |
+| Mode | Word Size | Depth | Domain Size | HBM beats/word | Latency (sparse) |
+|------|-----------|-------|-------------|----------------|------------------|
+| 256² | 256-bit | 2 | 65K | 1 | ~100ns |
+| 256³ | 256-bit | 3 | 16.7M | 1 | ~150ns |
+| 256⁴ | 256-bit | 4 | 4.3B | 1 | ~200ns |
+| 512² | 512-bit | 2 | 262K | 2 | ~200ns |
+| 512³ | 512-bit | 3 | 134M | 2 | ~300ns |
+| 512⁴ | 512-bit | 4 | 68B | 2 | ~400ns |
 
-**Observation:** 2K-bit words with 3 levels gives 8.6 billion values - likely sufficient for most workloads.
+**Mode encoding:**
+```systemverilog
+// {word_size[0], depth[1:0]} - 3 bits total
+`define HIER_MODE_256_2_CHIRHO  3'b0_01  // 256², 65K values
+`define HIER_MODE_256_3_CHIRHO  3'b0_10  // 256³, 16.7M values
+`define HIER_MODE_256_4_CHIRHO  3'b0_11  // 256⁴, 4.3B values
+`define HIER_MODE_512_2_CHIRHO  3'b1_01  // 512², 262K values
+`define HIER_MODE_512_3_CHIRHO  3'b1_10  // 512³, 134M values
+`define HIER_MODE_512_4_CHIRHO  3'b1_11  // 512⁴, 68B values
+```
+
+### Memory Requirements (Sparse 0.001%)
+
+| Mode | Dense Storage | Sparse Storage |
+|------|---------------|----------------|
+| 256² | 8 KB | ~70 bytes |
+| 256³ | 2 MB | ~2 KB |
+| 256⁴ | 512 MB | ~500 KB |
+| 512² | 33 KB | ~270 bytes |
+| 512³ | 16 MB | ~16 KB |
+| 512⁴ | 8.5 GB | ~8 MB |
+
+---
+
+## V5.4 Fixes Carried to V6
+
+### 1. Register Map (DONE)
+```
+HIER/TRAIN registers moved from 0x40-0x70 to 0x80+
+No conflicts with RESP registers (0x20-0x5C)
+```
+
+### 2. AXI Handshake (REQUIRED)
+```systemverilog
+// V5.3 BUG: Set arvalid, immediately wait for rvalid
+// V6 FIX: Wait for arready before expecting rvalid
+
+FSM_WAIT_ARREADY_CHIRHO: begin
+    if (hbm_axi4_bus_chirho.arready) begin
+        axi_read_req_chirho <= 1'b0;  // Clear after accepted
+        fsm_state_chirho <= FSM_LOAD_DATA_CHIRHO;
+    end
+end
+```
+
+### 3. Debug Registers (REQUIRED)
+```
+0x0C0: FSM_STATE   - Current FSM state (read-only)
+0x0C4: AXI_STATUS  - {arready, arvalid, rvalid, rready, awready, awvalid, bvalid, bready}
+0x0C8: AXI_ADDR_LO - Current axi_addr_chirho[31:0]
+0x0CC: AXI_ADDR_HI - Current axi_addr_chirho[47:32]
+0x0D0: BEAT_COUNT  - Current beat_counter_chirho
+0x0D4: LEVEL_INFO  - {current_level[3:0], max_depth[3:0], word_size[7:0]}
+```
 
 ---
 
 ## Hardware Resource Analysis
 
-### Per-Level Resources (Configurable Depth)
+### Per-Level Resources (Dual Pathway)
 
-| Component | 512-bit | 2048-bit | Notes |
-|-----------|---------|----------|-------|
-| Summary register | 512 FF | 2048 FF | Current word being processed |
-| Popcount circuit | ~900 LUT | ~3600 LUT | Adder tree for rank |
-| Priority encoder | ~500 LUT | ~2000 LUT | find_next_set_bit |
-| AND gate array | 512 LUT | 2048 LUT | Intersection |
+| Component | 256-bit | 512-bit | Notes |
+|-----------|---------|---------|-------|
+| Summary register | 256 FF | 512 FF | Current word being processed |
+| Popcount circuit | ~450 LUT | ~900 LUT | Adder tree for rank |
+| Priority encoder | ~400 LUT | ~500 LUT | find_next_set_bit |
+| AND gate array | 256 LUT | 512 LUT | Intersection |
 | Address calculator | ~200 LUT | ~200 LUT | Multiply/shift |
-| **Total per level** | **~2100 LUT, 512 FF** | **~7900 LUT, 2048 FF** |
+| Word assembly | 0 | ~100 LUT | 2-beat assembly for 512-bit |
+| **Total per level** | **~1300 LUT, 256 FF** | **~2200 LUT, 512 FF** |
+
+### Shared Resources (Both Pathways)
+
+| Component | Cost | Notes |
+|-----------|------|-------|
+| Depth counter | ~50 LUT | Compare against max_depth |
+| Mode decoder | ~30 LUT | Select 256/512 path |
+| Cumulative trackers | ~200 LUT, 128 FF | 4 levels × 32-bit counters |
+| Debug registers | ~100 LUT, 256 FF | V5.4 fix: visibility |
+| **Total shared** | **~380 LUT, 384 FF** |
 
 ### Configurable vs Hardcoded Depth
 
@@ -111,47 +176,43 @@ end
 
 ---
 
-## Word Size Analysis: 512 vs 2048 Bits
+## Word Size Analysis: 256 vs 512 Bits
 
 ### HBM Alignment
 
-| Word Size | HBM Beats | Efficiency |
-|-----------|-----------|------------|
-| 256-bit | 1 | 100% (native) |
-| 512-bit | 2 | 100% (2 aligned reads) |
-| 1024-bit | 4 | 100% (4 aligned reads) |
-| 2048-bit | 8 | 100% (8 aligned reads) |
+| Word Size | HBM Beats | Latency | Complexity |
+|-----------|-----------|---------|------------|
+| 256-bit | 1 | Lowest | Simplest (native) |
+| 512-bit | 2 | +1 cycle | Word assembly FSM |
 
-All are HBM-friendly - just more beats for larger words.
-
-### Popcount Circuit Scaling
+### Popcount Circuit Comparison
 
 ```
+256-bit popcount:
+  8 levels: 128→64→32→16→8→4→2→1
+  Total: ~450 LUT, 3 cycles (pipelined)
+
 512-bit popcount:
-  Level 1: 256 × 2-bit adders → 256 2-bit sums
-  Level 2: 128 × 3-bit adders → 128 3-bit sums
-  ...
-  Level 9: 1 × 10-bit result
+  9 levels: 256→128→64→32→16→8→4→2→1
   Total: ~900 LUT, 4 cycles (pipelined)
-
-2048-bit popcount:
-  Level 1: 1024 × 2-bit adders → 1024 2-bit sums
-  ...
-  Level 11: 1 × 12-bit result
-  Total: ~3600 LUT, 5 cycles (pipelined)
 ```
+
+### Trade-offs
+
+| Use Case | Best Choice | Why |
+|----------|-------------|-----|
+| Lowest latency | 256-bit | 1 HBM beat, simpler FSM |
+| Larger domains | 512-bit | 512⁴ = 68B vs 256⁴ = 4.3B |
+| Shallower trees | 512-bit | 512³ = 134M vs 256³ = 16.7M |
+| Resource-constrained | 256-bit | ~60% the LUT cost |
 
 ### Recommendation
 
-**Use 512-bit words with 4 levels** for V6:
-- 68 billion values (68B) is enormous
-- 2× smaller circuits than 2K
-- Aligns with HBM naturally (2 beats)
-- Matches V5.3 infrastructure
-
-If 68B isn't enough, use **2048-bit words** for special cases:
-- 17.6 trillion values at 4 levels
-- ~4× hardware cost per engine
+**Support both 256 and 512-bit** in V6:
+- 256-bit for latency-sensitive workloads (4.3B domain max)
+- 512-bit for large domains (68B max, proven in V5.3)
+- Mode register selects pathway at runtime
+- Shared FSM structure, parameterized circuits
 
 ---
 

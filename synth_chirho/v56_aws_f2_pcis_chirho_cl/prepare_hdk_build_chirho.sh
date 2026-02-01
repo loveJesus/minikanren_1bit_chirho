@@ -1,11 +1,13 @@
 #!/bin/bash
 # ============================================================================
 # For God so loved the world - John 3:16
-# Prepare AWS F2 HDK for miniKanren Build ☧
+# Prepare AWS F2 HDK for miniKanren Build V5.6 ☧
 # ============================================================================
 #
-# This script copies our design files into the AWS F2 HDK structure
-# and prepares for the full build with real HBM IP.
+# V5.6: PCIS-to-HBM Connectivity Fix
+#   - cl_pcis_handler_chirho.sv: Routes BAR4 DMA to HBM
+#   - cl_axi_arbiter_chirho.sv: Arbitrates PCIS vs FSM for HBM access
+#   - Fixed FSM AXI handshake bug (added WAIT_ARREADY state)
 #
 # Run this AFTER sourcing hdk_setup.sh:
 #   source $AWS_FPGA_REPO_DIR/hdk_setup.sh
@@ -17,8 +19,13 @@ set -e
 SCRIPT_DIR_CHIRHO=$(cd "$(dirname "$0")" && pwd)
 
 echo "============================================"
-echo "Preparing AWS F2 HDK Build ☧"
+echo "Preparing AWS F2 HDK Build V5.6 ☧"
 echo "============================================"
+echo ""
+echo "PCIS-to-HBM Connectivity Fix:"
+echo "- cl_pcis_handler_chirho.sv"
+echo "- cl_axi_arbiter_chirho.sv"
+echo ""
 
 # Check environment
 if [ -z "$HDK_DIR" ]; then
@@ -39,13 +46,22 @@ echo "Copying design files to $CL_TARGET_CHIRHO/design/..."
 cp $SCRIPT_DIR_CHIRHO/design/cl_minikanren_chirho.sv $CL_TARGET_CHIRHO/design/
 cp $SCRIPT_DIR_CHIRHO/design/cl_minikanren_chirho_defines.vh $CL_TARGET_CHIRHO/design/
 cp $SCRIPT_DIR_CHIRHO/design/cl_id_defines.vh $CL_TARGET_CHIRHO/design/
-cp $SCRIPT_DIR_CHIRHO/design/searchEngineChirho.v $CL_TARGET_CHIRHO/design/
 
-# Copy HDK-required files from common lib (these ARE the real implementations)
-echo "Copying HBM wrapper from HDK common lib..."
-cp $HDK_DIR/common/lib/cl_hbm_axi4.sv $CL_TARGET_CHIRHO/design/
-cp $HDK_DIR/common/lib/cl_hbm_wrapper.sv $CL_TARGET_CHIRHO/design/
-cp $HDK_DIR/common/lib/cl_dram_dma_defines.vh $CL_TARGET_CHIRHO/design/
+# V5.6: PCIS handler and AXI arbiter
+cp $SCRIPT_DIR_CHIRHO/design/cl_pcis_handler_chirho.sv $CL_TARGET_CHIRHO/design/
+cp $SCRIPT_DIR_CHIRHO/design/cl_axi_arbiter_chirho.sv $CL_TARGET_CHIRHO/design/
+
+# Optional: searchEngine if present (for legacy mode)
+if [ -f "$SCRIPT_DIR_CHIRHO/design/searchEngineChirho.v" ]; then
+    cp $SCRIPT_DIR_CHIRHO/design/searchEngineChirho.v $CL_TARGET_CHIRHO/design/
+fi
+
+# Copy HDK-required HBM files from cl_dram_hbm_dma example
+echo "Copying HBM wrapper from cl_dram_hbm_dma example..."
+HBM_EXAMPLE_DIR=$HDK_DIR/cl/examples/cl_dram_hbm_dma/design
+cp $HBM_EXAMPLE_DIR/cl_hbm_axi4.sv $CL_TARGET_CHIRHO/design/
+cp $HBM_EXAMPLE_DIR/cl_hbm_wrapper.sv $CL_TARGET_CHIRHO/design/
+cp $HBM_EXAMPLE_DIR/cl_dram_dma_defines.vh $CL_TARGET_CHIRHO/design/ 2>/dev/null || true
 
 # cl_id_defines.vh is now copied from our design directory (V5.4: device ID 0xF054)
 

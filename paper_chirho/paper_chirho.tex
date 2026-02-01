@@ -1109,6 +1109,66 @@ Relations correspond to morphisms, variable sharing to wiring, and contraction o
 The Topos Institute's work on compositional systems \cite{fong_spivak_chirho} provides the theoretical foundation for viewing our approach categorically: tensor networks \emph{are} string diagrams, and optimization over contraction order is diagram rewriting.
 
 % ============================================================================
+\section{Formal Verification}
+% ============================================================================
+
+We provide machine-checked proofs in both \textbf{Coq/Rocq 9.1} and \textbf{Lean 4 with Mathlib} establishing the correctness of our core claims.
+The formalization is available in \texttt{formal\_chirho/}.
+
+\subsection{Verified Theorems}
+
+\textbf{Domain Algebra (Both Coq and Lean 4):}
+\begin{itemize}
+  \item \texttt{intersect\_sound\_chirho}: If $v \in (d_1 \land d_2)$, then $v \in d_1$ and $v \in d_2$
+  \item \texttt{intersect\_complete\_chirho}: If $v \in d_1$ and $v \in d_2$, then $v \in (d_1 \land d_2)$
+  \item \texttt{intersect\_comm\_chirho}, \texttt{intersect\_assoc\_chirho}: Commutativity/associativity
+  \item \texttt{union\_comm\_chirho}, \texttt{union\_assoc\_chirho}: Union properties
+  \item \texttt{intersect\_distrib\_union\_chirho}: $d_1 \land (d_2 \lor d_3) = (d_1 \land d_2) \lor (d_1 \land d_3)$
+  \item \texttt{member\_intersect\_iff\_chirho}: \textbf{Main bridge theorem}---bidirectional equivalence
+\end{itemize}
+
+\textbf{Search Equivalence (Coq only):}
+\begin{itemize}
+  \item \texttt{domains\_refine\_chirho}: Running any goal can only shrink domains (monotonicity)
+  \item \texttt{search\_equiv\_chirho}: \textbf{Main theorem}---domain membership is preserved through search
+  \item \texttt{unify\_intersects\_chirho}: Unification computes domain intersection
+  \item \texttt{unify\_tensor\_equiv\_chirho}: Unification matches tensor representation
+\end{itemize}
+
+\textbf{Semiring Abstraction (Coq only):}
+\begin{itemize}
+  \item \texttt{Semiring\_chirho}: Type class with axioms (associativity, commutativity, distributivity, identities)
+  \item \texttt{bool\_semiring\_chirho}: Boolean instance (AND = $\times$, OR = $+$)
+  \item \texttt{nat\_semiring\_chirho}: Natural number instance for counting solutions
+\end{itemize}
+
+\subsection{Proof Methodology}
+
+The proofs proceed by structural induction on goal syntax.
+For each goal constructor (Unify, Conj, Disj, Fresh, Call, Succeed, Fail), we show that the domain semantics correctly refines the input domains.
+
+\textbf{Key lemma}: \texttt{member\_intersect\_iff\_chirho} establishes that bitwise AND exactly computes set intersection:
+\[
+v \in (d_1 \land d_2) \Leftrightarrow (v \in d_1 \wedge v \in d_2)
+\]
+This is proven by unfolding the definitions and applying \texttt{N.land\_spec} (Coq) or \texttt{Nat.testBit\_and} (Lean).
+
+\subsection{Build Instructions}
+
+\begin{verbatim}
+# Coq (Rocq 9.1)
+cd formal_chirho/coq
+coq_makefile -f _CoqProject -o Makefile && make
+
+# Lean 4 (requires elan)
+cd formal_chirho/lean4
+lake build
+\end{verbatim}
+
+All proofs compile with zero axioms or admitted lemmas for the core theorems.
+The hierarchical domain equivalence (\texttt{hier\_intersect\_equiv\_chirho}) is admitted as it requires additional infrastructure for disjoint bit ranges.
+
+% ============================================================================
 \section{Conclusion}
 % ============================================================================
 

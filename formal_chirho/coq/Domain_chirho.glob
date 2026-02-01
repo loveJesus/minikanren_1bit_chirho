@@ -1,0 +1,567 @@
+DIGEST f5df57152a16ad5677bcfe8d596d8f67
+FMiniKanrenChirho.Domain_chirho
+R1436:1443 Stdlib.Init.Nat <> <> lib
+R1473:1483 Stdlib.Arith.Arith <> <> lib
+R1513:1525 Stdlib.NArith.NArith <> <> lib
+R1555:1564 Stdlib.Lists.List <> <> lib
+R1594:1602 Stdlib.Bool.Bool <> <> lib
+R1612:1624 Stdlib.Lists.List ListNotations <> mod
+def 1871:1883 <> domain_chirho
+R1888:1888 Corelib.Numbers.BinNums <> N ind
+def 1935:1953 <> empty_domain_chirho
+R1957:1969 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+def 2038:2055 <> full_domain_chirho
+R2062:2064 Corelib.Init.Datatypes <> nat ind
+binder 2058:2058 <> n:1
+R2069:2081 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R2086:2091 Stdlib.NArith.BinNat N ones def
+R2094:2101 Stdlib.NArith.BinNat N of_nat def
+R2103:2103 MiniKanrenChirho.Domain_chirho <> n:1 var
+def 2167:2186 <> member_domain_chirho
+R2193:2195 Corelib.Init.Datatypes <> nat ind
+binder 2189:2189 <> v:2
+R2203:2215 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 2199:2199 <> d:3
+R2220:2223 Corelib.Init.Datatypes <> bool ind
+R2230:2238 Stdlib.NArith.BinNat N testbit def
+R2240:2240 MiniKanrenChirho.Domain_chirho <> d:3 var
+R2243:2250 Stdlib.NArith.BinNat N of_nat def
+R2252:2252 MiniKanrenChirho.Domain_chirho <> v:2 var
+def 2330:2352 <> intersect_domain_chirho
+R2363:2375 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 2355:2356 <> d1:4
+binder 2358:2359 <> d2:5
+R2380:2392 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R2399:2404 Stdlib.NArith.BinNat N land def
+R2406:2407 MiniKanrenChirho.Domain_chirho <> d1:4 var
+R2409:2410 MiniKanrenChirho.Domain_chirho <> d2:5 var
+def 2485:2503 <> union_domain_chirho
+R2514:2526 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 2506:2507 <> d1:6
+binder 2509:2510 <> d2:7
+R2531:2543 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R2550:2554 Stdlib.NArith.BinNat N lor def
+R2556:2557 MiniKanrenChirho.Domain_chirho <> d1:6 var
+R2559:2560 MiniKanrenChirho.Domain_chirho <> d2:7 var
+def 2623:2646 <> complement_domain_chirho
+R2653:2655 Corelib.Init.Datatypes <> nat ind
+binder 2649:2649 <> n:8
+R2663:2675 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 2659:2659 <> d:9
+R2680:2692 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R2699:2704 Stdlib.NArith.BinNat N lxor def
+R2707:2724 MiniKanrenChirho.Domain_chirho <> full_domain_chirho def
+R2726:2726 MiniKanrenChirho.Domain_chirho <> n:8 var
+R2729:2729 MiniKanrenChirho.Domain_chirho <> d:9 var
+def 2768:2789 <> is_empty_domain_chirho
+R2796:2808 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 2792:2792 <> d:10
+R2813:2816 Corelib.Init.Datatypes <> bool ind
+R2823:2827 Stdlib.NArith.BinNat N eqb def
+R2829:2829 MiniKanrenChirho.Domain_chirho <> d:10 var
+def 2894:2916 <> singleton_domain_chirho
+R2923:2925 Corelib.Init.Datatypes <> nat ind
+binder 2919:2919 <> v:11
+R2930:2942 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R2949:2956 Stdlib.NArith.BinNat N shiftl def
+R2961:2968 Stdlib.NArith.BinNat N of_nat def
+R2970:2970 MiniKanrenChirho.Domain_chirho <> v:11 var
+prf 3136:3157 <> intersect_sound_chirho
+R3173:3175 Corelib.Init.Datatypes <> nat ind
+binder 3169:3169 <> v:12
+R3187:3199 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 3179:3180 <> d1:13
+binder 3182:3183 <> d2:14
+R3266:3271 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R3259:3261 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R3205:3224 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3226:3226 MiniKanrenChirho.Domain_chirho <> v:12 var
+R3229:3251 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R3253:3254 MiniKanrenChirho.Domain_chirho <> d1:13 var
+R3256:3257 MiniKanrenChirho.Domain_chirho <> d2:14 var
+R3262:3265 Corelib.Init.Datatypes <> true constr
+R3304:3307 Corelib.Init.Logic <> ::type_scope:x_'/\'_x not
+R3297:3299 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R3272:3291 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3293:3293 MiniKanrenChirho.Domain_chirho <> v:12 var
+R3295:3296 MiniKanrenChirho.Domain_chirho <> d1:13 var
+R3300:3303 Corelib.Init.Datatypes <> true constr
+R3333:3335 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R3308:3327 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3329:3329 MiniKanrenChirho.Domain_chirho <> v:12 var
+R3331:3332 MiniKanrenChirho.Domain_chirho <> d2:14 var
+R3336:3339 Corelib.Init.Datatypes <> true constr
+R3378:3397 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3400:3422 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R3440:3450 Stdlib.NArith.BinNat N land_spec thm
+R3440:3450 Stdlib.NArith.BinNat N land_spec thm
+R3440:3450 Stdlib.NArith.BinNat N land_spec thm
+R3466:3478 Stdlib.Bool.Bool <> andb_true_iff thm
+R3466:3478 Stdlib.Bool.Bool <> andb_true_iff thm
+prf 3646:3670 <> intersect_complete_chirho
+R3686:3688 Corelib.Init.Datatypes <> nat ind
+binder 3682:3682 <> v:15
+R3700:3712 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 3692:3693 <> d1:16
+binder 3695:3696 <> d2:17
+R3750:3755 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R3743:3745 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R3718:3737 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3739:3739 MiniKanrenChirho.Domain_chirho <> v:15 var
+R3741:3742 MiniKanrenChirho.Domain_chirho <> d1:16 var
+R3746:3749 Corelib.Init.Datatypes <> true constr
+R3788:3793 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R3781:3783 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R3756:3775 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3777:3777 MiniKanrenChirho.Domain_chirho <> v:15 var
+R3779:3780 MiniKanrenChirho.Domain_chirho <> d2:17 var
+R3784:3787 Corelib.Init.Datatypes <> true constr
+R3848:3850 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R3794:3813 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3815:3815 MiniKanrenChirho.Domain_chirho <> v:15 var
+R3818:3840 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R3842:3843 MiniKanrenChirho.Domain_chirho <> d1:16 var
+R3845:3846 MiniKanrenChirho.Domain_chirho <> d2:17 var
+R3851:3854 Corelib.Init.Datatypes <> true constr
+R3897:3916 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R3919:3941 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R3954:3964 Stdlib.NArith.BinNat N land_spec thm
+R3954:3964 Stdlib.NArith.BinNat N land_spec thm
+R3954:3964 Stdlib.NArith.BinNat N land_spec thm
+R3975:3987 Stdlib.Bool.Bool <> andb_true_iff thm
+R3975:3987 Stdlib.Bool.Bool <> andb_true_iff thm
+prf 4075:4095 <> intersect_comm_chirho
+R4115:4127 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 4107:4108 <> d1:18
+binder 4110:4111 <> d2:19
+R4162:4164 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R4133:4155 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4157:4158 MiniKanrenChirho.Domain_chirho <> d1:18 var
+R4160:4161 MiniKanrenChirho.Domain_chirho <> d2:19 var
+R4165:4187 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4189:4190 MiniKanrenChirho.Domain_chirho <> d2:19 var
+R4192:4193 MiniKanrenChirho.Domain_chirho <> d1:18 var
+R4228:4250 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4261:4271 Stdlib.NArith.BinNat N land_comm thm
+R4261:4271 Stdlib.NArith.BinNat N land_comm thm
+prf 4338:4359 <> intersect_assoc_chirho
+R4382:4394 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 4371:4372 <> d1:20
+binder 4374:4375 <> d2:21
+binder 4377:4378 <> d3:22
+R4458:4462 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R4400:4422 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4425:4447 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4449:4450 MiniKanrenChirho.Domain_chirho <> d1:20 var
+R4452:4453 MiniKanrenChirho.Domain_chirho <> d2:21 var
+R4456:4457 MiniKanrenChirho.Domain_chirho <> d3:22 var
+R4463:4485 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4487:4488 MiniKanrenChirho.Domain_chirho <> d1:20 var
+R4491:4513 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4515:4516 MiniKanrenChirho.Domain_chirho <> d2:21 var
+R4518:4519 MiniKanrenChirho.Domain_chirho <> d3:22 var
+R4558:4580 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R4601:4612 Stdlib.NArith.BinNat N land_assoc thm
+R4601:4612 Stdlib.NArith.BinNat N land_assoc thm
+prf 4672:4688 <> union_comm_chirho
+R4708:4720 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 4700:4701 <> d1:23
+binder 4703:4704 <> d2:24
+R4751:4753 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R4726:4744 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R4746:4747 MiniKanrenChirho.Domain_chirho <> d1:23 var
+R4749:4750 MiniKanrenChirho.Domain_chirho <> d2:24 var
+R4754:4772 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R4774:4775 MiniKanrenChirho.Domain_chirho <> d2:24 var
+R4777:4778 MiniKanrenChirho.Domain_chirho <> d1:23 var
+R4813:4831 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R4842:4851 Stdlib.NArith.BinNat N lor_comm thm
+R4842:4851 Stdlib.NArith.BinNat N lor_comm thm
+prf 4911:4928 <> union_assoc_chirho
+R4951:4963 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 4940:4941 <> d1:25
+binder 4943:4944 <> d2:26
+binder 4946:4947 <> d3:27
+R5019:5023 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R4969:4987 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R4990:5008 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5010:5011 MiniKanrenChirho.Domain_chirho <> d1:25 var
+R5013:5014 MiniKanrenChirho.Domain_chirho <> d2:26 var
+R5017:5018 MiniKanrenChirho.Domain_chirho <> d3:27 var
+R5024:5042 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5044:5045 MiniKanrenChirho.Domain_chirho <> d1:25 var
+R5048:5066 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5068:5069 MiniKanrenChirho.Domain_chirho <> d2:26 var
+R5071:5072 MiniKanrenChirho.Domain_chirho <> d3:27 var
+R5111:5129 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5150:5160 Stdlib.NArith.BinNat N lor_assoc thm
+R5150:5160 Stdlib.NArith.BinNat N lor_assoc thm
+prf 5274:5291 <> union_sound_chirho
+R5307:5309 Corelib.Init.Datatypes <> nat ind
+binder 5303:5303 <> v:28
+R5321:5333 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 5313:5314 <> d1:29
+binder 5316:5317 <> d2:30
+R5396:5401 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R5389:5391 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R5339:5358 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R5360:5360 MiniKanrenChirho.Domain_chirho <> v:28 var
+R5363:5381 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5383:5384 MiniKanrenChirho.Domain_chirho <> d1:29 var
+R5386:5387 MiniKanrenChirho.Domain_chirho <> d2:30 var
+R5392:5395 Corelib.Init.Datatypes <> true constr
+R5434:5437 Corelib.Init.Logic <> ::type_scope:x_'\/'_x not
+R5427:5429 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R5402:5421 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R5423:5423 MiniKanrenChirho.Domain_chirho <> v:28 var
+R5425:5426 MiniKanrenChirho.Domain_chirho <> d1:29 var
+R5430:5433 Corelib.Init.Datatypes <> true constr
+R5463:5465 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R5438:5457 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R5459:5459 MiniKanrenChirho.Domain_chirho <> v:28 var
+R5461:5462 MiniKanrenChirho.Domain_chirho <> d2:30 var
+R5466:5469 Corelib.Init.Datatypes <> true constr
+R5508:5527 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R5530:5548 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5566:5575 Stdlib.NArith.BinNat N lor_spec thm
+R5566:5575 Stdlib.NArith.BinNat N lor_spec thm
+R5566:5575 Stdlib.NArith.BinNat N lor_spec thm
+R5591:5602 Stdlib.Bool.Bool <> orb_true_iff thm
+R5591:5602 Stdlib.Bool.Bool <> orb_true_iff thm
+prf 5736:5765 <> intersect_distrib_union_chirho
+R5788:5800 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 5777:5778 <> d1:31
+binder 5780:5781 <> d2:32
+binder 5783:5784 <> d3:33
+R5860:5864 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R5806:5828 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R5830:5831 MiniKanrenChirho.Domain_chirho <> d1:31 var
+R5834:5852 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5854:5855 MiniKanrenChirho.Domain_chirho <> d2:32 var
+R5857:5858 MiniKanrenChirho.Domain_chirho <> d3:33 var
+R5865:5883 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R5886:5908 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R5910:5911 MiniKanrenChirho.Domain_chirho <> d1:31 var
+R5913:5914 MiniKanrenChirho.Domain_chirho <> d2:32 var
+R5918:5940 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R5942:5943 MiniKanrenChirho.Domain_chirho <> d1:31 var
+R5945:5946 MiniKanrenChirho.Domain_chirho <> d3:33 var
+R5985:6007 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R6010:6028 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R6041:6058 Stdlib.NArith.BinNat N land_lor_distr_r thm
+R6041:6058 Stdlib.NArith.BinNat N land_lor_distr_r thm
+R6041:6058 Stdlib.NArith.BinNat N land_lor_distr_r thm
+prf 6147:6166 <> union_empty_l_chirho
+R6182:6194 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 6178:6178 <> d:34
+R6241:6243 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6200:6218 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R6220:6238 MiniKanrenChirho.Domain_chirho <> empty_domain_chirho def
+R6240:6240 MiniKanrenChirho.Domain_chirho <> d:34 var
+R6244:6244 MiniKanrenChirho.Domain_chirho <> d:34 var
+R6274:6292 MiniKanrenChirho.Domain_chirho <> union_domain_chirho def
+R6295:6313 MiniKanrenChirho.Domain_chirho <> empty_domain_chirho def
+R6324:6332 Stdlib.NArith.BinNat N lor_0_l thm
+R6324:6332 Stdlib.NArith.BinNat N lor_0_l thm
+prf 6415:6438 <> intersect_empty_l_chirho
+R6454:6466 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 6450:6450 <> d:35
+R6517:6519 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6472:6494 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R6496:6514 MiniKanrenChirho.Domain_chirho <> empty_domain_chirho def
+R6516:6516 MiniKanrenChirho.Domain_chirho <> d:35 var
+R6520:6538 MiniKanrenChirho.Domain_chirho <> empty_domain_chirho def
+R6568:6590 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R6593:6611 MiniKanrenChirho.Domain_chirho <> empty_domain_chirho def
+R6622:6631 Stdlib.NArith.BinNat N land_0_l thm
+R6622:6631 Stdlib.NArith.BinNat N land_0_l thm
+prf 6770:6796 <> member_intersect_iff_chirho
+R6812:6814 Corelib.Init.Datatypes <> nat ind
+binder 6808:6808 <> v:36
+R6826:6838 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+binder 6818:6819 <> d1:37
+binder 6821:6822 <> d2:38
+R6905:6912 Corelib.Init.Logic <> ::type_scope:x_'<->'_x not
+R6981:6981 Corelib.Init.Logic <> ::type_scope:x_'<->'_x not
+R6898:6900 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6844:6863 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R6865:6865 MiniKanrenChirho.Domain_chirho <> v:36 var
+R6868:6890 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R6892:6893 MiniKanrenChirho.Domain_chirho <> d1:37 var
+R6895:6896 MiniKanrenChirho.Domain_chirho <> d2:38 var
+R6901:6904 Corelib.Init.Datatypes <> true constr
+R6945:6948 Corelib.Init.Logic <> ::type_scope:x_'/\'_x not
+R6938:6940 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6913:6932 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R6934:6934 MiniKanrenChirho.Domain_chirho <> v:36 var
+R6936:6937 MiniKanrenChirho.Domain_chirho <> d1:37 var
+R6941:6944 Corelib.Init.Datatypes <> true constr
+R6974:6976 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6949:6968 MiniKanrenChirho.Domain_chirho <> member_domain_chirho def
+R6970:6970 MiniKanrenChirho.Domain_chirho <> v:36 var
+R6972:6973 MiniKanrenChirho.Domain_chirho <> d2:38 var
+R6977:6980 Corelib.Init.Datatypes <> true constr
+R7028:7049 MiniKanrenChirho.Domain_chirho <> intersect_sound_chirho thm
+R7028:7049 MiniKanrenChirho.Domain_chirho <> intersect_sound_chirho thm
+R7078:7102 MiniKanrenChirho.Domain_chirho <> intersect_complete_chirho thm
+R7078:7102 MiniKanrenChirho.Domain_chirho <> intersect_complete_chirho thm
+rec 7475:7496 <> hierarchical_4k_chirho
+proj 7523:7538 <> root_hier_chirho
+proj 7604:7621 <> leaves_hier_chirho
+R7542:7554 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R7625:7628 Corelib.Init.Datatypes <> list ind
+R7630:7642 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+def 7765:7786 <> flatten_hier_4k_chirho
+R7793:7814 MiniKanrenChirho.Domain_chirho <> hierarchical_4k_chirho rec
+binder 7789:7789 <> h:42
+R7819:7831 MiniKanrenChirho.Domain_chirho <> domain_chirho def
+R7903:7911 Stdlib.Lists.List <> fold_left def
+R7992:7998 Stdlib.Lists.List <> combine def
+R8012:8029 MiniKanrenChirho.Domain_chirho <> leaves_hier_chirho proj
+R8031:8031 MiniKanrenChirho.Domain_chirho <> h:42 var
+R8001:8003 Corelib.Lists.ListDef <> seq def
+binder 7918:7920 <> acc:43
+R7923:7923 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R7925:7926 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R7931:7931 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+binder 7927:7930 <> leaf:44
+binder 7924:7924 <> i:45
+binder 7923:7931 <> pat:46
+R7940:7944 Stdlib.NArith.BinNat N lor def
+R7946:7948 MiniKanrenChirho.Domain_chirho <> acc:43 var
+R7951:7958 Stdlib.NArith.BinNat N shiftl def
+R7960:7963 MiniKanrenChirho.Domain_chirho <> leaf:44 var
+R7966:7973 Stdlib.NArith.BinNat N of_nat def
+R7977:7979 Corelib.Init.Nat <> ::nat_scope:x_'*'_x not
+R7976:7976 MiniKanrenChirho.Domain_chirho <> i:45 var
+def 8087:8110 <> intersect_hier_4k_chirho
+R8121:8142 MiniKanrenChirho.Domain_chirho <> hierarchical_4k_chirho rec
+binder 8113:8114 <> h1:47
+binder 8116:8117 <> h2:48
+R8151:8172 MiniKanrenChirho.Domain_chirho <> hierarchical_4k_chirho rec
+R8195:8200 Stdlib.NArith.BinNat N land def
+R8203:8218 MiniKanrenChirho.Domain_chirho <> root_hier_chirho proj
+R8220:8221 MiniKanrenChirho.Domain_chirho <> h1:47 var
+R8225:8240 MiniKanrenChirho.Domain_chirho <> root_hier_chirho proj
+R8242:8243 MiniKanrenChirho.Domain_chirho <> h2:48 var
+binder 8183:8190 <> new_root:49
+R8269:8271 Corelib.Lists.ListDef <> map def
+R8330:8336 Stdlib.Lists.List <> combine def
+R8363:8380 MiniKanrenChirho.Domain_chirho <> leaves_hier_chirho proj
+R8382:8383 MiniKanrenChirho.Domain_chirho <> h2:48 var
+R8339:8356 MiniKanrenChirho.Domain_chirho <> leaves_hier_chirho proj
+R8358:8359 MiniKanrenChirho.Domain_chirho <> h1:47 var
+R8279:8279 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R8282:8283 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R8286:8286 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+binder 8284:8285 <> l2:50
+binder 8280:8281 <> l1:51
+binder 8279:8286 <> pat:52
+R8291:8296 Stdlib.NArith.BinNat N land def
+R8298:8299 MiniKanrenChirho.Domain_chirho <> l1:51 var
+R8301:8302 MiniKanrenChirho.Domain_chirho <> l2:50 var
+binder 8255:8264 <> new_leaves:53
+R8392:8408 MiniKanrenChirho.Domain_chirho <> Mk_hier_4k_chirho constr
+R8410:8417 MiniKanrenChirho.Domain_chirho <> new_root:49 var
+R8419:8428 MiniKanrenChirho.Domain_chirho <> new_leaves:53 var
+prf 8538:8564 <> hier_intersect_equiv_chirho
+R8586:8607 MiniKanrenChirho.Domain_chirho <> hierarchical_4k_chirho rec
+binder 8578:8579 <> h1:54
+binder 8581:8582 <> h2:55
+R8668:8672 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R8613:8634 MiniKanrenChirho.Domain_chirho <> flatten_hier_4k_chirho def
+R8637:8660 MiniKanrenChirho.Domain_chirho <> intersect_hier_4k_chirho def
+R8662:8663 MiniKanrenChirho.Domain_chirho <> h1:54 var
+R8665:8666 MiniKanrenChirho.Domain_chirho <> h2:55 var
+R8673:8695 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+R8698:8719 MiniKanrenChirho.Domain_chirho <> flatten_hier_4k_chirho def
+R8721:8722 MiniKanrenChirho.Domain_chirho <> h1:54 var
+R8726:8747 MiniKanrenChirho.Domain_chirho <> flatten_hier_4k_chirho def
+R8749:8750 MiniKanrenChirho.Domain_chirho <> h2:55 var
+R8786:8807 MiniKanrenChirho.Domain_chirho <> flatten_hier_4k_chirho def
+R8810:8833 MiniKanrenChirho.Domain_chirho <> intersect_hier_4k_chirho def
+R8836:8858 MiniKanrenChirho.Domain_chirho <> intersect_domain_chirho def
+rec 9403:9417 <> Semiring_chirho
+proj 9437:9456 <> zero_semiring_chirho
+proj 9465:9483 <> one_semiring_chirho
+proj 9492:9511 <> plus_semiring_chirho
+proj 9530:9550 <> times_semiring_chirho
+proj 9638:9663 <> plus_assoc_semiring_chirho
+proj 9794:9818 <> plus_comm_semiring_chirho
+proj 9893:9919 <> plus_zero_l_semiring_chirho
+proj 9988:10014 <> times_assoc_semiring_chirho
+proj 10149:10175 <> times_one_l_semiring_chirho
+proj 10244:10270 <> times_one_r_semiring_chirho
+proj 10339:10366 <> times_zero_l_semiring_chirho
+proj 10455:10479 <> distrib_l_semiring_chirho
+binder 9420:9420 <> A:56
+R9460:9460 MiniKanrenChirho.Domain_chirho <> A:56 var
+R9487:9487 MiniKanrenChirho.Domain_chirho <> A:56 var
+R9516:9519 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R9515:9515 MiniKanrenChirho.Domain_chirho <> A:56 var
+R9521:9524 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R9520:9520 MiniKanrenChirho.Domain_chirho <> A:56 var
+R9525:9525 MiniKanrenChirho.Domain_chirho <> A:56 var
+R9555:9558 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R9554:9554 MiniKanrenChirho.Domain_chirho <> A:56 var
+R9560:9563 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R9559:9559 MiniKanrenChirho.Domain_chirho <> A:56 var
+R9564:9564 MiniKanrenChirho.Domain_chirho <> A:56 var
+binder 9674:9674 <> a:62
+binder 9676:9676 <> b:63
+binder 9678:9678 <> c:64
+R9734:9740 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R9685:9704 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R9733:9733 MiniKanrenChirho.Domain_chirho <> c:64 var
+R9707:9726 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R9730:9730 MiniKanrenChirho.Domain_chirho <> b:63 var
+R9728:9728 MiniKanrenChirho.Domain_chirho <> a:62 var
+R9741:9760 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R9765:9784 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R9788:9788 MiniKanrenChirho.Domain_chirho <> c:64 var
+R9786:9786 MiniKanrenChirho.Domain_chirho <> b:63 var
+R9762:9762 MiniKanrenChirho.Domain_chirho <> a:62 var
+binder 9829:9829 <> a:66
+binder 9831:9831 <> b:67
+R9862:9864 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R9838:9857 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R9861:9861 MiniKanrenChirho.Domain_chirho <> b:67 var
+R9859:9859 MiniKanrenChirho.Domain_chirho <> a:66 var
+R9865:9884 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R9888:9888 MiniKanrenChirho.Domain_chirho <> a:66 var
+R9886:9886 MiniKanrenChirho.Domain_chirho <> b:67 var
+binder 9930:9930 <> a:69
+R9980:9982 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R9937:9956 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R9979:9979 MiniKanrenChirho.Domain_chirho <> a:69 var
+R9958:9977 MiniKanrenChirho.Domain_chirho <> zero_semiring_chirho:58 meth
+R9983:9983 MiniKanrenChirho.Domain_chirho <> a:69 var
+binder 10025:10025 <> a:71
+binder 10027:10027 <> b:72
+binder 10029:10029 <> c:73
+R10087:10093 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10036:10056 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10086:10086 MiniKanrenChirho.Domain_chirho <> c:73 var
+R10059:10079 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10083:10083 MiniKanrenChirho.Domain_chirho <> b:72 var
+R10081:10081 MiniKanrenChirho.Domain_chirho <> a:71 var
+R10094:10114 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10119:10139 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10143:10143 MiniKanrenChirho.Domain_chirho <> c:73 var
+R10141:10141 MiniKanrenChirho.Domain_chirho <> b:72 var
+R10116:10116 MiniKanrenChirho.Domain_chirho <> a:71 var
+binder 10186:10186 <> a:75
+R10236:10238 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10193:10213 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10235:10235 MiniKanrenChirho.Domain_chirho <> a:75 var
+R10215:10233 MiniKanrenChirho.Domain_chirho <> one_semiring_chirho:59 meth
+R10239:10239 MiniKanrenChirho.Domain_chirho <> a:75 var
+binder 10281:10281 <> a:77
+R10331:10333 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10288:10308 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10312:10330 MiniKanrenChirho.Domain_chirho <> one_semiring_chirho:59 meth
+R10310:10310 MiniKanrenChirho.Domain_chirho <> a:77 var
+R10334:10334 MiniKanrenChirho.Domain_chirho <> a:77 var
+binder 10377:10377 <> a:79
+R10428:10430 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10384:10404 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10427:10427 MiniKanrenChirho.Domain_chirho <> a:79 var
+R10406:10425 MiniKanrenChirho.Domain_chirho <> zero_semiring_chirho:58 meth
+R10431:10450 MiniKanrenChirho.Domain_chirho <> zero_semiring_chirho:58 meth
+binder 10490:10490 <> a:81
+binder 10492:10492 <> b:82
+binder 10494:10494 <> c:83
+R10551:10557 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10501:10521 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10526:10545 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R10549:10549 MiniKanrenChirho.Domain_chirho <> c:83 var
+R10547:10547 MiniKanrenChirho.Domain_chirho <> b:82 var
+R10523:10523 MiniKanrenChirho.Domain_chirho <> a:81 var
+R10558:10577 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho:60 meth
+R10608:10628 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10632:10632 MiniKanrenChirho.Domain_chirho <> c:83 var
+R10630:10630 MiniKanrenChirho.Domain_chirho <> a:81 var
+R10580:10600 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho:61 meth
+R10604:10604 MiniKanrenChirho.Domain_chirho <> b:82 var
+R10602:10602 MiniKanrenChirho.Domain_chirho <> a:81 var
+inst 10691:10710 <> bool_semiring_chirho
+R10714:10728 MiniKanrenChirho.Domain_chirho <> Semiring_chirho class
+R10730:10733 Corelib.Init.Datatypes <> bool ind
+R11246:11270 MiniKanrenChirho.Domain_chirho <> distrib_l_semiring_chirho meth
+R11198:11225 MiniKanrenChirho.Domain_chirho <> times_zero_l_semiring_chirho meth
+R11152:11178 MiniKanrenChirho.Domain_chirho <> times_one_r_semiring_chirho meth
+R11106:11132 MiniKanrenChirho.Domain_chirho <> times_one_l_semiring_chirho meth
+R11033:11059 MiniKanrenChirho.Domain_chirho <> times_assoc_semiring_chirho meth
+R10982:11008 MiniKanrenChirho.Domain_chirho <> plus_zero_l_semiring_chirho meth
+R10941:10965 MiniKanrenChirho.Domain_chirho <> plus_comm_semiring_chirho meth
+R10870:10895 MiniKanrenChirho.Domain_chirho <> plus_assoc_semiring_chirho meth
+R10837:10857 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho meth
+R10806:10825 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho meth
+R10775:10793 MiniKanrenChirho.Domain_chirho <> one_semiring_chirho meth
+R10742:10761 MiniKanrenChirho.Domain_chirho <> zero_semiring_chirho meth
+R10766:10770 Corelib.Init.Datatypes <> false constr
+R10798:10801 Corelib.Init.Datatypes <> true constr
+R10830:10832 Corelib.Init.Datatypes <> orb def
+R10862:10865 Corelib.Init.Datatypes <> andb def
+binder 10904:10904 <> a:85
+binder 10906:10906 <> b:86
+binder 10908:10908 <> c:87
+R10913:10918 Corelib.Init.Logic <> eq_sym thm
+R10921:10929 Stdlib.Bool.Bool <> orb_assoc thm
+R10931:10931 MiniKanrenChirho.Domain_chirho <> a:85 var
+R10933:10933 MiniKanrenChirho.Domain_chirho <> b:86 var
+R10935:10935 MiniKanrenChirho.Domain_chirho <> c:87 var
+R10970:10977 Stdlib.Bool.Bool <> orb_comm thm
+binder 11017:11017 <> a:88
+R11022:11028 Corelib.Init.Logic <> eq_refl constr
+binder 11068:11068 <> a:89
+binder 11070:11070 <> b:90
+binder 11072:11072 <> c:91
+R11077:11082 Corelib.Init.Logic <> eq_sym thm
+R11085:11094 Stdlib.Bool.Bool <> andb_assoc thm
+R11096:11096 MiniKanrenChirho.Domain_chirho <> a:89 var
+R11098:11098 MiniKanrenChirho.Domain_chirho <> b:90 var
+R11100:11100 MiniKanrenChirho.Domain_chirho <> c:91 var
+R11137:11147 Stdlib.Bool.Bool <> andb_true_l thm
+R11183:11193 Stdlib.Bool.Bool <> andb_true_r thm
+R11230:11241 Stdlib.Bool.Bool <> andb_false_l thm
+R11275:11292 Stdlib.Bool.Bool <> andb_orb_distrib_r thm
+inst 11361:11379 <> nat_semiring_chirho
+R11383:11397 MiniKanrenChirho.Domain_chirho <> Semiring_chirho class
+R11399:11401 Corelib.Init.Datatypes <> nat ind
+R11919:11943 MiniKanrenChirho.Domain_chirho <> distrib_l_semiring_chirho meth
+R11872:11899 MiniKanrenChirho.Domain_chirho <> times_zero_l_semiring_chirho meth
+R11826:11852 MiniKanrenChirho.Domain_chirho <> times_one_r_semiring_chirho meth
+R11780:11806 MiniKanrenChirho.Domain_chirho <> times_one_l_semiring_chirho meth
+R11704:11730 MiniKanrenChirho.Domain_chirho <> times_assoc_semiring_chirho meth
+R11658:11684 MiniKanrenChirho.Domain_chirho <> plus_zero_l_semiring_chirho meth
+R11613:11637 MiniKanrenChirho.Domain_chirho <> plus_comm_semiring_chirho meth
+R11538:11563 MiniKanrenChirho.Domain_chirho <> plus_assoc_semiring_chirho meth
+R11502:11522 MiniKanrenChirho.Domain_chirho <> times_semiring_chirho meth
+R11467:11486 MiniKanrenChirho.Domain_chirho <> plus_semiring_chirho meth
+R11439:11457 MiniKanrenChirho.Domain_chirho <> one_semiring_chirho meth
+R11410:11429 MiniKanrenChirho.Domain_chirho <> zero_semiring_chirho meth
+R11491:11497 Stdlib.Arith.PeanoNat Nat add def
+R11527:11533 Stdlib.Arith.PeanoNat Nat mul def
+binder 11572:11572 <> a:92
+binder 11574:11574 <> b:93
+binder 11576:11576 <> c:94
+R11581:11586 Corelib.Init.Logic <> eq_sym thm
+R11589:11601 Stdlib.Arith.PeanoNat Nat add_assoc thm
+R11603:11603 MiniKanrenChirho.Domain_chirho <> a:92 var
+R11605:11605 MiniKanrenChirho.Domain_chirho <> b:93 var
+R11607:11607 MiniKanrenChirho.Domain_chirho <> c:94 var
+R11642:11653 Stdlib.Arith.PeanoNat Nat add_comm thm
+R11689:11699 Stdlib.Arith.PeanoNat Nat add_0_l thm
+binder 11739:11739 <> a:95
+binder 11741:11741 <> b:96
+binder 11743:11743 <> c:97
+R11748:11753 Corelib.Init.Logic <> eq_sym thm
+R11756:11768 Stdlib.Arith.PeanoNat Nat mul_assoc thm
+R11770:11770 MiniKanrenChirho.Domain_chirho <> a:95 var
+R11772:11772 MiniKanrenChirho.Domain_chirho <> b:96 var
+R11774:11774 MiniKanrenChirho.Domain_chirho <> c:97 var
+R11811:11821 Stdlib.Arith.PeanoNat Nat mul_1_l thm
+R11857:11867 Stdlib.Arith.PeanoNat Nat mul_1_r thm
+R11904:11914 Stdlib.Arith.PeanoNat Nat mul_0_l thm
+R11948:11966 Stdlib.Arith.PeanoNat Nat mul_add_distr_l thm

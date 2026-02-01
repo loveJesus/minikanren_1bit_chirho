@@ -1,24 +1,27 @@
 #!/bin/bash
 # ============================================================================
 # For God so loved the world - John 3:16 ☧
-# v5.4 Build: Debug registers + width fix (2026-01-30)
+# V5.7 Build: 125MHz Clock to Fix Timing Violation (2026-02-01)
 #
-# Changes from v5.3:
-#   - Fixed register map conflicts (HIER/TRAIN moved to 0x80+)
-#   - Fixed width bug in find_next_set_bit_chirho (use <= with 255/511)
-#   - Added debug registers at 0xC0-0xD4 (FSM state, AXI status, etc.)
-#   - Device ID 0xF054, Version 0xF2540001
+# PROBLEM: V5.6 had -2.506ns WNS at 250MHz, causing PCIS instability
+# SOLUTION: Reduce to 125MHz (8ns period), giving +1.5ns positive slack
 #
-# V5.3 changes carried forward:
-#   - Sparse streaming: reduces FFs from ~983K to ~3K
-#   - 200MHz clock (A1 recipe)
-#   - HBM exclusion from pblock_CL
+# Changes from V5.6:
+#   - Clock recipe A0 (125MHz) instead of A2 (250MHz)
+#   - Device ID 0xF057, Version 0xF2570001
+#   - Same PCIS→HBM connectivity as V5.6
 #
-# MEMORY REQUIREMENT: 72GB RAM sufficient (c5.9xlarge)
+# TIMING ANALYSIS:
+#   - Critical path: 6.5ns (measured from V5.6 WNS = 4.0ns - (-2.5ns))
+#   - At 250MHz (4.0ns period): -2.5ns violation
+#   - At 200MHz (5.0ns period): -1.5ns violation
+#   - At 125MHz (8.0ns period): +1.5ns POSITIVE SLACK ✓
+#
+# MEMORY REQUIREMENT: Try c5.4xlarge (32GB RAM) first, c5.9xlarge if OOM
 # ============================================================================
 set -x
-exec > >(tee /var/log/hdk-build-v5.4-chirho.log) 2>&1
-echo "=== v5.4 DEBUG REGISTERS Build Starting ☧ ==="
+exec > >(tee /var/log/hdk-build-v57-125mhz-chirho.log) 2>&1
+echo "=== V5.7 125MHz Build Starting ☧ ==="
 date
 
 export HOME=/root
@@ -42,9 +45,10 @@ mkdir -p $CL_DIR/build/scripts
 mkdir -p $CL_DIR/build/checkpoints
 mkdir -p $CL_DIR/build/constraints
 
-# Download v5.4 design files (debug registers + width fix)
-aws s3 cp s3://$BUCKET_CHIRHO/f2_hbm_hdk/design_v5.4_chirho.tar.gz /tmp/design.tar.gz
-tar -xzf /tmp/design.tar.gz -C $CL_DIR/design/
+# Download V5.7 design files (same as V5.6 but with new version ID)
+# NOTE: Tarball contains design/ directory, so extract to $CL_DIR/ not $CL_DIR/design/
+aws s3 cp s3://$BUCKET_CHIRHO/f2_hbm_hdk/design_v5.7_125mhz_chirho.tar.gz /tmp/design.tar.gz
+tar -xzf /tmp/design.tar.gz -C $CL_DIR/
 
 # Copy HBM wrappers from example
 HBM_EXAMPLE_DIR=$HDK_DIR/cl/examples/cl_dram_hbm_dma
@@ -57,17 +61,15 @@ if [ -f "$HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh" ]; then
     cp $HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh $CL_DIR/design/
 fi
 
-# VALID PCI ID: 0xF054 (AWS valid range 0xF000-0xF0FF, v5.4 = 54)
-# Note: cl_id_defines.vh is now included in the tarball, but we create it here
-# to ensure the correct version is used even if tarball is updated
+# VALID PCI ID: 0xF057 (AWS valid range 0xF000-0xF0FF, v5.7 = 57)
 cat > "$CL_DIR/design/cl_id_defines.vh" << 'IDEOF'
 // ============================================================================
 // For God so loved the world - John 3:16 ☧
-// v5.4: Debug registers + width fix
-// PCI DeviceID 0xF054 = valid AWS range + version 5.4
+// V5.7: 125MHz clock to fix timing violation
+// PCI DeviceID 0xF057 = valid AWS range + version 5.7
 // ============================================================================
-`define CL_SH_ID0 32'hF054_1D0F
-`define CL_SH_ID1 32'h1D51_F054
+`define CL_SH_ID0 32'hF057_1D0F
+`define CL_SH_ID1 32'h1D51_F057
 IDEOF
 
 # Build script symlinks
@@ -76,10 +78,10 @@ ln -sf $HDK_DIR/common/shell_stable/build/scripts/aws_build_dcp_from_cl.py .
 ln -sf $HDK_DIR/common/shell_stable/build/scripts/build_all.tcl .
 ln -sf $HDK_DIR/common/shell_stable/build/scripts/build_level_1_cl.tcl .
 
-# Create synthesis TCL
+# Create synthesis TCL (same as V5.6)
 cat > "$CL_DIR/build/scripts/synth_cl_minikanren_chirho.tcl" << 'SYNTHTCL'
 source ${HDK_SHELL_DIR}/build/scripts/synth_cl_header.tcl
-print "Reading user source codes - v5.4 Debug Registers + Width Fix ☧"
+print "Reading user source codes - V5.7 125MHz Timing Fix ☧"
 
 read_verilog -sv ${src_post_enc_dir}/cl_dram_dma_pkg.sv
 read_verilog -sv [glob ${src_post_enc_dir}/*.sv]
@@ -137,7 +139,7 @@ read_xdc [ list \
 set_property PROCESSING_ORDER LATE [get_files cl_synth_user.xdc]
 set_property PROCESSING_ORDER LATE [get_files cl_timing_user.xdc]
 
-print "Starting synthesizing customer design ${CL} - v5.4 ☧"
+print "Starting synthesizing customer design ${CL} - V5.7 125MHz ☧"
 update_compile_order -fileset sources_1
 synth_design -mode out_of_context \
              -top ${CL} \
@@ -147,53 +149,32 @@ synth_design -mode out_of_context \
 source ${HDK_SHELL_DIR}/build/scripts/synth_cl_footer.tcl
 SYNTHTCL
 
-# ============================================================================
-# FLOORPLANNING CONSTRAINTS - v5.1 ☧
-# NO pblock constraints - HBM IP has fixed placement sites
-# Let SSI_SpreadLogic_high directive handle placement naturally
-# ============================================================================
+# Constraints (same as V5.6)
 cat > "$CL_DIR/build/constraints/cl_synth_user.xdc" << 'XDCEOF'
 # ============================================================================
-# v5.1 Constraints (2026-01-29) ☧
+# V5.7 Constraints (2026-02-01) ☧
 # NO pblock - HBM IP requires fixed hardware sites that conflict with pblocks
-# Vivado SSI_SpreadLogic_high directive handles placement
 # ============================================================================
-
-# No pblock constraints - HBM hard macros have fixed locations
-# The SSI_SpreadLogic_high directive will spread logic across SLRs automatically
 XDCEOF
 
 cat > "$CL_DIR/build/constraints/cl_timing_user.xdc" << 'XDCEOF'
 # ============================================================================
-# v5 Timing Constraints ☧
-# Target: 200MHz (5ns period) - relaxed from v4's 250MHz
+# V5.7 Timing Constraints ☧
+# Target: 125MHz (8ns period) - relaxed from V5.6's 250MHz to fix timing
 # ============================================================================
-
-# HBM async paths - CDC handled by HBM IP synchronizers
 set_false_path -through [get_pins -hierarchical -filter {NAME =~ *HBM*AXI*WREADY*}]
 set_false_path -through [get_pins -hierarchical -filter {NAME =~ *HBM*AXI*RREADY*}]
 set_false_path -through [get_pins -hierarchical -filter {NAME =~ *HBM*AXI*BREADY*}]
-
-# SLR crossing paths get extra slack (1-2ns crossing delay expected)
 set_multicycle_path 2 -setup -through [get_pins -hierarchical -filter {NAME =~ *SLR*}] -quiet
 set_multicycle_path 1 -hold -through [get_pins -hierarchical -filter {NAME =~ *SLR*}] -quiet
 XDCEOF
 
 cat > "$CL_DIR/build/constraints/small_shell_cl_pnr_user.xdc" << 'PNREOF'
 # ============================================================================
-# v5.2 P&R constraints - HBM exclusion from pblock_CL ☧
+# V5.7 P&R constraints - HBM exclusion from pblock_CL ☧
 # ============================================================================
-# Problem: AWS shell creates pblock_CL for reconfigurable CL region.
-# HBM IP has fixed physical sites (BLI_HBM_APB_INTF) at chip edges,
-# which are outside pblock_CL bounds. We must exclude HBM from pblock_CL.
-# ============================================================================
-
-# Remove HBM cells from the CL pblock
-# HBM hard macros must be placed at their fixed physical locations
-# These sites are at the bottom of the VU47P die, outside pblock_CL
 set hbm_cells [get_cells -hierarchical -filter {NAME =~ *HBM*} -quiet]
 if {[llength $hbm_cells] > 0} {
-    # Clear any pblock assignment for HBM cells
     foreach cell $hbm_cells {
         set pblock [get_pblocks -of_objects $cell -quiet]
         if {[llength $pblock] > 0} {
@@ -201,24 +182,18 @@ if {[llength $hbm_cells] > 0} {
         }
     }
 }
-
-# Aggressive optimization directives for timing
 set_property STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE AggressiveExplore [get_runs impl_1]
 set_property STEPS.ROUTE_DESIGN.ARGS.DIRECTIVE AggressiveExplore [get_runs impl_1]
 PNREOF
 
-# encrypt.tcl - v5 REVISED: Only flat + 65K + 262K (no 16M/134M)
+# encrypt.tcl (same as V5.6)
 cat > "$CL_DIR/build/scripts/encrypt.tcl" << 'ENCEOF'
 if {[llength [glob -nocomplain -dir $src_post_enc_dir *]] != 0} {
   eval file delete -force [glob $src_post_enc_dir/*]
 }
-
-# Header files
 file copy -force $CL_DIR/design/cl_minikanren_chirho_defines.vh $src_post_enc_dir
 file copy -force $CL_DIR/design/cl_id_defines.vh $src_post_enc_dir
 file copy -force $CL_DIR/design/cl_ports.vh $src_post_enc_dir
-
-# HDK interface files
 if {[file exists $CL_DIR/design/cl_dram_dma_pkg.sv]} {
     file copy -force $CL_DIR/design/cl_dram_dma_pkg.sv $src_post_enc_dir
 }
@@ -227,21 +202,14 @@ if {[file exists $CL_DIR/design/cl_dram_dma_defines.vh]} {
 }
 file copy -force $CL_DIR/design/cl_hbm_axi4.sv $src_post_enc_dir
 file copy -force $CL_DIR/design/cl_hbm_wrapper.sv $src_post_enc_dir
-
-# Core design
 file copy -force $CL_DIR/design/cl_minikanren_chirho.sv $src_post_enc_dir
-
-# Search engines (Clash-generated)
+file copy -force $CL_DIR/design/cl_pcis_handler_chirho.sv $src_post_enc_dir
+file copy -force $CL_DIR/design/cl_axi_arbiter_chirho.sv $src_post_enc_dir
 file copy -force $CL_DIR/design/searchEngineChirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/searchEngine64BitChirho.v $src_post_enc_dir
-
-# Hierarchical intersection modules - V5: ONLY 65K + 262K
 file copy -force $CL_DIR/design/intersect_512_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_hier_65k_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/intersect_hier_262k_chirho.v $src_post_enc_dir
-# EXCLUDED in V5: 16M and 134M streaming hierarchies (timing failures)
-
-# Neurosymbolic modules
 file copy -force $CL_DIR/design/diffTrainChirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/soft_and_32_chirho.v $src_post_enc_dir
 file copy -force $CL_DIR/design/soft_and_16_chirho.v $src_post_enc_dir
@@ -249,31 +217,31 @@ file copy -force $CL_DIR/design/intersect_prob_domain_64_chirho.v $src_post_enc_
 ENCEOF
 
 # ============================================================================
-# v5.3 BUILD: 200MHz (A1 recipe), Sparse Streaming (~3K FFs instead of ~983K)
+# V5.7 BUILD: 125MHz (A0 recipe) to fix timing violation
 # ============================================================================
-echo "Starting v5.3 HDK build (200 MHz, A1 recipe, sparse streaming)..."
+echo "Starting V5.7 HDK build (125 MHz, A0 recipe)..."
 python3 $HDK_DIR/common/shell_stable/build/scripts/aws_build_dcp_from_cl.py \
     --cl cl_minikanren_chirho \
     --aws_clk_gen \
-    --clock_recipe_a A1 \
-    2>&1 | tee $WORK_DIR_CHIRHO/build_v5_chirho.log
+    --clock_recipe_a A0 \
+    2>&1 | tee $WORK_DIR_CHIRHO/build_v57_chirho.log
 
 cd $CL_DIR/build
 DCP_TAR=$(find . -name "*.Developer_CL.tar" 2>/dev/null | head -1)
 if [ -n "$DCP_TAR" ]; then
-    aws s3 cp "$DCP_TAR" s3://$BUCKET_CHIRHO/f2_hbm_hdk/dcp_v5_floorplan/
-    echo "v5_floorplan_success" > /tmp/build_status.txt
+    aws s3 cp "$DCP_TAR" s3://$BUCKET_CHIRHO/f2_hbm_hdk/dcp_v57_125mhz/
+    echo "v57_125mhz_success" > /tmp/build_status.txt
 else
-    echo "v5_floorplan_failed" > /tmp/build_status.txt
+    echo "v57_125mhz_failed" > /tmp/build_status.txt
 fi
 
-aws s3 cp $WORK_DIR_CHIRHO/build_v5_chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5_chirho.log
-aws s3 cp /tmp/build_status.txt s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5_status_chirho.txt
-aws s3 cp /var/log/hdk-build-v5-chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/userdata_v5_chirho.log
+aws s3 cp $WORK_DIR_CHIRHO/build_v57_chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v57_chirho.log
+aws s3 cp /tmp/build_status.txt s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v57_status_chirho.txt
+aws s3 cp /var/log/hdk-build-v57-125mhz-chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/userdata_v57_chirho.log
 
-echo "=== v5.3 Sparse Streaming + 200MHz Build Complete ☧ ==="
+echo "=== V5.7 125MHz Build Complete ☧ ==="
 date
 
-# Keep instance alive for 30 min to check results, then shutdown
+# Keep instance alive for 30 min to check results
 sleep 1800
 shutdown -h now

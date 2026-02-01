@@ -1,13 +1,17 @@
 #!/bin/bash
 # ============================================================================
 # For God so loved the world - John 3:16 ☧
-# v5.4 Build: Debug registers + width fix (2026-01-30)
+# v5.5 Build: STATUS register fix (2026-01-30)
 #
-# Changes from v5.3:
+# Changes from v5.4:
+#   - STATUS register now uses actual op_done/op_valid signals
+#     (was hardcoded to 0x03, now reads real FSM state)
+#   - Device ID 0xF055, Version 0xF2550001
+#
+# V5.4 changes carried forward:
 #   - Fixed register map conflicts (HIER/TRAIN moved to 0x80+)
 #   - Fixed width bug in find_next_set_bit_chirho (use <= with 255/511)
 #   - Added debug registers at 0xC0-0xD4 (FSM state, AXI status, etc.)
-#   - Device ID 0xF054, Version 0xF2540001
 #
 # V5.3 changes carried forward:
 #   - Sparse streaming: reduces FFs from ~983K to ~3K
@@ -17,8 +21,8 @@
 # MEMORY REQUIREMENT: 72GB RAM sufficient (c5.9xlarge)
 # ============================================================================
 set -x
-exec > >(tee /var/log/hdk-build-v5.4-chirho.log) 2>&1
-echo "=== v5.4 DEBUG REGISTERS Build Starting ☧ ==="
+exec > >(tee /var/log/hdk-build-v5.5-chirho.log) 2>&1
+echo "=== v5.5 STATUS FIX Build Starting ☧ ==="
 date
 
 export HOME=/root
@@ -42,9 +46,15 @@ mkdir -p $CL_DIR/build/scripts
 mkdir -p $CL_DIR/build/checkpoints
 mkdir -p $CL_DIR/build/constraints
 
-# Download v5.4 design files (debug registers + width fix)
-aws s3 cp s3://$BUCKET_CHIRHO/f2_hbm_hdk/design_v5.4_chirho.tar.gz /tmp/design.tar.gz
-tar -xzf /tmp/design.tar.gz -C $CL_DIR/design/
+# Download v5.5 design files (STATUS register fix)
+aws s3 cp s3://$BUCKET_CHIRHO/f2_hbm_hdk/design_v5.5_chirho.tar.gz /tmp/design.tar.gz
+# Extract to parent of design/ since tarball contains design/ directory
+tar -xzf /tmp/design.tar.gz -C $CL_DIR/
+# Move files up if nested (tarball has design/ inside)
+if [ -d "$CL_DIR/design/design" ]; then
+    mv $CL_DIR/design/design/* $CL_DIR/design/
+    rm -rf $CL_DIR/design/design
+fi
 
 # Copy HBM wrappers from example
 HBM_EXAMPLE_DIR=$HDK_DIR/cl/examples/cl_dram_hbm_dma
@@ -57,17 +67,15 @@ if [ -f "$HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh" ]; then
     cp $HBM_EXAMPLE_DIR/design/cl_dram_dma_defines.vh $CL_DIR/design/
 fi
 
-# VALID PCI ID: 0xF054 (AWS valid range 0xF000-0xF0FF, v5.4 = 54)
-# Note: cl_id_defines.vh is now included in the tarball, but we create it here
-# to ensure the correct version is used even if tarball is updated
+# VALID PCI ID: 0xF055 (AWS valid range 0xF000-0xF0FF, v5.5 = 55)
 cat > "$CL_DIR/design/cl_id_defines.vh" << 'IDEOF'
 // ============================================================================
 // For God so loved the world - John 3:16 ☧
-// v5.4: Debug registers + width fix
-// PCI DeviceID 0xF054 = valid AWS range + version 5.4
+// v5.5: STATUS register fix - uses actual op_done/op_valid signals
+// PCI DeviceID 0xF055 = valid AWS range + version 5.5
 // ============================================================================
-`define CL_SH_ID0 32'hF054_1D0F
-`define CL_SH_ID1 32'h1D51_F054
+`define CL_SH_ID0 32'hF055_1D0F
+`define CL_SH_ID1 32'h1D51_F055
 IDEOF
 
 # Build script symlinks
@@ -79,7 +87,7 @@ ln -sf $HDK_DIR/common/shell_stable/build/scripts/build_level_1_cl.tcl .
 # Create synthesis TCL
 cat > "$CL_DIR/build/scripts/synth_cl_minikanren_chirho.tcl" << 'SYNTHTCL'
 source ${HDK_SHELL_DIR}/build/scripts/synth_cl_header.tcl
-print "Reading user source codes - v5.4 Debug Registers + Width Fix ☧"
+print "Reading user source codes - v5.5 STATUS Register Fix ☧"
 
 read_verilog -sv ${src_post_enc_dir}/cl_dram_dma_pkg.sv
 read_verilog -sv [glob ${src_post_enc_dir}/*.sv]
@@ -137,7 +145,7 @@ read_xdc [ list \
 set_property PROCESSING_ORDER LATE [get_files cl_synth_user.xdc]
 set_property PROCESSING_ORDER LATE [get_files cl_timing_user.xdc]
 
-print "Starting synthesizing customer design ${CL} - v5.4 ☧"
+print "Starting synthesizing customer design ${CL} - v5.5 ☧"
 update_compile_order -fileset sources_1
 synth_design -mode out_of_context \
              -top ${CL} \
@@ -249,29 +257,29 @@ file copy -force $CL_DIR/design/intersect_prob_domain_64_chirho.v $src_post_enc_
 ENCEOF
 
 # ============================================================================
-# v5.3 BUILD: 200MHz (A1 recipe), Sparse Streaming (~3K FFs instead of ~983K)
+# v5.5 BUILD: 200MHz (A1 recipe), STATUS register fix
 # ============================================================================
-echo "Starting v5.3 HDK build (200 MHz, A1 recipe, sparse streaming)..."
+echo "Starting v5.5 HDK build (200 MHz, A1 recipe, STATUS fix)..."
 python3 $HDK_DIR/common/shell_stable/build/scripts/aws_build_dcp_from_cl.py \
     --cl cl_minikanren_chirho \
     --aws_clk_gen \
     --clock_recipe_a A1 \
-    2>&1 | tee $WORK_DIR_CHIRHO/build_v5_chirho.log
+    2>&1 | tee $WORK_DIR_CHIRHO/build_v5.5_chirho.log
 
 cd $CL_DIR/build
 DCP_TAR=$(find . -name "*.Developer_CL.tar" 2>/dev/null | head -1)
 if [ -n "$DCP_TAR" ]; then
-    aws s3 cp "$DCP_TAR" s3://$BUCKET_CHIRHO/f2_hbm_hdk/dcp_v5_floorplan/
-    echo "v5_floorplan_success" > /tmp/build_status.txt
+    aws s3 cp "$DCP_TAR" s3://$BUCKET_CHIRHO/f2_hbm_hdk/dcp_v5.5/
+    echo "v5.5_success" > /tmp/build_status.txt
 else
-    echo "v5_floorplan_failed" > /tmp/build_status.txt
+    echo "v5.5_failed" > /tmp/build_status.txt
 fi
 
-aws s3 cp $WORK_DIR_CHIRHO/build_v5_chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5_chirho.log
-aws s3 cp /tmp/build_status.txt s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5_status_chirho.txt
-aws s3 cp /var/log/hdk-build-v5-chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/userdata_v5_chirho.log
+aws s3 cp $WORK_DIR_CHIRHO/build_v5.5_chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5.5_chirho.log
+aws s3 cp /tmp/build_status.txt s3://$BUCKET_CHIRHO/f2_hbm_hdk/build_v5.5_status_chirho.txt
+aws s3 cp /var/log/hdk-build-v5.5-chirho.log s3://$BUCKET_CHIRHO/f2_hbm_hdk/userdata_v5.5_chirho.log
 
-echo "=== v5.3 Sparse Streaming + 200MHz Build Complete ☧ ==="
+echo "=== v5.5 STATUS Fix Build Complete ☧ ==="
 date
 
 # Keep instance alive for 30 min to check results, then shutdown

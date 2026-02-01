@@ -1,0 +1,52 @@
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+# V5.5 Full Benchmark Results
+# Date: Fri Jan 30 23:00:11 2026
+Category,Test,Operations,Time_ms,Ops_per_sec,Notes
+Neurosym,Family KG triples,100,0.1659,602856,64 entities, 8 relations
+Neurosym,Family KG triples,1000,1.6714,598284,64 entities, 8 relations
+Neurosym,Family KG triples,10000,16.6425,600871,64 entities, 8 relations
+Neurosym,Family KG triples,100000,166.3098,601287,64 entities, 8 relations
+Neurosym,Soft unify training,1000,1.5186,658484,10 vars, 100 iters
+Neurosym,Soft unify training,5000,7.6074,657257,50 vars, 100 iters
+Neurosym,Soft unify training,10000,15.2161,657200,100 vars, 100 iters
+Neurosym,Soft unify training,50000,76.0398,657550,500 vars, 100 iters
+Neurosym,Gumbel-SAT,500,0.8295,602774,20v 50c 10s
+Neurosym,Gumbel-SAT,3000,4.9845,601867,50v 150c 20s
+Neurosym,Gumbel-SAT,15000,24.9360,601539,100v 300c 50s
+Neurosym,Gumbel-SAT,60000,99.7279,601637,200v 600c 100s
+TestForge,Minimal,10,0.0137,728279,
+TestForge,Simple user,500,0.6930,721458,
+TestForge,Medium FK,4000,5.4780,730195,
+TestForge,Large unique,5000,6.8533,729575,
+TestForge,E-commerce,7500,10.2779,729723,
+TestForge,Financial,20000,27.4061,729765,
+TestForge,Healthcare,50000,68.5126,729793,
+TestForge,Social graph,50000,68.5089,729832,
+TestForge,Max stress,300000,411.3263,729348,
+ConfigGuard,Single YAML,5,0.0070,717360,
+ConfigGuard,Docker Compose,30,0.0414,724253,
+ConfigGuard,K8s Deployment,200,0.2736,731069,
+ConfigGuard,Helm chart,750,1.0289,728901,
+ConfigGuard,Ansible playbook,750,1.0314,727133,
+ConfigGuard,Full namespace,2000,2.7375,730587,
+ConfigGuard,Microservices,5000,6.8512,729799,
+ConfigGuard,Enterprise K8s,15000,20.5518,729861,
+ConfigGuard,Multi-cluster,20000,27.4078,729718,
+ConfigGuard,Max stress,250000,342.5754,729766,
+Philologos,Single verse,10,0.0152,656599,20 words
+Philologos,Word study (logos),50,0.0764,654236,100 words
+Philologos,Lemma frequency,100,0.1523,656435,500 words
+Philologos,Verb forms,500,0.7586,659088,1000 words
+Philologos,Case usage,800,1.2147,658574,2000 words
+Philologos,OT quotations,1000,1.5265,655085,5000 words
+Philologos,Intertextual,2000,3.0393,658042,10000 words
+Philologos,Full corpus scan,1,0.0016,628931,137498 words
+Philologos,Proximity search,100,0.1566,638500,137498 words
+Philologos,Full frequency,5000,7.5994,657944,137498 words
+MassiveBatch,Queue stream,10000,5.1487,1942225,write=2381871 ops/s
+MassiveBatch,Queue stream,50000,25.7237,1943733,write=2374834 ops/s
+MassiveBatch,Queue stream,100000,51.4453,1943812,write=2373866 ops/s
+MassiveBatch,Queue stream,500000,257.2436,1943683,write=2373085 ops/s
+MassiveBatch,Queue stream,1000000,514.4809,1943707,write=2373002 ops/s
