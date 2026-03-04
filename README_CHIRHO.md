@@ -7,6 +7,14 @@
 
 ---
 
+## Patent Notice
+
+**Patent Pending** — U.S. Non-Provisional Application No. 19/549,066,
+filed February 25, 2026. Additional provisional applications filed and pending.
+The code in this repository implements inventions described in the above patent applications.
+
+---
+
 ## Project Vision
 
 miniKanren's relational search can be represented as sparse Boolean tensor operations. Variable domains become bitmasks, unification becomes bitwise AND. For infinite domains (lists, trees), hash consing interns terms to integer IDs on demand.
